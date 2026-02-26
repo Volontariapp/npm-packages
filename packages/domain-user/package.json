@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-user",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Domain user definitions and contracts for Volontariapp",
   "license": "UNLICENSED",
   "type": "module",
