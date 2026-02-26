@@ -33,13 +33,10 @@ CHANGED_PACKAGES=()
 cd "${ROOT_DIR}"
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   if [ -n "${GITHUB_BASE_REF:-}" ]; then
-    # PR environment
     BASE_SHA="origin/${GITHUB_BASE_REF}"
   elif [[ -n "${GITHUB_BEFORE:-}" ]] && [[ "${GITHUB_BEFORE}" != "0000000000000000000000000000000000000000" ]]; then
-    # Push environment (we passed GITHUB_BEFORE explicitly or it's standard)
     BASE_SHA="${GITHUB_BEFORE}"
   else
-    # Local fallback
     if git rev-parse origin/main >/dev/null 2>&1; then
       BASE_SHA="origin/main"
     else
@@ -49,7 +46,6 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 
   echo "🔍 Detecting changes against ${BASE_SHA}..."
   if git rev-parse "${BASE_SHA}" >/dev/null 2>&1; then
-    # Get changed files that start with packages/
     CHANGED_FILES=$(git diff --name-only "${BASE_SHA}" HEAD || echo "")
     
     for package_dir in packages/*/; do
@@ -63,12 +59,14 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     for d in "${ROOT_DIR}"/packages/*/; do CHANGED_PACKAGES+=("$d"); done
   fi
 else
-  # Not in a git repo
   for d in "${ROOT_DIR}"/packages/*/; do CHANGED_PACKAGES+=("$d"); done
 fi
 
 if [ ${#CHANGED_PACKAGES[@]} -eq 0 ]; then
   echo -e "${GREEN}✔ No packages were modified. Skipping changelog checks!${NC}"
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then
+    echo "has_changes=false" >> "$GITHUB_OUTPUT"
+  fi
   exit 0
 fi
 
@@ -104,5 +102,8 @@ if [ "$FAILED" -ne 0 ]; then
   exit 1
 else
   echo -e "\n${GREEN}✔ All changelogs are valid!${NC}"
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then
+    echo "has_changes=true" >> "$GITHUB_OUTPUT"
+  fi
   exit 0
 fi
