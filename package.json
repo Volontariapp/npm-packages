@@ -16,7 +16,6 @@
     "lint": "yarn workspaces foreach -A run lint",
     "test": "yarn workspaces foreach -A run test",
     "create-package": "bash scripts/create-package.sh",
-    "setup": "bash scripts/setup.sh",
     "check-changelogs": "bash scripts/check-changelogs.sh"
   },
   "devDependencies": {
