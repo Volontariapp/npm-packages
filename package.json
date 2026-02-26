@@ -17,11 +17,20 @@
     "test": "yarn workspaces foreach -A run test",
     "create-package": "bash scripts/create-package.sh",
     "setup": "bash scripts/setup.sh",
-    "check-changelogs": "bash scripts/check-changelogs.sh"
+    "check-changelogs": "bash scripts/check-changelogs.sh",
+    "prepare": "husky"
   },
   "devDependencies": {
     "eslint": "9.18.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "3.4.2",
     "typescript": "5.7.3"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
