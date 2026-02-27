@@ -10,7 +10,6 @@ on:
 jobs:
   check-changelogs:
     name: Changelog Compliance
-    if: github.event_name == 'push'
     uses: Volontariapp/ci-tools/.github/workflows/npm-packages-changelog.yml@main
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
