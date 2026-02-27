@@ -1,3 +1,13 @@
+## [@volontariapp/domain-user
+v0.2.1
+
+up to date in 516ms
+
+52 packages are looking for funding
+  run `npm fund` for details] - 2026-02-27
+### Changed
+- Auto-generated proto typings updated
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
