@@ -6,26 +6,32 @@ import { Transport } from '@nestjs/microservices';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const GRPC_SERVICES = {
-  USER: {
+export enum GRPC_SERVICES {
+  USER = 'USER',
+  POST = 'POST',
+  EVENT = 'EVENT',
+}
+
+export const GRPC_SERVICES_CONFIG = {
+  [GRPC_SERVICES.USER]: {
     package: 'volontariapp.user',
     protoFileName: 'user.services.proto',
     domain: 'user',
   },
-  POST: {
+  [GRPC_SERVICES.POST]: {
     package: 'volontariapp.post',
     protoFileName: 'post.services.proto',
     domain: 'post',
   },
-  EVENT: {
+  [GRPC_SERVICES.EVENT]: {
     package: 'volontariapp.event',
     protoFileName: 'event.services.proto',
     domain: 'event',
   },
 };
 
-export const getGrpcOptions = (service: keyof typeof GRPC_SERVICES, url: string): GrpcOptions => {
-  const config = GRPC_SERVICES[service];
+export const getGrpcOptions = (service: GRPC_SERVICES, url: string): GrpcOptions => {
+  const config = GRPC_SERVICES_CONFIG[service];
   const protoRoot = join(__dirname, '../proto');
 
   return {
