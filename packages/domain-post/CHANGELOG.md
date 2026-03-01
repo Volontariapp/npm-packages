@@ -12,6 +12,13 @@ up to date in 509ms
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2026-03-01
+
+### Changed
+
+- Auto-generated proto typings updated.
+
+
 ## [0.1.0] - 2026-02-24
 
 ### Added
@@ -19,3 +26,4 @@ All notable changes to this project will be documented in this file.
 - Initial package scaffold.
 
 [0.1.0]: https://github.com/Volontariapp/npm-packages/pull/PLACEHOLDER
+[0.1.2]: https://github.com/Volontariapp/npm-packages/pull/PR_PLACEHOLDER

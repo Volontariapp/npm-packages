@@ -9,6 +9,8 @@ import type { PaginationRequest, PaginationResponse } from "../../common/v1/pagi
 
 export const protobufPackage = "volontariapp.user.v1";
 
+/** trigger ci */
+
 export interface User {
   id: string;
   email: string;
