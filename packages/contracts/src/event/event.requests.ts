@@ -5,7 +5,7 @@
 // source: volontariapp/event/event.requests.proto
 
 /* eslint-disable */
-import { wrappers } from "protobufjs";
+import _m0 from "protobufjs"; const { wrappers } = _m0;
 import { PaginationRequest } from "../common/pagination.js";
 
 export interface GetEventRequest {

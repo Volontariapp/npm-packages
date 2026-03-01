@@ -5,7 +5,7 @@
 // source: volontariapp/event/event.proto
 
 /* eslint-disable */
-import { wrappers } from "protobufjs";
+import _m0 from 'protobufjs'; const { wrappers } = _m0;
 
 export interface Event {
   id: string;
@@ -17,7 +17,7 @@ export interface Event {
   organizerId: string;
 }
 
-wrappers[".google.protobuf.Timestamp"] = {
+wrappers['.google.protobuf.Timestamp'] = {
   fromObject(value: Date) {
     return { seconds: value.getTime() / 1000, nanos: (value.getTime() % 1000) * 1e6 };
   },
