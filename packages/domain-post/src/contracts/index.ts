@@ -1,1 +1,2 @@
-export * from './post.contract';
+// Auto-generated types will be exported from here
+export {};
