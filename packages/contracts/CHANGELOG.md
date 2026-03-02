@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2026-03-02
+
+### Changed
+
+- This PR was triggered by the reset label on a debug branch. It performs a full regeneration of all proto files and TypeScript types, including the .proto files in the contracts package.
+
+
 ## [0.5.0] - 2026-03-02
 
 ### Changed
@@ -50,6 +57,7 @@ All notable changes to this project will be documented in this file.
 
 - Initial package scaffold.
 
+[0.6.0]: https://github.com/Volontariapp/npm-packages/pull/PR_PLACEHOLDER
 [0.5.0]: https://github.com/Volontariapp/npm-packages/pull/23
 [0.4.0]: https://github.com/Volontariapp/npm-packages/pull/22
 [0.3.0]: https://github.com/Volontariapp/npm-packages/pull/19

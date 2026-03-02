@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package volontariapp.user;
+
+import "volontariapp/common/pagination.proto";
+
+message UserQuery {
+  string id = 1;
+}
+
+message ListUsersQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}

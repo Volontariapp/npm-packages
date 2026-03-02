@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package volontariapp.event;
+
+import "google/protobuf/timestamp.proto";
+
+message CreateEventCommand {
+  string title = 1;
+  string description = 2;
+  google.protobuf.Timestamp start_date = 3;
+  google.protobuf.Timestamp end_date = 4;
+  string location = 5;
+  string organizer_id = 6;
+}
+
+message UpdateEventCommand {
+  string id = 1;
+  optional string title = 2;
+  optional string description = 3;
+  optional google.protobuf.Timestamp start_date = 4;
+  optional google.protobuf.Timestamp end_date = 5;
+  optional string location = 6;
+}
+
+message DeleteEventCommand {
+  string id = 1;
+}
