@@ -43,7 +43,7 @@ All notable changes to this project will be documented in this file.
 
 - Initial package scaffold.
 
-[0.4.0]: https://github.com/Volontariapp/npm-packages/pull/PR_PLACEHOLDER
+[0.4.0]: https://github.com/Volontariapp/npm-packages/pull/20
 [0.3.0]: https://github.com/Volontariapp/npm-packages/pull/19
 [0.2.0]: https://github.com/Volontariapp/npm-packages/pull/18
 [0.1.2]: https://github.com/Volontariapp/npm-packages/pull/17
