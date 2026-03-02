@@ -3,5 +3,3 @@ export * from './event/index.js';
 export * from './post/index.js';
 export * from './user/index.js';
 export * from './grpc.helper.js';
-
-export * from './grpc.helper.js';
