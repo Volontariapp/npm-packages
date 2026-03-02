@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package volontariapp.post;
+
+import "volontariapp/common/pagination.proto";
+import "volontariapp/post/post.proto";
+
+
+message GetPostResponse {
+  Post post = 1;
+}
+
+message CreatePostResponse {
+  Post post = 1;
+}
+
+message UpdatePostResponse {
+  Post post = 1;
+}
+
+message ListPostsResponse {
+  repeated Post posts = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message DeletePostResponse {
+  bool success = 1;
+}
