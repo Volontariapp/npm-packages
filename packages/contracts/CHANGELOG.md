@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2026-03-02
+
+### Changed
+
+- Auto-generated proto typings update.
+
+
 ## [0.4.0] - 2026-03-02
 
 ### Changed
@@ -43,6 +50,7 @@ All notable changes to this project will be documented in this file.
 
 - Initial package scaffold.
 
+[0.5.0]: https://github.com/Volontariapp/npm-packages/pull/23
 [0.4.0]: https://github.com/Volontariapp/npm-packages/pull/22
 [0.3.0]: https://github.com/Volontariapp/npm-packages/pull/19
 [0.2.0]: https://github.com/Volontariapp/npm-packages/pull/18
