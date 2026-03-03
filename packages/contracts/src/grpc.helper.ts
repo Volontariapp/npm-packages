@@ -12,6 +12,30 @@ export enum GRPC_SERVICES {
   EVENT = 'EVENT',
 }
 
+export enum USER_GRPC_METHODS {
+  GET_USER = 'getUser',
+  LIST_USERS = 'listUsers',
+  CREATE_USER = 'createUser',
+  UPDATE_USER = 'updateUser',
+  DELETE_USER = 'deleteUser',
+}
+
+export enum POST_GRPC_METHODS {
+  GET_POST = 'getPost',
+  LIST_POSTS = 'listPosts',
+  CREATE_POST = 'createPost',
+  UPDATE_POST = 'updatePost',
+  DELETE_POST = 'deletePost',
+}
+
+export enum EVENT_GRPC_METHODS {
+  GET_EVENT = 'getEvent',
+  LIST_EVENTS = 'listEvents',
+  CREATE_EVENT = 'createEvent',
+  UPDATE_EVENT = 'updateEvent',
+  DELETE_EVENT = 'deleteEvent',
+}
+
 export const GRPC_SERVICES_CONFIG = {
   [GRPC_SERVICES.USER]: {
     package: 'volontariapp.user',
