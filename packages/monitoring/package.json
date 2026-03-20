@@ -1,6 +1,7 @@
 {
   "name": "@volontariapp/monitoring",
   "version": "0.1.0",
+  "publishConfig": { "provenance": true },
   "description": "",
   "license": "UNLICENSED",
   "type": "module",

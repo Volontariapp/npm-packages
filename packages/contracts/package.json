@@ -1,6 +1,7 @@
 {
   "name": "@volontariapp/contracts",
   "version": "0.7.0",
+  "publishConfig": { "provenance": true },
   "description": "",
   "license": "UNLICENSED",
   "type": "module",

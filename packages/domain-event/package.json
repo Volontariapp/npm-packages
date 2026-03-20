@@ -1,6 +1,9 @@
 {
   "name": "@volontariapp/domain-event",
   "version": "0.1.1",
+  "publishConfig": {
+    "provenance": true
+  },
   "description": "Domain event definitions and contracts for Volontariapp",
   "license": "UNLICENSED",
   "type": "module",

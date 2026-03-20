@@ -1,6 +1,7 @@
 {
   "name": "@volontariapp/eslint-config",
   "version": "0.1.0",
+  "publishConfig": { "provenance": true },
   "description": "Shared ESLint flat config for all Volontariapp projects",
   "license": "UNLICENSED",
   "type": "module",
