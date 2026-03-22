@@ -27,3 +27,64 @@ jobs:
       changed_packages: ${{ needs.check-changelogs.outputs.changed_packages }}
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
+
+  release:
+    name: Version Changelogs & Publish
+    needs: [check-changelogs, test-build]
+    if: needs.check-changelogs.outputs.has_changes == 'true' && needs.test-build.result == 'success' && (github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node & Yarn
+        uses: Volontariapp/ci-tools/.github/actions/setup-node-yarn@main
+        with:
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Resolve release mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "mode=snapshot" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=release" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate versions and enrich changelogs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn release:ci --mode ${{ steps.mode.outputs.mode }}
+
+      - name: Commit and push version/changelog updates
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: Volontariapp/ci-tools/.github/actions/setup-git@main
+
+      - name: Extract snapshot tag
+        if: github.event_name == 'pull_request'
+        id: snapshot-tag
+        run: |
+          if [ -f .changeset/.snapshot-tag ]; then
+            TAG=$(cat .changeset/.snapshot-tag)
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=snapshot" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish snapshot packages (PR)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          NPM_CONFIG_PROVENANCE: true
+        run: yarn changeset publish --tag ${{ steps.snapshot-tag.outputs.tag }}
+
+      - name: Publish packages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          NPM_CONFIG_PROVENANCE: true
+        run: yarn changeset publish
