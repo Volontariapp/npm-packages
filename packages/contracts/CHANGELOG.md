@@ -54,6 +54,7 @@
 
 - Initial package scaffold.
 
+[0.7.0]: https://github.com/Volontariapp/npm-packages/pull/25
 [0.6.0]: https://github.com/Volontariapp/npm-packages/pull/24
 [0.5.0]: https://github.com/Volontariapp/npm-packages/pull/23
 [0.4.0]: https://github.com/Volontariapp/npm-packages/pull/22
