@@ -1,13 +1,5 @@
 # Changelog
 
-## 0.2.0
-
-### Minor Changes
-
-- Yarn changeset added for each package, and npm provenance set to public
-
-All notable changes to this project will be documented in this file.
-
 ## [0.1.0] - 2026-02-27
 
 ### Added
