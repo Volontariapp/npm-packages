@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.0.0-next-1-20260322214055
+
+### Patch Changes
+
+- Test number 2
+
+## 0.0.0-next-0-20260322213859
+
+### Patch Changes
+
+- Automated snapshot release bump.
+
 ## [0.7.0] - 2026-03-03
 
 ### Changed

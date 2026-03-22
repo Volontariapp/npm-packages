@@ -21,20 +21,25 @@ usage() {
     cat <<EOF
 Usage: $(basename "$0") --packages <pkg1,pkg2,...> --release-type <patch|minor|major|snapshot>
 
+If arguments are omitted, the script starts in interactive mode.
+
 Options:
   --packages      Comma-separated package identifiers.
                   You can use package directory names or npm package names.
   --release-type  One of: patch, minor, major, snapshot.
+    --message       Changelog message used in generated temporary changesets.
   --help          Show this help message.
 
 Examples:
   $(basename "$0") --packages utils,core --release-type patch
   $(basename "$0") --packages @scope/utils --release-type snapshot
+    $(basename "$0") --packages utils --release-type minor --message "Add validation for auth payload"
 EOF
 }
 
 PACKAGES_INPUT=""
 RELEASE_TYPE=""
+CHANGELOG_MESSAGE=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -56,6 +61,15 @@ while [ $# -gt 0 ]; do
             RELEASE_TYPE="$2"
             shift 2
             ;;
+        --message)
+            if [ $# -lt 2 ]; then
+                echo -e "${RED}Error: --message requires a value.${NC}"
+                usage
+                exit 1
+            fi
+            CHANGELOG_MESSAGE="$2"
+            shift 2
+            ;;
         --help|-h)
             usage
             exit 0
@@ -68,13 +82,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-if [ -z "$PACKAGES_INPUT" ] || [ -z "$RELEASE_TYPE" ]; then
-    echo -e "${RED}Error: --packages and --release-type are required.${NC}"
-    usage
-    exit 1
-fi
-
-if [[ ! "$RELEASE_TYPE" =~ ^(patch|minor|major|snapshot)$ ]]; then
+if [ -n "$RELEASE_TYPE" ] && [[ ! "$RELEASE_TYPE" =~ ^(patch|minor|major|snapshot)$ ]]; then
     echo -e "${RED}Error: --release-type must be one of patch, minor, major, snapshot.${NC}"
     exit 1
 fi
@@ -122,107 +130,171 @@ for d in packages/*; do
     fi
 done
 
-IFS=',' read -r -a REQUESTED_PACKAGES <<< "$PACKAGES_INPUT"
+if [ ${#PKG_DIRS[@]} -eq 0 ]; then
+    echo -e "${RED}Error: No packages found in packages/.${NC}"
+    exit 1
+fi
 
-for raw_pkg in "${REQUESTED_PACKAGES[@]}"; do
-    pkg="${raw_pkg#"${raw_pkg%%[![:space:]]*}"}"
-    pkg="${pkg%"${pkg##*[![:space:]]}"}"
+if [ -z "$PACKAGES_INPUT" ]; then
+    echo -e "\n${CYAN}Interactive mode: select packages${NC}"
+    i=1
+    for idx in "${!PKG_DIRS[@]}"; do
+        echo -e "  [${i}] ${GREEN}${PKG_DIRS[$idx]}${NC} (${PKG_NAMES[$idx]} - v${PKG_VERSIONS[$idx]})"
+        i=$((i + 1))
+    done
 
-    if [ -z "$pkg" ]; then
-        continue
-    fi
+    echo -e "\n${CYAN}Enter package numbers (space-separated) or 'all':${NC}"
+    read -r -p "> " selection
 
-    idx=""
-    if [ -n "${PKG_DIR_TO_INDEX[$pkg]+x}" ]; then
-        idx="${PKG_DIR_TO_INDEX[$pkg]}"
-    elif [ -n "${PKG_NAME_TO_INDEX[$pkg]+x}" ]; then
-        idx="${PKG_NAME_TO_INDEX[$pkg]}"
+    if [ "$selection" = "all" ]; then
+        for idx in "${!PKG_DIRS[@]}"; do
+            SELECTED_INDICES+=("$idx")
+            SELECTED_SET["$idx"]=1
+        done
     else
-        echo -e "${RED}Error: Unknown package '$pkg'.${NC}"
-        exit 1
-    fi
+        for num in $selection; do
+            if ! [[ "$num" =~ ^[0-9]+$ ]]; then
+                echo -e "${RED}Invalid selection: $num${NC}"
+                continue
+            fi
 
-    if [ -z "${SELECTED_SET[$idx]+x}" ]; then
-        SELECTED_INDICES+=("$idx")
-        SELECTED_SET["$idx"]=1
+            idx=$((num - 1))
+            if [ "$idx" -lt 0 ] || [ "$idx" -ge ${#PKG_DIRS[@]} ]; then
+                echo -e "${RED}Index out of range: $num${NC}"
+                continue
+            fi
+
+            if [ -z "${SELECTED_SET[$idx]+x}" ]; then
+                SELECTED_INDICES+=("$idx")
+                SELECTED_SET["$idx"]=1
+            fi
+        done
     fi
-done
+else
+    IFS=',' read -r -a REQUESTED_PACKAGES <<< "$PACKAGES_INPUT"
+
+    for raw_pkg in "${REQUESTED_PACKAGES[@]}"; do
+        pkg="${raw_pkg#"${raw_pkg%%[![:space:]]*}"}"
+        pkg="${pkg%"${pkg##*[![:space:]]}"}"
+
+        if [ -z "$pkg" ]; then
+            continue
+        fi
+
+        idx=""
+        if [ -n "${PKG_DIR_TO_INDEX[$pkg]+x}" ]; then
+            idx="${PKG_DIR_TO_INDEX[$pkg]}"
+        elif [ -n "${PKG_NAME_TO_INDEX[$pkg]+x}" ]; then
+            idx="${PKG_NAME_TO_INDEX[$pkg]}"
+        else
+            echo -e "${RED}Error: Unknown package '$pkg'.${NC}"
+            exit 1
+        fi
+
+        if [ -z "${SELECTED_SET[$idx]+x}" ]; then
+            SELECTED_INDICES+=("$idx")
+            SELECTED_SET["$idx"]=1
+        fi
+    done
+fi
 
 if [ "${#SELECTED_INDICES[@]}" -eq 0 ]; then
     echo -e "${RED}Error: No valid packages were selected from --packages.${NC}"
     exit 1
 fi
 
+if [ -z "$RELEASE_TYPE" ]; then
+    echo -e "\n${CYAN}Interactive mode: choose release type${NC}"
+    echo "  [1] patch"
+    echo "  [2] minor"
+    echo "  [3] major"
+    echo "  [4] snapshot"
+    read -r -p "> " release_choice
+
+    case "$release_choice" in
+        1) RELEASE_TYPE="patch" ;;
+        2) RELEASE_TYPE="minor" ;;
+        3) RELEASE_TYPE="major" ;;
+        4) RELEASE_TYPE="snapshot" ;;
+        *)
+            echo -e "${RED}Invalid release type selection.${NC}"
+            exit 1
+            ;;
+    esac
+fi
+
+if [ -z "$CHANGELOG_MESSAGE" ]; then
+    echo -e "\n${CYAN}Changelog message (used by changesets):${NC}"
+    read -r -p "> " CHANGELOG_MESSAGE
+fi
+
+if [ -z "$CHANGELOG_MESSAGE" ]; then
+    CHANGELOG_MESSAGE="Automated ${RELEASE_TYPE} release bump."
+fi
+
 echo -e "\n${CYAN}Selected packages:${NC}"
 for idx in "${SELECTED_INDICES[@]}"; do
     echo " - ${PKG_NAMES[$idx]} (${PKG_DIRS[$idx]}) current=${PKG_VERSIONS[$idx]}"
 done
+echo -e "${CYAN}Changelog message:${NC} ${CHANGELOG_MESSAGE}"
+
+if [ ! -d ".changeset" ]; then
+    echo -e "${RED}Error: .changeset directory not found.${NC}"
+    exit 1
+fi
+
+BUMP_TYPE="$RELEASE_TYPE"
+SNAPSHOT_TAG=""
 
 if [ "$RELEASE_TYPE" = "snapshot" ]; then
-    echo -e "\n${CYAN}Applying snapshot versions (auto next suffix)...${NC}"
+    echo -e "\n${CYAN}Preparing snapshot release with Changesets CLI...${NC}"
+    BUMP_TYPE="patch"
 
+    computed_next=""
     for idx in "${SELECTED_INDICES[@]}"; do
-        d="packages/${PKG_DIRS[$idx]}"
-        pkg_json="$d/package.json"
+        current="${PKG_VERSIONS[$idx]}"
+        next_for_pkg=0
 
-        new_version=$(node - "$pkg_json" <<'NODE'
-const fs = require('fs');
+        if [[ "$current" =~ -next-([0-9]+)(-.+)?$ ]]; then
+            next_for_pkg=$((BASH_REMATCH[1] + 1))
+        fi
 
-const file = process.argv[2];
-const pkg = JSON.parse(fs.readFileSync(file, 'utf8'));
-const current = pkg.version;
-
-let base;
-let nextNumber;
-
-let m = current.match(/^(\d+)\.(\d+)(?:\.(\d+))?-next-(\d+)$/);
-if (m) {
-  base = m[3] !== undefined ? `${m[1]}.${m[2]}.${m[3]}` : `${m[1]}.${m[2]}`;
-  nextNumber = Number(m[4]) + 1;
-} else {
-  m = current.match(/^(\d+)\.(\d+)(?:\.(\d+))?$/);
-  if (!m) {
-    console.error(`Unsupported version format for snapshot: ${current}`);
-    process.exit(1);
-  }
-  base = m[3] !== undefined ? `${m[1]}.${m[2]}.${m[3]}` : `${m[1]}.${m[2]}`;
-  nextNumber = 0;
-}
-
-pkg.version = `${base}-next-${nextNumber}`;
-fs.writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');
-process.stdout.write(pkg.version);
-NODE
-)
-
-        echo -e "${GREEN}${PKG_NAMES[$idx]}${NC}: ${PKG_VERSIONS[$idx]} -> ${new_version}"
+        if [ -z "$computed_next" ]; then
+            computed_next="$next_for_pkg"
+        elif [ "$computed_next" -ne "$next_for_pkg" ]; then
+            echo -e "${RED}Error: Selected packages are on different snapshot indexes.${NC}"
+            echo -e "${RED}Please run snapshot release separately per package or align versions first.${NC}"
+            exit 1
+        fi
     done
 
-    echo -e "\n${GREEN}Snapshot versioning complete.${NC}"
-else
-    if [ ! -d ".changeset" ]; then
-        echo -e "${RED}Error: .changeset directory not found.${NC}"
-        exit 1
-    fi
+    SNAPSHOT_TAG="next-${computed_next}"
+    echo -e "${CYAN}Snapshot tag resolved to '${SNAPSHOT_TAG}'.${NC}"
+fi
 
-    echo -e "\n${CYAN}Creating temporary changesets for ${RELEASE_TYPE} release...${NC}"
-    ts=$(date +%s)
+echo -e "\n${CYAN}Creating temporary changesets for ${RELEASE_TYPE} release...${NC}"
+ts=$(date +%s)
 
-    for idx in "${SELECTED_INDICES[@]}"; do
-        name="${PKG_NAMES[$idx]}"
-        safe_name=$(echo "$name" | sed 's/[@/]/_/g')
-        filename=".changeset/release-temp-${safe_name}-${ts}-${RANDOM}.md"
+for idx in "${SELECTED_INDICES[@]}"; do
+    name="${PKG_NAMES[$idx]}"
+    safe_name=$(echo "$name" | sed 's/[@/]/_/g')
+    filename=".changeset/release-temp-${safe_name}-${ts}-${RANDOM}.md"
 
-        cat <<EOF > "$filename"
+    cat <<EOF > "$filename"
 ---
-"${name}": ${RELEASE_TYPE}
+"${name}": ${BUMP_TYPE}
 ---
 
-Automated ${RELEASE_TYPE} release bump.
+${CHANGELOG_MESSAGE}
 EOF
-        CREATED_FILES+=("$filename")
-    done
+    CREATED_FILES+=("$filename")
+done
 
+if [ "$RELEASE_TYPE" = "snapshot" ]; then
+    echo -e "${CYAN}Running changeset version --snapshot ${SNAPSHOT_TAG}...${NC}"
+    yarn exec changeset version --snapshot "$SNAPSHOT_TAG"
+    echo -e "\n${GREEN}Snapshot release versioning complete.${NC}"
+else
     echo -e "${CYAN}Running changeset version...${NC}"
     yarn exec changeset version
     echo -e "\n${GREEN}${RELEASE_TYPE^} release versioning complete.${NC}"
