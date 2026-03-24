@@ -68,3 +68,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: NODE_AUTH_TOKEN="" yarn release:ci --mode ${{ steps.mode.outputs.mode }} --changed-packages '${{ needs.check-changelogs.outputs.changed_packages }}'
+
+  check-package-versions:
+    name: Check No Snapshot Versions
+    needs: check-changelogs
+    if: needs.check-changelogs.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.14.0
+
+      - name: Check package versions are not snapshots
+        shell: bash
+        run: bash ./scripts/CI-check-no-snapshot.sh
