@@ -46,6 +46,14 @@ cat > "${PKG_DIR}/package.json" << EOF
 {
   "name": "@volontariapp/${PACKAGE_NAME}",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Volontariapp/npm-packages.git"
+  },
   "description": "",
   "license": "UNLICENSED",
   "type": "module",

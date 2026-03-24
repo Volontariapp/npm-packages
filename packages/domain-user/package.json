@@ -2,7 +2,12 @@
   "name": "@volontariapp/domain-user",
   "version": "1.0.1",
   "publishConfig": {
+    "access": "public",
     "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Volontariapp/npm-packages.git"
   },
   "description": "Domain user definitions and contracts for Volontariapp",
   "license": "UNLICENSED",
