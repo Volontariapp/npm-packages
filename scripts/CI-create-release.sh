@@ -24,15 +24,20 @@ fi
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") --mode <snapshot|release>
+Usage: $(basename "$0") --mode <snapshot|release> --changed-packages <json|csv>
 
 CI-only script:
-  --mode snapshot  Run changeset version in snapshot mode with auto next-N tag.
-  --mode release   Run standard changeset version for real releases.
+    --mode snapshot  Version in snapshot mode, output package tags, and publish with tag 'next'.
+    --mode release   Version for standard release, output package tags, and publish.
+
+Arguments:
+    --mode               Release mode. One of: snapshot, release.
+    --changed-packages   Changed packages as JSON array (e.g. ["domain-user","contracts"]) or CSV.
 EOF
 }
 
 MODE=""
+CHANGED_PACKAGES_INPUT=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -49,6 +54,15 @@ while [ $# -gt 0 ]; do
             usage
             exit 0
             ;;
+        --changed-packages)
+            if [ $# -lt 2 ]; then
+                echo -e "${RED}Error: --changed-packages requires a value.${NC}"
+                usage
+                exit 1
+            fi
+            CHANGED_PACKAGES_INPUT="$2"
+            shift 2
+            ;;
         *)
             echo -e "${RED}Error: Unknown argument '$1'.${NC}"
             usage
@@ -63,35 +77,108 @@ if [[ ! "$MODE" =~ ^(snapshot|release)$ ]]; then
     exit 1
 fi
 
-echo -e "${CYAN}=== CI Release Runner ===${NC}"
-echo -e "${CYAN}Mode:${NC} ${MODE}"
+if [ -z "$CHANGED_PACKAGES_INPUT" ]; then
+    echo -e "${RED}Error: --changed-packages is required.${NC}"
+    usage
+    exit 1
+fi
 
-if [ "$MODE" = "snapshot" ]; then
-    max_next=-1
-
-    for d in packages/*; do
-        if [ -d "$d" ] && [ -f "$d/package.json" ]; then
-            current_version=$(node -p "require('./$d/package.json').version")
-            if [[ "$current_version" =~ -next-([0-9]+)(-.+)?$ ]]; then
-                next_value=${BASH_REMATCH[1]}
-                if [ "$next_value" -gt "$max_next" ]; then
-                    max_next=$next_value
-                fi
-            fi
+# Parse changed packages as either a JSON array or CSV list.
+declare -a CHANGED_PACKAGES=()
+if [[ "$CHANGED_PACKAGES_INPUT" =~ ^\[.*\]$ ]]; then
+    mapfile -t CHANGED_PACKAGES < <(node -e '
+const raw = process.argv[1];
+let parsed;
+try {
+  parsed = JSON.parse(raw);
+} catch {
+  process.exit(2);
+}
+if (!Array.isArray(parsed)) {
+  process.exit(3);
+}
+for (const item of parsed) {
+  if (typeof item === "string" && item.trim().length > 0) {
+    console.log(item.trim());
+  }
+}
+' "$CHANGED_PACKAGES_INPUT") || {
+        echo -e "${RED}Error: invalid JSON for --changed-packages.${NC}"
+        exit 1
+    }
+else
+    IFS=',' read -r -a csv_packages <<< "$CHANGED_PACKAGES_INPUT"
+    for pkg in "${csv_packages[@]}"; do
+        trimmed=$(echo "$pkg" | xargs)
+        if [ -n "$trimmed" ]; then
+            CHANGED_PACKAGES+=("$trimmed")
         fi
     done
+fi
 
-    next_index=$((max_next + 1))
-    snapshot_tag="next-${next_index}"
+if [ ${#CHANGED_PACKAGES[@]} -eq 0 ]; then
+    echo -e "${RED}Error: no changed packages were provided.${NC}"
+    exit 1
+fi
 
-    echo -e "${CYAN}Running snapshot versioning with tag '${snapshot_tag}'...${NC}"
+declare -a SELECTED_PACKAGE_DIRS=()
+for package_selector in "${CHANGED_PACKAGES[@]}"; do
+    package_dir="packages/$package_selector"
+    if [ -d "$package_dir" ] && [ -f "$package_dir/package.json" ]; then
+        SELECTED_PACKAGE_DIRS+=("$package_dir")
+    else
+        echo -e "${RED}Error: package not found for selector '$package_selector'.${NC}"
+        exit 1
+    fi
+done
+
+echo -e "${CYAN}=== CI Release Runner ===${NC}"
+echo -e "${CYAN}Mode:${NC} ${MODE}"
+echo -e "${CYAN}Changed packages:${NC} ${CHANGED_PACKAGES[*]}"
+
+if [ "$MODE" = "snapshot" ]; then
+    snapshot_tag="next"
+    echo -e "${CYAN}Running snapshot versioning with dist-tag '${snapshot_tag}'...${NC}"
     yarn exec changeset version --snapshot "$snapshot_tag"
-    echo -e "${GREEN}Snapshot versioning complete.${NC}"
-    
-    # Store the snapshot tag for use in CI/CD
-    echo "$snapshot_tag" > "$PROJECT_ROOT/.changeset/.snapshot-tag"
+
+    : > "$PROJECT_ROOT/.changeset/.snapshot-tags"
+    for package_dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
+        package_name=$(node -p "require('./$package_dir/package.json').name")
+        package_version=$(node -p "require('./$package_dir/package.json').version")
+        full_tag="${package_name}@${package_version}"
+        echo "$full_tag" >> "$PROJECT_ROOT/.changeset/.snapshot-tags"
+        echo -e "${GREEN}${full_tag}${NC}"
+    done
+
+    if [ -n "${GITHUB_OUTPUT:-}" ]; then
+        echo "publish_tag=$snapshot_tag" >> "$GITHUB_OUTPUT"
+        snapshot_tags_csv=$(paste -sd, "$PROJECT_ROOT/.changeset/.snapshot-tags")
+        echo "snapshot_tags=$snapshot_tags_csv" >> "$GITHUB_OUTPUT"
+    fi
+
+    echo -e "${CYAN}Publishing snapshot packages...${NC}"
+    yarn changeset publish --tag "$snapshot_tag"
+    echo -e "${GREEN}Snapshot publication complete.${NC}"
 else
     echo -e "${CYAN}Running release versioning...${NC}"
     yarn exec changeset version
-    echo -e "${GREEN}Release versioning complete.${NC}"
+
+    : > "$PROJECT_ROOT/.changeset/.release-tags"
+    for package_dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
+        package_name=$(node -p "require('./$package_dir/package.json').name")
+        package_version=$(node -p "require('./$package_dir/package.json').version")
+        full_tag="${package_name}@${package_version}"
+        echo "$full_tag" >> "$PROJECT_ROOT/.changeset/.release-tags"
+        echo -e "${GREEN}${full_tag}${NC}"
+    done
+
+    if [ -n "${GITHUB_OUTPUT:-}" ]; then
+        echo "publish_tag=" >> "$GITHUB_OUTPUT"
+        release_tags_csv=$(paste -sd, "$PROJECT_ROOT/.changeset/.release-tags")
+        echo "release_tags=$release_tags_csv" >> "$GITHUB_OUTPUT"
+    fi
+
+    echo -e "${CYAN}Publishing release packages...${NC}"
+    yarn changeset publish
+    echo -e "${GREEN}Release publication complete.${NC}"
 fi
