@@ -63,7 +63,6 @@ jobs:
             echo "mode=release" >> "$GITHUB_OUTPUT"
           fi
 
-          name: Debug Node & npm
       - name: Debug Node & npm
         run: |
           node -v
