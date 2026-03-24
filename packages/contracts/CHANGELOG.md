@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- Test change on a single package
+
 ## 1.0.1
 
 ### Patch Changes
