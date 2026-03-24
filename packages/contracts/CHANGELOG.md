@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- First version, with the changeset setup done
+
 ## 0.7.1
 
 ### Patch Changes

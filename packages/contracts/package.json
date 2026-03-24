@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/contracts",
-  "version": "0.7.1",
+  "version": "1.0.0",
   "publishConfig": {
     "provenance": true
   },
