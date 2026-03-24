@@ -63,22 +63,6 @@ jobs:
             echo "mode=release" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Debug Node & npm
-        run: |
-          node -v
-          npm -v
-          npm config ls -l
-
-      - name: Try whoami with empty auth (test OIDC attempt)
-        run: |
-          echo "Running npm whoami with NODE_AUTH_TOKEN="""
-          NODE_AUTH_TOKEN="" npm whoami || true
-
-      - name: Inspect GitHub ID token request availability
-        run: |
-          echo "ACTIONS_ID_TOKEN_REQUEST_URL=$ACTIONS_ID_TOKEN_REQUEST_URL"
-          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN length: ${#ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
-
       - name: Version and publish packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
