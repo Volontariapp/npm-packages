@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/contracts",
-  "version": "0.0.0-20260324142521",
+  "version": "2.0.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
