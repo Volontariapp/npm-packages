@@ -63,13 +63,8 @@ jobs:
             echo "mode=release" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Verify npm auth
-        run: npm whoami
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.ORG_REPO_TOKEN }} # or the token returned by OIDC exchange
-
       - name: Version and publish packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-        run: yarn release:ci --mode ${{ steps.mode.outputs.mode }} --changed-packages '${{ needs.check-changelogs.outputs.changed_packages }}'
+        run: NODE_AUTH_TOKEN="" yarn release:ci --mode ${{ steps.mode.outputs.mode }} --changed-packages '${{ needs.check-changelogs.outputs.changed_packages }}'
