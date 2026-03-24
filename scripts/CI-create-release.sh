@@ -137,7 +137,7 @@ echo -e "${CYAN}Mode:${NC} ${MODE}"
 echo -e "${CYAN}Changed packages:${NC} ${CHANGED_PACKAGES[*]}"
 
 if [ "$MODE" = "snapshot" ]; then
-    snapshot_tag="next-$(date -u +%Y%m%d%H%M%S)"
+    snapshot_tag="next"
     echo -e "${CYAN}Running snapshot versioning with dist-tag '${snapshot_tag}'...${NC}"
     yarn exec changeset version --snapshot "$snapshot_tag"
 

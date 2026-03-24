@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.0-20260324142521
+
+### Patch Changes
+
+- test snapshot
+
 ## 1.1.0
 
 ### Minor Changes
