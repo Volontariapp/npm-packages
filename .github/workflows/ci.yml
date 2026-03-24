@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.ORG_REPO_TOKEN }}
           fetch-depth: 0
@@ -62,7 +62,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: yarn release:ci --mode ${{ steps.mode.outputs.mode }} --changed-packages '${{ needs.check-changelogs.outputs.changed_packages }}'
-
-      # - name: Commit and push version/changelog updates
-      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      #   uses: Volontariapp/ci-tools/.github/actions/setup-git@main

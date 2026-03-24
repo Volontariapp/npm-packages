@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Volontariapp/npm-packages.git"
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "Shared ESLint flat config for all Volontariapp projects",
   "license": "UNLICENSED",

@@ -52,7 +52,7 @@ cat > "${PKG_DIR}/package.json" << EOF
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Volontariapp/npm-packages.git"
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "",
   "license": "UNLICENSED",
@@ -103,13 +103,12 @@ cat > "${PKG_DIR}/CHANGELOG.md" << EOF
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.0] - ${TODAY}
+## 0.1.0
 
-### Added
+### Minor changes
 
 - Initial package scaffold.
 
-[0.1.0]: https://github.com/Volontariapp/npm-packages/pull/PLACEHOLDER
 EOF
 
 echo -e "${GREEN}✔${NC} src/index.ts"
