@@ -21,7 +21,7 @@ jobs:
   test-build:
     name: Build & Test
     needs: check-changelogs
-    if: needs.check-changelogs.outputs.has_changes == 'true' && (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'run_ci'))
+    if: needs.check-changelogs.outputs.has_changes == 'true'
     uses: Volontariapp/ci-tools/.github/workflows/npm-packages-test-build.yml@main
     with:
       changed_packages: ${{ needs.check-changelogs.outputs.changed_packages }}
