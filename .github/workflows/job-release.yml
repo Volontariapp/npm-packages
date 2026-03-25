@@ -47,7 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn release:ci --changed-packages '${{ inputs.changed_packages }}'
+        run: bash scripts/ci-package-publish.sh --changed-packages '${{ inputs.changed_packages }}'
 
       - name: Post Comment on PR
         if: github.event_name == 'pull_request' && steps.release.outputs.mode == 'snapshot' && steps.release.outputs.snapshot_tags != ''
