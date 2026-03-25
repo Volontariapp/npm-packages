@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.2
+
+### Patch Changes
+
+- Cleaning triggers
+
 ## 2.0.1
 
 ### Patch Changes

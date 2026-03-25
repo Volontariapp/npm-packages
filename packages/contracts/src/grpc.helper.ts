@@ -1,4 +1,3 @@
-// Trigger CI update
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import type { GrpcOptions } from '@nestjs/microservices';
