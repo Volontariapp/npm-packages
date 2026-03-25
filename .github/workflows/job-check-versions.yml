@@ -2,10 +2,6 @@ name: Job - Check Package Versions
 
 on:
   workflow_call:
-    inputs:
-      has_changes:
-        required: true
-        type: string
     secrets:
       ORG_REPO_TOKEN:
         required: true
@@ -13,7 +9,6 @@ on:
 jobs:
   check-versions:
     name: Check No Snapshot Versions
-    if: inputs.has_changes == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -10,6 +10,7 @@ on:
 permissions:
   id-token: write
   contents: write
+  pull-requests: write
 
 jobs:
   check-changelogs:
@@ -31,10 +32,9 @@ jobs:
   release:
     name: Release
     needs: [check-changelogs, test-build]
+    if: needs.check-changelogs.outputs.has_changes == 'true' && needs.test-build.result == 'success' && (github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
     uses: ./.github/workflows/job-release.yml
     with:
-      has_changes: ${{ needs.check-changelogs.outputs.has_changes }}
-      test_result: ${{ needs.test-build.result }}
       changed_packages: ${{ needs.check-changelogs.outputs.changed_packages }}
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
@@ -43,8 +43,7 @@ jobs:
   check-package-versions:
     name: Version Verification
     needs: check-changelogs
+    if: needs.check-changelogs.outputs.has_changes == 'true'
     uses: ./.github/workflows/job-check-versions.yml
-    with:
-      has_changes: ${{ needs.check-changelogs.outputs.has_changes }}
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
