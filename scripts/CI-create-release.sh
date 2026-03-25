@@ -24,14 +24,15 @@ fi
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") --mode <snapshot|release> --changed-packages <json|csv>
+Usage: $(basename "$0") [--mode <snapshot|release>] --changed-packages <json|csv>
 
 CI-only script:
     --mode snapshot  Version in snapshot mode, output package tags, and publish with tag 'next'.
     --mode release   Version for standard release, output package tags, and publish.
+                     If omitted, detected from GITHUB_EVENT_NAME.
 
 Arguments:
-    --mode               Release mode. One of: snapshot, release.
+    --mode               Release mode. Optional.
     --changed-packages   Changed packages as JSON array (e.g. ["domain-user","contracts"]) or CSV.
 EOF
 }
@@ -72,9 +73,19 @@ while [ $# -gt 0 ]; do
 done
 
 if [[ ! "$MODE" =~ ^(snapshot|release)$ ]]; then
-    echo -e "${RED}Error: --mode must be snapshot or release.${NC}"
-    usage
-    exit 1
+    if [ -n "$MODE" ]; then
+        echo -e "${RED}Error: --mode must be snapshot or release (got: '$MODE').${NC}"
+        usage
+        exit 1
+    fi
+
+    # Auto-resolve mode from GitHub environment if missing
+    if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ]; then
+        MODE="snapshot"
+    else
+        MODE="release"
+    fi
+    echo -e "${CYAN}Auto-resolved mode: ${MODE} (from GITHUB_EVENT_NAME='${GITHUB_EVENT_NAME:-}') ${NC}"
 fi
 
 if [ -z "$CHANGED_PACKAGES_INPUT" ]; then
@@ -141,6 +152,16 @@ if [ "$MODE" = "snapshot" ]; then
     echo -e "${CYAN}Running snapshot versioning with dist-tag '${snapshot_tag}'...${NC}"
     yarn exec changeset version --snapshot "$snapshot_tag"
 
+    timestamp=$(date +%Y%m%d%H%M%S)
+    for package_dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
+        package_version=$(node -p "require('./$package_dir/package.json').version")
+        if [[ ! "$package_version" =~ "-" ]]; then
+            new_snapshot_version="${package_version}-next.${timestamp}"
+            echo -e "${CYAN}Forcing snapshot version for ${package_dir}: ${new_snapshot_version}${NC}"
+            node -e "const fs=require('fs'); const file='$package_dir/package.json'; const pkg=JSON.parse(fs.readFileSync(file, 'utf8')); pkg.version='$new_snapshot_version'; fs.writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');"
+        fi
+    done
+
     : > "$PROJECT_ROOT/.changeset/.snapshot-tags"
     for package_dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
         package_name=$(node -p "require('./$package_dir/package.json').name")
@@ -151,13 +172,14 @@ if [ "$MODE" = "snapshot" ]; then
     done
 
     if [ -n "${GITHUB_OUTPUT:-}" ]; then
+        echo "mode=$MODE" >> "$GITHUB_OUTPUT"
         echo "publish_tag=$snapshot_tag" >> "$GITHUB_OUTPUT"
         snapshot_tags_csv=$(paste -sd, "$PROJECT_ROOT/.changeset/.snapshot-tags")
         echo "snapshot_tags=$snapshot_tags_csv" >> "$GITHUB_OUTPUT"
     fi
 
     echo -e "${CYAN}Publishing snapshot packages...${NC}"
-    yarn changeset publish --tag "$snapshot_tag"
+    yarn exec changeset publish --tag "$snapshot_tag"
     echo -e "${GREEN}Snapshot publication complete.${NC}"
 else
     echo -e "${CYAN}Running release versioning...${NC}"
@@ -173,12 +195,13 @@ else
     done
 
     if [ -n "${GITHUB_OUTPUT:-}" ]; then
+        echo "mode=$MODE" >> "$GITHUB_OUTPUT"
         echo "publish_tag=" >> "$GITHUB_OUTPUT"
         release_tags_csv=$(paste -sd, "$PROJECT_ROOT/.changeset/.release-tags")
         echo "release_tags=$release_tags_csv" >> "$GITHUB_OUTPUT"
     fi
 
     echo -e "${CYAN}Publishing release packages...${NC}"
-    yarn changeset publish
+    yarn exec changeset publish
     echo -e "${GREEN}Release publication complete.${NC}"
 fi

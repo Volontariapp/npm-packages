@@ -10,6 +10,7 @@ on:
 permissions:
   id-token: write
   contents: write
+  pull-requests: write
 
 jobs:
   check-changelogs:
@@ -21,7 +22,7 @@ jobs:
   test-build:
     name: Build & Test
     needs: check-changelogs
-    if: needs.check-changelogs.outputs.has_changes == 'true' && (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'run_ci'))
+    if: needs.check-changelogs.outputs.has_changes == 'true'
     uses: Volontariapp/ci-tools/.github/workflows/npm-packages-test-build.yml@main
     with:
       changed_packages: ${{ needs.check-changelogs.outputs.changed_packages }}
@@ -29,63 +30,20 @@ jobs:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
 
   release:
-    name: Version Changelogs & Publish
+    name: Release
     needs: [check-changelogs, test-build]
     if: needs.check-changelogs.outputs.has_changes == 'true' && needs.test-build.result == 'success' && (github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.ORG_REPO_TOKEN }}
-          fetch-depth: 0
-
-      - name: Enable Corepack
-        shell: bash
-        run: corepack enable
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.14.0
-          cache: yarn
-          registry-url: https://registry.npmjs.org/
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Resolve release mode
-        id: mode
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "mode=snapshot" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=release" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Version and publish packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-        run: NODE_AUTH_TOKEN="" yarn release:ci --mode ${{ steps.mode.outputs.mode }} --changed-packages '${{ needs.check-changelogs.outputs.changed_packages }}'
+    uses: ./.github/workflows/job-release.yml
+    with:
+      changed_packages: ${{ needs.check-changelogs.outputs.changed_packages }}
+    secrets:
+      ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   check-package-versions:
-    name: Check No Snapshot Versions
+    name: Version Verification
     needs: check-changelogs
     if: needs.check-changelogs.outputs.has_changes == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.ORG_REPO_TOKEN }}
-          fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.14.0
-
-      - name: Check package versions are not snapshots
-        shell: bash
-        run: bash ./scripts/CI-check-no-snapshot.sh
+    uses: ./.github/workflows/job-check-versions.yml
+    secrets:
+      ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
