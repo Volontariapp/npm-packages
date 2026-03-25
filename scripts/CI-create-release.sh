@@ -141,6 +141,16 @@ if [ "$MODE" = "snapshot" ]; then
     echo -e "${CYAN}Running snapshot versioning with dist-tag '${snapshot_tag}'...${NC}"
     yarn exec changeset version --snapshot "$snapshot_tag"
 
+    timestamp=$(date +%Y%m%d%H%M%S)
+    for package_dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
+        package_version=$(node -p "require('./$package_dir/package.json').version")
+        if [[ ! "$package_version" =~ "-" ]]; then
+            new_snapshot_version="${package_version}-next.${timestamp}"
+            echo -e "${CYAN}Forcing snapshot version for ${package_dir}: ${new_snapshot_version}${NC}"
+            node -e "const fs=require('fs'); const file='$package_dir/package.json'; const pkg=JSON.parse(fs.readFileSync(file, 'utf8')); pkg.version='$new_snapshot_version'; fs.writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');"
+        fi
+    done
+
     : > "$PROJECT_ROOT/.changeset/.snapshot-tags"
     for package_dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
         package_name=$(node -p "require('./$package_dir/package.json').name")
@@ -157,7 +167,7 @@ if [ "$MODE" = "snapshot" ]; then
     fi
 
     echo -e "${CYAN}Publishing snapshot packages...${NC}"
-    yarn changeset publish --tag "$snapshot_tag"
+    yarn exec changeset publish --tag "$snapshot_tag"
     echo -e "${GREEN}Snapshot publication complete.${NC}"
 else
     echo -e "${CYAN}Running release versioning...${NC}"
@@ -179,6 +189,6 @@ else
     fi
 
     echo -e "${CYAN}Publishing release packages...${NC}"
-    yarn changeset publish
+    yarn exec changeset publish
     echo -e "${GREEN}Release publication complete.${NC}"
 fi
