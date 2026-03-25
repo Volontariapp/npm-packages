@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.1
+
+### Patch Changes
+
+- Linked with @volontariapp/contracts workspace package
+
 ## 2.0.0
 
 ### Major Changes
