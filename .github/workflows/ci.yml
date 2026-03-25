@@ -54,21 +54,29 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Resolve release mode
-        id: mode
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "mode=snapshot" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=release" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Version and publish packages
+        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn release:ci --mode ${{ steps.mode.outputs.mode }} --changed-packages '${{ needs.check-changelogs.outputs.changed_packages }}'
+        run: yarn release:ci --changed-packages '${{ needs.check-changelogs.outputs.changed_packages }}'
+
+      - name: Post Comment on PR
+        if: github.event_name == 'pull_request' && steps.release.outputs.mode == 'snapshot' && steps.release.outputs.snapshot_tags != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAGS: ${{ steps.release.outputs.snapshot_tags }}
+        run: |
+          IFS=',' read -ra ADDR <<< "$TAGS"
+          for i in "${ADDR[@]}"; do
+            PKG=$(echo "$i" | sed 's/@[^@]*$//')
+            gh pr comment ${{ github.event.pull_request.number }} --body "🚀 Nouvelle version de \`$PKG\` :
+            
+            \`\`\`bash
+            yarn add $i
+            \`\`\`"
+          done
 
   check-package-versions:
     name: Check No Snapshot Versions
