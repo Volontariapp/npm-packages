@@ -508,6 +508,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/common@npm:^11.1.17":
+  version: 11.1.17
+  resolution: "@nestjs/common@npm:11.1.17"
+  dependencies:
+    file-type: "npm:21.3.2"
+    iterare: "npm:1.2.1"
+    load-esm: "npm:1.0.3"
+    tslib: "npm:2.8.1"
+    uid: "npm:2.0.2"
+  peerDependencies:
+    class-transformer: ">=0.4.1"
+    class-validator: ">=0.13.2"
+    reflect-metadata: ^0.1.12 || ^0.2.0
+    rxjs: ^7.1.0
+  peerDependenciesMeta:
+    class-transformer:
+      optional: true
+    class-validator:
+      optional: true
+  checksum: 10c0/65af2654ab42f1061b699fe3aee8202fb5a3cf7695c1fb854df2feef1f7a44a1b99682dd75212ff62d4fc6dee4ab9a0959f9338496ba4f4e293f68d75a024610
+  languageName: node
+  linkType: hard
+
 "@nestjs/core@npm:^11.0.1":
   version: 11.1.14
   resolution: "@nestjs/core@npm:11.1.14"
@@ -533,6 +556,34 @@ __metadata:
     "@nestjs/websockets":
       optional: true
   checksum: 10c0/842c8048fb83bc6df70975d91ec357bacb6d2cc42791e709d122fda16c6343d279cf9f4ec88c5427b02de5c3f40f3271b9c62367c662c39cdad838b5962669e9
+  languageName: node
+  linkType: hard
+
+"@nestjs/core@npm:^11.1.17":
+  version: 11.1.17
+  resolution: "@nestjs/core@npm:11.1.17"
+  dependencies:
+    "@nuxt/opencollective": "npm:0.4.1"
+    fast-safe-stringify: "npm:2.1.1"
+    iterare: "npm:1.2.1"
+    path-to-regexp: "npm:8.3.0"
+    tslib: "npm:2.8.1"
+    uid: "npm:2.0.2"
+  peerDependencies:
+    "@nestjs/common": ^11.0.0
+    "@nestjs/microservices": ^11.0.0
+    "@nestjs/platform-express": ^11.0.0
+    "@nestjs/websockets": ^11.0.0
+    reflect-metadata: ^0.1.12 || ^0.2.0
+    rxjs: ^7.1.0
+  peerDependenciesMeta:
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/platform-express":
+      optional: true
+    "@nestjs/websockets":
+      optional: true
+  checksum: 10c0/7d6b3a0add2569b2786d5cdc9d0d8fda7eaa557f7ed607fd73934c63565d3bdfe1e1b15d0d0b5e5eccabc62338812e05d2f8c7223b137ac568de33c531264b54
   languageName: node
   linkType: hard
 
@@ -2077,6 +2128,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/common@workspace:packages/common"
   dependencies:
+    "@nestjs/common": "npm:^11.1.17"
+    "@nestjs/core": "npm:^11.1.17"
     "@nestjs/terminus": "npm:^11.1.1"
     typescript: "npm:5.7.3"
   languageName: unknown
@@ -3167,6 +3220,18 @@ __metadata:
     token-types: "npm:^6.1.1"
     uint8array-extras: "npm:^1.4.0"
   checksum: 10c0/1b1fa909e6063044a6da1d2ea348ee4d747ed9286382d3f0d4d6532c11fb2ea9f2e7e67b2bc7d745d1bc937e05dee1aa8cb912c64250933bcb393a3744f4e284
+  languageName: node
+  linkType: hard
+
+"file-type@npm:21.3.2":
+  version: 21.3.2
+  resolution: "file-type@npm:21.3.2"
+  dependencies:
+    "@tokenizer/inflate": "npm:^0.4.1"
+    strtok3: "npm:^10.3.4"
+    token-types: "npm:^6.1.1"
+    uint8array-extras: "npm:^1.4.0"
+  checksum: 10c0/74d02787d2702f9d8592c715be1258cc6b865db98f400d17308f029d6bb895dc3135fcd2e5b4788b01e1b3ff4fc7e83d5fa32fd81e59a20f30b3dfe5f1e52aca
   languageName: node
   linkType: hard
 
