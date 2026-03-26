@@ -2178,19 +2178,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volontariapp/common@workspace:packages/common":
-  version: 0.0.0-use.local
-  resolution: "@volontariapp/common@workspace:packages/common"
-  dependencies:
-    "@nestjs/axios": "npm:^4.0.1"
-    "@nestjs/common": "npm:^11.1.17"
-    "@nestjs/core": "npm:^11.1.17"
-    "@nestjs/microservices": "npm:^11.1.17"
-    "@nestjs/terminus": "npm:^11.1.1"
-    typescript: "npm:5.7.3"
-  languageName: unknown
-  linkType: soft
-
 "@volontariapp/contracts@workspace:*, @volontariapp/contracts@workspace:packages/contracts":
   version: 0.0.0-use.local
   resolution: "@volontariapp/contracts@workspace:packages/contracts"
@@ -2205,6 +2192,15 @@ __metadata:
   peerDependencies:
     "@nestjs/microservices": ^11.0.0
     rxjs: ^7.0.0
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/core@workspace:*, @volontariapp/core@workspace:packages/core":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/core@workspace:packages/core"
+  dependencies:
+    eslint: "npm:9.18.0"
+    typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
 
@@ -2260,6 +2256,21 @@ __metadata:
     "@opentelemetry/sdk-metrics": "npm:^2.5.1"
     "@opentelemetry/sdk-node": "npm:^0.212.0"
     "@opentelemetry/semantic-conventions": "npm:^1.34.0"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/nest@workspace:packages/nest":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/nest@workspace:packages/nest"
+  dependencies:
+    "@nestjs/axios": "npm:^4.0.1"
+    "@nestjs/common": "npm:^11.1.17"
+    "@nestjs/core": "npm:^11.1.17"
+    "@nestjs/microservices": "npm:^11.1.17"
+    "@nestjs/terminus": "npm:^11.1.1"
+    "@volontariapp/core": "workspace:*"
+    eslint: "npm:9.18.0"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
