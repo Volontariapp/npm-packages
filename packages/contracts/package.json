@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/contracts",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -30,6 +30,7 @@
     "node": ">=24.14.0"
   },
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "yarn fix-esm && tsc -p tsconfig.json",
     "fix-esm": "node scripts/fix-esm.mjs",
     "lint": "eslint src/",
