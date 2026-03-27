@@ -2,7 +2,12 @@
   "name": "@volontariapp/health-check-providers",
   "version": "0.1.0",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "",
   "license": "UNLICENSED",
