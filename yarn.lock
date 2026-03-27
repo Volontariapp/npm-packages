@@ -2035,6 +2035,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/database@workspace:packages/database":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/database@workspace:packages/database"
+  dependencies:
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/domain-event@workspace:packages/domain-event":
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-event@workspace:packages/domain-event"
