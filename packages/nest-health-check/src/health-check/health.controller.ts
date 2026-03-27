@@ -34,7 +34,7 @@ export class HealthController {
     if (this.config.dbType === 'postgres') {
       providers.push(new PostgresHealthProvider(this.db));
     }
-    else if (this.config.dbType === 'neo4j') {
+    else {
       providers.push(new Neo4jHealthProvider(this.db));
     }
 

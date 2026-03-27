@@ -2195,15 +2195,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/core@workspace:*, @volontariapp/core@workspace:packages/core":
-  version: 0.0.0-use.local
-  resolution: "@volontariapp/core@workspace:packages/core"
-  dependencies:
-    eslint: "npm:9.18.0"
-    typescript: "npm:5.7.3"
-  languageName: unknown
-  linkType: soft
-
 "@volontariapp/domain-event@workspace:packages/domain-event":
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-event@workspace:packages/domain-event"
@@ -2244,6 +2235,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/health-check-providers@workspace:*, @volontariapp/health-check-providers@workspace:packages/health-check-providers":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/health-check-providers@workspace:packages/health-check-providers"
+  dependencies:
+    eslint: "npm:9.18.0"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/monitoring@workspace:packages/monitoring":
   version: 0.0.0-use.local
   resolution: "@volontariapp/monitoring@workspace:packages/monitoring"
@@ -2260,16 +2260,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/nest@workspace:packages/nest":
+"@volontariapp/nest-health-check@workspace:packages/nest-health-check":
   version: 0.0.0-use.local
-  resolution: "@volontariapp/nest@workspace:packages/nest"
+  resolution: "@volontariapp/nest-health-check@workspace:packages/nest-health-check"
   dependencies:
     "@nestjs/axios": "npm:^4.0.1"
     "@nestjs/common": "npm:^11.1.17"
     "@nestjs/core": "npm:^11.1.17"
     "@nestjs/microservices": "npm:^11.1.17"
     "@nestjs/terminus": "npm:^11.1.1"
-    "@volontariapp/core": "workspace:*"
+    "@volontariapp/health-check-providers": "workspace:*"
     eslint: "npm:9.18.0"
     typescript: "npm:5.7.3"
   languageName: unknown
