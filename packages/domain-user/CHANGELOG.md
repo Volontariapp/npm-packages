@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.4
+
+### Patch Changes
+
+- update version for exposing dist
+
+- Updated dependencies []:
+  - @volontariapp/contracts@2.1.1
+
 ## 2.0.3
 
 ### Patch Changes
