@@ -29,20 +29,19 @@ export class HealthController {
   ) {}
 
   private buildOrchestrator(): NestDatabaseHealthOrchestrator {
-    const providers: AbstractDatabaseHealthProvider[] = [];
+    const dbHealthProviders: AbstractDatabaseHealthProvider[] = [];
 
     if (this.config.dbType === 'postgres') {
-      providers.push(new PostgresHealthProvider(this.db));
-    }
-    else {
-      providers.push(new Neo4jHealthProvider(this.db));
+      dbHealthProviders.push(new PostgresHealthProvider(this.db));
+    } else {
+      dbHealthProviders.push(new Neo4jHealthProvider(this.db));
     }
 
     if (this.config.withRedis ?? false) {
-      providers.push(new RedisHealthProvider(this.microservice, this.config.redis));
+      dbHealthProviders.push(new RedisHealthProvider(this.microservice, this.config.redis));
     }
 
-    return new NestDatabaseHealthOrchestrator(new DatabaseHealthOrchestrator(providers));
+    return new NestDatabaseHealthOrchestrator(new DatabaseHealthOrchestrator(dbHealthProviders));
   }
 
   @Get()
