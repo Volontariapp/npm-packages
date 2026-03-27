@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-post",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -27,7 +27,7 @@
     "node": ">=24.14.0"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -b tsconfig.json",
     "lint": "eslint src/",
     "test": "echo \"No tests yet\""
   },

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.3
+
+### Patch Changes
+
+- change build methode
+
 ## 2.0.2
 
 ### Patch Changes

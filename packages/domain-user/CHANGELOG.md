@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.3
+
+### Patch Changes
+
+- change build methode
+
+- Updated dependencies []:
+  - @volontariapp/contracts@2.0.3
+
 ## 2.0.2
 
 ### Patch Changes
