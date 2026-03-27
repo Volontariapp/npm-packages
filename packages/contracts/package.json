@@ -30,6 +30,7 @@
     "node": ">=24.14.0"
   },
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "yarn fix-esm && tsc -p tsconfig.json",
     "fix-esm": "node scripts/fix-esm.mjs",
     "lint": "eslint src/",

@@ -103,6 +103,12 @@ if [ -n "${GITHUB_OUTPUT:-}" ]; then
     [ "$MODE" = "snapshot" ] && echo "snapshot_tags=$TAGS_CSV" >> "$GITHUB_OUTPUT" || echo "release_tags=$TAGS_CSV" >> "$GITHUB_OUTPUT"
 fi
 
+echo -e "${CYAN}Building packages before publish...${NC}"
+for dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
+    echo -e "${CYAN}Building $dir...${NC}"
+    (cd "$dir" && yarn build)
+done
+
 echo -e "${CYAN}Publishing with tag [${TAG:-latest}]...${NC}"
 yarn exec changeset publish ${TAG:+--tag $TAG}
 echo -e "${GREEN}Publication complete.${NC}"
