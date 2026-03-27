@@ -1,5 +1,5 @@
 {
-  "name": "@volontariapp/core",
+  "name": "@volontariapp/nest-health-check",
   "version": "0.1.0",
   "publishConfig": {
     "access": "public",
@@ -34,5 +34,13 @@
   "devDependencies": {
     "eslint": "9.18.0",
     "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "@nestjs/axios": "^4.0.1",
+    "@nestjs/common": "^11.1.17",
+    "@nestjs/core": "^11.1.17",
+    "@nestjs/microservices": "^11.1.17",
+    "@nestjs/terminus": "^11.1.1",
+    "@volontariapp/health-check-providers": "workspace:*"
   }
 }

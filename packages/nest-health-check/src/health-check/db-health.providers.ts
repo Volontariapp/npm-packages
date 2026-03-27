@@ -2,7 +2,7 @@ import {
   AbstractDatabaseHealthProvider,
   type DatabaseHealthResult,
   type OrchestratedHealthResult,
-} from '@volontariapp/core';
+} from '@volontariapp/health-check-providers';
 import { Transport, type RedisOptions } from '@nestjs/microservices';
 import type { MicroserviceHealthIndicator, TypeOrmHealthIndicator } from '@nestjs/terminus';
 import type { RedisHealthOptions } from './health-config.js';
@@ -19,6 +19,16 @@ type DatabaseHealthRunner = {
 export class PostgresHealthProvider extends AbstractDatabaseHealthProvider<TypeOrmHealthIndicator> {
   constructor(typeOrmIndicator: TypeOrmHealthIndicator) {
     super('postgres', typeOrmIndicator);
+  }
+
+  protected async pingDb(): Promise<void> {
+    await this.client.pingCheck(this.name);
+  }
+}
+
+export class Neo4jHealthProvider extends AbstractDatabaseHealthProvider<TypeOrmHealthIndicator> {
+  constructor(typeOrmIndicator: TypeOrmHealthIndicator) {
+    super('neo4j', typeOrmIndicator);
   }
 
   protected async pingDb(): Promise<void> {

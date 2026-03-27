@@ -12,6 +12,7 @@ import {
 } from '@volontariapp/core';
 import { HEALTH_CONFIG, type HealthConfig } from './health-config.js';
 import {
+  Neo4jHealthProvider,
   NestDatabaseHealthOrchestrator,
   PostgresHealthProvider,
   RedisHealthProvider,
@@ -30,8 +31,11 @@ export class HealthController {
   private buildOrchestrator(): NestDatabaseHealthOrchestrator {
     const providers: AbstractDatabaseHealthProvider[] = [];
 
-    if (this.config.withPostgres ?? true) {
+    if (this.config.dbType === 'postgres') {
       providers.push(new PostgresHealthProvider(this.db));
+    }
+    else if (this.config.dbType === 'neo4j') {
+      providers.push(new Neo4jHealthProvider(this.db));
     }
 
     if (this.config.withRedis ?? false) {

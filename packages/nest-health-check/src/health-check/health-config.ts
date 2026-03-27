@@ -6,8 +6,7 @@ export interface RedisHealthOptions {
 }
 
 export interface HealthConfig {
-  withPostgres?: boolean;
+  dbType: 'postgres' | 'neo4j';
   withRedis?: boolean;
-  withNeo4j?: boolean;
   redis?: RedisHealthOptions;
 }
