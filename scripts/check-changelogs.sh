@@ -86,8 +86,13 @@ for package_dir in "${CHANGED_PACKAGES[@]}"; do
     echo "📦 Package: ${package_name}..."
 
     if [ ! -f "${changelog}" ]; then
-      echo -e "  ${YELLOW}⚠ No CHANGELOG.md found. Skipping.${NC}"
-      continue
+      if git ls-tree -r HEAD --name-only | grep -q "^packages/${package_name}/"; then
+        echo -e "  ${BLUE}ℹ New package detected: ${package_name}. Skipping changelog check for first version.${NC}"
+        continue
+      else
+        echo -e "  ${YELLOW}⚠ No CHANGELOG.md found. Skipping.${NC}"
+        continue
+      fi
     fi
 
     if "${CHECKER_BIN}" "${pkg_json}" "${changelog}"; then
