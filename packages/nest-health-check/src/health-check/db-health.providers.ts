@@ -60,6 +60,6 @@ export class NestDatabaseHealthOrchestrator {
 
   async run(): Promise<Array<Record<string, DatabaseHealthResult>>> {
     const result: OrchestratedHealthResult = await this.orchestrator.run();
-    return result.checks.map((check) => ({ [check.name]: check }));
+    return result.checks.map((check: DatabaseHealthResult) => ({ [check.name]: check }));
   }
 }

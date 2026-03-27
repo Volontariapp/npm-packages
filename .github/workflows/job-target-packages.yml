@@ -42,9 +42,8 @@ jobs:
           CHANGED: ${{ inputs.changed_packages }}
           NEW: ${{ steps.detect.outputs.new }}
         run: |
-          echo "CHANGED: $CHANGED"
-          echo "NEW: $NEW"
           COMBINED=$(echo "$CHANGED $NEW" | jq -s -c 'add | unique')
-          echo "packages=$COMBINED" >> "$GITHUB_OUTPUT"
-          HAS_CHANGES=$(echo "$COMBINED" | jq 'length > 0')
+          RESOLVED=$(node scripts/ci-resolve-build-order.js "$COMBINED")
+          echo "packages=$RESOLVED" >> "$GITHUB_OUTPUT"
+          HAS_CHANGES=$(echo "$RESOLVED" | jq 'length > 0')
           echo "has_changes=$HAS_CHANGES" >> "$GITHUB_OUTPUT"

@@ -5,9 +5,7 @@ import { HealthController } from './health.controller.js';
 import { HEALTH_CONFIG, HealthConfig } from './health-config.js';
 
 @Module({
-  imports: [TerminusModule.forRoot({
-    // place future logger here
-  }), HttpModule],
+  imports: [TerminusModule.forRoot({}), HttpModule],
 })
 export class HealthModule {
   static register(config: HealthConfig): DynamicModule{
