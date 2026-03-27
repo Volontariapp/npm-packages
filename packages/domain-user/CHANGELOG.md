@@ -1,23 +1,5 @@
 # Changelog
 
-## 2.0.4
-
-### Patch Changes
-
-- Fix previous publication error, contained no dist/
-
-- Updated dependencies []:
-  - @volontariapp/contracts@2.0.4
-
-## 2.0.3
-
-### Patch Changes
-
-- change build methode
-
-- Updated dependencies []:
-  - @volontariapp/contracts@2.0.3
-
 ## 2.0.2
 
 ### Patch Changes
