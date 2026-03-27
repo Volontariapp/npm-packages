@@ -32,7 +32,11 @@
     "test": "echo \"No tests yet\""
   },
   "devDependencies": {
+    "@volontariapp/health-check-providers": "workspace:*",
+    "axios": "^1.7.9",
     "eslint": "9.18.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
     "typescript": "5.7.3"
   },
   "dependencies": {
@@ -40,7 +44,6 @@
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/microservices": "^11.1.17",
-    "@nestjs/terminus": "^11.1.1",
-    "@volontariapp/health-check-providers": "workspace:*"
+    "@nestjs/terminus": "^11.1.1"
   }
 }
