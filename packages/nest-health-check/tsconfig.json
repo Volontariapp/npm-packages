@@ -4,12 +4,8 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "./",
-    "composite": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src"],
-  "references": [
-    { "path": "../health-check-providers" }
-  ]
+  "include": ["src"]
 }
