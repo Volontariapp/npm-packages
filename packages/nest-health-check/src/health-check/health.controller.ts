@@ -9,7 +9,7 @@ import {
   DatabaseHealthOrchestrator,
   type AbstractDatabaseHealthProvider,
   type DatabaseHealthResult,
-} from '@volontariapp/core';
+} from '@volontariapp/health-check-providers';
 import { HEALTH_CONFIG, type HealthConfig } from './health-config.js';
 import {
   Neo4jHealthProvider,
