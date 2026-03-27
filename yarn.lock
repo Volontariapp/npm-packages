@@ -2075,6 +2075,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/logger@workspace:packages/logger":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/logger@workspace:packages/logger"
+  dependencies:
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/monitoring@workspace:packages/monitoring":
   version: 0.0.0-use.local
   resolution: "@volontariapp/monitoring@workspace:packages/monitoring"

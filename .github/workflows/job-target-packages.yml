@@ -11,10 +11,10 @@ on:
         required: true
     outputs:
       packages:
-        description: "Consolidated JSON array of packages to build/publish"
+        description: 'Consolidated JSON array of packages to build/publish'
         value: ${{ jobs.target.outputs.packages }}
       has_changes:
-        description: "Boolean indicating if any packages were detected"
+        description: 'Boolean indicating if any packages were detected'
         value: ${{ jobs.target.outputs.has_changes }}
 
 jobs:
@@ -42,10 +42,9 @@ jobs:
           CHANGED: ${{ inputs.changed_packages }}
           NEW: ${{ steps.detect.outputs.new }}
         run: |
-          # Combine unchanged but new packages (never published) with git-modified ones
           echo "CHANGED: $CHANGED"
           echo "NEW: $NEW"
-          COMBINED=$(echo "$CHANGED $NEW" | jq -s 'add | unique')
+          COMBINED=$(echo "$CHANGED $NEW" | jq -s -c 'add | unique')
           echo "packages=$COMBINED" >> "$GITHUB_OUTPUT"
-          HAS_CHANGES=$([ "$(echo "$COMBINED" | jq 'length')" -gt 0 ] && echo "true" || echo "false")
+          HAS_CHANGES=$(echo "$COMBINED" | jq 'length > 0')
           echo "has_changes=$HAS_CHANGES" >> "$GITHUB_OUTPUT"
