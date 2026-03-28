@@ -29,7 +29,7 @@ describe('Mapper Service (Unit)', () => {
     const model = new MockModel();
     model.id = 1;
     model.name = 'Test';
-    model.internalOnly = 'ignore me';
+    model.internalOnly = 'ignore me now';
 
     const entity = mapper.map(model, MockModel, MockEntity);
 
@@ -177,10 +177,9 @@ describe('Mapper Service (Unit)', () => {
       name = '';
     }
 
-    (mapper as unknown as { sourceToDestinations: Map<string, Set<string>> }).sourceToDestinations.set(
-      OddModel.name,
-      new Set([OddEntity.name]),
-    );
+    (
+      mapper as unknown as { sourceToDestinations: Map<string, Set<string>> }
+    ).sourceToDestinations.set(OddModel.name, new Set([OddEntity.name]));
 
     class ParentModel {
       child = new OddModel();
