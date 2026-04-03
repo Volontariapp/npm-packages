@@ -105,11 +105,8 @@ fi
 
 node scripts/resolve-workspaces.js
 
-echo -e "${CYAN}Building packages before publish...${NC}"
-for dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
-    echo -e "${CYAN}Building $dir...${NC}"
-    (cd "$dir" && yarn build)
-done
+echo -e "${CYAN}Building packages in topological order...${NC}"
+yarn workspaces foreach -A --topological run build
 
 echo -e "${CYAN}Publishing with tag [${TAG:-latest}]...${NC}"
 yarn exec changeset publish --publish-command "yarn npm publish --access public" ${TAG:+--tag $TAG}

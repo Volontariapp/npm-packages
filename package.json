@@ -12,7 +12,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach -A run build",
+    "build": "yarn workspaces foreach -A --topological run build",
     "lint": "yarn workspaces foreach -A run lint",
     "lint:fix": "yarn workspaces foreach -A run lint:fix",
     "format": "prettier --write .",

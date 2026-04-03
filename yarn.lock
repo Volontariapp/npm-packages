@@ -781,7 +781,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:^1.14.3":
+"@grpc/grpc-js@npm:^1.12.0, @grpc/grpc-js@npm:^1.14.3":
   version: 1.14.3
   resolution: "@grpc/grpc-js@npm:1.14.3"
   dependencies:
@@ -3274,6 +3274,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/auth@workspace:packages/auth"
   dependencies:
+    "@grpc/grpc-js": "npm:^1.12.0"
     "@nestjs/common": "npm:^11.0.0"
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/microservices": "npm:^11.0.0"
@@ -3284,6 +3285,7 @@ __metadata:
     rxjs: "npm:^7.8.1"
     typescript: "npm:5.7.3"
   peerDependencies:
+    "@grpc/grpc-js": ^1.12.0
     "@nestjs/common": ^10.0.0 || ^11.0.0
     "@nestjs/core": ^10.0.0 || ^11.0.0
     "@nestjs/microservices": ^10.0.0 || ^11.0.0
