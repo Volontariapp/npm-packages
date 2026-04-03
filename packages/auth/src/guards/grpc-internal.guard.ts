@@ -2,8 +2,8 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { UnauthorizedError } from '@volontariapp/errors';
 import type { Metadata } from '@grpc/grpc-js';
-import type { JwtService } from '../jwt.service.js';
-import { INTERNAL_TOKEN_METADATA_KEY } from '../constants.js';
+import type { JwtService } from '../services/jwt.service.js';
+import { INTERNAL_TOKEN_METADATA_KEY } from '../constants/index.js';
 
 @Injectable()
 export class GrpcInternalGuard implements CanActivate {
@@ -20,7 +20,7 @@ export class GrpcInternalGuard implements CanActivate {
     const metadata = rpcArgumentsHost.getContext<Metadata>();
     const tokens = metadata.get(INTERNAL_TOKEN_METADATA_KEY);
 
-    if (!tokens || tokens.length === 0) {
+    if (tokens.length === 0) {
       this.logger.warn(`Missing ${INTERNAL_TOKEN_METADATA_KEY} in metadata`);
       throw new UnauthorizedError('Missing internal token');
     }

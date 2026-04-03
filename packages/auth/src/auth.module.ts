@@ -1,9 +1,9 @@
 import type { DynamicModule } from '@nestjs/common';
 import { Module, Global } from '@nestjs/common';
-import { JwtService } from './jwt.service.js';
-import { AUTH_OPTIONS } from './constants.js';
-import type { AuthConfig } from './interfaces/auth-config.interface.js';
-import { GrpcMetadataHelper } from './grpc-metadata.helper.js';
+import { JwtService } from './services/jwt.service.js';
+import { AUTH_OPTIONS } from './constants/index.js';
+import type { AuthConfig } from './interfaces/index.js';
+import { GrpcMetadataHelper } from './services/grpc-metadata.helper.js';
 
 @Global()
 @Module({})

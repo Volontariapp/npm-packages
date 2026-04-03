@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as jose from 'jose';
 import { InternalServerError } from '@volontariapp/errors';
-import { AUTH_OPTIONS } from './constants.js';
-import type { AuthConfig } from './interfaces/auth-config.interface.js';
-import type { AuthUser } from './interfaces/auth-user.interface.js';
+import { AUTH_OPTIONS } from '../constants/index.js';
+import type { AuthConfig, AuthUser } from '../interfaces/index.js';
 
 @Injectable()
 export class JwtService {
@@ -26,11 +25,14 @@ export class JwtService {
   }
 
   async signInternal(user: AuthUser): Promise<string> {
-    const token = await new jose.SignJWT({ ...user })
+    const sessionPayload: jose.JWTPayload = { ...user };
+
+    const token = await new jose.SignJWT(sessionPayload)
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime(this.options.internalExpiresIn ?? '1m')
+      .setExpirationTime(this.options.internalExpiresIn.toString())
       .sign(this.internalSecret);
+
     return token;
   }
 

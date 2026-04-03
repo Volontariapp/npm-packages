@@ -5,10 +5,10 @@ import type { AuthUser } from '../interfaces/auth-user.interface.js';
 export const CurrentUser = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): AuthUser | undefined => {
     if (ctx.getType() === 'rpc') {
-      const rpcContext = ctx.switchToRpc().getContext();
-      return rpcContext.user;
+      const rpcContext = ctx.switchToRpc().getContext<Record<string, unknown>>();
+      return rpcContext.user as AuthUser | undefined;
     }
-    const request = ctx.switchToHttp().getRequest();
+    const request = ctx.switchToHttp().getRequest<{ user?: AuthUser }>();
     return request.user;
   },
 );

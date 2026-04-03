@@ -3,14 +3,15 @@ import { Injectable } from '@nestjs/common';
 import type { Observable } from 'rxjs';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import type { JwtService } from '../jwt.service.js';
+import type { JwtService } from '../services/jwt.service.js';
+import type { AuthUser } from '../interfaces/auth-user.interface.js';
 
 @Injectable()
 export class GrpcInternalInterceptor implements NestInterceptor {
   constructor(private readonly jwtService: JwtService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const httpRequest = context.switchToHttp().getRequest();
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const httpRequest = context.switchToHttp().getRequest<{ user?: AuthUser }>();
     const user = httpRequest.user;
 
     if (!user) {
