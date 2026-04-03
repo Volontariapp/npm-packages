@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as jose from 'jose';
+import { InternalServerError } from '@volontariapp/errors';
 import { AUTH_OPTIONS } from './constants.js';
 import type { AuthConfig } from './interfaces/auth-config.interface.js';
 import type { AuthUser } from './interfaces/auth-user.interface.js';
@@ -10,6 +11,13 @@ export class JwtService {
   private readonly gatewaySecret?: Uint8Array;
 
   constructor(@Inject(AUTH_OPTIONS) private readonly options: AuthConfig) {
+    if (!options.internalSecret) {
+      throw new InternalServerError('Internal secret not configured', 'AUTH_CONFIG_ERROR');
+    }
+    if (!options.internalExpiresIn) {
+      throw new InternalServerError('Internal expiration time not configured', 'AUTH_CONFIG_ERROR');
+    }
+
     this.internalSecret = new TextEncoder().encode(options.internalSecret);
     const gatewaySec = options.gatewaySecret;
     if (gatewaySec) {
@@ -18,11 +26,12 @@ export class JwtService {
   }
 
   async signInternal(user: AuthUser): Promise<string> {
-    return new jose.SignJWT({ ...user })
+    const token = await new jose.SignJWT({ ...user })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime(this.options.internalExpiresIn ?? '1m')
       .sign(this.internalSecret);
+    return token;
   }
 
   async verifyInternal(token: string): Promise<AuthUser> {
@@ -31,10 +40,11 @@ export class JwtService {
   }
 
   async verifyExternal(token: string): Promise<AuthUser> {
-    if (!this.gatewaySecret) {
-      throw new Error('Gateway secret not configured');
+    const secret = this.gatewaySecret;
+    if (!secret) {
+      throw new InternalServerError('Gateway secret not configured', 'AUTH_CONFIG_ERROR');
     }
-    const { payload } = await jose.jwtVerify(token, this.gatewaySecret);
+    const { payload } = await jose.jwtVerify(token, secret);
     return payload as unknown as AuthUser;
   }
 }

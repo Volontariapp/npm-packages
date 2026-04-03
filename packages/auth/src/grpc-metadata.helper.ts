@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata } from '@grpc/grpc-js';
-import { JwtService } from './jwt.service.js';
+import type { JwtService } from './jwt.service.js';
 import { INTERNAL_TOKEN_METADATA_KEY } from './constants.js';
 import type { AuthUser } from './interfaces/auth-user.interface.js';
 
