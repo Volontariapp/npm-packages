@@ -14,51 +14,69 @@ import {
 } from '@volontariapp/errors';
 import { ErrorResponseDto } from './error-response.dto.js';
 
+export interface ApiErrorOptions {
+  description?: string;
+  example?: Partial<ErrorResponseDto>;
+  type?: Type<unknown> | [Type<unknown>] | string;
+}
+
 export function ApiErrorResponse(options: {
   status: number;
-  description?: string;
-  type?: Type<unknown> | [Type<unknown>] | string;
-}) {
-  const { status, description, type = ErrorResponseDto } = options;
-  return applyDecorators(
-    ApiResponse({
-      status,
-      description: description ?? `Error ${status.toString()}`,
-      type,
-    } as ApiResponseOptions),
-  );
+} & ApiErrorOptions) {
+  const { status, description, example, type = ErrorResponseDto } = options;
+
+  const responseOptions: ApiResponseOptions = {
+    status,
+    description: description ?? `Error ${status.toString()}`,
+  };
+
+  if (example) {
+    const fullExample = {
+      statusCode: status,
+      code: 'ERROR_CODE',
+      message: description ?? 'An error occurred',
+      timestamp: new Date().toISOString(),
+      path: '/api/resource',
+      ...example,
+    };
+
+    responseOptions.content = {
+      'application/json': {
+        example: fullExample,
+      },
+    };
+    responseOptions.type = type;
+  } else {
+    responseOptions.type = type;
+  }
+
+  return applyDecorators(ApiResponse(responseOptions));
 }
 
-export function ApiNotFoundResponse(description = new NotFoundError().message) {
-  return ApiErrorResponse({ status: new NotFoundError().statusCode, description });
-}
-
-export function ApiBadRequestResponse(description = new BadRequestError().message) {
-  return ApiErrorResponse({ status: new BadRequestError().statusCode, description });
-}
-
-export function ApiUnauthorizedResponse(description = new UnauthorizedError().message) {
-  return ApiErrorResponse({ status: new UnauthorizedError().statusCode, description });
-}
-
-export function ApiForbiddenResponse(description = new ForbiddenError().message) {
-  return ApiErrorResponse({ status: new ForbiddenError().statusCode, description });
-}
-
-export function ApiInternalServerErrorResponse(description = new InternalServerError().message) {
-  return ApiErrorResponse({ status: new InternalServerError().statusCode, description });
-}
-
-export function ApiConflictResponse(description = new ConflictError().message) {
-  return ApiErrorResponse({ status: new ConflictError().statusCode, description });
-}
-
-export function ApiUnprocessableEntityResponse(
-  description = new UnprocessableEntityError().message,
+function createErrorDecorator<T extends { statusCode: number; message: string }>(
+  ErrorClass: Type<T>,
 ) {
-  return ApiErrorResponse({ status: new UnprocessableEntityError().statusCode, description });
+  return (options?: string | ApiErrorOptions) => {
+    const error = new ErrorClass();
+    const isString = typeof options === 'string';
+    const description = isString ? options : options?.description;
+    const example = isString ? undefined : options?.example;
+    const type = isString ? undefined : options?.type;
+
+    return ApiErrorResponse({
+      status: error.statusCode,
+      description: description ?? error.message,
+      example,
+      type,
+    });
+  };
 }
 
-export function ApiTooManyRequestsResponse(description = new TooManyRequestsError().message) {
-  return ApiErrorResponse({ status: new TooManyRequestsError().statusCode, description });
-}
+export const ApiNotFoundResponse = createErrorDecorator(NotFoundError);
+export const ApiBadRequestResponse = createErrorDecorator(BadRequestError);
+export const ApiUnauthorizedResponse = createErrorDecorator(UnauthorizedError);
+export const ApiForbiddenResponse = createErrorDecorator(ForbiddenError);
+export const ApiInternalServerErrorResponse = createErrorDecorator(InternalServerError);
+export const ApiConflictResponse = createErrorDecorator(ConflictError);
+export const ApiUnprocessableEntityResponse = createErrorDecorator(UnprocessableEntityError);
+export const ApiTooManyRequestsResponse = createErrorDecorator(TooManyRequestsError);
