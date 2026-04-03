@@ -103,7 +103,8 @@ if [ -n "${GITHUB_OUTPUT:-}" ]; then
     [ "$MODE" = "snapshot" ] && echo "snapshot_tags=$TAGS_CSV" >> "$GITHUB_OUTPUT" || echo "release_tags=$TAGS_CSV" >> "$GITHUB_OUTPUT"
 fi
 
-# Build and publish
+node scripts/resolve-workspaces.js
+
 echo -e "${CYAN}Building packages before publish...${NC}"
 for dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
     echo -e "${CYAN}Building $dir...${NC}"
