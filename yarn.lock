@@ -2919,6 +2919,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^24.1.0":
+  version: 24.12.2
+  resolution: "@types/node@npm:24.12.2"
+  dependencies:
+    undici-types: "npm:~7.16.0"
+  checksum: 10c0/710050c42f89075c4479e4e1e4c2532486b0c41b1e2a8a13ad88641c88b88cdaea87414e19224f30028719737bd70e327edcaa184d50e86b9418941edd7eb02b
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^25.5.1":
   version: 25.5.1
   resolution: "@types/node@npm:25.5.1"
@@ -3260,6 +3269,26 @@ __metadata:
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
+
+"@volontariapp/auth@workspace:packages/auth":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/auth@workspace:packages/auth"
+  dependencies:
+    "@nestjs/common": "npm:^11.0.0"
+    "@nestjs/core": "npm:^11.0.0"
+    "@nestjs/microservices": "npm:^11.0.0"
+    "@types/node": "npm:^24.1.0"
+    "@volontariapp/errors": "workspace:*"
+    jose: "npm:^6.2.2"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.1"
+    typescript: "npm:5.7.3"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+    "@nestjs/microservices": ^10.0.0 || ^11.0.0
+  languageName: unknown
+  linkType: soft
 
 "@volontariapp/contracts@workspace:*, @volontariapp/contracts@workspace:packages/contracts":
   version: 0.0.0-use.local
@@ -6249,6 +6278,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "jose@npm:6.2.2"
+  checksum: 10c0/201f4776d77eccd339de99fb3ba940fdf03db15e64be7a99b511e53c232e3f3818e3f21b95223d62f99315a2ab76b4251cedd94e067de56893e45273a8d2151b
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -8482,6 +8518,13 @@ __metadata:
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
   checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
   languageName: node
   linkType: hard
 
