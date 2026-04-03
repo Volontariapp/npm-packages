@@ -30,17 +30,24 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest"
   },
   "devDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/microservices": "^11.0.0",
     "@nestjs/swagger": "^11.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.5.1",
+    "jest": "^30.3.0",
+    "jest-environment-node": "^30.3.0",
+    "ts-jest": "^29.4.9",
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors": "workspace:*",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^10.0.0 || ^11.0.0",

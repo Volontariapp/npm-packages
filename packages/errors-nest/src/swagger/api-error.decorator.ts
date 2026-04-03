@@ -2,6 +2,7 @@ import type { Type } from '@nestjs/common';
 import { applyDecorators } from '@nestjs/common';
 import type { ApiResponseOptions } from '@nestjs/swagger';
 import { ApiResponse } from '@nestjs/swagger';
+import type { BaseError } from '@volontariapp/errors';
 import {
   BadRequestError,
   ConflictError,
@@ -20,9 +21,11 @@ export interface ApiErrorOptions {
   type?: Type<unknown> | [Type<unknown>] | string;
 }
 
-export function ApiErrorResponse(options: {
-  status: number;
-} & ApiErrorOptions) {
+export function ApiErrorResponse(
+  options: {
+    status: number;
+  } & ApiErrorOptions,
+) {
   const { status, description, example, type = ErrorResponseDto } = options;
 
   const responseOptions: ApiResponseOptions = {
@@ -53,9 +56,7 @@ export function ApiErrorResponse(options: {
   return applyDecorators(ApiResponse(responseOptions));
 }
 
-function createErrorDecorator<T extends { statusCode: number; message: string }>(
-  ErrorClass: Type<T>,
-) {
+function createErrorDecorator<T extends BaseError>(ErrorClass: Type<T>) {
   return (options?: string | ApiErrorOptions) => {
     const error = new ErrorClass();
     const isString = typeof options === 'string';
