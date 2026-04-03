@@ -16,12 +16,15 @@ export class JwtService {
     if (!options.internalExpiresIn) {
       throw new InternalServerError('Internal expiration time not configured', 'AUTH_CONFIG_ERROR');
     }
+    if (!options.gatewaySecret) {
+      throw new InternalServerError('Gateway secret not configured', 'AUTH_CONFIG_ERROR');
+    }
+    if (!options.gatewayExpiresIn) {
+      throw new InternalServerError('Gateway expiration time not configured', 'AUTH_CONFIG_ERROR');
+    }
 
     this.internalSecret = new TextEncoder().encode(options.internalSecret);
-    const gatewaySec = options.gatewaySecret;
-    if (gatewaySec) {
-      this.gatewaySecret = new TextEncoder().encode(gatewaySec);
-    }
+    this.gatewaySecret = new TextEncoder().encode(options.gatewaySecret);
   }
 
   async signInternal(user: AuthUser): Promise<string> {

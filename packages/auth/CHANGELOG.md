@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- auth package new version
+
 All notable changes to this project will be documented in this file.
 
 ## 0.1.0
@@ -7,4 +13,3 @@ All notable changes to this project will be documented in this file.
 ### Minor Changes
 
 - Initial package scaffold.
-
