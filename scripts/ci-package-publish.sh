@@ -69,7 +69,7 @@ echo -e "${CYAN}=== CI Publish Runner [${MODE}] ===${NC}"
 if [ "$MODE" = "snapshot" ]; then
     TAG="next"
     yarn exec changeset version --snapshot "$TAG"
-    
+
     # Auto-suffix for manually versioned packages
     TS=$(date +%Y%m%d%H%M%S)
     for dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
@@ -103,6 +103,7 @@ if [ -n "${GITHUB_OUTPUT:-}" ]; then
     [ "$MODE" = "snapshot" ] && echo "snapshot_tags=$TAGS_CSV" >> "$GITHUB_OUTPUT" || echo "release_tags=$TAGS_CSV" >> "$GITHUB_OUTPUT"
 fi
 
+# Build and publish
 echo -e "${CYAN}Building packages before publish...${NC}"
 for dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
     echo -e "${CYAN}Building $dir...${NC}"
@@ -110,5 +111,5 @@ for dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
 done
 
 echo -e "${CYAN}Publishing with tag [${TAG:-latest}]...${NC}"
-yarn exec changeset publish ${TAG:+--tag $TAG}
+yarn exec changeset publish --publish-command "yarn npm publish --access public" ${TAG:+--tag $TAG}
 echo -e "${GREEN}Publication complete.${NC}"
