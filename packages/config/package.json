@@ -29,9 +29,18 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.5.1",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
     "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1"
   }
 }
