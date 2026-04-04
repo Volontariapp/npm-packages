@@ -51,15 +51,10 @@ function resolveEnvVarValues(value: unknown): unknown {
  * resolved from `process.env` and then merged over the default config.
  *
  * @param {string} dirPath - The directory containing the .json configuration files.
- * @param {(config: BaseConfig) => config is T} [isConfig] - Optional runtime
- * type guard used to validate the merged config before returning.
  * @returns {T} The merged configuration object.
- * @throws Will throw an error if the loaded configuration does not match the expected type.
  */
-export function loadConfig<T extends BaseConfig>(
-  dirPath: string,
-  isConfig?: (config: BaseConfig) => config is T,
-): T {
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Generic return type is intentional for caller-typed config.
+export function loadConfig<T extends BaseConfig>(dirPath: string): T {
   const customEnvVarsPath = `${dirPath}/custom-env-vars.json`;
   const defaultConfigPath = `${dirPath}/default.config.json`;
 
@@ -81,10 +76,6 @@ export function loadConfig<T extends BaseConfig>(
   }
 
   const config = mergeConfigs(defaultConfig, customEnvVars);
-
-  if (isConfig && !isConfig(config as BaseConfig)) {
-    throw new Error('Loaded configuration does not match the expected type');
-  }
 
   return config;
 }
