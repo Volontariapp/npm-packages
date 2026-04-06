@@ -2,7 +2,7 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { UnauthorizedError } from '@volontariapp/errors';
 import type { Metadata } from '@grpc/grpc-js';
-import type { JwtService } from '../services/jwt.service.js';
+import { JwtService } from '../services/jwt.service.js';
 import { INTERNAL_TOKEN_METADATA_KEY } from '../constants/index.js';
 
 @Injectable()
@@ -25,7 +25,10 @@ export class GrpcInternalGuard implements CanActivate {
       throw new UnauthorizedError('Missing internal token');
     }
 
-    const token = tokens[0] as string;
+    const token = tokens[0];
+    if (typeof token !== 'string') {
+      throw new UnauthorizedError('Invalid internal token format');
+    }
 
     try {
       const user = await this.jwtService.verifyInternal(token);

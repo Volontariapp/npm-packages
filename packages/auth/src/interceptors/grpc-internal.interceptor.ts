@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import type { Observable } from 'rxjs';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import type { JwtService } from '../services/jwt.service.js';
+import { JwtService } from '../services/jwt.service.js';
 import type { AuthUser } from '../interfaces/auth-user.interface.js';
 
 @Injectable()

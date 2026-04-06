@@ -781,6 +781,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@golevelup/ts-jest@npm:^0.6.1":
+  version: 0.6.2
+  resolution: "@golevelup/ts-jest@npm:0.6.2"
+  checksum: 10c0/91fd477a1bd44913178929a9aecf8f5540208cf78a939b74f52c6804069ba1098b6e134d415b02226fb4be0f621ec16a1bcf1904821f254c009accce8c70ef27
+  languageName: node
+  linkType: hard
+
 "@grpc/grpc-js@npm:^1.12.0, @grpc/grpc-js@npm:^1.14.3":
   version: 1.14.3
   resolution: "@grpc/grpc-js@npm:1.14.3"
@@ -1406,6 +1413,25 @@ __metadata:
     class-validator:
       optional: true
   checksum: 10c0/495bf5df95794da0e8a3eb4d2d93a54bec9d59bbcbe46c51de87be2ca23d0cc7e7572d9d43213aeaf18eae17e0b871acf2be5e07e971de899e87f70a01deac50
+  languageName: node
+  linkType: hard
+
+"@nestjs/testing@npm:^11.0.1":
+  version: 11.1.18
+  resolution: "@nestjs/testing@npm:11.1.18"
+  dependencies:
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    "@nestjs/common": ^11.0.0
+    "@nestjs/core": ^11.0.0
+    "@nestjs/microservices": ^11.0.0
+    "@nestjs/platform-express": ^11.0.0
+  peerDependenciesMeta:
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/platform-express":
+      optional: true
+  checksum: 10c0/49addd548fbf8881181b4e467a713835190cb79e24cd3a9ad643d6c7b7bca1688547ce0a7dffe453d811fb85f5aad75d247d6d04bbceb36136dd3724d1e8509f
   languageName: node
   linkType: hard
 
@@ -3274,15 +3300,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/auth@workspace:packages/auth"
   dependencies:
+    "@golevelup/ts-jest": "npm:^0.6.1"
     "@grpc/grpc-js": "npm:^1.12.0"
+    "@jest/globals": "npm:^30.3.0"
     "@nestjs/common": "npm:^11.0.0"
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/microservices": "npm:^11.0.0"
+    "@nestjs/testing": "npm:^11.0.1"
+    "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.1.0"
     "@volontariapp/errors": "workspace:*"
+    jest: "npm:^30.3.0"
     jose: "npm:^6.2.2"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.1"
+    ts-jest: "npm:^29.4.6"
     typescript: "npm:5.7.3"
   peerDependencies:
     "@grpc/grpc-js": ^1.12.0

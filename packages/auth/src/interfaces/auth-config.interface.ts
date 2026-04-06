@@ -1,6 +1,7 @@
 export interface AuthConfig {
-  internalSecret: string;
-  gatewaySecret: string;
-  internalExpiresIn: number;
-  gatewayExpiresIn: number;
+  internalPrivateKeyPath?: string;
+  internalPublicKeyPath?: string;
+  gatewayPublicKeyPath?: string;
+  internalExpiresIn: number | string;
+  gatewayExpiresIn: number | string;
 }
