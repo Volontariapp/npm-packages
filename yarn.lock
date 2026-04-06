@@ -3302,6 +3302,7 @@ __metadata:
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.15.1"
     jest: "npm:^30.3.0"
+    reflect-metadata: "npm:^0.2.2"
     ts-jest: "npm:^29.4.9"
     typescript: "npm:5.7.3"
   languageName: unknown
