@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { BaseConfig } from '../src/base-config.js';
 import { loadConfig } from '../src/config-loader.js';
 
 type TestConfig = {
@@ -65,7 +66,7 @@ describe('config-loader', () => {
       'utf-8',
     );
 
-    const result = loadConfig<TestConfig>(dirPath);
+    const result = loadConfig<TestConfig>(dirPath, BaseConfig);
 
     expect(result).toEqual({
       db: { host: 'env-db-host', port: 5432 },
@@ -97,7 +98,7 @@ describe('config-loader', () => {
       'utf-8',
     );
 
-    const result = loadConfig<TestConfig>(dirPath);
+    const result = loadConfig<TestConfig>(dirPath, BaseConfig);
 
     expect(result.clement?.thomas?.lucas?.value).toBe('3');
   });
@@ -112,7 +113,7 @@ describe('config-loader', () => {
       'utf-8',
     );
 
-    const result = loadConfig<TestConfig>(dirPath);
+    const result = loadConfig<TestConfig>(dirPath, BaseConfig);
 
     expect(result).toEqual({
       db: { host: 'default-db', port: 5432 },
@@ -134,7 +135,7 @@ describe('config-loader', () => {
     );
     fs.writeFileSync(path.join(dirPath, 'default.config.json'), '{invalid-json', 'utf-8');
 
-    const result = loadConfig<TestConfig>(dirPath);
+    const result = loadConfig<TestConfig>(dirPath, BaseConfig);
 
     expect(result).toEqual({
       db: { host: 'env-db-host', port: '5432' },
@@ -160,7 +161,7 @@ describe('config-loader', () => {
     );
 
     expect(() => {
-      loadConfig<TestConfig>(dirPath);
+      loadConfig<TestConfig>(dirPath, BaseConfig);
     }).toThrow(/redis/);
   });
 
@@ -175,7 +176,7 @@ describe('config-loader', () => {
     );
 
     expect(() => {
-      loadConfig<TestConfig>(dirPath);
+      loadConfig<TestConfig>(dirPath, BaseConfig);
     }).toThrow(/db|host|Invalid config/);
   });
 });

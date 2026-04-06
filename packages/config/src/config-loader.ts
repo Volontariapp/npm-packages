@@ -1,7 +1,7 @@
 import * as fs from 'fs';
-import { plainToInstance } from 'class-transformer';
+import { plainToInstance, type ClassConstructor } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { BaseConfig } from './base-config.js';
+import type { BaseConfig } from './base-config.js';
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -118,8 +118,11 @@ function mergeConfigs<T extends BaseConfig>(
   return mergedConfig as T;
 }
 
-function validateConfigOrThrow(value: unknown): void {
-  const instance = plainToInstance(BaseConfig, value, {
+function validateConfigOrThrow<T extends BaseConfig>(
+  value: unknown,
+  schema: ClassConstructor<T>,
+): void {
+  const instance = plainToInstance(schema, value, {
     enableImplicitConversion: true,
   });
 
@@ -167,8 +170,10 @@ function resolveEnvVarValues(value: unknown): unknown {
  * @param {string} dirPath - The directory containing the .json configuration files.
  * @returns {T} The merged configuration object.
  */
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Generic return type is intentional for caller-typed config.
-export function loadConfig<T extends BaseConfig>(dirPath: string): T {
+export function loadConfig<T extends BaseConfig>(
+  dirPath: string,
+  schema: ClassConstructor<T>,
+): T {
   const customEnvVarsPath = `${dirPath}/custom-env-vars.json`;
   const defaultConfigPath = `${dirPath}/default.config.json`;
 
@@ -190,7 +195,7 @@ export function loadConfig<T extends BaseConfig>(dirPath: string): T {
   }
 
   const config = mergeConfigs(defaultConfig, customEnvVars);
-  validateConfigOrThrow(config);
+  validateConfigOrThrow(config, schema);
 
   return config;
 }
