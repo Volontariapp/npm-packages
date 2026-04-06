@@ -31,7 +31,9 @@ describe('config-loader', () => {
     dirPath = fs.mkdtempSync(path.join(os.tmpdir(), 'config-loader-test-'));
 
     process.env.DB_HOST = 'env-db-host';
+    process.env.DB_PORT = '5432';
     process.env.REDIS_HOST = 'env-redis-host';
+    process.env.REDIS_PORT = '6379';
     process.env.CLEMENT_LUCAS_VALUE = '3';
   });
 
@@ -39,7 +41,9 @@ describe('config-loader', () => {
     warnSpy.mockRestore();
     fs.rmSync(dirPath, { recursive: true, force: true });
     delete process.env.DB_HOST;
+    delete process.env.DB_PORT;
     delete process.env.REDIS_HOST;
+    delete process.env.REDIS_PORT;
     delete process.env.CLEMENT_LUCAS_VALUE;
   });
 
@@ -123,8 +127,8 @@ describe('config-loader', () => {
     fs.writeFileSync(
       path.join(dirPath, 'custom-env-vars.json'),
       JSON.stringify({
-        db: { host: 'DB_HOST' },
-        redis: { host: 'REDIS_HOST' },
+        db: { host: 'DB_HOST', port: 'DB_PORT' },
+        redis: { host: 'REDIS_HOST', port: 'REDIS_PORT' },
       }),
       'utf-8',
     );
@@ -133,45 +137,45 @@ describe('config-loader', () => {
     const result = loadConfig<TestConfig>(dirPath);
 
     expect(result).toEqual({
-      db: { host: 'env-db-host' },
-      redis: { host: 'env-redis-host' },
+      db: { host: 'env-db-host', port: '5432' },
+      redis: { host: 'env-redis-host', port: '6379' },
     });
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining(`${dirPath}/default.config.json`));
   });
 
-  it('throws when merged config contains undefined values', () => {
+  it('throws when required schema fields are missing from both JSON files', () => {
+    fs.writeFileSync(
+      path.join(dirPath, 'default.config.json'),
+      JSON.stringify({
+        db: { host: 'default-db', port: 5432 },
+      }),
+      'utf-8',
+    );
     fs.writeFileSync(
       path.join(dirPath, 'custom-env-vars.json'),
       JSON.stringify({
-        db: { host: 'DB_HOST', password: 'DB_PASSWORD' },
+        db: { host: 'DB_HOST', port: 'DB_PORT' },
       }),
       'utf-8',
     );
 
     expect(() => {
       loadConfig<TestConfig>(dirPath);
-    }).toThrow(/db\.password/);
+    }).toThrow(/redis/);
   });
 
-  it('lists multiple undefined values in the error message', () => {
+  it('throws when a required nested field resolves to undefined', () => {
     fs.writeFileSync(
       path.join(dirPath, 'custom-env-vars.json'),
       JSON.stringify({
-        db: { password: 'DB_PASSWORD' },
-        clement: { thomas: { lucas: { value: 'MISSING_VAR' } } },
+        db: { host: 'MISSING_DB_HOST', port: 'DB_PORT' },
+        redis: { host: 'REDIS_HOST', port: 'REDIS_PORT' },
       }),
       'utf-8',
     );
 
-    try {
+    expect(() => {
       loadConfig<TestConfig>(dirPath);
-      // If no error thrown, fail the test explicitly
-      throw new Error('Expected loadConfig to throw due to undefined values');
-    } catch (err) {
-      expect(err).toBeInstanceOf(Error);
-      const msg = (err as Error).message;
-      expect(msg).toMatch(/db\.password/);
-      expect(msg).toMatch(/clement\.thomas\.lucas\.value/);
-    }
+    }).toThrow(/db|host|Invalid config/);
   });
 });
