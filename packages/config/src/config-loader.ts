@@ -15,11 +15,105 @@ function LoadJSONFile<T extends BaseConfig>(filePath: string): Partial<T> {
   }
 }
 
+/**
+ * Deep merge with fallback semantics (iterative, no recursion):
+ *
+ * Goal:
+ * - Keep `customEnvVars` as the source of truth when a value is defined.
+ * - Fall back to `defaultConfig` only when the custom value is `undefined`
+ *   (typical case when an env var name exists in `custom-env-vars.json` but
+ *   the corresponding environment variable is not set).
+ *
+ * Why not `{ ...defaultConfig, ...customEnvVars }`?
+ * - Spread merge is shallow. For nested objects, the whole nested branch from
+ *   `customEnvVars` replaces the default one.
+ * - Example: `default.db = { host, port }` and `custom.db = { host }`
+ *   gives `{ db: { host } }`, so `port` is lost.
+ *
+ * Strategy:
+ * - Traverse both structures with an explicit stack of frames.
+ * - Each frame carries `(defaultValue, customValue)` and an `assign` callback
+ *   telling where the merged result must be written.
+ * - Rules per frame:
+ *   1) `customValue === undefined` => keep `defaultValue`.
+ *   2) both arrays => merge element by element.
+ *   3) both plain objects => merge key by key (union of keys).
+ *   4) otherwise => keep `customValue`.
+ */
 function mergeConfigs<T extends BaseConfig>(
   defaultConfig: Partial<T>,
   customEnvVars: Partial<T>,
 ): T {
-  return { ...defaultConfig, ...customEnvVars } as T;
+  const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  };
+
+  type Frame = {
+    defaultValue: unknown;
+    customValue: unknown;
+    assign: (value: unknown) => void;
+  };
+
+  let mergedConfig: unknown = {};
+  const stack: Frame[] = [
+    {
+      defaultValue: defaultConfig,
+      customValue: customEnvVars,
+      assign: (value) => {
+        mergedConfig = value;
+      },
+    },
+  ];
+
+  while (stack.length > 0) {
+    const frame = stack.pop() as Frame;
+
+    if (frame.customValue === undefined) {
+      frame.assign(frame.defaultValue);
+      continue;
+    }
+
+    if (Array.isArray(frame.defaultValue) && Array.isArray(frame.customValue)) {
+      const maxLength = Math.max(frame.defaultValue.length, frame.customValue.length);
+      const mergedArray = new Array<unknown>(maxLength);
+      frame.assign(mergedArray);
+
+      for (let i = 0; i < maxLength; i++) {
+        stack.push({
+          defaultValue: frame.defaultValue[i],
+          customValue: frame.customValue[i],
+          assign: (value) => {
+            mergedArray[i] = value;
+          },
+        });
+      }
+
+      continue;
+    }
+
+    if (isPlainObject(frame.defaultValue) && isPlainObject(frame.customValue)) {
+      const mergedObject: Record<string, unknown> = {};
+      frame.assign(mergedObject);
+
+      const keys = new Set([...Object.keys(frame.defaultValue), ...Object.keys(frame.customValue)]);
+
+      for (const key of keys) {
+        stack.push({
+          defaultValue: frame.defaultValue[key],
+          customValue: frame.customValue[key],
+          assign: (value) => {
+            mergedObject[key] = value;
+          },
+        });
+      }
+
+      continue;
+    }
+
+    frame.assign(frame.customValue);
+  }
+
+  return mergedConfig as T;
 }
 
 function findUndefinedPaths(value: unknown, path = ''): string[] {

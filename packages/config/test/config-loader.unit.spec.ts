@@ -64,8 +64,8 @@ describe('config-loader', () => {
     const result = loadConfig<TestConfig>(dirPath);
 
     expect(result).toEqual({
-      db: { host: 'env-db-host' },
-      redis: { host: 'env-redis-host' },
+      db: { host: 'env-db-host', port: 5432 },
+      redis: { host: 'env-redis-host', port: 6379 },
     });
     expect(warnSpy).not.toHaveBeenCalled();
   });
