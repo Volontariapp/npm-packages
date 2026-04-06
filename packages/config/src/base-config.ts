@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { IsDefined, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
