@@ -22,6 +22,39 @@ function mergeConfigs<T extends BaseConfig>(
   return { ...defaultConfig, ...customEnvVars } as T;
 }
 
+function findUndefinedPaths(value: unknown, path = ''): string[] {
+  const undefinedPaths: string[] = [];
+
+  // Iterative depth-first traversal using a stack to avoid recursion.
+  const stack: Array<{ val: unknown; p: string }> = [{ val: value, p: path }];
+
+  while (stack.length > 0) {
+    const { val, p } = stack.pop() as { val: unknown; p: string };
+
+    if (val === undefined) {
+      undefinedPaths.push(p || '(root)');
+      continue;
+    }
+
+    if (Array.isArray(val)) {
+      for (let i = 0; i < val.length; i++) {
+        stack.push({ val: val[i], p: `${p}[${i}]` });
+      }
+      continue;
+    }
+
+    if (val !== null && typeof val === 'object') {
+      for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
+        const nextPath = p ? `${p}.${k}` : k;
+        stack.push({ val: v, p: nextPath });
+      }
+      continue;
+    }
+  }
+
+  return undefinedPaths;
+}
+
 function resolveEnvVarValues(value: unknown): unknown {
   if (typeof value === 'string') {
     return process.env[value];
@@ -76,6 +109,12 @@ export function loadConfig<T extends BaseConfig>(dirPath: string): T {
   }
 
   const config = mergeConfigs(defaultConfig, customEnvVars);
+
+  // Validate for any `undefined` values and throw with a list of their paths.
+  const undefinedPaths = findUndefinedPaths(config as unknown);
+  if (undefinedPaths.length > 0) {
+    throw new Error(`Undefined config values: ${undefinedPaths.join(', ')}`);
+  }
 
   return config;
 }

@@ -138,4 +138,40 @@ describe('config-loader', () => {
     });
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining(`${dirPath}/default.config.json`));
   });
+
+  it('throws when merged config contains undefined values', () => {
+    fs.writeFileSync(
+      path.join(dirPath, 'custom-env-vars.json'),
+      JSON.stringify({
+        db: { host: 'DB_HOST', password: 'DB_PASSWORD' },
+      }),
+      'utf-8',
+    );
+
+    expect(() => {
+      loadConfig<TestConfig>(dirPath);
+    }).toThrow(/db\.password/);
+  });
+
+  it('lists multiple undefined values in the error message', () => {
+    fs.writeFileSync(
+      path.join(dirPath, 'custom-env-vars.json'),
+      JSON.stringify({
+        db: { password: 'DB_PASSWORD' },
+        clement: { thomas: { lucas: { value: 'MISSING_VAR' } } },
+      }),
+      'utf-8',
+    );
+
+    try {
+      loadConfig<TestConfig>(dirPath);
+      // If no error thrown, fail the test explicitly
+      throw new Error('Expected loadConfig to throw due to undefined values');
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+      const msg = (err as Error).message;
+      expect(msg).toMatch(/db\.password/);
+      expect(msg).toMatch(/clement\.thomas\.lucas\.value/);
+    }
+  });
 });
