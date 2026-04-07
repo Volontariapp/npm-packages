@@ -2,7 +2,6 @@ import 'reflect-metadata';
 
 export * from './constants/index.js';
 export * from './interfaces/index.js';
-export * from './errors/index.js';
 export * from './services/jwt.service.js';
 export * from './services/grpc-metadata.helper.js';
 export * from './auth.module.js';

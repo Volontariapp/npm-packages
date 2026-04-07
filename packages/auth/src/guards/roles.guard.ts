@@ -2,7 +2,7 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
-import { INSUFFICIENT_PERMISSIONS, MISSING_AUTHENTICATED_USER } from '../errors/auth.errors.js';
+import { INSUFFICIENT_PERMISSIONS, MISSING_AUTHENTICATED_USER } from '@volontariapp/errors-nest';
 import type { AuthUser } from '../interfaces/auth-user.interface.js';
 
 @Injectable()
