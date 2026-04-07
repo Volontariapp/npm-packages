@@ -1,7 +1,7 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '../services/jwt.service.js';
-import { MISSING_ACCESS_TOKEN, INVALID_ACCESS_TOKEN } from '../errors/auth.errors.js';
+import { MISSING_ACCESS_TOKEN, INVALID_ACCESS_TOKEN } from '@volontariapp/errors-nest';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {

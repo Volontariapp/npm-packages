@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@volontariapp/errors": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
     "jose": "^6.2.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"

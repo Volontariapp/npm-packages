@@ -2,7 +2,7 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '../services/jwt.service.js';
 import { INTERNAL_TOKEN_METADATA_KEY } from '../constants/index.js';
-import { MISSING_INTERNAL_TOKEN, INVALID_INTERNAL_TOKEN } from '../errors/auth.errors.js';
+import { MISSING_INTERNAL_TOKEN, INVALID_INTERNAL_TOKEN } from '@volontariapp/errors-nest';
 import type { Metadata } from '@grpc/grpc-js';
 
 @Injectable()

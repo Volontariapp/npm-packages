@@ -2,7 +2,11 @@ import * as jose from 'jose';
 import type { CryptoKey } from 'jose';
 import fs from 'node:fs';
 import { InternalServerError } from '@volontariapp/errors';
-import { CONFIG_ERROR, INVALID_TOKEN_PAYLOAD, VERIFY_TOKEN_FAILED } from '../errors/auth.errors.js';
+import {
+  CONFIG_ERROR,
+  INVALID_TOKEN_PAYLOAD,
+  VERIFY_TOKEN_FAILED,
+} from '@volontariapp/errors-nest';
 import type { AuthConfig, AuthUser } from '../interfaces/index.js';
 
 export class JwtService {

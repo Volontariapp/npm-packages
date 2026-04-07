@@ -1,7 +1,7 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '../services/jwt.service.js';
-import { MISSING_REFRESH_TOKEN, INVALID_REFRESH_TOKEN } from '../errors/auth.errors.js';
+import { MISSING_REFRESH_TOKEN, INVALID_REFRESH_TOKEN } from '@volontariapp/errors-nest';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {

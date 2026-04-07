@@ -3454,6 +3454,7 @@ __metadata:
     "@types/node": "npm:^24.1.0"
     "@types/supertest": "npm:^7.2.0"
     "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors-nest": "workspace:*"
     jest: "npm:^30.3.0"
     jose: "npm:^6.2.2"
     reflect-metadata: "npm:^0.2.2"
@@ -3531,7 +3532,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/errors-nest@workspace:packages/errors-nest":
+"@volontariapp/errors-nest@workspace:*, @volontariapp/errors-nest@workspace:packages/errors-nest":
   version: 0.0.0-use.local
   resolution: "@volontariapp/errors-nest@workspace:packages/errors-nest"
   dependencies:
