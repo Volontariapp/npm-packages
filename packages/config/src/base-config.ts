@@ -24,6 +24,20 @@ class RedisConfig {
   port!: number;
 }
 
+class MSURLsConfig {
+  @IsDefined()
+  @IsNotEmpty()
+  msPostUrl!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  msUserUrl!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  msEventUrl!: string;
+}
+
 class BaseConfig {
   @IsDefined()
   @ValidateNested()
@@ -34,6 +48,16 @@ class BaseConfig {
   @ValidateNested()
   @Type(() => DBConfig)
   db!: DBConfig;
+
+  @IsDefined()
+  @Type(() => Number)
+  @IsNumber()
+  port!: number;
+
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MSURLsConfig)
+  microServices!: MSURLsConfig;
 }
 
-export { BaseConfig, DBConfig, RedisConfig };
+export { BaseConfig, DBConfig, RedisConfig, MSURLsConfig };
