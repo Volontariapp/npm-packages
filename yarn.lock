@@ -3774,7 +3774,7 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:^29.7.0"
     "@types/jest": "npm:^29.5.12"
-    "@volontariapp/errors": "workspace:^"
+    "@volontariapp/errors": "workspace:*"
     jest: "npm:^29.7.0"
     ts-jest: "npm:^29.1.5"
     typescript: "npm:5.7.3"
@@ -3851,7 +3851,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/errors@workspace:*, @volontariapp/errors@workspace:^, @volontariapp/errors@workspace:packages/errors":
+"@volontariapp/errors@workspace:*, @volontariapp/errors@workspace:packages/errors":
   version: 0.0.0-use.local
   resolution: "@volontariapp/errors@workspace:packages/errors"
   dependencies:
