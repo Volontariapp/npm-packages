@@ -3470,6 +3470,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/config@workspace:packages/config":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/config@workspace:packages/config"
+  dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^25.5.1"
+    class-transformer: "npm:^0.5.1"
+    class-validator: "npm:^0.15.1"
+    jest: "npm:^30.3.0"
+    reflect-metadata: "npm:^0.2.2"
+    ts-jest: "npm:^29.4.9"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/contracts@workspace:*, @volontariapp/contracts@workspace:packages/contracts":
   version: 0.0.0-use.local
   resolution: "@volontariapp/contracts@workspace:packages/contracts"
@@ -4311,6 +4327,17 @@ __metadata:
     libphonenumber-js: "npm:^1.11.1"
     validator: "npm:^13.15.22"
   checksum: 10c0/1d415261aad7bdd72528db76e814195ca627a9d33f159752554dbbf71b8360359d3061a8edd16ac951a9a4fb86e0495cdf8badf82ec44e2dcc187ab496f37c5a
+  languageName: node
+  linkType: hard
+
+"class-validator@npm:^0.15.1":
+  version: 0.15.1
+  resolution: "class-validator@npm:0.15.1"
+  dependencies:
+    "@types/validator": "npm:^13.15.3"
+    libphonenumber-js: "npm:^1.11.1"
+    validator: "npm:^13.15.22"
+  checksum: 10c0/bc030e0118d79a5fc2d053dfd4c7475092dd159222eafe946c2b01d7ff22a0a8075c8713a96239a3db536ff2a18e18d791c3a6bfabd66dbac077f7d3fd950402
   languageName: node
   linkType: hard
 
