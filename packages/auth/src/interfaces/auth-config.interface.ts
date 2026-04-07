@@ -1,7 +1,11 @@
 export interface AuthConfig {
   internalPrivateKeyPath?: string;
   internalPublicKeyPath?: string;
-  gatewayPublicKeyPath?: string;
-  internalExpiresIn: number | string;
-  gatewayExpiresIn: number | string;
+  accessTokenPrivateKeyPath?: string;
+  accessTokenPublicKeyPath?: string;
+  refreshTokenPrivateKeyPath?: string;
+  refreshTokenPublicKeyPath?: string;
+  readonly internalExpiresIn?: string | number;
+  readonly accessTokenExpiresIn?: string | number;
+  readonly refreshTokenExpiresIn?: string | number;
 }

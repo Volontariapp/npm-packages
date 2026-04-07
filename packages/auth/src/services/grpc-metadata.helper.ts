@@ -11,7 +11,7 @@ export class GrpcMetadataHelper {
   async createInternalMetadata(user: AuthUser): Promise<Metadata> {
     const metadata = new Metadata();
     const token = await this.jwtService.signInternal(user);
-    metadata.add(INTERNAL_TOKEN_METADATA_KEY, token);
+    metadata.set(INTERNAL_TOKEN_METADATA_KEY, token);
     return metadata;
   }
 }

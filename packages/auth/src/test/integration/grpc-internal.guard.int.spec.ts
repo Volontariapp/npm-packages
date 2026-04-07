@@ -21,9 +21,10 @@ describe('GrpcInternalGuard (Integration)', () => {
   const config: AuthConfig = {
     internalPrivateKeyPath: 'internal-private-path',
     internalPublicKeyPath: 'internal-public-path',
-    gatewayPublicKeyPath: 'gateway-public-path',
+    accessTokenPublicKeyPath: 'access-public-path',
     internalExpiresIn: '1h',
-    gatewayExpiresIn: '1h',
+    accessTokenExpiresIn: '1h',
+    refreshTokenExpiresIn: '7d',
   };
 
   beforeAll(async () => {

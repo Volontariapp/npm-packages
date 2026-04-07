@@ -19,7 +19,9 @@ export class GrpcInternalInterceptor implements NestInterceptor {
     }
 
     return from(this.jwtService.signInternal(user)).pipe(
-      switchMap((_token) => {
+      switchMap((token) => {
+        const req = httpRequest as unknown as Record<string, unknown>;
+        req['internalToken'] = token;
         return next.handle();
       }),
     );
