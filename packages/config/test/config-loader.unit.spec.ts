@@ -36,6 +36,9 @@ describe('config-loader', () => {
     process.env.REDIS_HOST = 'env-redis-host';
     process.env.REDIS_PORT = '6379';
     process.env.CLEMENT_LUCAS_VALUE = '3';
+    process.env.MS_POST_URL = 'http://post';
+    process.env.MS_USER_URL = 'http://user';
+    process.env.MS_EVENT_URL = 'http://event';
   });
 
   afterEach(() => {
@@ -46,6 +49,9 @@ describe('config-loader', () => {
     delete process.env.REDIS_HOST;
     delete process.env.REDIS_PORT;
     delete process.env.CLEMENT_LUCAS_VALUE;
+    delete process.env.MS_POST_URL;
+    delete process.env.MS_USER_URL;
+    delete process.env.MS_EVENT_URL;
   });
 
   it('resolves env names in custom config and merges over defaults', () => {
@@ -54,6 +60,12 @@ describe('config-loader', () => {
       JSON.stringify({
         db: { host: 'default-db', port: 5432 },
         redis: { host: 'default-redis', port: 6379 },
+        port: 3000,
+        microServices: {
+          msPostUrl: 'http://post',
+          msUserUrl: 'http://user',
+          msEventUrl: 'http://event',
+        },
       }),
       'utf-8',
     );
@@ -71,6 +83,12 @@ describe('config-loader', () => {
     expect(result).toEqual({
       db: { host: 'env-db-host', port: 5432 },
       redis: { host: 'env-redis-host', port: 6379 },
+      port: 3000,
+      microServices: {
+        msPostUrl: 'http://post',
+        msUserUrl: 'http://user',
+        msEventUrl: 'http://event',
+      },
     });
     expect(warnSpy).not.toHaveBeenCalled();
   });
@@ -81,6 +99,12 @@ describe('config-loader', () => {
       JSON.stringify({
         db: { host: 'default-db', port: 5432 },
         redis: { host: 'default-redis', port: 6379 },
+        port: 3000,
+        microServices: {
+          msPostUrl: 'http://post',
+          msUserUrl: 'http://user',
+          msEventUrl: 'http://event',
+        },
       }),
       'utf-8',
     );
@@ -109,6 +133,12 @@ describe('config-loader', () => {
       JSON.stringify({
         db: { host: 'default-db', port: 5432 },
         redis: { host: 'default-redis', port: 6379 },
+        port: 3000,
+        microServices: {
+          msPostUrl: 'http://post',
+          msUserUrl: 'http://user',
+          msEventUrl: 'http://event',
+        },
       }),
       'utf-8',
     );
@@ -118,6 +148,12 @@ describe('config-loader', () => {
     expect(result).toEqual({
       db: { host: 'default-db', port: 5432 },
       redis: { host: 'default-redis', port: 6379 },
+      port: 3000,
+      microServices: {
+        msPostUrl: 'http://post',
+        msUserUrl: 'http://user',
+        msEventUrl: 'http://event',
+      },
     });
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining(`${dirPath}/custom-env-vars.json`),
@@ -130,6 +166,12 @@ describe('config-loader', () => {
       JSON.stringify({
         db: { host: 'DB_HOST', port: 'DB_PORT' },
         redis: { host: 'REDIS_HOST', port: 'REDIS_PORT' },
+        port: 3000,
+        microServices: {
+          msPostUrl: 'MS_POST_URL',
+          msUserUrl: 'MS_USER_URL',
+          msEventUrl: 'MS_EVENT_URL',
+        },
       }),
       'utf-8',
     );
@@ -140,6 +182,12 @@ describe('config-loader', () => {
     expect(result).toEqual({
       db: { host: 'env-db-host', port: '5432' },
       redis: { host: 'env-redis-host', port: '6379' },
+      port: 3000,
+      microServices: {
+        msPostUrl: 'http://post',
+        msUserUrl: 'http://user',
+        msEventUrl: 'http://event',
+      },
     });
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining(`${dirPath}/default.config.json`));
   });
@@ -149,6 +197,13 @@ describe('config-loader', () => {
       path.join(dirPath, 'default.config.json'),
       JSON.stringify({
         db: { host: 'default-db', port: 5432 },
+        port: 3000,
+        microServices: {
+          msPostUrl: 'http://post',
+          msUserUrl: 'http://user',
+          msEventUrl: 'http://event',
+        },
+        redis: undefined,
       }),
       'utf-8',
     );
@@ -156,6 +211,12 @@ describe('config-loader', () => {
       path.join(dirPath, 'custom-env-vars.json'),
       JSON.stringify({
         db: { host: 'DB_HOST', port: 'DB_PORT' },
+        port: 3000,
+        microServices: {
+          msPostUrl: 'http://post',
+          msUserUrl: 'http://user',
+          msEventUrl: 'http://event',
+        },
       }),
       'utf-8',
     );
@@ -171,6 +232,12 @@ describe('config-loader', () => {
       JSON.stringify({
         db: { host: 'MISSING_DB_HOST', port: 'DB_PORT' },
         redis: { host: 'REDIS_HOST', port: 'REDIS_PORT' },
+        port: 3000,
+        microServices: {
+          msPostUrl: 'http://post',
+          msUserUrl: 'http://user',
+          msEventUrl: 'http://event',
+        },
       }),
       'utf-8',
     );
