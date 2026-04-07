@@ -16,7 +16,11 @@ export class AuthModule {
           provide: AUTH_OPTIONS,
           useValue: options,
         },
-        JwtService,
+        {
+          provide: JwtService,
+          useFactory: (opts: AuthConfig) => new JwtService(opts),
+          inject: [AUTH_OPTIONS],
+        },
         GrpcMetadataHelper,
       ],
       exports: [JwtService, GrpcMetadataHelper],

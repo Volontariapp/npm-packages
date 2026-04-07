@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import type { Observable } from 'rxjs';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import type { JwtService } from '../services/jwt.service.js';
+import { JwtService } from '../services/jwt.service.js';
 import type { AuthUser } from '../interfaces/auth-user.interface.js';
 
 @Injectable()
@@ -19,7 +19,9 @@ export class GrpcInternalInterceptor implements NestInterceptor {
     }
 
     return from(this.jwtService.signInternal(user)).pipe(
-      switchMap((_token) => {
+      switchMap((token) => {
+        const req = httpRequest as unknown as Record<string, unknown>;
+        req['internalToken'] = token;
         return next.handle();
       }),
     );
