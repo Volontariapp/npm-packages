@@ -16,7 +16,7 @@ describe('RolesGuard (Unit)', () => {
   });
 
   it('should allow access if no roles are required', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(undefined);
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([]);
     const context = createMock<ExecutionContext>();
     expect(guard.canActivate(context)).toBe(true);
   });
