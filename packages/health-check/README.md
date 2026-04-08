@@ -118,3 +118,4 @@ type OrchestratedHealthResult = {
 - Garder health-check focalisé sur la vérification
 - Configurer host, port, credentials dans bridge, pas ici
 - Réutiliser les mêmes instances pour l'app métier et le health endpoint
+ 
