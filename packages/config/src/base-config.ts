@@ -38,6 +38,17 @@ class MSURLsConfig {
   msEventUrl!: string;
 }
 
+class WebSocketConfig {
+  @IsDefined()
+  @IsNotEmpty()
+  host!: string;
+
+  @IsDefined()
+  @Type(() => Number)
+  @IsNumber()
+  port!: number;
+}
+
 class BaseConfig {
   @IsDefined()
   @ValidateNested()
@@ -54,10 +65,26 @@ class BaseConfig {
   @IsNumber()
   port!: number;
 
+
+}
+
+class BaseConfigMS extends BaseConfig {
   @IsDefined()
   @ValidateNested()
   @Type(() => MSURLsConfig)
   microServices!: MSURLsConfig;
 }
 
-export { BaseConfig, DBConfig, RedisConfig, MSURLsConfig };
+class BaseConfigNativeApp  {
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => WebSocketConfig)
+  webSocket!: WebSocketConfig;
+
+  @IsDefined()
+  @Type(() => Number)
+  @IsNumber()
+  port!: number;
+}
+
+export { BaseConfig, BaseConfigMS, BaseConfigNativeApp, DBConfig, RedisConfig, MSURLsConfig, WebSocketConfig };
