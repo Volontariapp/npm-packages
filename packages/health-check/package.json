@@ -1,5 +1,5 @@
 {
-  "name": "@volontariapp/health-check-providers",
+  "name": "@volontariapp/health-check",
   "version": "0.1.0",
   "publishConfig": {
     "access": "public",
@@ -29,10 +29,19 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/jest": "^30.0.0",
     "eslint": "9.18.0",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
     "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "@volontariapp/bridge": "workspace:*"
   }
 }

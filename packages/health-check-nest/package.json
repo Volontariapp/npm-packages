@@ -1,5 +1,5 @@
 {
-  "name": "@volontariapp/nest-health-check",
+  "name": "@volontariapp/health-check-nest",
   "version": "0.1.0",
   "publishConfig": {
     "access": "public",
@@ -29,13 +29,19 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/jest": "^30.0.0",
     "axios": "^1.7.9",
     "eslint": "9.18.0",
+    "jest": "^30.3.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
     "typescript": "5.7.3"
   },
   "dependencies": {
@@ -44,6 +50,8 @@
     "@nestjs/core": "^11.1.17",
     "@nestjs/microservices": "^11.1.17",
     "@nestjs/terminus": "^11.1.1",
-    "@volontariapp/health-check-providers": "workspace:*"
+    "@volontariapp/bridge": "workspace:*",
+    "@volontariapp/bridge-nest": "workspace:*",
+    "@volontariapp/health-check": "workspace:*"
   }
 }
