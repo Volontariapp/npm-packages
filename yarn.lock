@@ -4114,6 +4114,47 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/health-check-nest@workspace:packages/health-check-nest":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/health-check-nest@workspace:packages/health-check-nest"
+  dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@nestjs/axios": "npm:^4.0.1"
+    "@nestjs/common": "npm:^11.1.17"
+    "@nestjs/core": "npm:^11.1.17"
+    "@nestjs/microservices": "npm:^11.1.17"
+    "@nestjs/terminus": "npm:^11.1.1"
+    "@types/jest": "npm:^30.0.0"
+    "@volontariapp/bridge": "workspace:*"
+    "@volontariapp/bridge-nest": "workspace:*"
+    "@volontariapp/health-check": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
+    axios: "npm:^1.7.9"
+    eslint: "npm:9.18.0"
+    jest: "npm:^30.3.0"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.1"
+    ts-jest: "npm:^29.4.9"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/health-check@workspace:*, @volontariapp/health-check@workspace:packages/health-check":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/health-check@workspace:packages/health-check"
+  dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@types/jest": "npm:^30.0.0"
+    "@volontariapp/bridge": "workspace:*"
+    eslint: "npm:9.18.0"
+    jest: "npm:^30.3.0"
+    ts-jest: "npm:^29.4.9"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/logger@workspace:*, @volontariapp/logger@workspace:packages/logger":
   version: 0.0.0-use.local
   resolution: "@volontariapp/logger@workspace:packages/logger"
