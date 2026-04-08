@@ -3379,6 +3379,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^25.5.2":
+  version: 25.5.2
+  resolution: "@types/node@npm:25.5.2"
+  dependencies:
+    undici-types: "npm:~7.18.0"
+  checksum: 10c0/11e41a85401724cd1a4de6fb7bd4264ec46db10c09fc8cf8d41de4ede0a7063db458348f859ead4ec0929906aa26aaf45a5fef3aa59742ca0521cda9cee52377
+  languageName: node
+  linkType: hard
+
 "@types/oracledb@npm:6.5.2":
   version: 6.5.2
   resolution: "@types/oracledb@npm:6.5.2"
@@ -3988,6 +3997,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/logger@workspace:packages/logger"
   dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^25.5.2"
+    jest: "npm:^30.3.0"
+    ts-jest: "npm:^29.4.9"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
