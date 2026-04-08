@@ -1,0 +1,53 @@
+{
+  "name": "@volontariapp/bridge",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
+  },
+  "description": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/",
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/pg": "^8",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
+    "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "@types/geojson": "^7946.0.16",
+    "@volontariapp/errors": "workspace:^",
+    "ioredis": "^5.10.1",
+    "neo4j-driver": "^6.0.1",
+    "pg": "^8.20.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28"
+  }
+}
