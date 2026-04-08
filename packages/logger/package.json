@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/logger",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -27,11 +27,17 @@
     "node": ">=24.14.0"
   },
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.5.2",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
     "typescript": "5.7.3"
   }
 }
