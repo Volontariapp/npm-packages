@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/bridge-nest",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -48,6 +48,7 @@
     "@volontariapp/bridge": "workspace:^",
     "@volontariapp/errors": "workspace:^",
     "@volontariapp/errors-nest": "workspace:^",
+    "@volontariapp/logger": "workspace:*",
     "ioredis": "^5.10.1",
     "neo4j-driver": "^6.0.1",
     "reflect-metadata": "^0.2.2",

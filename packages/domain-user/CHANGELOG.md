@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0
+
+### Minor Changes
+
+- logger added
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@2.2.0
+
 ## 2.0.4
 
 ### Patch Changes

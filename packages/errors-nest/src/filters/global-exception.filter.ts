@@ -1,12 +1,13 @@
 import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
-import { Catch, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Catch, HttpException, HttpStatus } from '@nestjs/common';
+import { Logger } from '@volontariapp/logger';
 import { RpcException } from '@nestjs/microservices';
 import { BaseError, GrpcStatus } from '@volontariapp/errors';
 import type { ErrorResponseDto } from '../swagger/error-response.dto.js';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private readonly logger = new Logger({ context: GlobalExceptionFilter.name, format: 'json' });
 
   catch(exception: unknown, host: ArgumentsHost) {
     const isBaseError = exception instanceof BaseError;
@@ -37,7 +38,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       code = exception.name;
     } else if (exception instanceof Error) {
       message = exception.message;
-      this.logger.error(`Unhandled Exception: ${exception.message}`, exception.stack);
+      this.logger.error(`Unhandled Exception: ${exception.message}`, exception);
     } else {
       this.logger.error(`Unknown Exception: ${JSON.stringify(exception)}`);
     }

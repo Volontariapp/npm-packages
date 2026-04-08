@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/config",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -40,6 +40,7 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
+    "@volontariapp/logger": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "reflect-metadata": "^0.2.2"

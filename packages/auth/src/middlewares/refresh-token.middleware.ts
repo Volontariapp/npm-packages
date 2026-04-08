@@ -1,9 +1,11 @@
 import type { NestMiddleware } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
+import { Logger } from '@volontariapp/logger';
 
 @Injectable()
 export class RefreshTokenMiddleware implements NestMiddleware {
-  use(req: unknown, _res: unknown, next: unknown): void {
+  private readonly logger = new Logger({ context: 'RefreshTokenMiddleware', format: 'json' });
+  use = (req: unknown, _res: unknown, next: unknown): void => {
     const request = req as Record<string, unknown>;
     const nextFn = next as () => void;
     let token: string | undefined;
@@ -19,7 +21,8 @@ export class RefreshTokenMiddleware implements NestMiddleware {
 
     if (typeof token === 'string' && token !== '') {
       request['refreshToken'] = token;
+      this.logger.debug('Extracted refresh token from request');
     }
     nextFn();
-  }
+  };
 }

@@ -1,6 +1,9 @@
 import { createCipheriv, createDecipheriv, randomBytes, createHmac } from 'node:crypto';
 import { InternalServerError, BadRequestError } from '@volontariapp/errors';
+import { Logger } from '@volontariapp/logger';
 import { deriveKey } from './kdf.js';
+
+const logger = new Logger({ context: 'CryptoCipher', format: 'json' });
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
@@ -23,6 +26,7 @@ export function encrypt(text: string, secret: string | Buffer): string {
     return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted.toString('hex')}`;
   } catch (error) {
     if (error instanceof InternalServerError || error instanceof Error) {
+      logger.error('Encryption failed', error);
       throw new InternalServerError('Encryption failed.', 'ENCRYPTION_ERROR', {
         detail: error.message,
       });
@@ -61,6 +65,7 @@ export function decrypt(encryptedText: string, secret: string | Buffer): string 
   } catch (error) {
     if (error instanceof BadRequestError) throw error;
     if (error instanceof Error) {
+      logger.error('Decryption failed', error);
       throw new InternalServerError('Decryption failed.', 'DECRYPTION_ERROR', {
         detail: error.message,
       });

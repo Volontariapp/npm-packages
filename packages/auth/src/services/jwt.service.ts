@@ -2,6 +2,7 @@ import * as jose from 'jose';
 import type { CryptoKey } from 'jose';
 import fs from 'node:fs';
 import { InternalServerError } from '@volontariapp/errors';
+import { Logger } from '@volontariapp/logger';
 import {
   CONFIG_ERROR,
   INVALID_TOKEN_PAYLOAD,
@@ -16,6 +17,7 @@ export class JwtService {
   private accessTokenPublicKey?: CryptoKey;
   private refreshTokenPrivateKey?: CryptoKey;
   private refreshTokenPublicKey?: CryptoKey;
+  private readonly logger = new Logger({ context: 'JwtService', format: 'json' });
 
   constructor(private readonly options: AuthConfig) {}
 
@@ -160,6 +162,7 @@ export class JwtService {
       throw INVALID_TOKEN_PAYLOAD(type);
     } catch (error) {
       if (error instanceof InternalServerError) throw error;
+      this.logger.error(`Failed to verify ${type} token`, error);
       throw VERIFY_TOKEN_FAILED(type, (error as Error).message);
     }
   }

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, beforeAll, jest } from '@jest/globals';
 import fs from 'node:fs';
+import { Logger } from '@volontariapp/logger';
 import * as jose from 'jose';
 import { Test } from '@nestjs/testing';
 import { GrpcInternalGuard } from '../../guards/grpc-internal.guard.js';
@@ -38,11 +39,17 @@ describe('GrpcInternalGuard (Integration)', () => {
 
   beforeEach(async () => {
     jest.restoreAllMocks();
+
+    jest.spyOn(Logger.prototype, 'debug').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'info').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+
     jest.spyOn(fs, 'readFileSync').mockImplementation((path) => {
       if (path === 'internal-private-path') return internalPrivate;
       if (path === 'internal-public-path') return internalPublic;
       if (path === 'gateway-public-path') return gatewayPublic;
-      throw new Error('File not found');
+      return '';
     });
 
     const module = await Test.createTestingModule({
