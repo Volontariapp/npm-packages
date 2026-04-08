@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0
+
+### Minor Changes
+
+- update workspace:\* to workspace:^
+
 ## 2.2.0
 
 ### Minor Changes

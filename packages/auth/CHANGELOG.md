@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0.0
+
+### Minor Changes
+
+- update workspace:\* to workspace:^
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@1.0.0
+  - @volontariapp/errors@0.4.0
+
 ## 2.1.0
 
 ### Minor Changes

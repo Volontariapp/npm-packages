@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.0
+
+### Minor Changes
+
+- update workspace:\* to workspace:^
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@2.3.0
+
 ## 2.1.0
 
 ### Minor Changes
