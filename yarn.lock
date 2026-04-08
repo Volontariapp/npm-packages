@@ -3488,6 +3488,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^25.5.2":
+  version: 25.5.2
+  resolution: "@types/node@npm:25.5.2"
+  dependencies:
+    undici-types: "npm:~7.18.0"
+  checksum: 10c0/11e41a85401724cd1a4de6fb7bd4264ec46db10c09fc8cf8d41de4ede0a7063db458348f859ead4ec0929906aa26aaf45a5fef3aa59742ca0521cda9cee52377
+  languageName: node
+  linkType: hard
+
 "@types/oracledb@npm:6.5.2":
   version: 6.5.2
   resolution: "@types/oracledb@npm:6.5.2"
@@ -3894,6 +3903,7 @@ __metadata:
     "@types/supertest": "npm:^7.2.0"
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/errors-nest": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
     jest: "npm:^30.3.0"
     jose: "npm:^6.2.2"
     reflect-metadata: "npm:^0.2.2"
@@ -3921,6 +3931,7 @@ __metadata:
     "@volontariapp/bridge": "workspace:^"
     "@volontariapp/errors": "workspace:^"
     "@volontariapp/errors-nest": "workspace:^"
+    "@volontariapp/logger": "workspace:*"
     ioredis: "npm:^5.10.1"
     jest: "npm:^30.3.0"
     neo4j-driver: "npm:^6.0.1"
@@ -3942,6 +3953,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/pg": "npm:^8"
     "@volontariapp/errors": "workspace:^"
+    "@volontariapp/logger": "workspace:*"
     ioredis: "npm:^5.10.1"
     jest: "npm:^30.3.0"
     neo4j-driver: "npm:^6.0.1"
@@ -3961,6 +3973,7 @@ __metadata:
     "@jest/globals": "npm:^30.3.0"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^25.5.1"
+    "@volontariapp/logger": "workspace:*"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.15.1"
     jest: "npm:^30.3.0"
@@ -3977,6 +3990,7 @@ __metadata:
     "@nestjs/common": "npm:^11.0.1"
     "@nestjs/core": "npm:^11.0.1"
     "@nestjs/microservices": "npm:^11.1.14"
+    "@volontariapp/logger": "workspace:*"
     protobufjs: "npm:7.5.3"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
@@ -3994,6 +4008,7 @@ __metadata:
     "@jest/globals": "npm:^29.7.0"
     "@types/jest": "npm:^29.5.12"
     "@volontariapp/errors": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
     jest: "npm:^29.7.0"
     ts-jest: "npm:^29.1.5"
     typescript: "npm:5.7.3"
@@ -4008,6 +4023,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^22.10.7"
     "@types/pg": "npm:^8"
+    "@volontariapp/logger": "workspace:*"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
     jest: "npm:^30.3.0"
@@ -4024,6 +4040,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-event@workspace:packages/domain-event"
   dependencies:
+    "@volontariapp/logger": "workspace:*"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4032,6 +4049,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-post@workspace:packages/domain-post"
   dependencies:
+    "@volontariapp/logger": "workspace:*"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4041,6 +4059,7 @@ __metadata:
   resolution: "@volontariapp/domain-user@workspace:packages/domain-user"
   dependencies:
     "@volontariapp/contracts": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4056,6 +4075,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^25.5.1"
     "@volontariapp/errors": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
     jest: "npm:^30.3.0"
     jest-environment-node: "npm:^30.3.0"
     reflect-metadata: "npm:^0.2.2"
@@ -4074,6 +4094,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/errors@workspace:packages/errors"
   dependencies:
+    "@volontariapp/logger": "workspace:*"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4093,50 +4114,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/health-check-nest@workspace:packages/health-check-nest":
-  version: 0.0.0-use.local
-  resolution: "@volontariapp/health-check-nest@workspace:packages/health-check-nest"
-  dependencies:
-    "@jest/globals": "npm:^30.3.0"
-    "@nestjs/axios": "npm:^4.0.1"
-    "@nestjs/common": "npm:^11.1.17"
-    "@nestjs/core": "npm:^11.1.17"
-    "@nestjs/microservices": "npm:^11.1.17"
-    "@nestjs/terminus": "npm:^11.1.1"
-    "@types/jest": "npm:^30.0.0"
-    "@volontariapp/bridge": "workspace:*"
-    "@volontariapp/bridge-nest": "workspace:*"
-    "@volontariapp/health-check": "workspace:*"
-    axios: "npm:^1.7.9"
-    eslint: "npm:9.18.0"
-    jest: "npm:^30.3.0"
-    reflect-metadata: "npm:^0.2.2"
-    rxjs: "npm:^7.8.1"
-    ts-jest: "npm:^29.4.9"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:5.7.3"
-  languageName: unknown
-  linkType: soft
-
-"@volontariapp/health-check@workspace:*, @volontariapp/health-check@workspace:packages/health-check":
-  version: 0.0.0-use.local
-  resolution: "@volontariapp/health-check@workspace:packages/health-check"
-  dependencies:
-    "@jest/globals": "npm:^30.3.0"
-    "@types/jest": "npm:^30.0.0"
-    "@volontariapp/bridge": "workspace:*"
-    eslint: "npm:9.18.0"
-    jest: "npm:^30.3.0"
-    ts-jest: "npm:^29.4.9"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:5.7.3"
-  languageName: unknown
-  linkType: soft
-
-"@volontariapp/logger@workspace:packages/logger":
+"@volontariapp/logger@workspace:*, @volontariapp/logger@workspace:packages/logger":
   version: 0.0.0-use.local
   resolution: "@volontariapp/logger@workspace:packages/logger"
   dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^25.5.2"
+    jest: "npm:^30.3.0"
+    ts-jest: "npm:^29.4.9"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4154,6 +4140,7 @@ __metadata:
     "@opentelemetry/sdk-metrics": "npm:^2.5.1"
     "@opentelemetry/sdk-node": "npm:^0.212.0"
     "@opentelemetry/semantic-conventions": "npm:^1.34.0"
+    "@volontariapp/logger": "workspace:*"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft

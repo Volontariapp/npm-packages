@@ -5,9 +5,11 @@ import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { JwtService } from '../services/jwt.service.js';
 import type { AuthUser } from '../interfaces/auth-user.interface.js';
+import { Logger } from '@volontariapp/logger';
 
 @Injectable()
 export class GrpcInternalInterceptor implements NestInterceptor {
+  private readonly logger = new Logger({ context: 'GrpcInternalInterceptor', format: 'json' });
   constructor(private readonly jwtService: JwtService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
@@ -20,6 +22,7 @@ export class GrpcInternalInterceptor implements NestInterceptor {
 
     return from(this.jwtService.signInternal(user)).pipe(
       switchMap((token) => {
+        this.logger.debug(`Signed internal token for user ${user.id}`);
         const req = httpRequest as unknown as Record<string, unknown>;
         req['internalToken'] = token;
         return next.handle();

@@ -11,6 +11,7 @@ export class NestPostgresProvider
   async onModuleInit(): Promise<void> {
     try {
       await this.connect();
+      this.logger.info('Nest Postgres Bridge initialized successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
       throw BRIDGE_CONNECTION_FAILED('Postgres', message);
@@ -20,6 +21,7 @@ export class NestPostgresProvider
   async onModuleDestroy(): Promise<void> {
     try {
       await this.disconnect();
+      this.logger.info('Nest Postgres Bridge destroyed successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown disconnection error';
       throw BRIDGE_DISCONNECTION_FAILED('Postgres', message);

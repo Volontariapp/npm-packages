@@ -5,6 +5,9 @@ import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { resourceFromAttributes } from '@opentelemetry/resources';
+import { Logger } from '@volontariapp/logger';
+
+const logger = new Logger({ context: 'Monitoring', format: 'json' });
 
 export interface TracingOptions {
   serviceName: string;
@@ -47,7 +50,7 @@ export function initTracing(options: TracingOptions): NodeSDK {
     sdk
       .shutdown()
       .catch((err: unknown) => {
-        console.error('OTel SDK shutdown error', err);
+        logger.error('OTel SDK shutdown error', err);
       })
       .finally(() => process.exit(0));
   });

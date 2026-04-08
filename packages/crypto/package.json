@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/crypto",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -40,6 +40,7 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/logger": "workspace:*"
   }
 }

@@ -1,9 +1,11 @@
 import type { NestMiddleware } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
+import { Logger } from '@volontariapp/logger';
 
 @Injectable()
 export class AccessTokenMiddleware implements NestMiddleware {
-  use(req: unknown, _res: unknown, next: unknown): void {
+  private readonly logger = new Logger({ context: 'AccessTokenMiddleware', format: 'json' });
+  use = (req: unknown, _res: unknown, next: unknown): void => {
     const request = req as Record<string, unknown>;
     const nextFn = next as () => void;
     const headers = (request['headers'] ?? {}) as Record<string, unknown>;
@@ -23,7 +25,8 @@ export class AccessTokenMiddleware implements NestMiddleware {
 
     if (typeof token === 'string' && token !== '') {
       request['accessToken'] = token;
+      this.logger.debug('Extracted access token from request');
     }
     nextFn();
-  }
+  };
 }

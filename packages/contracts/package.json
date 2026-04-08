@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/contracts",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -50,6 +50,7 @@
     "rxjs": "^7.0.0"
   },
   "dependencies": {
+    "@volontariapp/logger": "workspace:*",
     "protobufjs": "7.5.3"
   }
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+### Minor Changes
+
+- logger added
+
 ## 2.1.1
 
 ### Patch Changes

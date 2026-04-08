@@ -7,6 +7,7 @@ export class NestRedisProvider extends RedisProvider implements OnModuleInit, On
   async onModuleInit(): Promise<void> {
     try {
       await this.connect();
+      this.logger.info('Nest Redis Bridge initialized successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
       throw BRIDGE_CONNECTION_FAILED('Redis', message);
@@ -16,6 +17,7 @@ export class NestRedisProvider extends RedisProvider implements OnModuleInit, On
   async onModuleDestroy(): Promise<void> {
     try {
       await this.disconnect();
+      this.logger.info('Nest Redis Bridge destroyed successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown disconnection error';
       throw BRIDGE_DISCONNECTION_FAILED('Redis', message);

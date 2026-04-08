@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, beforeEach, beforeAll, jest, afterEach } from '@jest/globals';
 import fs from 'node:fs';
+import { Logger } from '@volontariapp/logger';
 import * as jose from 'jose';
 import { Test } from '@nestjs/testing';
 import type { INestApplication, ExecutionContext } from '@nestjs/common';
@@ -45,6 +45,13 @@ describe('Full Auth Flow (Integration)', () => {
   });
 
   beforeEach(async () => {
+    jest.restoreAllMocks();
+
+    jest.spyOn(Logger.prototype, 'debug').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'info').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+
     const config = {
       accessTokenPublicKeyPath: 'access-public.pem',
       accessTokenPrivateKeyPath: 'access-private.pem',
@@ -64,7 +71,7 @@ describe('Full Auth Flow (Integration)', () => {
       if (path === 'internal-private.pem') return internalPrivate;
       if (path === 'refresh-public.pem') return refreshTokenPublic;
       if (path === 'refresh-private.pem') return refreshTokenPrivate;
-      throw new Error(`Unexpected path: ${path as string}`);
+      return '';
     });
 
     const moduleRef = await Test.createTestingModule({

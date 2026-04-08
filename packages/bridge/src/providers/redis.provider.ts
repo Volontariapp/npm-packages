@@ -1,11 +1,13 @@
 import { Redis } from 'ioredis';
 import { InternalServerError } from '@volontariapp/errors';
+import { Logger } from '@volontariapp/logger';
 import type { IConnectionProvider } from '../interfaces/provider.interface.js';
 import type { IRedisConfig } from '../interfaces/database.config.interface.js';
 
 export class RedisProvider implements IConnectionProvider<Redis> {
   private redis: Redis | null = null;
   private connected = false;
+  protected readonly logger = new Logger({ context: 'RedisProvider', format: 'json' });
 
   constructor(private readonly setup: IRedisConfig) {}
 
@@ -20,6 +22,7 @@ export class RedisProvider implements IConnectionProvider<Redis> {
 
       await this.redis.connect();
       this.connected = true;
+      this.logger.info('Connected to Redis');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
       throw new InternalServerError(
@@ -36,6 +39,7 @@ export class RedisProvider implements IConnectionProvider<Redis> {
       await this.redis.quit();
       this.connected = false;
       this.redis = null;
+      this.logger.info('Disconnected from Redis');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown disconnection error';
       throw new InternalServerError(

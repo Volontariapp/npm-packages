@@ -2,6 +2,9 @@ import * as fs from 'fs';
 import { plainToInstance, type ClassConstructor } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import type { BaseConfig } from './base-config.js';
+import { Logger } from '@volontariapp/logger';
+
+const logger = new Logger({ context: 'ConfigLoader', format: 'json' });
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -12,7 +15,7 @@ function LoadJSONFile<T extends BaseConfig>(filePath: string): Partial<T> {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(fileContent) as Partial<T>;
   } catch (error) {
-    console.warn(`Could not read ${filePath}: ${getErrorMessage(error)}`);
+    logger.warn(`Could not read ${filePath}: ${getErrorMessage(error)}`);
     return {};
   }
 }
@@ -170,10 +173,7 @@ function resolveEnvVarValues(value: unknown): unknown {
  * @param {string} dirPath - The directory containing the .json configuration files.
  * @returns {T} The merged configuration object.
  */
-export function loadConfig<T extends BaseConfig>(
-  dirPath: string,
-  schema: ClassConstructor<T>,
-): T {
+export function loadConfig<T extends BaseConfig>(dirPath: string, schema: ClassConstructor<T>): T {
   const customEnvVarsPath = `${dirPath}/custom-env-vars.json`;
   const defaultConfigPath = `${dirPath}/default.config.json`;
 
@@ -183,7 +183,7 @@ export function loadConfig<T extends BaseConfig>(
   try {
     customEnvVars = resolveEnvVarValues(LoadJSONFile<T>(customEnvVarsPath)) as Partial<T>;
   } catch (error) {
-    console.warn(`Could not read ${customEnvVarsPath}: ${getErrorMessage(error)}`);
+    logger.warn(`Could not read ${customEnvVarsPath}: ${getErrorMessage(error)}`);
   }
 
   try {
@@ -191,7 +191,7 @@ export function loadConfig<T extends BaseConfig>(
       ...LoadJSONFile<T>(defaultConfigPath),
     };
   } catch (error) {
-    console.warn(`Could not read ${defaultConfigPath}: ${getErrorMessage(error)}`);
+    logger.warn(`Could not read ${defaultConfigPath}: ${getErrorMessage(error)}`);
   }
 
   const config = mergeConfigs(defaultConfig, customEnvVars);
