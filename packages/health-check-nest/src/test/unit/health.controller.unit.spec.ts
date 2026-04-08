@@ -1,24 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
-import type { HealthCheckService } from '@nestjs/terminus';
-import type {
-  NestPostgresProvider,
-  NestRedisProvider,
-} from '@volontariapp/bridge-nest';
+import type { NestPostgresProvider, NestRedisProvider } from '@volontariapp/bridge-nest';
 import { HealthController } from '../../health-check/health.controller.js';
 import type { HealthConfig } from '../../health-check/health-config.js';
-
-type HealthCheckHandler = () => Promise<Record<string, unknown>>;
-
-function createHealthServiceMock(): HealthCheckService {
-  const healthServiceMock = {
-    check: (checks: HealthCheckHandler[]) => {
-      const [first] = checks;
-      return first();
-    },
-  };
-
-  return healthServiceMock as HealthCheckService;
-}
+import { createHealthServiceMock } from '../utils/utils.js';
 
 describe('HealthController', () => {
   it('returns only configured database checks when providers are available', async () => {
@@ -65,7 +49,9 @@ describe('HealthController', () => {
       undefined,
     );
 
-    await expect(controller.check()).rejects.toThrow('Missing NestNeo4jProvider');
+    await expect(controller.check()).rejects.toMatchObject({
+      code: 'BRIDGE_NOT_INITIALIZED',
+    });
   });
 
   it('skips missing providers when failOnMissingProvider is false', async () => {
@@ -107,6 +93,8 @@ describe('HealthController', () => {
       undefined,
     );
 
-    await expect(controller.check()).rejects.toThrow('No database providers configured for health-check.');
+    await expect(controller.check()).rejects.toMatchObject({
+      code: 'BRIDGE_NOT_INITIALIZED',
+    });
   });
 });

@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "@nestjs/testing": "^11.1.17",
     "@types/jest": "^30.0.0",
     "axios": "^1.7.9",
     "eslint": "9.18.0",
