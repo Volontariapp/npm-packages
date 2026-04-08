@@ -42,7 +42,7 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@volontariapp/bridge": "workspace:*",
-    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/bridge": "0.2.0",
+    "@volontariapp/errors": "0.3.0"
   }
 }
