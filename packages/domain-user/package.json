@@ -31,11 +31,11 @@
     "lint": "eslint src/",
     "test": "echo \"No tests yet\""
   },
-  "dependencies": {
-    "@volontariapp/contracts": "workspace:*",
-    "@volontariapp/logger": "workspace:*"
-  },
   "devDependencies": {
     "typescript": "5.7.3"
+  },
+  "peerDependencies": {
+    "@volontariapp/contracts": "workspace:^",
+    "@volontariapp/logger": "workspace:^"
   }
 }

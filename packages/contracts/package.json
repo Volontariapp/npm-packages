@@ -47,10 +47,10 @@
   },
   "peerDependencies": {
     "@nestjs/microservices": "^11.0.0",
-    "rxjs": "^7.0.0"
+    "rxjs": "^7.0.0",
+    "@volontariapp/logger": "workspace:^"
   },
   "dependencies": {
-    "@volontariapp/logger": "workspace:*",
     "protobufjs": "7.5.3"
   }
 }

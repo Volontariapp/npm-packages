@@ -35,7 +35,6 @@
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },
   "dependencies": {
-    "@volontariapp/logger": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "pg": "^8.20.0",
@@ -51,5 +50,8 @@
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "5.7.3"
+  },
+  "peerDependencies": {
+    "@volontariapp/logger": "workspace:^"
   }
 }

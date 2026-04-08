@@ -34,14 +34,14 @@
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "dependencies": {
-    "@volontariapp/errors": "workspace:*",
-    "@volontariapp/errors-nest": "workspace:*",
-    "@volontariapp/logger": "workspace:*",
     "jose": "^6.2.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
   "peerDependencies": {
+    "@volontariapp/errors": "workspace:^",
+    "@volontariapp/errors-nest": "workspace:^",
+    "@volontariapp/logger": "workspace:^",
     "@grpc/grpc-js": "^1.12.0",
     "@nestjs/common": "^10.0.0 || ^11.0.0",
     "@nestjs/core": "^10.0.0 || ^11.0.0",

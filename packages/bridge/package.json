@@ -43,13 +43,15 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@types/geojson": "^7946.0.16",
-    "@volontariapp/errors": "workspace:^",
-    "@volontariapp/logger": "workspace:*",
     "ioredis": "^5.10.1",
     "neo4j-driver": "^6.0.1",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.28"
+  },
+  "peerDependencies": {
+    "@types/geojson": "^7946.0.16",
+    "@volontariapp/errors": "workspace:^",
+    "@volontariapp/logger": "workspace:^"
   }
 }
