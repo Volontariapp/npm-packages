@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.0.4
+
+### Patch Changes
+
+- bump open telemetrie deps
+
+## 2.0.3
+
+### Patch Changes
+
+- bump open telemetrie deps
+
+## 2.0.2
+
+### Patch Changes
+
+- bump open telemetrie deps
+
+## 2.0.1
+
+### Patch Changes
+
+- update version for exposing dist
+
 ## 2.0.0
 
 ### Major Changes

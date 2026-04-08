@@ -2,6 +2,7 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+coverage/
 .yarn/*
 !.yarn/releases
 !.yarn/plugins
@@ -14,3 +15,4 @@ dist/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.gitnexus

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/contracts",
-  "version": "2.0.2",
+  "version": "2.1.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -18,7 +18,9 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json",
+    "./proto/*": "./proto/*"
   },
   "files": [
     "dist",
@@ -28,6 +30,7 @@
     "node": ">=24.14.0"
   },
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "yarn fix-esm && tsc -p tsconfig.json",
     "fix-esm": "node scripts/fix-esm.mjs",
     "lint": "eslint src/",
