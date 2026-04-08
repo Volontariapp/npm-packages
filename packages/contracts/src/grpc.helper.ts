@@ -2,6 +2,9 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import type { GrpcOptions } from '@nestjs/microservices';
 import { Transport } from '@nestjs/microservices';
+import { Logger } from '@volontariapp/logger';
+
+const logger = new Logger({ context: 'GrpcHelper', format: 'json' });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -57,6 +60,7 @@ export const GRPC_SERVICES_CONFIG = {
 export const getGrpcOptions = (service: GRPC_SERVICES, url: string): GrpcOptions => {
   const config = GRPC_SERVICES_CONFIG[service];
   const protoRoot = join(__dirname, '../proto');
+  logger.info(`Generating gRPC options for ${service} at ${url}`);
 
   return {
     transport: Transport.GRPC,

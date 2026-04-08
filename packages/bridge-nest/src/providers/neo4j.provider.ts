@@ -8,6 +8,7 @@ export class NestNeo4jProvider extends Neo4jProvider implements OnModuleInit, On
   async onModuleInit(): Promise<void> {
     try {
       await this.connect();
+      this.logger.info('Nest Neo4j Bridge initialized successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
       throw BRIDGE_CONNECTION_FAILED('Neo4j', message);
@@ -17,6 +18,7 @@ export class NestNeo4jProvider extends Neo4jProvider implements OnModuleInit, On
   async onModuleDestroy(): Promise<void> {
     try {
       await this.disconnect();
+      this.logger.info('Nest Neo4j Bridge destroyed successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown disconnection error';
       throw BRIDGE_DISCONNECTION_FAILED('Neo4j', message);

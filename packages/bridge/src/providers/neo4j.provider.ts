@@ -1,12 +1,14 @@
 import type { Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
 import { InternalServerError } from '@volontariapp/errors';
+import { Logger } from '@volontariapp/logger';
 import type { IConnectionProvider } from '../interfaces/provider.interface.js';
 import type { INeo4jConfig } from '../interfaces/database.config.interface.js';
 
 export class Neo4jProvider implements IConnectionProvider<Driver> {
   private driver: Driver | null = null;
   private connected = false;
+  protected readonly logger = new Logger({ context: 'Neo4jProvider', format: 'json' });
 
   constructor(private readonly setup: INeo4jConfig) {}
 
@@ -22,6 +24,7 @@ export class Neo4jProvider implements IConnectionProvider<Driver> {
 
       await this.driver.verifyConnectivity();
       this.connected = true;
+      this.logger.info('Connected to Neo4j');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
       throw new InternalServerError(
@@ -38,6 +41,7 @@ export class Neo4jProvider implements IConnectionProvider<Driver> {
       await this.driver.close();
       this.connected = false;
       this.driver = null;
+      this.logger.info('Disconnected from Neo4j');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown disconnection error';
       throw new InternalServerError(

@@ -1,5 +1,6 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { Logger } from '@volontariapp/logger';
 import type { ArgumentsHost } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { BaseError, GrpcStatus } from '@volontariapp/errors';

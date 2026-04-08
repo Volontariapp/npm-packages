@@ -12,6 +12,7 @@ import type {
   SaveOptions,
   RemoveOptions,
 } from 'typeorm';
+import { Logger } from '@volontariapp/logger';
 import { Like, In } from 'typeorm';
 import type { Constructor } from './mapper.service.js';
 import { databaseMapper } from './mapper.service.js';
@@ -39,6 +40,7 @@ export abstract class BaseRepository<
   TId extends string | number = string | number,
 > {
   protected readonly mapper = databaseMapper;
+  protected readonly logger = new Logger({ context: this.constructor.name, format: 'json' });
 
   constructor(
     protected readonly repository: Repository<TModel>,
@@ -271,9 +273,11 @@ export abstract class BaseRepository<
     try {
       const result = await work(queryRunner);
       await queryRunner.commitTransaction();
+      this.logger.debug('Transaction committed');
       return result;
     } catch (error: unknown) {
       await queryRunner.rollbackTransaction();
+      this.logger.error('Transaction rolled back due to error', error);
       throw error;
     } finally {
       await queryRunner.release();
