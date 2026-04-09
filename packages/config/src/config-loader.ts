@@ -96,6 +96,7 @@ export function loadConfig<T extends BaseConfig>(dirPath: string, schema: ClassC
 
   const defaultConfig = LoadJSONFile<T>(`${dirPath}/default.config.json`);
   const envConfig = LoadJSONFile<T>(`${dirPath}/${nodeEnv}.config.json`);
+  const localConfig = LoadJSONFile<T>(`${dirPath}/local.config.json`);
   const customEnvMapping = LoadJSONFile<T>(`${dirPath}/custom-env-vars.json`);
   const customEnvVars = resolveEnvVarValues(customEnvMapping) as Partial<T>;
 
@@ -103,6 +104,7 @@ export function loadConfig<T extends BaseConfig>(dirPath: string, schema: ClassC
     { nodeEnv } as unknown as Partial<T>,
     defaultConfig,
     envConfig,
+    localConfig,
     customEnvVars,
   );
 
