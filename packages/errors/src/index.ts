@@ -4,6 +4,7 @@ export * from './exceptions/bad-request.error.js';
 export * from './exceptions/conflict.error.js';
 export * from './exceptions/forbidden.error.js';
 export * from './exceptions/internal-server.error.js';
+export * from './exceptions/database-health.error.js';
 export * from './exceptions/not-found.error.js';
 export * from './exceptions/unauthorized.error.js';
 export * from './exceptions/unprocessable-entity.error.js';
