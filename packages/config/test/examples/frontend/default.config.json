@@ -1,0 +1,7 @@
+{
+  "port": 8080,
+  "logger": {
+    "level": "debug"
+  },
+  "apiGatewayUrl": "http://localhost:3000"
+}

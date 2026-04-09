@@ -1,0 +1,32 @@
+{
+  "port": 3000,
+  "logger": {
+    "level": "info"
+  },
+  "microServices": {
+    "msPostUrl": "http://ms-post:5002",
+    "msUserUrl": "http://ms-user:5001",
+    "msEventUrl": "http://ms-event:5003"
+  },
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "volontariapp",
+    "maxPoolSize": 20,
+    "ssl": false
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "dbIndex": 0
+  },
+  "neo4j": {
+    "host": "localhost",
+    "port": 7687,
+    "scheme": "bolt"
+  },
+  "auth": {
+    "internalPublicKeyPath": "/app/keys/internal.pub",
+    "accessTokenPublicKeyPath": "/app/keys/access.pub"
+  }
+}
