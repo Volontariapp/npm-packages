@@ -1,0 +1,7 @@
+{
+  "auth": {
+    "internalPrivateKeyPath": "/etc/secrets/internal.key",
+    "internalPublicKeyPath": "/etc/secrets/internal.pub",
+    "internalExpiresIn": "1h"
+  }
+}

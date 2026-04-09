@@ -1,11 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "./",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "types": ["node", "jest"]
+    "emitDecoratorMetadata": true
   },
-  "include": ["src", "test/**/*.ts"]
+  "include": ["src"]
 }
