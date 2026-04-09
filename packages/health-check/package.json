@@ -1,6 +1,6 @@
 {
-  "name": "@volontariapp/bridge-nest",
-  "version": "0.2.1",
+  "name": "@volontariapp/health-check",
+  "version": "0.1.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -27,7 +27,6 @@
     "node": ">=24.14.0"
   },
   "scripts": {
-    "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
@@ -35,24 +34,16 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
-    "@nestjs/testing": "^11.1.18",
     "@types/jest": "^30.0.0",
+    "eslint": "9.18.0",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.18",
-    "@nestjs/core": "^11.1.18",
-    "@volontariapp/bridge": "workspace:^",
-    "@volontariapp/errors": "workspace:^",
-    "@volontariapp/errors-nest": "workspace:^",
-    "@volontariapp/logger": "workspace:*",
-    "ioredis": "^5.10.1",
-    "neo4j-driver": "^6.0.1",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
-    "typeorm": "^0.3.28"
+    "@volontariapp/bridge": "0.2.1",
+    "@volontariapp/config": "1.0.0",
+    "@volontariapp/errors": "0.4.0"
   }
 }

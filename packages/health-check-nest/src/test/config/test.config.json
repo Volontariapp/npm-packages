@@ -1,0 +1,33 @@
+{
+  "port": 3000,
+  "logger": {
+    "level": "info",
+    "format": "json"
+  },
+  "postgres": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "user",
+    "password": "password",
+    "database": "bridge_test",
+    "maxPoolSize": 10,
+    "ssl": false
+  },
+  "neo4j": {
+    "scheme": "bolt",
+    "host": "localhost",
+    "port": 7687,
+    "username": "neo4j",
+    "password": "password",
+    "database": "neo4j"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "username": "default",
+    "password": "test",
+    "database": "0",
+    "dbIndex": 0,
+    "keyPrefix": ""
+  }
+}
