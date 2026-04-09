@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class DBConfig {
@@ -12,15 +12,18 @@ export class DBConfig {
   @IsNumber()
   port!: number;
 
+  @IsDefined()
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  username?: string;
+  username!: string;
 
+  @IsDefined()
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  password?: string;
+  password!: string;
 
+  @IsDefined()
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  database?: string;
+  database!: string;
 }

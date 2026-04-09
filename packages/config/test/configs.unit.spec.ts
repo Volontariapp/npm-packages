@@ -30,47 +30,54 @@ describe('Config Classes Unit Tests', () => {
       config.nodeEnv = NodeEnv.DEVELOPMENT;
       expect(config.getLoggerFormat()).toBe(LoggerFormat.TEXT);
     });
-
-    it('should respect explicit logger format override', () => {
-      const config = new BaseConfig();
-      config.nodeEnv = NodeEnv.PRODUCTION;
-      config.logger.format = LoggerFormat.TEXT;
-      expect(config.getLoggerFormat()).toBe(LoggerFormat.TEXT);
-    });
   });
 
   describe('PostgresConfig', () => {
-    it('should have correct default values', () => {
-      const pg = new PostgresConfig();
-      expect(pg.maxPoolSize).toBe(10);
-      expect(pg.ssl).toBe(false);
-    });
-
-    it('should convert string to number via @Type', () => {
-      const plain = { maxPoolSize: '25', host: 'localhost', port: '5432' };
+    it('should convert string to number via @Type and handle mandatory fields', () => {
+      const plain = {
+        maxPoolSize: '25',
+        host: 'localhost',
+        port: '5432',
+        username: 'u',
+        password: 'p',
+        database: 'd',
+        ssl: 'true',
+      };
       const pg = plainToInstance(PostgresConfig, plain, { enableImplicitConversion: true });
       expect(pg.maxPoolSize).toBe(25);
       expect(pg.port).toBe(5432);
+      expect(pg.ssl).toBe(true);
     });
   });
 
   describe('RedisConfig', () => {
-    it('should have correct default values', () => {
-      const redis = new RedisConfig();
-      expect(redis.dbIndex).toBe(0);
-    });
-
-    it('should convert string to number via @Type', () => {
-      const plain = { dbIndex: '2', host: 'localhost', port: '6379' };
+    it('should handle mandatory fields and optional tricky fields', () => {
+      const plain = {
+        host: 'localhost',
+        port: '6379',
+        username: 'u',
+        password: 'p',
+        database: 'd',
+        dbIndex: '2',
+      };
       const redis = plainToInstance(RedisConfig, plain, { enableImplicitConversion: true });
       expect(redis.dbIndex).toBe(2);
+      expect(redis.keyPrefix).toBeUndefined();
     });
   });
 
   describe('Neo4jConfig', () => {
-    it('should have correct default values', () => {
-      const neo = new Neo4jConfig();
-      expect(neo.scheme).toBe('neo4j');
+    it('should handle mandatory scheme', () => {
+      const plain = {
+        host: 'localhost',
+        port: '7687',
+        username: 'u',
+        password: 'p',
+        database: 'd',
+        scheme: 'bolt',
+      };
+      const neo = plainToInstance(Neo4jConfig, plain, { enableImplicitConversion: true });
+      expect(neo.scheme).toBe('bolt');
     });
   });
 

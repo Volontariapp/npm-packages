@@ -3,11 +3,36 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import { BaseConfig, BackendConfig, NodeEnv, loadConfig } from '../src/index.js';
+import { IsDefined, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  BaseConfig,
+  BackendConfig,
+  NodeEnv,
+  loadConfig,
+  LoggerFormat,
+  PostgresConfig,
+} from '../src/index.js';
 
 describe('Config Loader Unit Tests', () => {
   let dirPath: string;
   const originalEnv = { ...process.env };
+
+  const validAuth = {
+    internalPublicKeyPath: 'k',
+    internalPrivateKeyPath: 'k',
+    accessTokenPublicKeyPath: 'k',
+    accessTokenPrivateKeyPath: 'k',
+    refreshTokenPublicKeyPath: 'k',
+    refreshTokenPrivateKeyPath: 'k',
+    internalExpiresIn: '1h',
+    accessTokenExpiresIn: '1h',
+    refreshTokenExpiresIn: '1h',
+  };
+
+  const validLogger = { level: 'info', format: LoggerFormat.JSON };
+
+  const validMicroservices = { msUserUrl: 'u', msPostUrl: 'p', msEventUrl: 'e' };
 
   beforeEach(() => {
     dirPath = fs.mkdtempSync(path.join(os.tmpdir(), 'config-loader-test-'));
@@ -24,7 +49,9 @@ describe('Config Loader Unit Tests', () => {
       path.join(dirPath, 'default.config.json'),
       JSON.stringify({
         port: 3000,
-        microServices: { msUserUrl: 'u', msPostUrl: 'p', msEventUrl: 'e' },
+        logger: validLogger,
+        auth: validAuth,
+        microServices: validMicroservices,
       }),
     );
 
@@ -39,7 +66,9 @@ describe('Config Loader Unit Tests', () => {
       path.join(dirPath, 'default.config.json'),
       JSON.stringify({
         port: 3000,
-        microServices: { msUserUrl: 'u', msPostUrl: 'p', msEventUrl: 'e' },
+        logger: validLogger,
+        auth: validAuth,
+        microServices: validMicroservices,
       }),
     );
 
@@ -62,7 +91,10 @@ describe('Config Loader Unit Tests', () => {
       path.join(dirPath, 'default.config.json'),
       JSON.stringify({
         port: 3000,
-        microServices: { msUserUrl: 'default', msPostUrl: 'p', msEventUrl: 'e' },
+        nodeEnv: NodeEnv.DEVELOPMENT,
+        logger: validLogger,
+        auth: validAuth,
+        microServices: { ...validMicroservices, msUserUrl: 'default' },
       }),
     );
 
@@ -77,13 +109,30 @@ describe('Config Loader Unit Tests', () => {
     expect(config.microServices.msUserUrl).toBe('http://resolved-user');
   });
 
-  it('should handle complex deep merges', () => {
+  class TestConfig extends BackendConfig {
+    @IsDefined()
+    @ValidateNested()
+    @Type(() => PostgresConfig)
+    db!: PostgresConfig;
+  }
+
+  it('should handle complex deep merges with extended config', () => {
     fs.writeFileSync(
       path.join(dirPath, 'default.config.json'),
       JSON.stringify({
         port: 3000,
-        microServices: { msUserUrl: 'u', msPostUrl: 'p', msEventUrl: 'e' },
-        db: { host: 'localhost', port: 5432 },
+        logger: validLogger,
+        auth: validAuth,
+        microServices: validMicroservices,
+        db: {
+          host: 'localhost',
+          port: 5432,
+          username: 'u',
+          password: 'p',
+          database: 'd',
+          maxPoolSize: 10,
+          ssl: false,
+        },
       }),
     );
 
@@ -96,15 +145,22 @@ describe('Config Loader Unit Tests', () => {
 
     process.env['DB_HOST'] = 'prod-db';
 
-    const config = loadConfig(dirPath, BackendConfig);
-    expect(config.db?.host).toBe('prod-db');
-    expect(config.db?.port).toBe(5432);
+    const config = loadConfig(dirPath, TestConfig);
+    expect(config.db.host).toBe('prod-db');
+    expect(config.db.port).toBe(5432);
   });
 
   it('should resolve environment variables in nested arrays', () => {
     process.env['ARR_VAL_1'] = 'val1';
 
-    fs.writeFileSync(path.join(dirPath, 'default.config.json'), JSON.stringify({ port: 3000 }));
+    fs.writeFileSync(
+      path.join(dirPath, 'default.config.json'),
+      JSON.stringify({
+        port: 3000,
+        nodeEnv: NodeEnv.DEVELOPMENT,
+        logger: validLogger,
+      }),
+    );
 
     fs.writeFileSync(
       path.join(dirPath, 'custom-env-vars.json'),
@@ -122,7 +178,14 @@ describe('Config Loader Unit Tests', () => {
   });
 
   it('should handle null values in resolveEnvVarValues', () => {
-    fs.writeFileSync(path.join(dirPath, 'default.config.json'), JSON.stringify({ port: 3000 }));
+    fs.writeFileSync(
+      path.join(dirPath, 'default.config.json'),
+      JSON.stringify({
+        port: 3000,
+        nodeEnv: NodeEnv.DEVELOPMENT,
+        logger: validLogger,
+      }),
+    );
 
     fs.writeFileSync(
       path.join(dirPath, 'custom-env-vars.json'),

@@ -1,12 +1,13 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsString, IsDefined, IsNotEmpty } from 'class-validator';
 import { LoggerFormat } from '../enums/logger-format.enum.js';
 
 export class LoggerConfig {
+  @IsDefined()
   @IsEnum(LoggerFormat)
-  @IsOptional()
-  format?: LoggerFormat;
+  format!: LoggerFormat;
 
+  @IsDefined()
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  level?: string = 'info';
+  level!: string;
 }

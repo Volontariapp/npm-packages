@@ -1,9 +1,8 @@
 import { IsDefined, IsNotEmpty, IsString } from 'class-validator';
-import { DBConfig } from './db-config.js';
 
-export class Neo4jConfig extends DBConfig {
+export class MsAuthConfig {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  scheme!: string;
+  internalPublicKeyPath!: string;
 }

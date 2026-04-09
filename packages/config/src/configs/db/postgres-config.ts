@@ -1,14 +1,14 @@
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsNumber, IsDefined } from 'class-validator';
 import { Type } from 'class-transformer';
 import { DBConfig } from './db-config.js';
 
 export class PostgresConfig extends DBConfig {
-  @IsOptional()
+  @IsDefined()
   @Type(() => Number)
   @IsNumber()
-  maxPoolSize?: number = 10;
+  maxPoolSize!: number;
 
-  @IsOptional()
+  @IsDefined()
   @IsBoolean()
-  ssl?: boolean = false;
+  ssl!: boolean;
 }
