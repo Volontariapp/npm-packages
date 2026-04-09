@@ -38,6 +38,9 @@ function deepMerge<T extends object>(...objects: Partial<T>[]): T {
   for (const obj of objects) {
     for (const key of Object.keys(obj)) {
       const val = (obj as Record<string, unknown>)[key];
+      if (val === undefined) {
+        continue;
+      }
       const prevVal = result[key];
       if (isObject(val) && isObject(prevVal)) {
         result[key] = deepMerge(prevVal, val);
@@ -96,7 +99,6 @@ export function loadConfig<T extends BaseConfig>(dirPath: string, schema: ClassC
 
   const defaultConfig = LoadJSONFile<T>(`${dirPath}/default.config.json`);
   const envConfig = LoadJSONFile<T>(`${dirPath}/${nodeEnv}.config.json`);
-  const localConfig = LoadJSONFile<T>(`${dirPath}/local.config.json`);
   const customEnvMapping = LoadJSONFile<T>(`${dirPath}/custom-env-vars.json`);
   const customEnvVars = resolveEnvVarValues(customEnvMapping) as Partial<T>;
 
@@ -104,7 +106,6 @@ export function loadConfig<T extends BaseConfig>(dirPath: string, schema: ClassC
     { nodeEnv } as unknown as Partial<T>,
     defaultConfig,
     envConfig,
-    localConfig,
     customEnvVars,
   );
 
