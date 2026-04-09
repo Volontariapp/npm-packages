@@ -1,4 +1,5 @@
-import type { AbstractDatabaseHealthProvider, DatabaseHealthResult } from './database-health.provider.js';
+import type { DatabaseHealthResult } from './database-health-types.js';
+import type { AbstractDatabaseHealthProvider } from './database-health.provider.js';
 
 export interface OrchestratedHealthResult {
   status: 'ok' | 'error';
@@ -6,9 +7,7 @@ export interface OrchestratedHealthResult {
 }
 
 export class DatabaseHealthOrchestrator {
-  constructor(
-    private readonly providers: ReadonlyArray<AbstractDatabaseHealthProvider>,
-  ) {}
+  constructor(private readonly providers: ReadonlyArray<AbstractDatabaseHealthProvider>) {}
 
   async run(): Promise<OrchestratedHealthResult> {
     const checks = await Promise.all(this.providers.map((provider) => provider.health()));

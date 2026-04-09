@@ -1,16 +1,5 @@
-export type DatabaseHealthStatus = 'up' | 'down';
-
-export interface DatabaseHealthError {
-  name: string;
-  message: string;
-}
-
-export interface DatabaseHealthResult {
-  name: string;
-  status: DatabaseHealthStatus;
-  message: string;
-  error?: DatabaseHealthError;
-}
+import { DatabaseHealthError } from '@volontariapp/errors';
+import type { DatabaseHealthResult } from './database-health-types.js';
 
 export abstract class AbstractDatabaseHealthProvider<TClient = unknown> {
   protected constructor(
@@ -41,22 +30,15 @@ export abstract class AbstractDatabaseHealthProvider<TClient = unknown> {
 
   private normalizeError(error: unknown): DatabaseHealthError {
     if (error instanceof Error) {
-      return {
-        name: error.name,
-        message: error.message,
-      };
+      return new DatabaseHealthError(error.message, 'DATABASE_HEALTH_ERROR', {
+        causeName: error.name,
+      });
     }
 
     if (typeof error === 'string') {
-      return {
-        name: 'Error',
-        message: error,
-      };
+      return new DatabaseHealthError(error);
     }
 
-    return {
-      name: 'UnknownError',
-      message: 'Unknown error while pinging database',
-    };
+    return new DatabaseHealthError('Unknown error while pinging database');
   }
 }

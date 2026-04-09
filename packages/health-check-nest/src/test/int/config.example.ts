@@ -2,7 +2,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Type } from 'class-transformer';
 import { IsDefined, ValidateNested } from 'class-validator';
-import type { IPostgresConfig, INeo4jConfig, IRedisConfig } from '@volontariapp/bridge';
+import type { INeo4jConfig, IPostgresConfig, IRedisConfig } from '@volontariapp/bridge';
 import {
   BaseConfig,
   Neo4jConfig,
@@ -32,7 +32,7 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 const configDir = resolve(currentDir, '../config');
 const config = loadConfig(configDir, IntegrationConfig);
 
-export const postgresConfig: IPostgresConfig = {
+export const testDbPostgresConfig: IPostgresConfig = {
   host: config.postgres.host,
   port: config.postgres.port,
   username: config.postgres.username,
@@ -42,7 +42,7 @@ export const postgresConfig: IPostgresConfig = {
   ssl: config.postgres.ssl,
 };
 
-export const neo4jConfig: INeo4jConfig = {
+export const testDbNeo4jConfig: INeo4jConfig = {
   url: `${config.neo4j.scheme}://${config.neo4j.host}:${String(config.neo4j.port)}`,
   authToken: {
     scheme: config.neo4j.scheme,
@@ -51,11 +51,10 @@ export const neo4jConfig: INeo4jConfig = {
   },
 };
 
-export const redisConfig: IRedisConfig = {
+export const testDbRedisConfig: IRedisConfig = {
   host: config.redis.host,
   port: config.redis.port,
   username: config.redis.username,
-  password: config.redis.password,
   db: config.redis.dbIndex,
   keyPrefix: config.redis.keyPrefix,
 };

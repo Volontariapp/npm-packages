@@ -3966,7 +3966,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/config@workspace:packages/config":
+"@volontariapp/config@npm:1.0.0, @volontariapp/config@workspace:packages/config":
   version: 0.0.0-use.local
   resolution: "@volontariapp/config@workspace:packages/config"
   dependencies:
@@ -4128,6 +4128,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@volontariapp/bridge": "npm:0.2.0"
     "@volontariapp/bridge-nest": "npm:0.2.0"
+    "@volontariapp/config": "npm:1.0.0"
     "@volontariapp/errors-nest": "npm:0.4.0"
     "@volontariapp/health-check": "npm:0.1.0"
     "@volontariapp/logger": "npm:0.2.0"
@@ -4149,6 +4150,7 @@ __metadata:
     "@jest/globals": "npm:^30.3.0"
     "@types/jest": "npm:^30.0.0"
     "@volontariapp/bridge": "npm:0.2.0"
+    "@volontariapp/config": "npm:1.0.0"
     "@volontariapp/errors": "npm:0.3.0"
     eslint: "npm:9.18.0"
     jest: "npm:^30.3.0"

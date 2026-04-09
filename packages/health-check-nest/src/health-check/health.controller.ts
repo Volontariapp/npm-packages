@@ -34,11 +34,11 @@ export class HealthController {
   ) {}
 
   private getRequestedDatabases(): SupportedDatabase[] {
-    return this.config.databases ?? ['postgres', 'redis', 'neo4j'];
+    return this.config.databases;
   }
 
   private shouldFailOnMissingProvider(): boolean {
-    return this.config.failOnMissingProvider ?? true;
+    return this.config.failOnMissingProvider;
   }
 
   private buildOrchestrator(): NestDatabaseHealthOrchestrator {

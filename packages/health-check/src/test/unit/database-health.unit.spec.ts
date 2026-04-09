@@ -1,4 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
+import { DatabaseHealthError } from '@volontariapp/errors';
 import {
   AbstractDatabaseHealthProvider,
   DatabaseHealthOrchestrator,
@@ -31,13 +32,21 @@ describe('Database health core', () => {
   it('normalizes error when ping fails', async () => {
     const provider = new TestProvider('redis', () => Promise.reject(new Error('boom')));
 
-    await expect(provider.health()).resolves.toEqual({
+    const result = await provider.health();
+
+    expect(result).toMatchObject({
       name: 'redis',
       status: 'down',
       message: 'redis connection failed',
-      error: {
-        name: 'Error',
-        message: 'boom',
+    });
+
+    expect(result.error).toBeInstanceOf(DatabaseHealthError);
+    expect(result.error).toMatchObject({
+      name: 'DatabaseHealthError',
+      message: 'boom',
+      code: 'DATABASE_HEALTH_ERROR',
+      details: {
+        causeName: 'Error',
       },
     });
   });

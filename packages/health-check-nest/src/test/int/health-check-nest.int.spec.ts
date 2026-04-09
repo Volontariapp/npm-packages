@@ -2,7 +2,6 @@ import { beforeAll, afterAll, describe, expect, it } from '@jest/globals';
 import { Test } from '@nestjs/testing';
 import type { TestingModule } from '@nestjs/testing';
 import { HealthCheckService } from '@nestjs/terminus';
-import type { IPostgresConfig, INeo4jConfig, IRedisConfig } from '@volontariapp/bridge';
 import {
   NestNeo4jProvider,
   NestPostgresProvider,
@@ -13,6 +12,7 @@ import {
 } from '@volontariapp/bridge-nest';
 import { HEALTH_CONFIG } from '../../health-check/health-config.js';
 import { HealthController } from '../../health-check/health.controller.js';
+import { testDbNeo4jConfig, testDbPostgresConfig, testDbRedisConfig } from './config.example.js';
 import { createHealthServiceMock } from '../utils/utils.js';
 
 type HealthResponse = {
@@ -22,28 +22,6 @@ type HealthResponse = {
   postgres?: { status?: string };
   neo4j?: { status?: string };
   redis?: { status?: string };
-};
-
-const testDbPostgresConfig: IPostgresConfig = {
-  host: 'localhost',
-  port: 5432,
-  username: 'user',
-  password: 'password',
-  database: 'bridge_test',
-  synchronize: true,
-};
-
-const testDbNeo4jConfig: INeo4jConfig = {
-  url: 'bolt://localhost:7687',
-  authToken: {
-    principal: 'neo4j',
-    credentials: 'password',
-  },
-};
-
-const testDbRedisConfig: IRedisConfig = {
-  host: 'localhost',
-  port: 6379,
 };
 
 describe('Health Check Nest (Integration)', () => {
@@ -84,9 +62,7 @@ describe('Health Check Nest (Integration)', () => {
   });
 
   afterAll(async () => {
-    if (moduleRef !== undefined) {
-      await moduleRef.close();
-    }
+    await moduleRef.close();
   });
 
   it('should inject NestPostgresProvider and have it connected', () => {

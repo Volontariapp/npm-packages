@@ -8,6 +8,7 @@ describe('HealthController', () => {
   it('returns only configured database checks when providers are available', async () => {
     const config: HealthConfig = {
       databases: ['postgres', 'redis'],
+      failOnMissingProvider: true,
     };
 
     const postgresProvider = {
