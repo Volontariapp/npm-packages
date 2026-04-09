@@ -20,6 +20,13 @@ import {
   RedisNestHealthProvider,
 } from './db-health.providers.js';
 
+type HealthProviderResolver = {
+  create: () => AbstractDatabaseHealthProvider | undefined;
+  missingWarning: string;
+  missingErrorMessage: string;
+  registeredDebugMessage: string;
+};
+
 @Controller('health')
 export class HealthController {
   private readonly logger = new Logger({ context: 'HealthController', format: 'json' });
@@ -41,10 +48,67 @@ export class HealthController {
     return this.config.failOnMissingProvider;
   }
 
+  private getHealthProviderResolvers(): Record<SupportedDatabase, HealthProviderResolver> {
+    return {
+      postgres: {
+        create: () =>
+          this.postgresProvider === undefined
+            ? undefined
+            : new PostgresNestHealthProvider(this.postgresProvider),
+        missingWarning: 'Postgres provider missing for health-check',
+        missingErrorMessage:
+          'NestPostgresProvider for health-check. Import PostgresBridgeModule.register(...) first.',
+        registeredDebugMessage: 'Postgres health provider registered',
+      },
+      redis: {
+        create: () =>
+          this.redisProvider === undefined
+            ? undefined
+            : new RedisNestHealthProvider(this.redisProvider),
+        missingWarning: 'Redis provider missing for health-check',
+        missingErrorMessage:
+          'NestRedisProvider for health-check. Import RedisBridgeModule.register(...) first.',
+        registeredDebugMessage: 'Redis health provider registered',
+      },
+      neo4j: {
+        create: () =>
+          this.neo4jProvider === undefined
+            ? undefined
+            : new Neo4jNestHealthProvider(this.neo4jProvider),
+        missingWarning: 'Neo4j provider missing for health-check',
+        missingErrorMessage:
+          'NestNeo4jProvider for health-check. Import Neo4jBridgeModule.register(...) first.',
+        registeredDebugMessage: 'Neo4j health provider registered',
+      },
+    };
+  }
+
+  private registerRequestedProvider(
+    dbName: SupportedDatabase,
+    resolvers: Record<SupportedDatabase, HealthProviderResolver>,
+    failOnMissingProvider: boolean,
+    dbHealthProviders: AbstractDatabaseHealthProvider[],
+  ): void {
+    const resolver = resolvers[dbName];
+    const provider = resolver.create();
+
+    if (provider === undefined) {
+      this.logger.warn(resolver.missingWarning);
+      if (failOnMissingProvider) {
+        throw BRIDGE_NOT_INITIALIZED(resolver.missingErrorMessage);
+      }
+      return;
+    }
+
+    dbHealthProviders.push(provider);
+    this.logger.debug(resolver.registeredDebugMessage);
+  }
+
   private buildOrchestrator(): NestDatabaseHealthOrchestrator {
     const dbHealthProviders: AbstractDatabaseHealthProvider[] = [];
     const requestedDatabases = this.getRequestedDatabases();
     const failOnMissingProvider = this.shouldFailOnMissingProvider();
+    const resolvers = this.getHealthProviderResolvers();
 
     this.logger.debug('Building health-check orchestrator', {
       requestedDatabases,
@@ -52,50 +116,7 @@ export class HealthController {
     });
 
     for (const dbName of requestedDatabases) {
-      if (dbName === 'postgres') {
-        if (this.postgresProvider === undefined) {
-          this.logger.warn('Postgres provider missing for health-check');
-          if (failOnMissingProvider) {
-            throw BRIDGE_NOT_INITIALIZED(
-              'NestPostgresProvider for health-check. Import PostgresBridgeModule.register(...) first.',
-            );
-          }
-          continue;
-        }
-        const postgresProvider = new PostgresNestHealthProvider(this.postgresProvider);
-        dbHealthProviders.push(postgresProvider);
-        this.logger.debug('Postgres health provider registered');
-        continue;
-      }
-
-      if (dbName === 'redis') {
-        if (this.redisProvider === undefined) {
-          this.logger.warn('Redis provider missing for health-check');
-          if (failOnMissingProvider) {
-            throw BRIDGE_NOT_INITIALIZED(
-              'NestRedisProvider for health-check. Import RedisBridgeModule.register(...) first.',
-            );
-          }
-          continue;
-        }
-
-        dbHealthProviders.push(new RedisNestHealthProvider(this.redisProvider));
-        this.logger.debug('Redis health provider registered');
-        continue;
-      }
-
-      if (this.neo4jProvider === undefined) {
-        this.logger.warn('Neo4j provider missing for health-check');
-        if (failOnMissingProvider) {
-          throw BRIDGE_NOT_INITIALIZED(
-            'NestNeo4jProvider for health-check. Import Neo4jBridgeModule.register(...) first.',
-          );
-        }
-        continue;
-      }
-
-      dbHealthProviders.push(new Neo4jNestHealthProvider(this.neo4jProvider));
-      this.logger.debug('Neo4j health provider registered');
+      this.registerRequestedProvider(dbName, resolvers, failOnMissingProvider, dbHealthProviders);
     }
 
     if (dbHealthProviders.length === 0) {
@@ -103,7 +124,9 @@ export class HealthController {
       throw BRIDGE_NOT_INITIALIZED('Database providers for health-check');
     }
 
-    this.logger.info('Health-check orchestrator ready', { providersCount: dbHealthProviders.length });
+    this.logger.info('Health-check orchestrator ready', {
+      providersCount: dbHealthProviders.length,
+    });
 
     return new NestDatabaseHealthOrchestrator(new DatabaseHealthOrchestrator(dbHealthProviders));
   }
