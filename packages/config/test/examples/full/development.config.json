@@ -1,0 +1,22 @@
+{
+  "nodeEnv": "local",
+  "port": 3000,
+  "logger": {
+    "level": "info",
+    "format": "text"
+  },
+  "microServices": {
+    "msPostUrl": "http://localhost:5002",
+    "msUserUrl": "http://localhost:5001",
+    "msEventUrl": "http://localhost:5003"
+  },
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "volontariapp_dev"
+  },
+  "auth": {
+    "internalPublicKeyPath": "./keys/internal.pub",
+    "internalExpiresIn": "24h"
+  }
+}

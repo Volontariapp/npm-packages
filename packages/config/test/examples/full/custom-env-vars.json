@@ -1,0 +1,26 @@
+{
+  "port": "PORT",
+  "logger": {
+    "level": "LOGGER_LEVEL",
+    "format": "LOGGER_FORMAT"
+  },
+  "db": {
+    "host": "DB_HOST",
+    "port": "DB_PORT",
+    "username": "DB_USERNAME",
+    "password": "DB_PASSWORD"
+  },
+  "redis": {
+    "host": "REDIS_HOST",
+    "port": "REDIS_PORT"
+  },
+  "neo4j": {
+    "host": "NEO4J_HOST",
+    "port": "NEO4J_PORT"
+  },
+  "auth": {
+    "internalPrivateKeyPath": "INTERNAL_TOKEN_PRIVATE_KEY_PATH",
+    "accessTokenPrivateKeyPath": "ACCESS_TOKEN_PRIVATE_KEY_PATH",
+    "refreshTokenPrivateKeyPath": "REFRESH_TOKEN_PRIVATE_KEY_PATH"
+  }
+}
