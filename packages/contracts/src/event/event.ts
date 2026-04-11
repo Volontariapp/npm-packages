@@ -9,7 +9,7 @@ import _m0 from "protobufjs"; const { wrappers } = _m0;
 
 export interface Event {
   id: string;
-  localisationName: string;
+  locationName: string;
   title: string;
   description: string;
   startDate: Date | undefined;
