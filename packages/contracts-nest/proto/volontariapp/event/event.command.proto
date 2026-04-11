@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package volontariapp.event;
 
-import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "volontariapp/common/geo.proto";
 import "volontariapp/event/event.proto";
@@ -23,7 +22,7 @@ message CreateEventCommand {
 message UpdateEventCommand {
   string id = 1;
   Event event = 2;
-  google.protobuf.FieldMask update_mask = 3;
+  repeated string update_mask = 3;
 }
 
 message ChangeEventStateCommand {

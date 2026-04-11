@@ -22,7 +22,6 @@ message ManageRequirementsResponse {
   string message = 2;
 }
 
-// Unique Responses for Query Service
 message GetEventResponse {
   Event event = 1;
 }
@@ -36,7 +35,6 @@ message ListRequirementsResponse {
   repeated Requirement requirements = 1;
 }
 
-// Unique Responses for Tag Service
 message GetTagsResponse {
   repeated Tag tags = 1;
 }
