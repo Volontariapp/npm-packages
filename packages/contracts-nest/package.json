@@ -18,10 +18,13 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json",
+    "./proto/*": "./proto/*"
   },
   "files": [
-    "dist"
+    "dist",
+    "proto"
   ],
   "engines": {
     "node": ">=24.14.0"

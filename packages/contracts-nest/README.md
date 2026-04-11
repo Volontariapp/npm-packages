@@ -8,6 +8,7 @@ This package provides the integration layer for NestJS microservices. It contain
 - **gRPC Helpers**: `getGrpcOptions` and configuration utilities.
 - **Service Controllers**: Generated decorators like `UserServiceControllerMethods`.
 - **Service Clients**: Interfaces for gRPC clients using RxJS.
+- **Proto Files**: Contains the original `.proto` definition files in the `proto/` directory.
 
 ## ⚠️ Compatibility
 
