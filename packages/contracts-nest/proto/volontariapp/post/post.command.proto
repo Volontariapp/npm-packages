@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package volontariapp.post;
+
+message CreatePostCommand {
+  string author_id = 1;
+  string title = 2;
+  string content = 3;
+}
+
+message UpdatePostCommand {
+  string id = 1;
+  optional string title = 2;
+  optional string content = 3;
+}
+
+message DeletePostCommand {
+  string id = 1;
+}
