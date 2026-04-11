@@ -6,15 +6,54 @@
 
 /* eslint-disable */
 import _m0 from "protobufjs"; const { wrappers } = _m0;
+import { Point } from "../common/geo.js";
+
+export enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0,
+  EVENT_TYPE_SOCIAL = 1,
+  EVENT_TYPE_ECOLOGY = 2,
+  UNRECOGNIZED = -1,
+}
+
+export enum EventState {
+  EVENT_STATE_UNSPECIFIED = 0,
+  EVENT_STATE_DRAFT = 1,
+  EVENT_STATE_PUBLISHED = 2,
+  EVENT_STATE_CANCELLED = 3,
+  UNRECOGNIZED = -1,
+}
+
+export interface Tag {
+  id: string;
+  slug: string;
+  name: string;
+  color: string;
+}
+
+export interface Requirement {
+  id: string;
+  name: string;
+  description: string;
+  neededQuantity: number;
+  currentQuantity: number;
+}
 
 export interface Event {
   id: string;
-  locationName: string;
   title: string;
   description: string;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
+  startAt: Date | undefined;
+  endAt: Date | undefined;
+  location: Point | undefined;
+  localisationName: string;
+  type: EventType;
+  state: EventState;
+  awardedImpactScore: number;
+  maxParticipants: number;
+  currentParticipants: number;
   organizerId: string;
+  tags: Tag[];
+  requirements: Requirement[];
 }
 
 wrappers[".google.protobuf.Timestamp"] = {

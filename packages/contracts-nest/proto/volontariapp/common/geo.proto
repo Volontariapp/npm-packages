@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package volontariapp.common;
+
+message Point {
+  double latitude = 1;
+  double longitude = 2;
+}
+
+message GeoCircle {
+  Point center = 1;
+  double radius_meters = 2;
+}

@@ -6,27 +6,53 @@
 
 /* eslint-disable */
 import _m0 from "protobufjs"; const { wrappers } = _m0;
+import { Point } from "../common/geo.js";
+import { Event, EventState, EventType } from "./event.js";
 
 export interface CreateEventCommand {
   title: string;
   description: string;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  location: string;
-  organizerId: string;
+  startAt: Date | undefined;
+  endAt: Date | undefined;
+  location: Point | undefined;
+  localisationName: string;
+  type: EventType;
+  awardedImpactScore: number;
+  maxParticipants: number;
+  tagIds: string[];
 }
 
 export interface UpdateEventCommand {
   id: string;
-  title?: string | undefined;
-  description?: string | undefined;
-  startDate?: Date | undefined;
-  endDate?: Date | undefined;
-  location?: string | undefined;
+  event: Event | undefined;
+  updateMask: string[] | undefined;
 }
 
-export interface DeleteEventCommand {
+export interface ChangeEventStateCommand {
   id: string;
+  newState: EventState;
+}
+
+export interface ManageRequirementCommand {
+  eventId: string;
+  add?: AddRequirement | undefined;
+  remove?: RemoveRequirement | undefined;
+}
+
+export interface AddRequirement {
+  name: string;
+  description: string;
+  neededQuantity: number;
+}
+
+export interface RemoveRequirement {
+  requirementId: string;
+}
+
+export interface CreateTagCommand {
+  slug: string;
+  name: string;
+  color: string;
 }
 
 wrappers[".google.protobuf.Timestamp"] = {

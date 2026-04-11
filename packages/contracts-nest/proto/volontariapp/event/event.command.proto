@@ -2,26 +2,55 @@ syntax = "proto3";
 
 package volontariapp.event;
 
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
+import "volontariapp/common/geo.proto";
+import "volontariapp/event/event.proto";
 
 message CreateEventCommand {
   string title = 1;
   string description = 2;
-  google.protobuf.Timestamp start_date = 3;
-  google.protobuf.Timestamp end_date = 4;
-  string location = 5;
-  string organizer_id = 6;
+  google.protobuf.Timestamp start_at = 3;
+  google.protobuf.Timestamp end_at = 4;
+  volontariapp.common.Point location = 5;
+  string localisation_name = 6;
+  EventType type = 7;
+  int32 awarded_impact_score = 8;
+  int32 max_participants = 9;
+  repeated string tag_ids = 10;
 }
 
 message UpdateEventCommand {
   string id = 1;
-  optional string title = 2;
-  optional string description = 3;
-  optional google.protobuf.Timestamp start_date = 4;
-  optional google.protobuf.Timestamp end_date = 5;
-  optional string location = 6;
+  Event event = 2;
+  google.protobuf.FieldMask update_mask = 3;
 }
 
-message DeleteEventCommand {
+message ChangeEventStateCommand {
   string id = 1;
+  EventState new_state = 2;
+}
+
+message ManageRequirementCommand {
+  string event_id = 1;
+  oneof action {
+    AddRequirement add = 2;
+    RemoveRequirement remove = 3;
+  }
+}
+
+message AddRequirement {
+  string name = 1;
+  string description = 2;
+  int32 needed_quantity = 3;
+}
+
+message RemoveRequirement {
+  string requirement_id = 1;
+}
+
+message CreateTagCommand {
+  string slug = 1;
+  string name = 2;
+  string color = 3;
 }
