@@ -5,17 +5,17 @@
 // source: volontariapp/event/event.services.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
-import { CreateEventCommand, DeleteEventCommand, UpdateEventCommand } from "./event.command.js";
-import { EventQuery, ListEventsQuery } from "./event.query.js";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
+import { CreateEventCommand, DeleteEventCommand, UpdateEventCommand } from './event.command.js';
+import { EventQuery, ListEventsQuery } from './event.query.js';
 import {
   CreateEventResponse,
   DeleteEventResponse,
   GetEventResponse,
   ListEventsResponse,
   UpdateEventResponse,
-} from "./event.responses.js";
+} from './event.responses.js';
 
 export interface EventServiceClient {
   getEvent(request: EventQuery): Observable<GetEventResponse>;
@@ -30,7 +30,9 @@ export interface EventServiceClient {
 }
 
 export interface EventServiceController {
-  getEvent(request: EventQuery): Promise<GetEventResponse> | Observable<GetEventResponse> | GetEventResponse;
+  getEvent(
+    request: EventQuery,
+  ): Promise<GetEventResponse> | Observable<GetEventResponse> | GetEventResponse;
 
   listEvents(
     request: ListEventsQuery,
@@ -51,17 +53,23 @@ export interface EventServiceController {
 
 export function EventServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getEvent", "listEvents", "createEvent", "updateEvent", "deleteEvent"];
+    const grpcMethods: string[] = [
+      'getEvent',
+      'listEvents',
+      'createEvent',
+      'updateEvent',
+      'deleteEvent',
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("EventService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod('EventService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("EventService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod('EventService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const EVENT_SERVICE_NAME = "EventService";
+export const EVENT_SERVICE_NAME = 'EventService';

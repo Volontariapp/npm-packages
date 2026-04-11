@@ -5,17 +5,17 @@
 // source: volontariapp/post/post.services.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
-import { CreatePostCommand, DeletePostCommand, UpdatePostCommand } from "./post.command.js";
-import { ListPostsQuery, PostQuery } from "./post.query.js";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
+import { CreatePostCommand, DeletePostCommand, UpdatePostCommand } from './post.command.js';
+import { ListPostsQuery, PostQuery } from './post.query.js';
 import {
   CreatePostResponse,
   DeletePostResponse,
   GetPostResponse,
   ListPostsResponse,
   UpdatePostResponse,
-} from "./post.responses.js";
+} from './post.responses.js';
 
 export interface PostServiceClient {
   getPost(request: PostQuery): Observable<GetPostResponse>;
@@ -30,9 +30,13 @@ export interface PostServiceClient {
 }
 
 export interface PostServiceController {
-  getPost(request: PostQuery): Promise<GetPostResponse> | Observable<GetPostResponse> | GetPostResponse;
+  getPost(
+    request: PostQuery,
+  ): Promise<GetPostResponse> | Observable<GetPostResponse> | GetPostResponse;
 
-  listPosts(request: ListPostsQuery): Promise<ListPostsResponse> | Observable<ListPostsResponse> | ListPostsResponse;
+  listPosts(
+    request: ListPostsQuery,
+  ): Promise<ListPostsResponse> | Observable<ListPostsResponse> | ListPostsResponse;
 
   createPost(
     request: CreatePostCommand,
@@ -49,17 +53,23 @@ export interface PostServiceController {
 
 export function PostServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getPost", "listPosts", "createPost", "updatePost", "deletePost"];
+    const grpcMethods: string[] = [
+      'getPost',
+      'listPosts',
+      'createPost',
+      'updatePost',
+      'deletePost',
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("PostService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod('PostService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("PostService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod('PostService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const POST_SERVICE_NAME = "PostService";
+export const POST_SERVICE_NAME = 'PostService';
