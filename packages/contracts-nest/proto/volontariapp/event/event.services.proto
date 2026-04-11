@@ -6,11 +6,20 @@ import "volontariapp/event/event.query.proto";
 import "volontariapp/event/event.command.proto";
 import "volontariapp/event/event.responses.proto";
 
-
-service EventService {
-  rpc GetEvent (EventQuery) returns (GetEventResponse) {}
-  rpc ListEvents (ListEventsQuery) returns (ListEventsResponse) {}
+service EventCommandService {
   rpc CreateEvent (CreateEventCommand) returns (CreateEventResponse) {}
   rpc UpdateEvent (UpdateEventCommand) returns (UpdateEventResponse) {}
-  rpc DeleteEvent (DeleteEventCommand) returns (DeleteEventResponse) {}
+  rpc ChangeEventState (ChangeEventStateCommand) returns (ChangeEventStateResponse) {}
+  rpc ManageRequirements (ManageRequirementCommand) returns (ManageRequirementsResponse) {}
+}
+
+service EventQueryService {
+  rpc GetEvent (GetEventQuery) returns (GetEventResponse) {}
+  rpc SearchEvents (SearchEventsQuery) returns (SearchEventsResponse) {}
+  rpc ListRequirements (ListRequirementsQuery) returns (ListRequirementsResponse) {}
+}
+
+service TagService {
+  rpc GetTags (GetTagsQuery) returns (GetTagsResponse) {}
+  rpc CreateTag (CreateTagCommand) returns (CreateTagResponse) {}
 }

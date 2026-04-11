@@ -2,12 +2,24 @@ syntax = "proto3";
 
 package volontariapp.event;
 
-import "volontariapp/common/pagination.proto";
+import "volontariapp/common/geo.proto";
+import "volontariapp/event/event.proto";
 
-message EventQuery {
+message GetEventQuery {
   string id = 1;
 }
 
-message ListEventsQuery {
-  volontariapp.common.PaginationRequest pagination = 1;
+message SearchEventsQuery {
+  volontariapp.common.GeoCircle area = 1;
+  repeated EventType types = 2;
+  repeated string tag_slugs = 3;
+  bool only_available = 4;
+}
+
+message ListRequirementsQuery {
+  string event_id = 1;
+}
+
+message GetTagsQuery {
+  repeated string slugs = 1;
 }
