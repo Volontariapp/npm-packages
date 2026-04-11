@@ -41,3 +41,4 @@
 ### Major Changes
 
 - CI done, so major release to flush previous trash versions
+[3.1.0]: https://github.com/Volontariapp/npm-packages/pull/PR_PLACEHOLDER
