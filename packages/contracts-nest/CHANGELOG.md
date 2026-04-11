@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.9
+
+### Patch Changes
+
+- Bump contract-nest packages
+
 ## 2.0.8
 
 ### Patch Changes

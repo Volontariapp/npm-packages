@@ -10,57 +10,72 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export enum GRPC_SERVICES {
-  USER = 'USER',
-  POST = 'POST',
-  EVENT = 'EVENT',
+  USER_SERVICE = 'UserService',
+  POST_SERVICE = 'PostService',
+  EVENT_COMMAND_SERVICE = 'EventCommandService',
+  EVENT_QUERY_SERVICE = 'EventQueryService',
+  TAG_SERVICE = 'TagService',
 }
 
-export enum USER_GRPC_METHODS {
-  GET_USER = 'getUser',
-  LIST_USERS = 'listUsers',
-  CREATE_USER = 'createUser',
-  UPDATE_USER = 'updateUser',
-  DELETE_USER = 'deleteUser',
-}
+export const USER_GRPC_METHODS = {
+  GET_USER: 'GetUser',
+  LIST_USERS: 'ListUsers',
+  CREATE_USER: 'CreateUser',
+  UPDATE_USER: 'UpdateUser',
+  DELETE_USER: 'DeleteUser',
+} as const;
 
-export enum POST_GRPC_METHODS {
-  GET_POST = 'getPost',
-  LIST_POSTS = 'listPosts',
-  CREATE_POST = 'createPost',
-  UPDATE_POST = 'updatePost',
-  DELETE_POST = 'deletePost',
-}
+export const POST_GRPC_METHODS = {
+  GET_POST: 'GetPost',
+  LIST_POSTS: 'ListPosts',
+  CREATE_POST: 'CreatePost',
+  UPDATE_POST: 'UpdatePost',
+  DELETE_POST: 'DeletePost',
+} as const;
 
-export enum EVENT_GRPC_METHODS {
-  GET_EVENT = 'getEvent',
-  LIST_EVENTS = 'listEvents',
-  CREATE_EVENT = 'createEvent',
-  UPDATE_EVENT = 'updateEvent',
-  DELETE_EVENT = 'deleteEvent',
-}
+export const EVENT_COMMAND_METHODS = {
+  CREATE_EVENT: 'CreateEvent',
+  UPDATE_EVENT: 'UpdateEvent',
+  CHANGE_EVENT_STATE: 'ChangeEventState',
+  MANAGE_REQUIREMENTS: 'ManageRequirements',
+} as const;
+
+export const EVENT_QUERY_METHODS = {
+  GET_EVENT: 'GetEvent',
+  SEARCH_EVENTS: 'SearchEvents',
+  LIST_REQUIREMENTS: 'ListRequirements',
+} as const;
+
+export const TAG_METHODS = {
+  GET_TAGS: 'GetTags',
+  CREATE_TAG: 'CreateTag',
+} as const;
 
 export const GRPC_SERVICES_CONFIG = {
-  [GRPC_SERVICES.USER]: {
+  USER: {
     package: 'volontariapp.user',
     protoFileName: 'user.services.proto',
     domain: 'user',
   },
-  [GRPC_SERVICES.POST]: {
+  POST: {
     package: 'volontariapp.post',
     protoFileName: 'post.services.proto',
     domain: 'post',
   },
-  [GRPC_SERVICES.EVENT]: {
+  EVENT: {
     package: 'volontariapp.event',
     protoFileName: 'event.services.proto',
     domain: 'event',
   },
 };
 
-export const getGrpcOptions = (service: GRPC_SERVICES, url: string): GrpcOptions => {
-  const config = GRPC_SERVICES_CONFIG[service];
+export const getGrpcOptions = (
+  domain: keyof typeof GRPC_SERVICES_CONFIG,
+  url: string,
+): GrpcOptions => {
+  const config = GRPC_SERVICES_CONFIG[domain];
   const protoRoot = join(__dirname, '../proto');
-  logger.info(`Generating gRPC options for ${service} at ${url}`);
+  logger.info(`Generating gRPC options for ${domain} domain at ${url}`);
 
   return {
     transport: Transport.GRPC,
