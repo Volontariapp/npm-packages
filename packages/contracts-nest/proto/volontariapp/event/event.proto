@@ -3,13 +3,50 @@ syntax = "proto3";
 package volontariapp.event;
 
 import "google/protobuf/timestamp.proto";
+import "volontariapp/common/geo.proto";
+
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_SOCIAL = 1;
+  EVENT_TYPE_ECOLOGY = 2;
+}
+
+enum EventState {
+  EVENT_STATE_UNSPECIFIED = 0;
+  EVENT_STATE_DRAFT = 1;
+  EVENT_STATE_PUBLISHED = 2;
+  EVENT_STATE_CANCELLED = 3;
+}
+
+message Tag {
+  string id = 1;
+  string slug = 2;
+  string name = 3;
+  string color = 4;
+}
+
+message Requirement {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int32 needed_quantity = 4;
+  int32 current_quantity = 5;
+}
 
 message Event {
   string id = 1;
-  string location_name = 2;
-  string title = 3;
-  string description = 4;
-  google.protobuf.Timestamp start_date = 5;
-  google.protobuf.Timestamp end_date = 6;
-  string organizer_id = 7;
+  string title = 2;
+  string description = 3;
+  google.protobuf.Timestamp start_at = 4;
+  google.protobuf.Timestamp end_at = 5;
+  volontariapp.common.Point location = 6;
+  string localisation_name = 7;
+  EventType type = 8;
+  EventState state = 9;
+  int32 awarded_impact_score = 10;
+  int32 max_participants = 11;
+  int32 current_participants = 12;
+  string organizer_id = 13;
+  repeated Tag tags = 14;
+  repeated Requirement requirements = 15;
 }

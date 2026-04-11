@@ -5,13 +5,9 @@
 // source: volontariapp/event/event.responses.proto
 
 /* eslint-disable */
-import { PaginationResponse } from "../common/pagination.js";
-import { Event } from "./event.js";
+import { Event, Requirement, Tag } from "./event.js";
 
-export interface GetEventResponse {
-  event: Event | undefined;
-}
-
+/** Unique Responses for Command Service */
 export interface CreateEventResponse {
   event: Event | undefined;
 }
@@ -20,11 +16,32 @@ export interface UpdateEventResponse {
   event: Event | undefined;
 }
 
-export interface ListEventsResponse {
-  events: Event[];
-  pagination: PaginationResponse | undefined;
+export interface ChangeEventStateResponse {
+  event: Event | undefined;
 }
 
-export interface DeleteEventResponse {
+export interface ManageRequirementsResponse {
   success: boolean;
+  message: string;
+}
+
+export interface GetEventResponse {
+  event: Event | undefined;
+}
+
+export interface SearchEventsResponse {
+  events: Event[];
+  totalCount: number;
+}
+
+export interface ListRequirementsResponse {
+  requirements: Requirement[];
+}
+
+export interface GetTagsResponse {
+  tags: Tag[];
+}
+
+export interface CreateTagResponse {
+  tag: Tag | undefined;
 }

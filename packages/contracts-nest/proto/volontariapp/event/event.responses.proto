@@ -2,16 +2,9 @@ syntax = "proto3";
 
 package volontariapp.event;
 
-import "volontariapp/common/pagination.proto";
 import "volontariapp/event/event.proto";
 
-
-
-
-message GetEventResponse {
-  Event event = 1;
-}
-
+// Unique Responses for Command Service
 message CreateEventResponse {
   Event event = 1;
 }
@@ -20,11 +13,32 @@ message UpdateEventResponse {
   Event event = 1;
 }
 
-message ListEventsResponse {
-  repeated Event events = 1;
-  volontariapp.common.PaginationResponse pagination = 2;
+message ChangeEventStateResponse {
+  Event event = 1;
 }
 
-message DeleteEventResponse {
+message ManageRequirementsResponse {
   bool success = 1;
+  string message = 2;
+}
+
+message GetEventResponse {
+  Event event = 1;
+}
+
+message SearchEventsResponse {
+  repeated Event events = 1;
+  int32 total_count = 2;
+}
+
+message ListRequirementsResponse {
+  repeated Requirement requirements = 1;
+}
+
+message GetTagsResponse {
+  repeated Tag tags = 1;
+}
+
+message CreateTagResponse {
+  Tag tag = 1;
 }

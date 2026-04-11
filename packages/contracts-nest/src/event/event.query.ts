@@ -5,12 +5,24 @@
 // source: volontariapp/event/event.query.proto
 
 /* eslint-disable */
-import { PaginationRequest } from "../common/pagination.js";
+import { GeoCircle } from "../common/geo.js";
+import { EventType } from "./event.js";
 
-export interface EventQuery {
+export interface GetEventQuery {
   id: string;
 }
 
-export interface ListEventsQuery {
-  pagination: PaginationRequest | undefined;
+export interface SearchEventsQuery {
+  area: GeoCircle | undefined;
+  types: EventType[];
+  tagSlugs: string[];
+  onlyAvailable: boolean;
+}
+
+export interface ListRequirementsQuery {
+  eventId: string;
+}
+
+export interface GetTagsQuery {
+  slugs: string[];
 }
