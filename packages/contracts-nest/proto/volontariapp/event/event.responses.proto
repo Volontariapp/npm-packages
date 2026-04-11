@@ -4,7 +4,6 @@ package volontariapp.event;
 
 import "volontariapp/event/event.proto";
 
-// Unique Responses for Command Service
 message CreateEventResponse {
   Event event = 1;
 }

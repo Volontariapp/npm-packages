@@ -7,7 +7,6 @@
 /* eslint-disable */
 import { Event, Requirement, Tag } from "./event.js";
 
-/** Unique Responses for Command Service */
 export interface CreateEventResponse {
   event: Event | undefined;
 }
