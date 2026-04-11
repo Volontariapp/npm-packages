@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 
 message Event {
   string id = 1;
-  string localisation_name = 2;
+  string location_name = 2;
   string title = 3;
   string description = 4;
   google.protobuf.Timestamp start_date = 5;
