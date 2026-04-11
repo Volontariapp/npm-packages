@@ -3874,21 +3874,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/contracts@workspace:*, @volontariapp/contracts@workspace:packages/contracts":
+"@volontariapp/contracts-nest@workspace:packages/contracts-nest":
   version: 0.0.0-use.local
-  resolution: "@volontariapp/contracts@workspace:packages/contracts"
+  resolution: "@volontariapp/contracts-nest@workspace:packages/contracts-nest"
   dependencies:
     "@nestjs/common": "npm:^11.0.1"
     "@nestjs/core": "npm:^11.0.1"
     "@nestjs/microservices": "npm:^11.1.14"
+    "@volontariapp/contracts": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     protobufjs: "npm:7.5.3"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
     typescript: "npm:5.7.3"
   peerDependencies:
+    "@nestjs/common": ^11.0.0
+    "@nestjs/core": ^11.0.0
     "@nestjs/microservices": ^11.0.0
     rxjs: ^7.0.0
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/contracts@workspace:*, @volontariapp/contracts@workspace:packages/contracts":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/contracts@workspace:packages/contracts"
+  dependencies:
+    "@volontariapp/logger": "workspace:*"
+    protobufjs: "npm:7.5.3"
+    typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
 
