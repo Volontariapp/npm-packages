@@ -1,0 +1,57 @@
+{
+  "name": "@volontariapp/contracts-nest",
+  "version": "2.0.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
+  },
+  "description": "NestJS integration for Volontariapp gRPC contracts",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json",
+    "./proto/*": "./proto/*"
+  },
+  "files": [
+    "dist",
+    "proto"
+  ],
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/",
+    "test": "echo \"No tests yet\"",
+    "dev:sync-proto": "rm -rf proto && ln -s ../../../proto-registry/proto ./proto"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/microservices": "^11.1.14",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "typescript": "5.7.3"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/microservices": "^11.0.0",
+    "rxjs": "^7.0.0"
+  },
+  "dependencies": {
+    "@volontariapp/logger": "workspace:*",
+    "protobufjs": "7.5.3"
+  }
+}
