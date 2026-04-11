@@ -3881,7 +3881,6 @@ __metadata:
     "@nestjs/common": "npm:^11.0.1"
     "@nestjs/core": "npm:^11.0.1"
     "@nestjs/microservices": "npm:^11.1.14"
-    "@volontariapp/contracts": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     protobufjs: "npm:7.5.3"
     reflect-metadata: "npm:^0.2.2"
