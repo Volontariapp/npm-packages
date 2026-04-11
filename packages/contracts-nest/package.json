@@ -48,7 +48,6 @@
     "rxjs": "^7.0.0"
   },
   "dependencies": {
-    "@volontariapp/contracts": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "protobufjs": "7.5.3"
   }
