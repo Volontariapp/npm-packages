@@ -17,6 +17,12 @@ export enum GRPC_SERVICES {
   TAG_SERVICE = 'TagService',
 }
 
+export enum GRPC_MICROSERVICES {
+  USER = 'USER',
+  POST = 'POST',
+  EVENT = 'EVENT',
+}
+
 export const USER_GRPC_METHODS = {
   GET_USER: 'GetUser',
   LIST_USERS: 'ListUsers',

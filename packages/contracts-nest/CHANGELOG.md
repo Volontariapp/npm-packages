@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.10
+
+### Patch Changes
+
+- adding grpc-microservice enum
+
 ## 2.0.9
 
 ### Patch Changes
