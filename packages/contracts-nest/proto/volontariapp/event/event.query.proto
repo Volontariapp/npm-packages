@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package volontariapp.event;
+
+import "volontariapp/common/pagination.proto";
+
+message EventQuery {
+  string id = 1;
+}
+
+message ListEventsQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
