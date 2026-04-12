@@ -55,6 +55,20 @@ export interface CreateTagCommand {
   color: string;
 }
 
+export interface UpdateTagCommand {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface DeleteEventCommand {
+  id: string;
+}
+
+export interface DeleteTagCommand {
+  id: string;
+}
+
 wrappers[".google.protobuf.Timestamp"] = {
   fromObject(value: Date) {
     return { seconds: value.getTime() / 1000, nanos: (value.getTime() % 1000) * 1e6 };

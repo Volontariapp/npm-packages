@@ -25,6 +25,10 @@ export interface ManageRequirementsResponse {
   message: string;
 }
 
+export interface DeleteEventResponse {
+  success: boolean;
+}
+
 export interface GetEventResponse {
   event: Event | undefined;
 }
@@ -44,4 +48,12 @@ export interface GetTagsResponse {
 
 export interface CreateTagResponse {
   tag: Tag | undefined;
+}
+
+export interface UpdateTagResponse {
+  tag: Tag | undefined;
+}
+
+export interface DeleteTagResponse {
+  success: boolean;
 }

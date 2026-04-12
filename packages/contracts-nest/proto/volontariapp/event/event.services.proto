@@ -11,6 +11,7 @@ service EventCommandService {
   rpc UpdateEvent (UpdateEventCommand) returns (UpdateEventResponse) {}
   rpc ChangeEventState (ChangeEventStateCommand) returns (ChangeEventStateResponse) {}
   rpc ManageRequirements (ManageRequirementCommand) returns (ManageRequirementsResponse) {}
+  rpc DeleteEvent (DeleteEventCommand) returns (DeleteEventResponse) {}
 }
 
 service EventQueryService {
@@ -19,7 +20,12 @@ service EventQueryService {
   rpc ListRequirements (ListRequirementsQuery) returns (ListRequirementsResponse) {}
 }
 
-service TagService {
-  rpc GetTags (GetTagsQuery) returns (GetTagsResponse) {}
+service TagCommandService {
   rpc CreateTag (CreateTagCommand) returns (CreateTagResponse) {}
+  rpc UpdateTag (UpdateTagCommand) returns (UpdateTagResponse) {}
+  rpc DeleteTag (DeleteTagCommand) returns (DeleteTagResponse) {}
+}
+
+service TagQueryService {
+  rpc GetTags (GetTagsQuery) returns (GetTagsResponse) {}
 }
