@@ -35,16 +35,22 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "@nestjs/common": "^11.1.18",
+    "@nestjs/core": "^11.1.18",
     "@nestjs/testing": "^11.1.18",
     "@types/jest": "^30.0.0",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
+    "typeorm": "^0.3.28",
     "typescript": "5.7.3"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nestjs/common": "^11.1.18",
     "@nestjs/core": "^11.1.18",
+    "typeorm": "^0.3.28"
+  },
+  "dependencies": {
     "@volontariapp/bridge": "workspace:^",
     "@volontariapp/errors": "workspace:^",
     "@volontariapp/errors-nest": "workspace:^",
@@ -52,7 +58,6 @@
     "ioredis": "^5.10.1",
     "neo4j-driver": "^6.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
-    "typeorm": "^0.3.28"
+    "rxjs": "^7.8.2"
   }
 }

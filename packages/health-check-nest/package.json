@@ -34,6 +34,11 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "@nestjs/axios": "^4.0.1",
+    "@nestjs/common": "^11.1.17",
+    "@nestjs/core": "^11.1.17",
+    "@nestjs/microservices": "^11.1.17",
+    "@nestjs/terminus": "^11.1.1",
     "@nestjs/testing": "^11.1.17",
     "@types/jest": "^30.0.0",
     "axios": "^1.7.9",
@@ -45,12 +50,14 @@
     "ts-node": "^10.9.2",
     "typescript": "5.7.3"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/microservices": "^11.1.17",
-    "@nestjs/terminus": "^11.1.1",
+    "@nestjs/terminus": "^11.1.1"
+  },
+  "dependencies": {
     "@volontariapp/bridge": "0.2.3",
     "@volontariapp/bridge-nest": "0.2.5",
     "@volontariapp/config": "1.0.2",
