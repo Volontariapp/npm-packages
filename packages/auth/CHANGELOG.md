@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.6.5
+
 ## 2.1.6
 
 ### Patch Changes

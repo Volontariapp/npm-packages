@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.5
+
+### Patch Changes
+
+- fix errorDto example value
+
 ## 0.6.4
 
 ### Patch Changes
