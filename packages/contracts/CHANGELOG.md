@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.4
+
+### Patch Changes
+
+- Add missing event request interfaces
+
 ## 3.1.3
 
 ### Patch Changes
