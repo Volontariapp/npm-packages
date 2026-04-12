@@ -1,7 +1,7 @@
 import type { Type } from '@nestjs/common';
 import { applyDecorators } from '@nestjs/common';
 import type { ApiResponseOptions } from '@nestjs/swagger';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, getSchemaPath } from '@nestjs/swagger';
 import type { BaseError } from '@volontariapp/errors';
 import {
   BadRequestError,
@@ -45,10 +45,15 @@ export function ApiErrorResponse(
 
     responseOptions.content = {
       'application/json': {
-        example: fullExample,
+        schema: { $ref: getSchemaPath(type as string) },
+        examples: {
+          [status.toString()]: {
+            summary: description ?? `Error ${status.toString()}`,
+            value: fullExample,
+          },
+        },
       },
     };
-    responseOptions.type = type;
   } else {
     responseOptions.type = type;
   }
