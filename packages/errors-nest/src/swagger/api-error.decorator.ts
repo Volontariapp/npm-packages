@@ -36,10 +36,10 @@ export function ApiErrorResponse(
   if (example) {
     const fullExample = {
       statusCode: status,
-      code: 'ERROR_CODE',
-      message: description ?? 'An error occurred',
+      code: 'INTERNAL_ERROR',
+      message: description ?? 'An unexpected error occurred',
       timestamp: new Date().toISOString(),
-      path: '/api/resource',
+      path: '/api/v1/resource',
       ...example,
     };
 
@@ -58,7 +58,7 @@ export function ApiErrorResponse(
 
 function createErrorDecorator<T extends BaseError>(ErrorClass: Type<T>) {
   return (options?: string | ApiErrorOptions) => {
-    const error = new ErrorClass();
+    const error = new (ErrorClass as unknown as { new (): T })();
     const isString = typeof options === 'string';
     const description = isString ? options : options?.description;
     const example = isString ? undefined : options?.example;
@@ -67,7 +67,11 @@ function createErrorDecorator<T extends BaseError>(ErrorClass: Type<T>) {
     return ApiErrorResponse({
       status: error.statusCode,
       description: description ?? error.message,
-      example,
+      example: example ?? {
+        statusCode: error.statusCode,
+        code: error.code,
+        message: error.message,
+      },
       type,
     });
   };
@@ -92,7 +96,11 @@ export function CustomApiError(
   return ApiErrorResponse({
     status: error.statusCode,
     description,
-    example: options?.example,
+    example: options?.example ?? {
+      statusCode: error.statusCode,
+      code: error.code,
+      message: error.message,
+    },
     type: options?.type,
   });
 }

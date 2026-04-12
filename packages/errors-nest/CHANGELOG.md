@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.4
+
+### Patch Changes
+
+- fix errorDto example value
+
+## 0.6.3
+
+### Patch Changes
+
+- fix api decorator
+
 ## 0.6.2
 
 ### Patch Changes
