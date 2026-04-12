@@ -1,3 +1,3 @@
-import config from "@volontariapp/eslint-config";
+import config from '@volontariapp/eslint-config';
 
 export default config;
