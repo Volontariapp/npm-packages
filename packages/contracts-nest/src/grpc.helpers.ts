@@ -14,7 +14,8 @@ export enum GRPC_SERVICES {
   POST_SERVICE = 'PostService',
   EVENT_COMMAND_SERVICE = 'EventCommandService',
   EVENT_QUERY_SERVICE = 'EventQueryService',
-  TAG_SERVICE = 'TagService',
+  TAG_COMMAND_SERVICE = 'TagCommandService',
+  TAG_QUERY_SERVICE = 'TagQueryService',
 }
 
 export enum GRPC_MICROSERVICES {
@@ -22,40 +23,6 @@ export enum GRPC_MICROSERVICES {
   POST = 'POST',
   EVENT = 'EVENT',
 }
-
-export const USER_GRPC_METHODS = {
-  GET_USER: 'GetUser',
-  LIST_USERS: 'ListUsers',
-  CREATE_USER: 'CreateUser',
-  UPDATE_USER: 'UpdateUser',
-  DELETE_USER: 'DeleteUser',
-} as const;
-
-export const POST_GRPC_METHODS = {
-  GET_POST: 'GetPost',
-  LIST_POSTS: 'ListPosts',
-  CREATE_POST: 'CreatePost',
-  UPDATE_POST: 'UpdatePost',
-  DELETE_POST: 'DeletePost',
-} as const;
-
-export const EVENT_COMMAND_METHODS = {
-  CREATE_EVENT: 'CreateEvent',
-  UPDATE_EVENT: 'UpdateEvent',
-  CHANGE_EVENT_STATE: 'ChangeEventState',
-  MANAGE_REQUIREMENTS: 'ManageRequirements',
-} as const;
-
-export const EVENT_QUERY_METHODS = {
-  GET_EVENT: 'GetEvent',
-  SEARCH_EVENTS: 'SearchEvents',
-  LIST_REQUIREMENTS: 'ListRequirements',
-} as const;
-
-export const TAG_METHODS = {
-  GET_TAGS: 'GetTags',
-  CREATE_TAG: 'CreateTag',
-} as const;
 
 export const GRPC_SERVICES_CONFIG = {
   USER: {
