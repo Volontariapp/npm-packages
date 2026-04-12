@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.1
+
+### Patch Changes
+
+- bump ci
+
 ## 2.2.0
 
 ### Minor Changes

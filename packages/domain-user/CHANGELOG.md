@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.1.14
+
+### Patch Changes
+
+- bump ci
+
+- Updated dependencies []:
+  - @volontariapp/contracts@3.1.2
+  - @volontariapp/logger@0.2.1
+
 ## 2.1.13
 
 ### Patch Changes
