@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- refacto contract for gateway compatibility
+
 ## 3.0.10
 
 ### Patch Changes
