@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.6
+
+### Patch Changes
+
+- fix example value
+
 ## 0.6.5
 
 ### Patch Changes
