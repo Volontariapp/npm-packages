@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.2
+
+### Patch Changes
+
+- bump global version
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.2
+
 ## 1.1.1
 
 ### Patch Changes

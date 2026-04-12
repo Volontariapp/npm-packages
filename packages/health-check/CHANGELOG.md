@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- bump global version
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.3
+  - @volontariapp/config@1.0.2
+  - @volontariapp/errors@0.4.2
+
 ## 0.1.2
 
 ### Patch Changes

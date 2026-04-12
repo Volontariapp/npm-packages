@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.2
+
+### Patch Changes
+
+- bump global version
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.4.2
+  - @volontariapp/logger@0.2.2
+
 ## 0.6.1
 
 ### Patch Changes
