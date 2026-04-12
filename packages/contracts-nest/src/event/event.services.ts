@@ -11,20 +11,26 @@ import {
   ChangeEventStateCommand,
   CreateEventCommand,
   CreateTagCommand,
+  DeleteEventCommand,
+  DeleteTagCommand,
   ManageRequirementCommand,
   UpdateEventCommand,
+  UpdateTagCommand,
 } from "./event.command.js";
 import { GetEventQuery, GetTagsQuery, ListRequirementsQuery, SearchEventsQuery } from "./event.query.js";
 import {
   ChangeEventStateResponse,
   CreateEventResponse,
   CreateTagResponse,
+  DeleteEventResponse,
+  DeleteTagResponse,
   GetEventResponse,
   GetTagsResponse,
   ListRequirementsResponse,
   ManageRequirementsResponse,
   SearchEventsResponse,
   UpdateEventResponse,
+  UpdateTagResponse,
 } from "./event.responses.js";
 
 export interface EventCommandServiceClient {
@@ -35,6 +41,8 @@ export interface EventCommandServiceClient {
   changeEventState(request: ChangeEventStateCommand): Observable<ChangeEventStateResponse>;
 
   manageRequirements(request: ManageRequirementCommand): Observable<ManageRequirementsResponse>;
+
+  deleteEvent(request: DeleteEventCommand): Observable<DeleteEventResponse>;
 }
 
 export interface EventCommandServiceController {
@@ -53,11 +61,21 @@ export interface EventCommandServiceController {
   manageRequirements(
     request: ManageRequirementCommand,
   ): Promise<ManageRequirementsResponse> | Observable<ManageRequirementsResponse> | ManageRequirementsResponse;
+
+  deleteEvent(
+    request: DeleteEventCommand,
+  ): Promise<DeleteEventResponse> | Observable<DeleteEventResponse> | DeleteEventResponse;
 }
 
 export function EventCommandServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createEvent", "updateEvent", "changeEventState", "manageRequirements"];
+    const grpcMethods: string[] = [
+      "createEvent",
+      "updateEvent",
+      "changeEventState",
+      "manageRequirements",
+      "deleteEvent",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("EventCommandService", method)(constructor.prototype[method], method, descriptor);
@@ -109,31 +127,60 @@ export function EventQueryServiceControllerMethods() {
 
 export const EVENT_QUERY_SERVICE_NAME = "EventQueryService";
 
-export interface TagServiceClient {
-  getTags(request: GetTagsQuery): Observable<GetTagsResponse>;
-
+export interface TagCommandServiceClient {
   createTag(request: CreateTagCommand): Observable<CreateTagResponse>;
+
+  updateTag(request: UpdateTagCommand): Observable<UpdateTagResponse>;
+
+  deleteTag(request: DeleteTagCommand): Observable<DeleteTagResponse>;
 }
 
-export interface TagServiceController {
-  getTags(request: GetTagsQuery): Promise<GetTagsResponse> | Observable<GetTagsResponse> | GetTagsResponse;
-
+export interface TagCommandServiceController {
   createTag(request: CreateTagCommand): Promise<CreateTagResponse> | Observable<CreateTagResponse> | CreateTagResponse;
+
+  updateTag(request: UpdateTagCommand): Promise<UpdateTagResponse> | Observable<UpdateTagResponse> | UpdateTagResponse;
+
+  deleteTag(request: DeleteTagCommand): Promise<DeleteTagResponse> | Observable<DeleteTagResponse> | DeleteTagResponse;
 }
 
-export function TagServiceControllerMethods() {
+export function TagCommandServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getTags", "createTag"];
+    const grpcMethods: string[] = ["createTag", "updateTag", "deleteTag"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("TagService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("TagCommandService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("TagService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("TagCommandService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const TAG_SERVICE_NAME = "TagService";
+export const TAG_COMMAND_SERVICE_NAME = "TagCommandService";
+
+export interface TagQueryServiceClient {
+  getTags(request: GetTagsQuery): Observable<GetTagsResponse>;
+}
+
+export interface TagQueryServiceController {
+  getTags(request: GetTagsQuery): Promise<GetTagsResponse> | Observable<GetTagsResponse> | GetTagsResponse;
+}
+
+export function TagQueryServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["getTags"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("TagQueryService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("TagQueryService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const TAG_QUERY_SERVICE_NAME = "TagQueryService";

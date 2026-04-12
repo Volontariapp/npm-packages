@@ -53,3 +53,17 @@ message CreateTagCommand {
   string name = 2;
   string color = 3;
 }
+
+message UpdateTagCommand {
+  string id = 1;
+  string name = 2;
+  string color = 3;
+}
+
+message DeleteEventCommand {
+  string id = 1;
+}
+
+message DeleteTagCommand {
+  string id = 1;
+}

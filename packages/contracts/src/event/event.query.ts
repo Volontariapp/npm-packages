@@ -17,6 +17,8 @@ export interface SearchEventsQuery {
   types: EventType[];
   tagSlugs: string[];
   onlyAvailable: boolean;
+  searchTerm: string;
+  organizerId: string;
 }
 
 export interface ListRequirementsQuery {

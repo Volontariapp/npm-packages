@@ -14,6 +14,8 @@ message SearchEventsQuery {
   repeated EventType types = 2;
   repeated string tag_slugs = 3;
   bool only_available = 4;
+  string search_term = 5;
+  string organizer_id = 6;
 }
 
 message ListRequirementsQuery {

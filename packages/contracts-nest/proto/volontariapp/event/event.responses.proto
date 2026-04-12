@@ -22,6 +22,10 @@ message ManageRequirementsResponse {
   string message = 2;
 }
 
+message DeleteEventResponse {
+  bool success = 1;
+}
+
 message GetEventResponse {
   Event event = 1;
 }
@@ -41,4 +45,12 @@ message GetTagsResponse {
 
 message CreateTagResponse {
   Tag tag = 1;
+}
+
+message UpdateTagResponse {
+  Tag tag = 1;
+}
+
+message DeleteTagResponse {
+  bool success = 1;
 }
