@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-event",
-  "version": "2.1.2",
+  "version": "2.2.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -32,9 +32,22 @@
     "test": "echo \"No tests yet\""
   },
   "devDependencies": {
+    "@nestjs/typeorm": "^11.0.1",
+    "typeorm": "^0.3.20",
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@volontariapp/logger": "workspace:*"
+    "@nestjs/common": "^11.0.1",
+    "@volontariapp/contracts": "workspace:*",
+    "@volontariapp/database": "workspace:*",
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
+    "@volontariapp/logger": "workspace:*",
+    "class-transformer": "^0.5.1",
+    "reflect-metadata": "^0.2.2"
+  },
+  "peerDependencies": {
+    "@nestjs/typeorm": "^11.0.1",
+    "typeorm": "^0.3.20"
   }
 }

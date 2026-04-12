@@ -1,4 +1,5 @@
 import type { Event, Tag, Requirement } from '../../../event/event.js';
+import type { PaginationResponse } from '../../../common/pagination.js';
 
 export interface EventWebResponse {
   event: Event;
@@ -7,6 +8,7 @@ export interface EventWebResponse {
 export interface ListEventsWebResponse {
   events: Event[];
   totalCount: number;
+  pagination: PaginationResponse;
 }
 
 export interface TagWebResponse {
