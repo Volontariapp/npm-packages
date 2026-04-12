@@ -3954,6 +3954,10 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
+  peerDependencies:
+    "@nestjs/common": ^11.1.18
+    "@nestjs/core": ^11.1.18
+    typeorm: ^0.3.28
   languageName: unknown
   linkType: soft
 
@@ -4177,6 +4181,12 @@ __metadata:
     ts-jest: "npm:^29.4.9"
     ts-node: "npm:^10.9.2"
     typescript: "npm:5.7.3"
+  peerDependencies:
+    "@nestjs/axios": ^4.0.1
+    "@nestjs/common": ^11.1.17
+    "@nestjs/core": ^11.1.17
+    "@nestjs/microservices": ^11.1.17
+    "@nestjs/terminus": ^11.1.1
   languageName: unknown
   linkType: soft
 
