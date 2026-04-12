@@ -57,7 +57,7 @@ export const getGrpcOptions = (
       package: config.package,
       protoPath: join(protoRoot, `volontariapp/${config.domain}/${config.protoFileName}`),
       loader: {
-        keepCase: true,
+        keepCase: false,
         longs: String,
         enums: String,
         defaults: true,

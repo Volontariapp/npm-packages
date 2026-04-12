@@ -140,9 +140,15 @@ export abstract class BaseRepository<
   }
 
   async update(id: TId, data: Partial<TEntity>): Promise<TEntity | null> {
-    const modelData = this.toModel(data);
+    const modelData = this.toModel(data) as Record<string, unknown>;
     const where = this.buildIdWhere(id);
-    await this.repository.update(where, modelData as Parameters<Repository<TModel>['update']>[1]);
+
+    const relationNames = this.repository.metadata.relations.map((r) => r.propertyName);
+    const updateData = Object.fromEntries(
+      Object.entries(modelData).filter(([key]) => !relationNames.includes(key)),
+    );
+
+    await this.repository.update(where, updateData as Parameters<Repository<TModel>['update']>[1]);
     return this.findOne(where);
   }
 
@@ -150,8 +156,12 @@ export abstract class BaseRepository<
     where: FindOptionsWhere<TModel>,
     data: Partial<TEntity>,
   ): Promise<UpdateResult> {
-    const modelData = this.toModel(data);
-    return this.repository.update(where, modelData as Parameters<Repository<TModel>['update']>[1]);
+    const modelData = this.toModel(data) as Record<string, unknown>;
+    const relationNames = this.repository.metadata.relations.map((r) => r.propertyName);
+    const updateData = Object.fromEntries(
+      Object.entries(modelData).filter(([key]) => !relationNames.includes(key)),
+    );
+    return this.repository.update(where, updateData as Parameters<Repository<TModel>['update']>[1]);
   }
 
   async upsert(data: Partial<TEntity>, conflictPaths: string[]): Promise<TEntity> {

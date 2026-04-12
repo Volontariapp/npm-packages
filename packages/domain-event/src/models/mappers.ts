@@ -16,11 +16,13 @@ export function registerEventMappings() {
     overridesAtoB: [
       {
         field: 'location',
-        resolve: (source) =>
-          ({
+        resolve: (source: Partial<EventEntity>) => {
+          if (!source.location) return undefined;
+          return {
             type: 'Point',
             coordinates: [source.location.longitude, source.location.latitude] as [number, number],
-          }) as PointGeoJSON,
+          } as PointGeoJSON;
+        },
       },
     ],
     overridesBtoA: [
