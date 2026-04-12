@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/health-check",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@volontariapp/bridge": "0.2.3",
-    "@volontariapp/config": "1.0.2",
+    "@volontariapp/config": "1.1.0",
     "@volontariapp/errors": "0.4.2"
   }
 }
