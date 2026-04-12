@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.2.0
+
+## 2.2.0
+
+### Minor Changes
+
+- Setup Domain Event Basis
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.7.0
+
 ## 2.1.2
 
 ### Patch Changes
