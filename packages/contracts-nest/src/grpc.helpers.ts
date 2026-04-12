@@ -24,46 +24,6 @@ export enum GRPC_MICROSERVICES {
   EVENT = 'EVENT',
 }
 
-export const USER_GRPC_METHODS = {
-  GET_USER: 'GetUser',
-  LIST_USERS: 'ListUsers',
-  CREATE_USER: 'CreateUser',
-  UPDATE_USER: 'UpdateUser',
-  DELETE_USER: 'DeleteUser',
-} as const;
-
-export const POST_GRPC_METHODS = {
-  GET_POST: 'GetPost',
-  LIST_POSTS: 'ListPosts',
-  CREATE_POST: 'CreatePost',
-  UPDATE_POST: 'UpdatePost',
-  DELETE_POST: 'DeletePost',
-} as const;
-
-export const EVENT_COMMAND_METHODS = {
-  CREATE_EVENT: 'CreateEvent',
-  UPDATE_EVENT: 'UpdateEvent',
-  CHANGE_EVENT_STATE: 'ChangeEventState',
-  MANAGE_REQUIREMENTS: 'ManageRequirements',
-  DELETE_EVENT: 'DeleteEvent',
-} as const;
-
-export const EVENT_QUERY_METHODS = {
-  GET_EVENT: 'GetEvent',
-  SEARCH_EVENTS: 'SearchEvents',
-  LIST_REQUIREMENTS: 'ListRequirements',
-} as const;
-
-export const TAG_COMMAND_METHODS = {
-  CREATE_TAG: 'CreateTag',
-  UPDATE_TAG: 'UpdateTag',
-  DELETE_TAG: 'DeleteTag',
-} as const;
-
-export const TAG_QUERY_METHODS = {
-  GET_TAGS: 'GetTags',
-} as const;
-
 export const GRPC_SERVICES_CONFIG = {
   USER: {
     package: 'volontariapp.user',
