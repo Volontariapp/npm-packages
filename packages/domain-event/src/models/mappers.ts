@@ -1,16 +1,11 @@
 import { databaseMapper } from '@volontariapp/database';
-import { EventModel } from './event.model.js';
+import { EventModel, type PointGeoJSON } from './event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { TagModel } from './tag.model.js';
 import { TagEntity } from '../entities/tag.entity.js';
 import { RequirementModel } from './requirement.model.js';
 import { RequirementEntity } from '../entities/requirement.entity.js';
 import { EventLocation } from '../value-objects/event-location.value-object.js';
-
-interface GeoJsonObject {
-  type: string;
-  coordinates: [number, number];
-}
 
 export function registerEventMappings() {
   databaseMapper.registerBidirectional(TagEntity, TagModel);
@@ -22,7 +17,10 @@ export function registerEventMappings() {
       {
         field: 'location',
         resolve: (source) =>
-          `${source.location.longitude.toString()},${source.location.latitude.toString()}`,
+          ({
+            type: 'Point',
+            coordinates: [source.location.longitude, source.location.latitude] as [number, number],
+          }) as PointGeoJSON,
       },
     ],
     overridesBtoA: [
@@ -36,7 +34,7 @@ export function registerEventMappings() {
               return new EventLocation(parseFloat(matches[2]), parseFloat(matches[1]));
             }
           } else if (typeof loc === 'object' && loc !== null && 'coordinates' in loc) {
-            const geoJson = loc as GeoJsonObject;
+            const geoJson = loc as PointGeoJSON;
             return new EventLocation(geoJson.coordinates[1], geoJson.coordinates[0]);
           }
           return new EventLocation(0, 0);

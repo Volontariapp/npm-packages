@@ -11,6 +11,11 @@ import { EventType, EventState } from '@volontariapp/contracts';
 import { TagModel } from './tag.model.js';
 import { RequirementModel } from './requirement.model.js';
 
+export interface PointGeoJSON {
+  type: 'Point';
+  coordinates: [number, number];
+}
+
 @Entity('events')
 export class EventModel {
   @PrimaryGeneratedColumn('uuid')
@@ -34,7 +39,7 @@ export class EventModel {
     srid: 4326,
     nullable: true,
   })
-  location!: string;
+  location!: PointGeoJSON;
 
   @Column({
     type: 'enum',
