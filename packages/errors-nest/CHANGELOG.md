@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- create Custom Decorator
+
 ## 0.5.0
 
 ### Minor Changes

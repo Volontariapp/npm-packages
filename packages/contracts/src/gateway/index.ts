@@ -1,5 +1,5 @@
 // Event Module
-export * from './event/request/event.request.js';
+export * from './event/request/index.js';
 export * from './event/response/event.response.js';
 
 // User Module

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/health-check-nest",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -52,9 +52,9 @@
     "@nestjs/microservices": "^11.1.17",
     "@nestjs/terminus": "^11.1.1",
     "@volontariapp/bridge": "0.2.1",
-    "@volontariapp/bridge-nest": "0.2.1",
+    "@volontariapp/bridge-nest": "0.2.2",
     "@volontariapp/config": "1.0.0",
-    "@volontariapp/errors-nest": "0.5.0",
+    "@volontariapp/errors-nest": "0.6.0",
     "@volontariapp/health-check": "0.1.1",
     "@volontariapp/logger": "0.2.0"
   }

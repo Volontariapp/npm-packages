@@ -81,3 +81,18 @@ export const ApiInternalServerErrorResponse = createErrorDecorator(InternalServe
 export const ApiConflictResponse = createErrorDecorator(ConflictError);
 export const ApiUnprocessableEntityResponse = createErrorDecorator(UnprocessableEntityError);
 export const ApiTooManyRequestsResponse = createErrorDecorator(TooManyRequestsError);
+
+export function CustomApiError(
+  errorFactory: (...args: unknown[]) => BaseError,
+  options?: ApiErrorOptions,
+) {
+  const error = errorFactory();
+  const description = options?.description ?? error.message;
+
+  return ApiErrorResponse({
+    status: error.statusCode,
+    description,
+    example: options?.example,
+    type: options?.type,
+  });
+}

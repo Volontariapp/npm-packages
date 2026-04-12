@@ -3919,7 +3919,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/bridge-nest@npm:0.2.1, @volontariapp/bridge-nest@workspace:packages/bridge-nest":
+"@volontariapp/bridge-nest@npm:0.2.2, @volontariapp/bridge-nest@workspace:packages/bridge-nest":
   version: 0.0.0-use.local
   resolution: "@volontariapp/bridge-nest@workspace:packages/bridge-nest"
   dependencies:
@@ -4076,7 +4076,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/errors-nest@npm:0.5.0, @volontariapp/errors-nest@workspace:*, @volontariapp/errors-nest@workspace:^, @volontariapp/errors-nest@workspace:packages/errors-nest":
+"@volontariapp/errors-nest@npm:0.6.0, @volontariapp/errors-nest@workspace:*, @volontariapp/errors-nest@workspace:^, @volontariapp/errors-nest@workspace:packages/errors-nest":
   version: 0.0.0-use.local
   resolution: "@volontariapp/errors-nest@workspace:packages/errors-nest"
   dependencies:
@@ -4139,9 +4139,9 @@ __metadata:
     "@nestjs/testing": "npm:^11.1.17"
     "@types/jest": "npm:^30.0.0"
     "@volontariapp/bridge": "npm:0.2.1"
-    "@volontariapp/bridge-nest": "npm:0.2.1"
+    "@volontariapp/bridge-nest": "npm:0.2.2"
     "@volontariapp/config": "npm:1.0.0"
-    "@volontariapp/errors-nest": "npm:0.5.0"
+    "@volontariapp/errors-nest": "npm:0.6.0"
     "@volontariapp/health-check": "npm:0.1.1"
     "@volontariapp/logger": "npm:0.2.0"
     axios: "npm:^1.7.9"

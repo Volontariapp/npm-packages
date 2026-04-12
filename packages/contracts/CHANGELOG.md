@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.1
+
+### Patch Changes
+
+- refacto contract libs
+
 ## 3.1.0
 
 ### Minor Changes
