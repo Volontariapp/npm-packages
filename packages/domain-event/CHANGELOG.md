@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.7
+
+### Patch Changes
+
+- including google GRPC timestamps + update mappers
+- Updated dependencies
+  - @volontariapp/errors-nest@0.7.2
+
 ## 2.2.6
 
 ### Patch Changes

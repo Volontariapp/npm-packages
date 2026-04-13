@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.2
+
+### Patch Changes
+
+- af499d7: adding grpc helpers enum
+- including google GRPC timestamps + update mappers
+
 ## 2.2.1
 
 ### Patch Changes

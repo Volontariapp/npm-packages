@@ -10,10 +10,15 @@ export class EventEntity {
   startAt!: Date;
   endAt!: Date;
   location!: EventLocation;
+  localisationName!: string;
   type!: EventType;
   state!: EventState;
   awardedImpactScore!: number;
   maxParticipants!: number;
+  currentParticipants!: number;
+  organizerId!: string;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   requirements?: RequirementEntity[];
   tags?: TagEntity[];
