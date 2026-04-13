@@ -4151,6 +4151,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/validation-nest@workspace:packages/validation-nest":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/validation-nest@workspace:packages/validation-nest"
+  dependencies:
+    "@nestjs/common": "npm:^11.0.1"
+    "@nestjs/core": "npm:^11.0.1"
+    "@nestjs/testing": "npm:^11.0.1"
+    "@types/jest": "npm:^30.0.0"
+    class-transformer: "npm:^0.5.1"
+    class-validator: "npm:^0.15.1"
+    jest: "npm:^30.0.0"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.1"
+    ts-jest: "npm:^29.2.5"
+    typescript: "npm:5.7.3"
+  peerDependencies:
+    "@nestjs/common": ^11.0.1
+    class-transformer: ^0.5.1
+    class-validator: ^0.15.1
+  languageName: unknown
+  linkType: soft
+
 "abbrev@npm:^4.0.0":
   version: 4.0.0
   resolution: "abbrev@npm:4.0.0"
@@ -8030,7 +8052,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^30.3.0":
+"jest@npm:^30.0.0, jest@npm:^30.3.0":
   version: 30.3.0
   resolution: "jest@npm:30.3.0"
   dependencies:
@@ -10490,7 +10512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.1.5, ts-jest@npm:^29.4.6, ts-jest@npm:^29.4.9":
+"ts-jest@npm:^29.1.5, ts-jest@npm:^29.2.5, ts-jest@npm:^29.4.6, ts-jest@npm:^29.4.9":
   version: 29.4.9
   resolution: "ts-jest@npm:29.4.9"
   dependencies:
