@@ -45,6 +45,11 @@ export class EventModel {
     type: 'enum',
     enum: EventType,
     default: EventType.EVENT_TYPE_UNSPECIFIED,
+    transformer: {
+      to: (value: number | string) => (typeof value === 'number' ? EventType[value] : value),
+      from: (value: string) =>
+        typeof value === 'string' ? EventType[value as keyof typeof EventType] : value,
+    },
   })
   type!: EventType;
 
@@ -52,6 +57,11 @@ export class EventModel {
     type: 'enum',
     enum: EventState,
     default: EventState.EVENT_STATE_DRAFT,
+    transformer: {
+      to: (value: number | string) => (typeof value === 'number' ? EventState[value] : value),
+      from: (value: string) =>
+        typeof value === 'string' ? EventState[value as keyof typeof EventState] : value,
+    },
   })
   state!: EventState;
 
