@@ -5,9 +5,9 @@
 // source: volontariapp/event/event.command.proto
 
 /* eslint-disable */
-import { Timestamp } from '../google/protobuf/timestamp.js';
-import { Point } from '../common/geo.js';
-import { Event, EventState, EventType } from './event.js';
+import { Timestamp } from "../google/protobuf/timestamp.js";
+import { Point } from "../common/geo.js";
+import { Event, EventState, EventType } from "./event.js";
 
 export interface CreateEventCommand {
   title: string;
