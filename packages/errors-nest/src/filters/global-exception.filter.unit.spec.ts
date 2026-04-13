@@ -2,8 +2,8 @@ import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import type { ArgumentsHost } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
 import { BaseError, GrpcStatus } from '@volontariapp/errors';
+import { Observable } from 'rxjs';
 import { GlobalExceptionFilter } from './global-exception.filter.js';
 
 describe('GlobalExceptionFilter Unit Test', () => {
@@ -99,7 +99,7 @@ describe('GlobalExceptionFilter Unit Test', () => {
       (mockArgumentsHost as { getType: jest.Mock }).getType.mockReturnValue('rpc');
     });
 
-    it('should return RpcException for BaseError', () => {
+    it('should return RpcException for BaseError', (done) => {
       class TestError extends BaseError {
         statusCode = HttpStatus.NOT_FOUND;
         grpcCode = GrpcStatus.NOT_FOUND;
@@ -108,22 +108,30 @@ describe('GlobalExceptionFilter Unit Test', () => {
 
       const result = filter.catch(exception, mockArgumentsHost as ArgumentsHost);
 
-      expect(result).toBeInstanceOf(RpcException);
-      const rpcError = (result as RpcException).getError() as { code: number; message: string };
-      expect(rpcError.code).toBe(GrpcStatus.NOT_FOUND);
-      expect(JSON.parse(rpcError.message)).toMatchObject({
-        code: 'USER_NOT_FOUND',
-        statusCode: HttpStatus.NOT_FOUND,
+      expect(result).toBeInstanceOf(Observable);
+      (result as Observable<unknown>).subscribe({
+        error: (rpcError: { code: number; message: string }) => {
+          expect(rpcError.code).toBe(GrpcStatus.NOT_FOUND);
+          expect(JSON.parse(rpcError.message)).toMatchObject({
+            code: 'USER_NOT_FOUND',
+            statusCode: HttpStatus.NOT_FOUND,
+          });
+          done();
+        },
       });
     });
 
-    it('should return RpcException with INTERNAL for unknown errors', () => {
+    it('should return RpcException with INTERNAL for unknown errors', (done) => {
       const exception = new Error('Unknown');
       const result = filter.catch(exception, mockArgumentsHost as ArgumentsHost);
 
-      expect(result).toBeInstanceOf(RpcException);
-      const rpcError = (result as RpcException).getError() as { code: number };
-      expect(rpcError.code).toBe(GrpcStatus.INTERNAL);
+      expect(result).toBeInstanceOf(Observable);
+      (result as Observable<unknown>).subscribe({
+        error: (rpcError: { code: number }) => {
+          expect(rpcError.code).toBe(GrpcStatus.INTERNAL);
+          done();
+        },
+      });
     });
   });
 });
