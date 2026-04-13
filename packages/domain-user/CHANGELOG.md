@@ -1,6 +1,14 @@
 # Changelog
 
+## 2.1.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@3.2.1
+
 <<<<<<< HEAD
+
 ## 2.1.18
 
 ### Patch Changes
@@ -9,7 +17,9 @@
   - @volontariapp/contracts@3.2.0
 
 =======
->>>>>>> main
+
+> > > > > > > main
+
 ## 2.1.17
 
 ### Patch Changes
