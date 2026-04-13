@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/contracts-nest",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "publishConfig": {
     "access": "public",
     "provenance": true
