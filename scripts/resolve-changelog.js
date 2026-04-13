@@ -7,9 +7,8 @@ const { execSync } = require('node:child_process');
  * resolve-changelog.js
  *
  * This script identifies multiple version headers added to a CHANGELOG.md file
- * and collapses them into a single (highest) version header, merging the content.
- * This avoids multiple version bumps for the same package in a single PR
- * caused by cascading dependency updates.
+ * and collapses them into a single version header (calculating the correct increment from main),
+ * merging the content. This avoids multiple version bumps for the same package in a single PR.
  */
 
 const files = process.argv.slice(2);
@@ -92,11 +91,20 @@ files.forEach((file) => {
   const firstNewHeaderIndex = versions[0].index;
   const prefix = newSection.substring(0, firstNewHeaderIndex);
 
-  console.log(
-    `[resolve-changelog] Found ${versions.length} consecutive versions in ${file}. Merging into one...`,
-  );
+  // Determine required increment level from merged content
+  const contentParts = [];
+  for (let i = 0; i < versions.length; i++) {
+    const start = versions[i].index + versions[i].fullLength;
+    const end = i + 1 < versions.length ? versions[i + 1].index : newSection.length;
+    contentParts.push(newSection.substring(start, end).trim());
+  }
 
-  // Sort versions to find the highest
+  let highestLevel = 'patch';
+  const allNewContent = contentParts.join('\n');
+  if (allNewContent.includes('### Major Changes')) highestLevel = 'major';
+  else if (allNewContent.includes('### Minor Changes')) highestLevel = 'minor';
+
+  // Sort versions to find the highest found by changesets (as fallback)
   const sortedVersions = [...versions].sort((a, b) => {
     const va = a.version.split('.').map(Number);
     const vb = b.version.split('.').map(Number);
@@ -106,15 +114,38 @@ files.forEach((file) => {
     return 0;
   });
 
-  const highestVersion = sortedVersions[0].version;
+  // Get base version from package.json in main
+  let targetVersion = sortedVersions[0].version; // Default fallback
+  const packageJsonPath = path.join(path.dirname(file), 'package.json');
+  try {
+    const basePkgContent = execSync(`git show ${baseSha}:${packageJsonPath}`, {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    });
+    const baseVersion = JSON.parse(basePkgContent).version;
 
-  // Extract content parts between headers
-  const contentParts = [];
-  for (let i = 0; i < versions.length; i++) {
-    const start = versions[i].index + versions[i].fullLength;
-    const end = i + 1 < versions.length ? versions[i + 1].index : newSection.length;
-    contentParts.push(newSection.substring(start, end).trim());
+    // Helper to increment version
+    const parts = baseVersion.split('.').map(Number);
+    if (highestLevel === 'major') {
+      parts[0]++;
+      parts[1] = 0;
+      parts[2] = 0;
+    } else if (highestLevel === 'minor') {
+      parts[1]++;
+      parts[2] = 0;
+    } else {
+      parts[2]++;
+    }
+    targetVersion = parts.join('.');
+  } catch (e) {
+    console.warn(
+      `[resolve-changelog] Could not read base version for ${file}, keeping ${targetVersion}`,
+    );
   }
+
+  console.log(
+    `[resolve-changelog] Found ${versions.length} consecutive versions in ${file}. Merging into version ${targetVersion}...`,
+  );
 
   // Group content by sub-headers (e.g., ### Patch Changes)
   const mergedContentMap = new Map();
@@ -138,7 +169,7 @@ files.forEach((file) => {
 
   // Reconstruct the new section
   let resolvedNewSection = prefix;
-  resolvedNewSection += `## ${highestVersion}\n\n`;
+  resolvedNewSection += `## ${targetVersion}\n\n`;
 
   const standardOrder = ['### Major Changes', '### Minor Changes', '### Patch Changes'];
   const handledHeaders = new Set();
@@ -162,8 +193,26 @@ files.forEach((file) => {
     resolvedNewSection += mergedContentMap.get('Default').join('\n') + '\n\n';
   }
 
-  // Write the file back
+  // Write the CHANGELOG.md back
   fs.writeFileSync(fullPath, resolvedNewSection + oldSection);
 
-  console.log(`[resolve-changelog] Successfully resolved ${file} to version ${highestVersion}`);
+  // Update package.json back to targetVersion if it differs
+  const fullPkgPath = path.resolve(process.cwd(), packageJsonPath);
+  if (fs.existsSync(fullPkgPath)) {
+    const pkg = JSON.parse(fs.readFileSync(fullPkgPath, 'utf8'));
+    if (pkg.version !== targetVersion) {
+      console.log(
+        `[resolve-changelog] Updating ${packageJsonPath} version: ${pkg.version} -> ${targetVersion}`,
+      );
+      pkg.version = targetVersion;
+      fs.writeFileSync(fullPkgPath, JSON.stringify(pkg, null, 2) + '\n');
+      try {
+        execSync(`git add ${packageJsonPath}`);
+      } catch (e) {
+        // Not critical
+      }
+    }
+  }
+
+  console.log(`[resolve-changelog] Successfully resolved ${file} to version ${targetVersion}`);
 });
