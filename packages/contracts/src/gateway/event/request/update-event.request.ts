@@ -5,4 +5,7 @@ import type { CreateEventCommand } from '../../../event/event.command.js';
  * REST-friendly: flatten fields from EventDTO.
  * In Gateway, this will be mapped to gRPC UpdateEventCommand + updateMask.
  */
-export interface UpdateEventRequest extends Partial<CreateEventCommand> {}
+export interface UpdateEventRequest extends Partial<Omit<CreateEventCommand, 'startAt' | 'endAt'>> {
+  startAt?: Date;
+  endAt?: Date;
+}

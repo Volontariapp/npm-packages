@@ -1,12 +1,20 @@
 import type { Event, Tag, Requirement } from '../../../event/event.js';
 import type { PaginationResponse } from '../../../common/pagination.js';
 
+/**
+ * REST-friendly Event DTO with Date objects
+ */
+export interface EventDTO extends Omit<Event, 'startAt' | 'endAt'> {
+  startAt?: Date;
+  endAt?: Date;
+}
+
 export interface EventWebResponse {
-  event: Event;
+  event: EventDTO;
 }
 
 export interface ListEventsWebResponse {
-  events: Event[];
+  events: EventDTO[];
   totalCount: number;
   pagination: PaginationResponse;
 }
