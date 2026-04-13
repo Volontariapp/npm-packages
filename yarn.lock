@@ -1848,6 +1848,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/typeorm@npm:^11.0.1":
+  version: 11.0.1
+  resolution: "@nestjs/typeorm@npm:11.0.1"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+    reflect-metadata: ^0.1.13 || ^0.2.0
+    rxjs: ^7.2.0
+    typeorm: ^0.3.0 || ^1.0.0-dev
+  checksum: 10c0/5f3b790f562e01af172f0d3359dc85ca4f509ff6efb5bc9ae046067c10a901c43778e718c6bbe284971161730d0fac9450c90e80742c7b656dcc75b47e1b744e
+  languageName: node
+  linkType: hard
+
 "@noble/hashes@npm:^1.1.5":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
@@ -4027,7 +4040,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/database@workspace:packages/database":
+"@volontariapp/database@workspace:*, @volontariapp/database@workspace:packages/database":
   version: 0.0.0-use.local
   resolution: "@volontariapp/database@workspace:packages/database"
   dependencies:
@@ -4052,8 +4065,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-event@workspace:packages/domain-event"
   dependencies:
+    "@nestjs/common": "npm:^11.0.1"
+    "@nestjs/typeorm": "npm:^11.0.1"
+    "@volontariapp/contracts": "workspace:*"
+    "@volontariapp/database": "workspace:*"
+    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
+    class-transformer: "npm:^0.5.1"
+    reflect-metadata: "npm:^0.2.2"
+    typeorm: "npm:^0.3.20"
     typescript: "npm:5.7.3"
+  peerDependencies:
+    "@nestjs/typeorm": ^11.0.1
+    typeorm: ^0.3.20
   languageName: unknown
   linkType: soft
 
