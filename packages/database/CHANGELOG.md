@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- Fix update on base repository
+
 ## 1.2.0
 
 ### Minor Changes

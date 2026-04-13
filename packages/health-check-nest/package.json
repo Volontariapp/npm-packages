@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/health-check-nest",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -34,6 +34,11 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "@nestjs/axios": "^4.0.1",
+    "@nestjs/common": "^11.1.17",
+    "@nestjs/core": "^11.1.17",
+    "@nestjs/microservices": "^11.1.17",
+    "@nestjs/terminus": "^11.1.1",
     "@nestjs/testing": "^11.1.17",
     "@types/jest": "^30.0.0",
     "axios": "^1.7.9",
@@ -45,17 +50,19 @@
     "ts-node": "^10.9.2",
     "typescript": "5.7.3"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/microservices": "^11.1.17",
-    "@nestjs/terminus": "^11.1.1",
-    "@volontariapp/bridge": "0.2.3",
-    "@volontariapp/bridge-nest": "0.2.5",
-    "@volontariapp/config": "1.0.2",
-    "@volontariapp/errors-nest": "0.7.0",
-    "@volontariapp/health-check": "0.1.3",
-    "@volontariapp/logger": "0.2.2"
+    "@nestjs/terminus": "^11.1.1"
+  },
+  "dependencies": {
+    "@volontariapp/bridge": "workspace:*",
+    "@volontariapp/bridge-nest": "workspace:*",
+    "@volontariapp/config": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
+    "@volontariapp/health-check": "workspace:*",
+    "@volontariapp/logger": "workspace:*"
   }
 }

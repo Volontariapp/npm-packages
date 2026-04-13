@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- new config for ms-social
+
 ## 1.0.2
 
 ### Patch Changes
