@@ -3,7 +3,7 @@ export * from './event/index.js';
 export * from './post/index.js';
 export * from './user/index.js';
 export * from './grpc.helpers.js';
-export * from './event/grpc-helpers.js';
 export * from './post/grpc-helpers.js';
 export * from './user/grpc-helpers.js';
 export * from './date.mapper.js';
+export * from './google/protobuf/timestamp.js';

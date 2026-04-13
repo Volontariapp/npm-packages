@@ -7,6 +7,7 @@ type ErrorConstructorV8 = ErrorConstructor & {
 export abstract class BaseError extends Error {
   public abstract readonly statusCode: number;
   public abstract readonly grpcCode: GrpcStatus;
+  public readonly isBaseError = true;
 
   constructor(
     public readonly message: string,
@@ -17,4 +18,12 @@ export abstract class BaseError extends Error {
     this.name = this.constructor.name;
     (Error as ErrorConstructorV8).captureStackTrace(this, this.constructor);
   }
+}
+
+export function isBaseError(error: unknown): error is BaseError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    (error as Record<string, unknown>).isBaseError === true
+  );
 }

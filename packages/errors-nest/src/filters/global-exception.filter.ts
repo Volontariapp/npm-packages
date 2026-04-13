@@ -1,56 +1,84 @@
-import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
-import { Catch, HttpException, HttpStatus } from '@nestjs/common';
-import { Logger } from '@volontariapp/logger';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { BaseError, GrpcStatus } from '@volontariapp/errors';
+import { GrpcStatus, isBaseError } from '@volontariapp/errors';
+import { Logger } from '@volontariapp/logger';
+import { throwError, Observable } from 'rxjs';
 import type { ErrorResponseDto } from '../swagger/error-response.dto.js';
+
+interface GrpcErrorObject {
+  code?: number;
+  details?: string;
+  message?: string;
+}
+
+interface ParsedErrorBody {
+  statusCode?: number;
+  code?: string;
+  message?: string;
+  details?: Record<string, unknown>;
+  timestamp?: string;
+}
+
+interface HttpResponse {
+  status(code: number): { json(body: unknown): void };
+}
+
+interface HttpRequest {
+  url: string;
+}
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger({ context: GlobalExceptionFilter.name, format: 'json' });
 
-  catch(exception: unknown, host: ArgumentsHost) {
-    const isBaseError = exception instanceof BaseError;
-    const isHttpException = exception instanceof HttpException;
+  catch(exception: unknown, host: ArgumentsHost): Observable<never> | undefined {
+    const type = host.getType();
 
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let status: number = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal Server Error';
     let code = 'INTERNAL_ERROR';
     let details: Record<string, unknown> | undefined = undefined;
     let grpcCode = GrpcStatus.INTERNAL;
 
-    if (isBaseError) {
-      status = exception.statusCode;
-      message = exception.message;
-      code = exception.code;
-      details = exception.details;
-      grpcCode = exception.grpcCode;
-    } else if (isHttpException) {
-      status = exception.getStatus();
-      const response = exception.getResponse() as unknown;
-      if (typeof response === 'string') {
-        message = response;
-      } else if (typeof response === 'object' && response !== null && 'message' in response) {
-        message = String((response as Record<string, unknown>).message);
-      } else {
-        message = exception.message;
+    let errorData: unknown = exception;
+
+    if (this.isGrpcError(exception)) {
+      const rawMessage = exception.details ?? exception.message ?? '';
+      const parsed = this.tryParseJson(rawMessage);
+      if (parsed) {
+        errorData = parsed;
       }
-      code = exception.name;
-    } else if (exception instanceof Error) {
-      message = exception.message;
-      this.logger.error(`Unhandled Exception: ${exception.message}`, exception);
-    } else {
-      this.logger.error(`Unknown Exception: ${JSON.stringify(exception)}`);
     }
 
-    const type = host.getType();
+    if (isBaseError(errorData)) {
+      status = errorData.statusCode;
+      message = errorData.message;
+      code = errorData.code;
+      details = errorData.details;
+      grpcCode = errorData.grpcCode;
+    } else if (errorData instanceof HttpException) {
+      status = errorData.getStatus();
+      const response = errorData.getResponse();
+      message = this.extractHttpMessage(response);
+      code = errorData.name;
+    } else if (this.isParsedErrorBody(errorData)) {
+      status = errorData.statusCode ?? status;
+      message = errorData.message ?? message;
+      code = errorData.code ?? code;
+      details = errorData.details;
+    } else if (errorData instanceof Error) {
+      message = errorData.message;
+    }
+
+    if (status >= 500) {
+      const stack = exception instanceof Error ? exception.stack : undefined;
+      this.logger.error(`Unhandled Exception: ${message}`, stack);
+    }
 
     if (type === 'http') {
       const ctx = host.switchToHttp();
-      const response = ctx.getResponse<{
-        status: (code: number) => { json: (body: ErrorResponseDto) => void };
-      }>();
-      const request = ctx.getRequest<{ url: string }>();
+      const response = ctx.getResponse<HttpResponse>();
+      const request = ctx.getRequest<HttpRequest>();
 
       const errorResponse: ErrorResponseDto = {
         statusCode: status,
@@ -62,24 +90,59 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       };
 
       response.status(status).json(errorResponse);
-      return;
+      return undefined;
     }
 
     if (type === 'rpc') {
+      const rpcErrorBody: ParsedErrorBody = {
+        statusCode: status,
+        code,
+        message,
+        details,
+        timestamp: new Date().toISOString(),
+      };
+
       const rpcException = new RpcException({
-        code: isBaseError ? grpcCode : GrpcStatus.INTERNAL,
-        message: JSON.stringify({
-          statusCode: status,
-          code,
-          message,
-          details,
-          timestamp: new Date().toISOString(),
-        }),
+        code: isBaseError(exception) ? exception.grpcCode : grpcCode,
+        message: JSON.stringify(rpcErrorBody),
       });
-      return rpcException;
+
+      return throwError(() => rpcException.getError());
     }
 
-    this.logger.warn(`Unknown context type: ${type}`);
-    return exception;
+    return undefined;
+  }
+
+  private isGrpcError(err: unknown): err is GrpcErrorObject {
+    if (typeof err !== 'object' || err === null || isBaseError(err)) return false;
+    const obj = err as Record<string, unknown>;
+    if (typeof obj['code'] === 'number') return true;
+    if (typeof obj['details'] === 'string') return true;
+    const msg = obj['message'];
+    return typeof msg === 'string' && msg.includes('{');
+  }
+
+  private isParsedErrorBody(err: unknown): err is ParsedErrorBody {
+    return typeof err === 'object' && err !== null && 'statusCode' in err;
+  }
+
+  private tryParseJson(str: string): ParsedErrorBody | null {
+    if (!str.includes('{')) return null;
+    try {
+      const start = str.indexOf('{');
+      const end = str.lastIndexOf('}') + 1;
+      return JSON.parse(str.substring(start, end)) as ParsedErrorBody;
+    } catch {
+      return null;
+    }
+  }
+
+  private extractHttpMessage(response: string | object): string {
+    if (typeof response === 'string') return response;
+    if ('message' in response) {
+      const msg = (response as { message: unknown }).message;
+      return Array.isArray(msg) ? msg.join(', ') : String(msg);
+    }
+    return 'Unknown HTTP Error';
   }
 }

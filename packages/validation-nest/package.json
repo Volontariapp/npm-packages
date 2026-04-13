@@ -1,6 +1,6 @@
 {
-  "name": "@volontariapp/errors",
-  "version": "0.4.3",
+  "name": "@volontariapp/validation-nest",
+  "version": "0.1.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
-  "description": "",
+  "description": "Validation utilities for NestJS in Volontariapp",
   "license": "UNLICENSED",
   "type": "module",
   "main": "./dist/index.js",
@@ -30,12 +30,24 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules $(yarn bin jest)"
   },
   "devDependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/testing": "^11.0.1",
+    "@types/jest": "^30.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "jest": "^30.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "ts-jest": "^29.2.5",
     "typescript": "5.7.3"
   },
-  "dependencies": {
-    "@volontariapp/logger": "workspace:*"
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1"
   }
 }

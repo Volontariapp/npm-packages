@@ -9,8 +9,14 @@ export class RequirementModel {
   @Column({ type: 'varchar', length: 255 })
   name!: string;
 
+  @Column({ type: 'text', nullable: true })
+  description?: string;
+
   @Column({ type: 'int' })
   quantity!: number;
+
+  @Column({ type: 'int', default: 0 })
+  currentQuantity!: number;
 
   @Column({ type: 'boolean', default: false })
   isSystem!: boolean;

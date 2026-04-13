@@ -4018,10 +4018,19 @@ __metadata:
     "@nestjs/core": ^10.0.0 || ^11.0.0
     "@nestjs/microservices": ^10.0.0 || ^11.0.0
     "@nestjs/swagger": ^8.0.0 || ^11.0.0
+  peerDependenciesMeta:
+    "@nestjs/common":
+      optional: true
+    "@nestjs/core":
+      optional: true
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/swagger":
+      optional: true
   languageName: unknown
   linkType: soft
 
-"@volontariapp/errors@npm:0.4.2, @volontariapp/errors@workspace:*, @volontariapp/errors@workspace:^, @volontariapp/errors@workspace:packages/errors":
+"@volontariapp/errors@npm:0.4.3, @volontariapp/errors@workspace:*, @volontariapp/errors@workspace:^, @volontariapp/errors@workspace:packages/errors":
   version: 0.0.0-use.local
   resolution: "@volontariapp/errors@workspace:packages/errors"
   dependencies:
@@ -4088,7 +4097,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@volontariapp/bridge": "npm:0.2.3"
     "@volontariapp/config": "npm:1.1.0"
-    "@volontariapp/errors": "npm:0.4.2"
+    "@volontariapp/errors": "npm:0.4.3"
     eslint: "npm:9.18.0"
     jest: "npm:^30.3.0"
     ts-jest: "npm:^29.4.9"
@@ -4139,6 +4148,28 @@ __metadata:
     lint-staged: "npm:^16.4.0"
     prettier: "npm:3.4.2"
     typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/validation-nest@workspace:packages/validation-nest":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/validation-nest@workspace:packages/validation-nest"
+  dependencies:
+    "@nestjs/common": "npm:^11.0.1"
+    "@nestjs/core": "npm:^11.0.1"
+    "@nestjs/testing": "npm:^11.0.1"
+    "@types/jest": "npm:^30.0.0"
+    class-transformer: "npm:^0.5.1"
+    class-validator: "npm:^0.15.1"
+    jest: "npm:^30.0.0"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.1"
+    ts-jest: "npm:^29.2.5"
+    typescript: "npm:5.7.3"
+  peerDependencies:
+    "@nestjs/common": ^11.0.1
+    class-transformer: ^0.5.1
+    class-validator: ^0.15.1
   languageName: unknown
   linkType: soft
 
@@ -8021,7 +8052,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^30.3.0":
+"jest@npm:^30.0.0, jest@npm:^30.3.0":
   version: 30.3.0
   resolution: "jest@npm:30.3.0"
   dependencies:
@@ -10481,7 +10512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.1.5, ts-jest@npm:^29.4.6, ts-jest@npm:^29.4.9":
+"ts-jest@npm:^29.1.5, ts-jest@npm:^29.2.5, ts-jest@npm:^29.4.6, ts-jest@npm:^29.4.9":
   version: 29.4.9
   resolution: "ts-jest@npm:29.4.9"
   dependencies:

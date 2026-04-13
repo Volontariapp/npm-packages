@@ -1,4 +1,5 @@
 export * from './core/base.error.js';
+export * from './core/database.js';
 export * from './core/grpc-status.enum.js';
 export * from './exceptions/bad-request.error.js';
 export * from './exceptions/conflict.error.js';

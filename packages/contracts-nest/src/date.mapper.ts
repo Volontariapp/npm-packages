@@ -1,5 +1,5 @@
 export interface GrpcTimestamp {
-  seconds: number | string;
+  seconds: number;
   nanos: number;
 }
 

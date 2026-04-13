@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/errors-nest",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -55,5 +55,19 @@
     "@nestjs/core": "^10.0.0 || ^11.0.0",
     "@nestjs/microservices": "^10.0.0 || ^11.0.0",
     "@nestjs/swagger": "^8.0.0 || ^11.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@nestjs/common": {
+      "optional": true
+    },
+    "@nestjs/core": {
+      "optional": true
+    },
+    "@nestjs/microservices": {
+      "optional": true
+    },
+    "@nestjs/swagger": {
+      "optional": true
+    }
   }
 }

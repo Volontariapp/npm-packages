@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { REQUIREMENT_NOT_FOUND, DATABASE_ERROR } from '@volontariapp/errors-nest';
-import { BaseError } from '@volontariapp/errors';
+import { isBaseError } from '@volontariapp/errors';
 import type { IRequirementRepository } from '../repositories/interfaces/requirement.repository.js';
 import { PostgresRequirementRepository } from '../repositories/postgres-requirement.repository.js';
 import { RequirementEntity } from '../entities/requirement.entity.js';
@@ -33,7 +33,7 @@ export class RequirementService {
       }
       return req;
     } catch (error) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to fetch requirement: ${id}`, err);
       throw DATABASE_ERROR(`finding requirement: ${id}`, err.message);
@@ -45,7 +45,7 @@ export class RequirementService {
       this.logger.log(`Creating requirement: ${String(data.name)}`);
       return await this.requirementRepository.create(data);
     } catch (error) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error('Failed to create requirement', err);
       throw DATABASE_ERROR('creating requirement', err.message);
@@ -61,7 +61,7 @@ export class RequirementService {
       }
       return updated;
     } catch (error) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to update requirement: ${id}`, err);
       throw DATABASE_ERROR(`updating requirement: ${id}`, err.message);
@@ -73,7 +73,7 @@ export class RequirementService {
       await this.findById(id);
       await this.requirementRepository.delete(id);
     } catch (error) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to delete requirement: ${id}`, err);
       throw DATABASE_ERROR(`deleting requirement: ${id}`, err.message);
