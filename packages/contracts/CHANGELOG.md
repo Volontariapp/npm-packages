@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.2
+
+### Patch Changes
+
+- fix: index.ts deps
+
 ## 3.2.1
 
 ### Patch Changes
