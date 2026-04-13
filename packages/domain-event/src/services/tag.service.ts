@@ -41,6 +41,17 @@ export class TagService {
     }
   }
 
+  async findByIds(ids: string[]): Promise<TagEntity[]> {
+    try {
+      this.logger.debug(`Fetching tags by ids: ${ids.join(', ')}`);
+      return await this.tagRepository.findByIds(ids);
+    } catch (error: unknown) {
+      const err = error as Error;
+      this.logger.error(`Failed to fetch tags by ids: ${ids.join(', ')}`, err);
+      throw DATABASE_ERROR(`finding tags by ids: ${ids.join(', ')}`, err.message);
+    }
+  }
+
   async findBySlug(slug: string): Promise<TagEntity> {
     try {
       const tag = await this.tagRepository.findBySlug(slug);
