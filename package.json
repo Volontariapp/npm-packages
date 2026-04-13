@@ -29,6 +29,9 @@
     ],
     "*.json": [
       "prettier --write"
+    ],
+    "CHANGELOG.md": [
+      "node scripts/resolve-changelog.js"
     ]
   },
   "devDependencies": {

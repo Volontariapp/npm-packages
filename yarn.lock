@@ -4021,7 +4021,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/errors@npm:0.4.2, @volontariapp/errors@workspace:*, @volontariapp/errors@workspace:^, @volontariapp/errors@workspace:packages/errors":
+"@volontariapp/errors@npm:0.4.3, @volontariapp/errors@workspace:*, @volontariapp/errors@workspace:^, @volontariapp/errors@workspace:packages/errors":
   version: 0.0.0-use.local
   resolution: "@volontariapp/errors@workspace:packages/errors"
   dependencies:
@@ -4088,7 +4088,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@volontariapp/bridge": "npm:0.2.3"
     "@volontariapp/config": "npm:1.1.0"
-    "@volontariapp/errors": "npm:0.4.2"
+    "@volontariapp/errors": "npm:0.4.3"
     eslint: "npm:9.18.0"
     jest: "npm:^30.3.0"
     ts-jest: "npm:^29.4.9"
