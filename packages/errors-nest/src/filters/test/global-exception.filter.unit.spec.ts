@@ -10,7 +10,6 @@ import {
 } from './helpers/argument-host.factory.js';
 import type {
   GrpcErrorPayload,
-  JsonBody,
   MockHttpResponse,
   ParsedGrpcBody,
 } from './interfaces/filter.test.interfaces.js';
@@ -38,7 +37,7 @@ describe('GlobalExceptionFilter Unit Test', () => {
 
       expect(response.status).toHaveBeenCalledWith(404);
       expect(response.json).toHaveBeenCalledWith(
-        expect.objectContaining<Partial<JsonBody>>({
+        expect.objectContaining({
           statusCode: 404,
           code: 'TAG_NOT_FOUND',
           message: 'Tag not found',
@@ -56,7 +55,7 @@ describe('GlobalExceptionFilter Unit Test', () => {
 
       expect(response.status).toHaveBeenCalledWith(409);
       expect(response.json).toHaveBeenCalledWith(
-        expect.objectContaining<Partial<JsonBody>>({
+        expect.objectContaining({
           statusCode: 409,
           code: 'EVENT_CONFLICT',
           message: 'Event already exists',
@@ -72,7 +71,7 @@ describe('GlobalExceptionFilter Unit Test', () => {
 
       expect(response.status).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
       expect(response.json).toHaveBeenCalledWith(
-        expect.objectContaining<Partial<JsonBody>>({
+        expect.objectContaining({
           statusCode: 403,
           message: 'Forbidden access',
         }),
@@ -93,7 +92,7 @@ describe('GlobalExceptionFilter Unit Test', () => {
 
       expect(response.status).toHaveBeenCalledWith(404);
       expect(response.json).toHaveBeenCalledWith(
-        expect.objectContaining<Partial<JsonBody>>({
+        expect.objectContaining({
           statusCode: 404,
           code: 'TAG_NOT_FOUND',
           message: 'Tag with id 76c5b964 not found',
@@ -109,7 +108,7 @@ describe('GlobalExceptionFilter Unit Test', () => {
 
       expect(response.status).toHaveBeenCalledWith(500);
       expect(response.json).toHaveBeenCalledWith(
-        expect.objectContaining<Partial<JsonBody>>({
+        expect.objectContaining({
           statusCode: 500,
           code: 'INTERNAL_ERROR',
           message: 'Database connection lost',
