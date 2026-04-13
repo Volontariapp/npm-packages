@@ -39,7 +39,26 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       code = exception.name;
     } else if (exception instanceof Error) {
       message = exception.message;
-      this.logger.error(`Unhandled Exception: ${exception.message}`, exception);
+
+      if (message.includes('{') && message.includes('}')) {
+        try {
+          const jsonStr = message.substring(message.indexOf('{'), message.lastIndexOf('}') + 1);
+          const parsed = JSON.parse(jsonStr) as Record<string, unknown>;
+          if (typeof parsed.statusCode === 'number') status = parsed.statusCode;
+          if (typeof parsed.code === 'string') code = parsed.code;
+          if (typeof parsed.message === 'string') message = parsed.message;
+          if (typeof parsed.details === 'object' && parsed.details !== null) {
+            details = parsed.details as Record<string, unknown>;
+          }
+        } catch {
+          this.logger.debug('Failed to parse gRPC error message as JSON, using original string');
+        }
+      }
+
+      const isInternal = (status as number) >= 500;
+      if (isInternal) {
+        this.logger.error(`Unhandled Exception: ${exception.message}`, exception.stack);
+      }
     } else {
       this.logger.error(`Unknown Exception: ${JSON.stringify(exception)}`);
     }
