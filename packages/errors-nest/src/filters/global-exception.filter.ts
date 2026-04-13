@@ -3,6 +3,7 @@ import { Catch, HttpException, HttpStatus } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { RpcException } from '@nestjs/microservices';
 import { GrpcStatus, isBaseError } from '@volontariapp/errors';
+import { throwError } from 'rxjs';
 import type { ErrorResponseDto } from '../swagger/error-response.dto.js';
 
 @Catch()
@@ -76,7 +77,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           timestamp: new Date().toISOString(),
         }),
       });
-      return rpcException;
+      return throwError(() => rpcException.getError());
     }
 
     this.logger.warn(`Unknown context type: ${type}`);
