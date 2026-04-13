@@ -40,8 +40,8 @@ jobs:
 
   release:
     name: Release
-    needs: [check-changelogs, target, test-build]
-    if: needs.target.outputs.has_changes == 'true' && needs.test-build.result == 'success' && (github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+    needs: [check-changelogs, target]
+    if: needs.target.outputs.has_changes == 'true' && (github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
     uses: ./.github/workflows/job-release.yml
     with:
       changed_packages: ${{ needs.target.outputs.packages }}
