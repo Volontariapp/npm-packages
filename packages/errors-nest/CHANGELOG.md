@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1
+
+### Patch Changes
+
+- new errors for invalid date parameters
+
 ## 0.7.0
 
 ### Minor Changes
