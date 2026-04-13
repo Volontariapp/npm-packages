@@ -3,6 +3,10 @@ export interface GrpcTimestamp {
   nanos: number;
 }
 
+/**
+ * Utility to map between JavaScript Date objects and gRPC Timestamp objects.
+ * This prevents manual manipulations of seconds/nanos in DTOs and Transformers.
+ */
 export class GrpcDateMapper {
   /**
    * Converts a JavaScript Date to a gRPC-compliant Timestamp object.
@@ -27,10 +31,12 @@ export class GrpcDateMapper {
     if (value instanceof Date) return value;
     if (typeof value === 'string') return new Date(value);
 
+    // gRPC Timestamp structure
     if (typeof value === 'object' && ('seconds' in value || 'nanos' in value)) {
       const seconds = Number(value.seconds);
       const nanos = Number(value.nanos);
 
+      // Return a fresh Date if it represents the epoch 0 (gRPC default)
       if (seconds === 0 && nanos === 0) return new Date();
 
       return new Date(seconds * 1000 + nanos / 1e6);

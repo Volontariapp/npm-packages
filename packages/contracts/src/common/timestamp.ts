@@ -5,18 +5,9 @@
 // source: volontariapp/common/timestamp.proto
 
 /* eslint-disable */
-import _m0 from "protobufjs"; const { wrappers } = _m0;
+import { Timestamp } from "../google/protobuf/timestamp.js";
 
 export interface DateRange {
-  start: Date | undefined;
-  end: Date | undefined;
+  start: Timestamp | undefined;
+  end: Timestamp | undefined;
 }
-
-wrappers[".google.protobuf.Timestamp"] = {
-  fromObject(value: Date) {
-    return { seconds: value.getTime() / 1000, nanos: (value.getTime() % 1000) * 1e6 };
-  },
-  toObject(message: { seconds: number; nanos: number }) {
-    return new Date(message.seconds * 1000 + message.nanos / 1e6);
-  },
-} as any;

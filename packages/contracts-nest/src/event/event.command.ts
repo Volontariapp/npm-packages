@@ -5,15 +5,15 @@
 // source: volontariapp/event/event.command.proto
 
 /* eslint-disable */
-import _m0 from "protobufjs"; const { wrappers } = _m0;
+import { Timestamp } from "../google/protobuf/timestamp.js";
 import { Point } from "../common/geo.js";
 import { Event, EventState, EventType } from "./event.js";
 
 export interface CreateEventCommand {
   title: string;
   description: string;
-  startAt: Date | undefined;
-  endAt: Date | undefined;
+  startAt: Timestamp | undefined;
+  endAt: Timestamp | undefined;
   location: Point | undefined;
   localisationName: string;
   type: EventType;
@@ -68,12 +68,3 @@ export interface DeleteEventCommand {
 export interface DeleteTagCommand {
   id: string;
 }
-
-wrappers[".google.protobuf.Timestamp"] = {
-  fromObject(value: Date) {
-    return { seconds: value.getTime() / 1000, nanos: (value.getTime() % 1000) * 1e6 };
-  },
-  toObject(message: { seconds: number; nanos: number }) {
-    return new Date(message.seconds * 1000 + message.nanos / 1e6);
-  },
-} as any;
