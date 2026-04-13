@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- fix peer dependencies
+
 ## 0.3.0
 
 ### Minor Changes

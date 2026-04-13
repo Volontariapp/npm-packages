@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+### Patch Changes
+
+- fix peer dependencies
+
 All notable changes to this project will be documented in this file.
 
 ## 0.1.0
@@ -11,4 +17,3 @@ All notable changes to this project will be documented in this file.
 - Automatic conversion of stringified `int64` (seconds/nanos) to numbers.
 - Automatic normalization of empty strings to `undefined` for Protobuf compatibility.
 - Strictly typed implementation without comments.
-

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/bridge-nest",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -49,6 +49,11 @@
     "@nestjs/common": "^11.1.18",
     "@nestjs/core": "^11.1.18",
     "typeorm": "^0.3.28"
+  },
+  "peerDependenciesMeta": {
+    "typeorm": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@volontariapp/bridge": "workspace:^",

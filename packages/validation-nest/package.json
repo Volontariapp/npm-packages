@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/validation-nest",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -49,5 +49,13 @@
     "@nestjs/common": "^11.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1"
+  },
+  "peerDependenciesMeta": {
+    "class-transformer": {
+      "optional": true
+    },
+    "class-validator": {
+      "optional": true
+    }
   }
 }
