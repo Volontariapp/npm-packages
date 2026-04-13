@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.7.3
+  - @volontariapp/health-check@0.1.5
+
 ## 0.1.12
 
 ### Patch Changes

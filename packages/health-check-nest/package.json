@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/health-check-nest",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "publishConfig": {
     "access": "public",
     "provenance": true
