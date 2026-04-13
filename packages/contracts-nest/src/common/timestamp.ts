@@ -5,7 +5,7 @@
 // source: volontariapp/common/timestamp.proto
 
 /* eslint-disable */
-import { Timestamp } from "../../google/protobuf/timestamp.js";
+import { Timestamp } from '../google/protobuf/timestamp.js';
 
 export interface DateRange {
   start: Timestamp | undefined;

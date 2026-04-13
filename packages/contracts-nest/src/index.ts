@@ -6,3 +6,4 @@ export * from './grpc.helpers.js';
 export * from './event/grpc-helpers.js';
 export * from './post/grpc-helpers.js';
 export * from './user/grpc-helpers.js';
+export * from './date.mapper.js';

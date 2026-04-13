@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+### Minor Changes
+
+- patch version
+
 ## 3.1.5
 
 ### Patch Changes

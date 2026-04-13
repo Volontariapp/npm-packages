@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+### Minor Changes
+
+- patch version
+
 ## 2.1.3
 
 ### Patch Changes
