@@ -5,8 +5,8 @@
 // source: volontariapp/event/event.proto
 
 /* eslint-disable */
-import { Timestamp } from "../../google/protobuf/timestamp.js";
-import { Point } from "../common/geo.js";
+import { Timestamp } from '..//google/protobuf/timestamp.js';
+import { Point } from '../common/geo.js';
 
 export enum EventType {
   EVENT_TYPE_UNSPECIFIED = 0,
