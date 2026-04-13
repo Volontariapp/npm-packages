@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { TAG_NOT_FOUND, TAG_ALREADY_EXISTS, DATABASE_ERROR } from '@volontariapp/errors-nest';
-import { BaseError } from '@volontariapp/errors';
+import { isBaseError } from '@volontariapp/errors';
 import type { ITagRepository } from '../repositories/interfaces/tag.repository.js';
 import { PostgresTagRepository } from '../repositories/postgres-tag.repository.js';
 import { TagEntity } from '../entities/tag.entity.js';
@@ -34,7 +34,7 @@ export class TagService {
       }
       return tag;
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to fetch tag: ${id}`, err);
       throw DATABASE_ERROR(`finding tag by id: ${id}`, err.message);
@@ -60,7 +60,7 @@ export class TagService {
       }
       return tag;
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to fetch tag by slug: ${slug}`, err);
       throw DATABASE_ERROR(`finding tag by slug: ${slug}`, err.message);
@@ -78,7 +78,7 @@ export class TagService {
       this.logger.log(`Creating new tag: ${String(tagData.name)}`);
       return await this.tagRepository.create(tagData);
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error('Failed to create tag', err);
       throw DATABASE_ERROR('creating tag', err.message);
@@ -96,7 +96,7 @@ export class TagService {
       }
       return updated;
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to update tag: ${id}`, err);
       throw DATABASE_ERROR(`updating tag: ${id}`, err.message);
@@ -109,7 +109,7 @@ export class TagService {
       this.logger.log(`Deleting tag: ${id}`);
       await this.tagRepository.delete(id);
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to delete tag: ${id}`, err);
       throw DATABASE_ERROR(`deleting tag: ${id}`, err.message);

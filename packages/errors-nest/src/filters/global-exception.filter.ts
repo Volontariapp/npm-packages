@@ -2,7 +2,7 @@ import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Catch, HttpException, HttpStatus } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { RpcException } from '@nestjs/microservices';
-import { BaseError, GrpcStatus } from '@volontariapp/errors';
+import { GrpcStatus, isBaseError } from '@volontariapp/errors';
 import type { ErrorResponseDto } from '../swagger/error-response.dto.js';
 
 @Catch()
@@ -10,7 +10,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger({ context: GlobalExceptionFilter.name, format: 'json' });
 
   catch(exception: unknown, host: ArgumentsHost) {
-    const isBaseError = exception instanceof BaseError;
+    const isBase = isBaseError(exception);
     const isHttpException = exception instanceof HttpException;
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -19,7 +19,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let details: Record<string, unknown> | undefined = undefined;
     let grpcCode = GrpcStatus.INTERNAL;
 
-    if (isBaseError) {
+    if (isBase) {
       status = exception.statusCode;
       message = exception.message;
       code = exception.code;
@@ -67,7 +67,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     if (type === 'rpc') {
       const rpcException = new RpcException({
-        code: isBaseError ? grpcCode : GrpcStatus.INTERNAL,
+        code: isBase ? grpcCode : GrpcStatus.INTERNAL,
         message: JSON.stringify({
           statusCode: status,
           code,

@@ -8,7 +8,7 @@ import {
   INVALID_EVENT_STATE_TRANSITION,
   INVALID_DATE_PARAMETERS,
 } from '@volontariapp/errors-nest';
-import { BaseError, isDatabaseDriverError } from '@volontariapp/errors';
+import { isDatabaseDriverError, isBaseError } from '@volontariapp/errors';
 import { EventState } from '@volontariapp/contracts';
 import type { IEventRepository } from '../repositories/interfaces/event.repository.js';
 import { PostgresEventRepository } from '../repositories/postgres-event.repository.js';
@@ -34,7 +34,7 @@ export class EventService {
       }
       return event;
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to find event: ${id}`, err);
       throw DATABASE_ERROR(`finding event: ${id}`, err.message);
@@ -65,7 +65,7 @@ export class EventService {
 
       return await this.eventRepository.create(data);
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
 
       if (isDatabaseDriverError(error) && error.code === '23505') {
         throw EVENT_ALREADY_EXISTS(data.name ?? 'Unknown');
@@ -99,7 +99,7 @@ export class EventService {
       }
       return updated;
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
 
       if (isDatabaseDriverError(error) && error.code === '23505') {
         throw EVENT_ALREADY_EXISTS(data.name ?? id);
@@ -134,7 +134,7 @@ export class EventService {
       }
       return updated;
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to change event state: ${id}`, err);
       throw DATABASE_ERROR(`changing event state: ${id}`, err.message);
@@ -147,7 +147,7 @@ export class EventService {
       this.logger.log(`Deleting event: ${id}`);
       await this.eventRepository.delete(id);
     } catch (error: unknown) {
-      if (error instanceof BaseError) throw error;
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to delete event: ${id}`, err);
       throw DATABASE_ERROR(`deleting event: ${id}`, err.message);
@@ -159,6 +159,7 @@ export class EventService {
       this.logger.debug(`Searching events with term: ${searchTerm}`);
       return await this.eventRepository.search(searchTerm);
     } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to search events: ${searchTerm}`, err);
       throw DATABASE_ERROR(`searching events: ${searchTerm}`, err.message);
