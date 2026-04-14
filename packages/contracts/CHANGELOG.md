@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.1
+
+### Patch Changes
+
+- add requirement request on contract
+
 ## 3.3.0
 
 ### Minor Changes
