@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.5
+
+### Patch Changes
+
+- fix: date mappers to return undefined instead of new Date()
+
 ## 2.2.4
 
 ### Patch Changes

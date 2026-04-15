@@ -17,7 +17,18 @@ export class PostgresEventRepository
   ) {
     super(repository, EventEntity, EventModel);
   }
-  findAll(): Promise<EventEntity[]> {
-    return this.find();
+
+  async findById(id: string, relations: string[] = []): Promise<EventEntity | null> {
+    if (relations.length > 0) {
+      return this.findWithRelations({ id }, relations);
+    }
+    return super.findById(id);
+  }
+
+  async findAll(relations: string[] = []): Promise<EventEntity[]> {
+    if (relations.length > 0) {
+      return super.findAllWithRelations(relations);
+    }
+    return super.find();
   }
 }
