@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+
+### Minor Changes
+
+- Added generic representation of an outbox model
+
 ## 1.3.0
 
 ### Minor Changes
