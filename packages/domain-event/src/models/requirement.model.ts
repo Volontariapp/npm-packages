@@ -21,8 +21,8 @@ export class RequirementModel {
   @Column({ type: 'boolean', default: false })
   isSystem!: boolean;
 
-  @Column({ type: 'uuid' })
-  createdBy!: string;
+  @Column({ type: 'uuid', nullable: true })
+  createdBy?: string;
 
   @ManyToMany(() => EventModel, (event) => event.requirements)
   events?: EventModel[];
