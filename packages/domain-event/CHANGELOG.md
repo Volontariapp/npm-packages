@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0
+
+### Minor Changes
+
+- adding organizerId
+
 ## 2.2.9
 
 ### Patch Changes

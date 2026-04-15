@@ -79,6 +79,9 @@ export class EventModel {
   @JoinTable({ name: 'event_requirements' })
   requirements?: RequirementModel[];
 
+  @Column({ type: 'uuid', nullable: true })
+  organizerId?: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 
