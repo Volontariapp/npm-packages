@@ -21,9 +21,6 @@ export class UserModel {
   @Column({ name: "password_hash"})
   passwordHash!: string;
 
-  @Column()
-  salt!: string;
-
   @Column({ type: 'text', nullable: true })
   bio?: string;
 

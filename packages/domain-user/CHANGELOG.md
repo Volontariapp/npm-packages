@@ -1,29 +1,5 @@
 # Changelog
 
-## 2.2.4
-
-### Patch Changes
-
-- Add rna column to user model
-
-## 2.2.3
-
-### Patch Changes
-
-- Fix circular dependency in domain-user models
-
-## 2.2.2
-
-### Patch Changes
-
-- Add export in index.ts in domain-user
-
-## 2.2.1
-
-### Patch Changes
-
-- Fix typeorm and TS errors in domain-user
-
 ## 2.2.0
 
 ### Minor Changes

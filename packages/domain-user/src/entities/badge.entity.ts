@@ -1,9 +1,7 @@
-export class Badge {
-  constructor(
-    public readonly id: string,
-    public name: string,
-    public slug: string,
-    public description: string,
-    public iconPath: string,
-  ) {}
+export class BadgeEntity {
+  id!: string;
+  name!: string;
+  slug!: string;
+  description!: string;
+  iconPath?: string;
 }

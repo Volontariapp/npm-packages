@@ -1,5 +1,3 @@
-export {};
-
 export * from "./entities/user.entity.js";
 export * from "./entities/badge.entity.js";
 

@@ -1,14 +1,12 @@
-import { Badge } from "./badge.entity.js";
+import { BadgeEntity } from "./badge.entity.js";
 
-export class User {
-  constructor(
-    public readonly id: string,
-    public email: string,
-    public pseudo: string,
-    public role: string,
-    public bio?: string,
-    public logoPath?: string,
-    public totalImpactScore: number = 0,
-    public badges: Badge[] = [],
-  ) {}
+export class UserEntity {
+  id!: string;
+  email!: string;
+  name!: string;
+  logoPath?: string;
+  rna?: string;
+  bio?: string;
+  totalImpactScore!: number;
+  badges!: BadgeEntity[];
 }

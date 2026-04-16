@@ -15,8 +15,8 @@ export class BadgeModel {
   @Column({ type: 'text' })
   description!: string;
 
-  @Column({name: "icon_path"})
-  iconPath!: string;
+  @Column({name: "icon_path", type: 'varchar', nullable: true })
+  iconPath?: string;
 
   @OneToMany('UserBadgeModel', 'badge')
   userBadges!: UserBadgeModel[];
