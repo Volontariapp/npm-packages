@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+### Minor Changes
+
+- Add User and Badge models and entities
+
 ## 2.1.23
 
 ### Patch Changes
