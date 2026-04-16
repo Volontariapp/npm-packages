@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { UserBadgeModel } from './user-badge.model.js';
+import type { UserBadgeModel } from './user-badge.model.js';
 
 @Entity('users')
 export class UserModel {
@@ -33,6 +33,6 @@ export class UserModel {
   @Column({ type: 'int', default: 0, name: "total_impact_score" })
   totalImpactScore!: number;
 
-  @OneToMany(() => UserBadgeModel, (userBadge:UserBadgeModel) => userBadge.user)
+  @OneToMany('UserBadgeModel', 'user')
   userBadges!: UserBadgeModel[];
 }

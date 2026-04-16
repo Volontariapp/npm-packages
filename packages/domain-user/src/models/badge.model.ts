@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { UserBadgeModel } from "./user-badge.model.js";
+import type { UserBadgeModel } from "./user-badge.model.js";
 
 @Entity('badges')
 export class BadgeModel {
@@ -18,6 +18,6 @@ export class BadgeModel {
   @Column({name: "icon_path"})
   iconPath!: string;
 
-  @OneToMany(() => UserBadgeModel, (userBadge:UserBadgeModel) => userBadge.badge)
+  @OneToMany('UserBadgeModel', 'badge')
   userBadges!: UserBadgeModel[];
 }

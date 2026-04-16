@@ -1,6 +1,6 @@
 import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { BadgeModel } from "./badge.model.js";
-import { UserModel } from "./user.model.js";
+import type { BadgeModel } from "./badge.model.js";
+import type { UserModel } from "./user.model.js";
 
 @Entity('user_badges')
 export class UserBadgeModel {
@@ -10,11 +10,11 @@ export class UserBadgeModel {
   @PrimaryColumn({ type: 'uuid', name: "badge_id" })
   badgeId!: string;
 
-  @ManyToOne(() => UserModel, (user:UserModel) => user.userBadges, { onDelete: 'CASCADE' })
+  @ManyToOne('UserModel', 'userBadges', { onDelete: 'CASCADE' })
   @JoinColumn({ name: "user_id" })
   user!: UserModel;
 
-  @ManyToOne(() => BadgeModel, (badge:BadgeModel) => badge.userBadges, { onDelete: 'CASCADE' })
+  @ManyToOne('BadgeModel', 'userBadges', { onDelete: 'CASCADE' })
   @JoinColumn({ name: "badge_id" })
   badge!: BadgeModel;
 

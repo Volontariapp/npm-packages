@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.3
+
+### Patch Changes
+
+- Fix circular dependency in domain-user models
+
 ## 2.2.2
 
 ### Patch Changes
