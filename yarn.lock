@@ -4164,6 +4164,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/shared@workspace:packages/shared":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/shared@workspace:packages/shared"
+  dependencies:
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/validation-nest@workspace:packages/validation-nest":
   version: 0.0.0-use.local
   resolution: "@volontariapp/validation-nest@workspace:packages/validation-nest"
