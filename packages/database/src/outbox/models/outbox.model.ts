@@ -1,15 +1,24 @@
-import type { OutboxModelStatus } from '../types/outbox-model.status.js';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { OutboxStatus } from '../types/outbox.status.js';
 
-export abstract class OutboxModel {
+@Entity('outbox')
+export class OutboxModel {
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   // Tracking and attempts
-  status!: OutboxModelStatus;
-  attemps!: number;
+  @Column({ type: 'varchar', length: 20, default: OutboxStatus.PENDING })
+  status: OutboxStatus = OutboxStatus.PENDING;
+  @Column({ type: 'int', default: 0 })
+  attempts: number = 0;
+  @Column({ type: 'text', nullable: true })
   lastError?: string;
 
+  @Column({ type: 'varchar', length: 100 })
   type!: string;
+  @Column({ type: 'varchar', length: 100 })
   emitter!: string;
 
-  createdAt!: Date;
+  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date = new Date();
 }

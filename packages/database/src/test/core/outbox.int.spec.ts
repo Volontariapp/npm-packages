@@ -1,57 +1,73 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import type { BaseRepository } from '../../core/base.repository.js';
-import type { OutboxModel } from '../../outbox/models/outbox.model.js';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
+import type { Repository } from 'typeorm';
+import { BaseRepository } from '../../core/base.repository.js';
+import { testDataSource, initializeTestDb, closeTestDb } from '../data-source.js';
+import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
+import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
-import { OutboxModelStatus } from '../../outbox/types/outbox-model.status.js';
+import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 
-type OutboxWriterRepository = ConstructorParameters<typeof OutboxWriter<OutboxModel>>[0];
+class TestOutboxRepository extends BaseRepository<OutboxModel, OutboxEntity, string> {
+  constructor(repository: Repository<OutboxModel>) {
+    super(repository, OutboxEntity, OutboxModel);
+  }
+}
 
-const makeOutboxEvent = (overrides: Partial<OutboxModel> = {}): OutboxModel => ({
-  id: 'evt-1',
-  status: OutboxModelStatus.PENDING,
-  attemps: 0,
-  type: 'user.created',
-  emitter: 'database-tests',
-  createdAt: new Date(),
-  ...overrides,
-});
+const makeOutboxEvent = (overrides: Partial<OutboxModel> = {}): OutboxModel => {
+  const event = new OutboxModel();
+  event.type = 'user.created';
+  event.emitter = 'database-tests';
+  return Object.assign(event, overrides);
+};
 
-describe('Outbox Writer', () => {
+describe('Outbox Writer (Full Integration)', () => {
   let outboxWriter: OutboxWriter<OutboxModel>;
-  let repository: OutboxWriterRepository;
+  let repository: TestOutboxRepository;
 
-  beforeEach(() => {
-    repository = {
-      create: jest.fn().mockResolvedValue(undefined),
-      createMany: jest.fn().mockResolvedValue(undefined),
-    } as unknown as BaseRepository<OutboxModel, never, string> as OutboxWriterRepository;
-
+  beforeAll(async () => {
+    await initializeTestDb();
+    repository = new TestOutboxRepository(testDataSource.getRepository(OutboxModel));
     outboxWriter = new OutboxWriter(repository);
   });
 
-  it('create() should delegate to repository.create()', async () => {
+  afterAll(async () => {
+    await closeTestDb();
+  });
+
+  beforeEach(async () => {
+    await testDataSource.getRepository(OutboxModel).createQueryBuilder().delete().execute();
+  });
+
+  it('create() should persist event in database', async () => {
     const event = makeOutboxEvent();
 
     await outboxWriter.create(event);
 
-    expect(repository.create).toHaveBeenCalledTimes(1);
-    expect(repository.create).toHaveBeenCalledWith(event);
+    const rows = await testDataSource.getRepository(OutboxModel).find();
+    expect(rows).toHaveLength(1);
+    expect(rows[0].type).toBe('user.created');
+    expect(rows[0].status).toBe(OutboxStatus.PENDING);
+    expect(rows[0].attempts).toBe(0);
+    expect(rows[0].id).toBeDefined();
   });
 
-  it('createMany() should delegate to repository.createMany()', async () => {
+  it('createMany() should persist all events with provided structure', async () => {
     const events = [
-      makeOutboxEvent({ id: 'evt-1', type: 'user.created' }),
+      makeOutboxEvent({ type: 'user.created' }),
       makeOutboxEvent({
-        id: 'evt-2',
         type: 'user.updated',
-        status: OutboxModelStatus.PROCESSING,
-        attemps: 2,
+        status: OutboxStatus.PROCESSING,
+        attempts: 2,
       }),
     ];
 
     await outboxWriter.createMany(events);
 
-    expect(repository.createMany).toHaveBeenCalledTimes(1);
-    expect(repository.createMany).toHaveBeenCalledWith(events);
+    const rows = await testDataSource.getRepository(OutboxModel).find({ order: { type: 'ASC' } });
+    expect(rows).toHaveLength(2);
+    expect(rows[0].type).toBe('user.created');
+    expect(rows[1].type).toBe('user.updated');
+    expect(rows[1].status).toBe(OutboxStatus.PROCESSING);
+    expect(rows[1].attempts).toBe(2);
   });
 });

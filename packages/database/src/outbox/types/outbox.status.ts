@@ -1,4 +1,4 @@
-export enum OutboxModelStatus {
+export enum OutboxStatus {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
   COMPLETED = 'COMPLETED',
