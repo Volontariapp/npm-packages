@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.4
+
+### Patch Changes
+
+- Add rna column to user model
+
 ## 2.2.3
 
 ### Patch Changes

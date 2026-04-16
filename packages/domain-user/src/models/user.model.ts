@@ -30,6 +30,9 @@ export class UserModel {
   @Column({ type: 'varchar', nullable: true })
   logoPath?: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  rna?: string;
+
   @Column({ type: 'int', default: 0, name: "total_impact_score" })
   totalImpactScore!: number;
 
