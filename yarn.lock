@@ -3992,8 +3992,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-user@workspace:packages/domain-user"
   dependencies:
+    "@nestjs/typeorm": "npm:^11.0.1"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/logger": "workspace:*"
+    typeorm: "npm:^0.3.20"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft

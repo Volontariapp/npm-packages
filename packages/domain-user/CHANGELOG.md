@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.1
+
+### Patch Changes
+
+- Fix typeorm and TS errors in domain-user
+
 ## 2.2.0
 
 ### Minor Changes

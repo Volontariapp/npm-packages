@@ -33,6 +33,6 @@ export class UserModel {
   @Column({ type: 'int', default: 0, name: "total_impact_score" })
   totalImpactScore!: number;
 
-  @OneToMany(() => UserBadgeModel, userBadge => userBadge.user)
+  @OneToMany(() => UserBadgeModel, (userBadge:UserBadgeModel) => userBadge.user)
   userBadges!: UserBadgeModel[];
 }

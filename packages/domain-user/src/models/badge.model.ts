@@ -18,6 +18,6 @@ export class BadgeModel {
   @Column({name: "icon_path"})
   iconPath!: string;
 
-  @OneToMany(() => UserBadgeModel, userBadge => userBadge.badge)
+  @OneToMany(() => UserBadgeModel, (userBadge:UserBadgeModel) => userBadge.badge)
   userBadges!: UserBadgeModel[];
 }

@@ -10,11 +10,11 @@ export class UserBadgeModel {
   @PrimaryColumn({ type: 'uuid', name: "badge_id" })
   badgeId!: string;
 
-  @ManyToOne(() => UserModel, user => user.userBadges, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserModel, (user:UserModel) => user.userBadges, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "user_id" })
   user!: UserModel;
 
-  @ManyToOne(() => BadgeModel, badge => badge.userBadges, { onDelete: 'CASCADE' })
+  @ManyToOne(() => BadgeModel, (badge:BadgeModel) => badge.userBadges, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "badge_id" })
   badge!: BadgeModel;
 
