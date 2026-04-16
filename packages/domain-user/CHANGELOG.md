@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.2
+
+### Patch Changes
+
+- Add export in index.ts in domain-user
+
 ## 2.2.1
 
 ### Patch Changes
