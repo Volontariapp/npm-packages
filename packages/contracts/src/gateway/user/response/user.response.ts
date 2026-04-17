@@ -7,6 +7,33 @@ export interface UserWebResponse {
 
 export interface ListUsersWebResponse {
   users: User[];
-  totalCount: number;
   pagination: PaginationResponse;
+}
+
+export interface GetUserWebResponse {
+  user: User;
+}
+
+export interface DeleteUserWebResponse {
+}
+
+export interface UpdateUserWebResponse {
+}
+
+export interface AuthWebResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface LoginWebResponse {
+  auth: AuthWebResponse;
+}
+
+export interface RefreshTokenWebResponse {
+  auth: AuthWebResponse;
+}
+
+export interface SignUpWebResponse {
+  user: User;
+  auth: AuthWebResponse;
 }
