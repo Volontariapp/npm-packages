@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/health-check",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -30,6 +30,7 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "devDependencies": {
@@ -42,8 +43,8 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@volontariapp/bridge": "0.2.3",
-    "@volontariapp/config": "1.1.0",
-    "@volontariapp/errors": "0.4.3"
+    "@volontariapp/bridge": "workspace:*",
+    "@volontariapp/config": "workspace:*",
+    "@volontariapp/errors": "workspace:*"
   }
 }

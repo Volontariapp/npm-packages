@@ -43,6 +43,9 @@ describe('JwtService (Unit)', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
     jwtService = new JwtService(config);
+    jest.spyOn(jwtService['logger'], 'error').mockImplementation(() => undefined);
+    jest.spyOn(jwtService['logger'], 'debug').mockImplementation(() => undefined);
+    jest.spyOn(jwtService['logger'], 'warn').mockImplementation(() => undefined);
 
     const readSpy = jest.spyOn(fs, 'readFileSync');
     readSpy.mockImplementation((path) => {

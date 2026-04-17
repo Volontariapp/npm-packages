@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.4
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.3
+  - @volontariapp/errors@0.4.4
+
 ## 0.2.3
 
 ### Patch Changes

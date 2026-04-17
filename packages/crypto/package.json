@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/crypto",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -30,7 +30,8 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint src/",
-    "test": "node --experimental-vm-modules $(yarn bin jest)"
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/config",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -29,8 +29,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest",
-    "test:cov": "node --experimental-vm-modules ../../node_modules/.bin/jest --coverage"
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",

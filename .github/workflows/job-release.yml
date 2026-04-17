@@ -22,7 +22,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.ORG_REPO_TOKEN }}
           fetch-depth: 0
@@ -32,7 +32,7 @@ jobs:
         run: corepack enable
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 24.14.0
           cache: yarn
@@ -54,20 +54,3 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: bash scripts/ci-package-publish.sh --changed-packages '${{ inputs.changed_packages }}'
-
-      - name: Post Comment on PR
-        if: github.event_name == 'pull_request' && steps.release.outputs.mode == 'snapshot' && steps.release.outputs.snapshot_tags != ''
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAGS: ${{ steps.release.outputs.snapshot_tags }}
-        run: |
-          IFS=',' read -ra ADDR <<< "$TAGS"
-          for i in "${ADDR[@]}"; do
-            PKG=$(echo "$i" | sed 's/@[^@]*$//')
-            gh pr comment ${{ github.event.pull_request.number }} --body "🚀 Nouvelle version de \`$PKG\` :
-
-            \`\`\`bash
-            yarn add $i
-            yarn up $i
-            \`\`\`"
-          done
