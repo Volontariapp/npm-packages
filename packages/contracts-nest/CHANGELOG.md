@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.8
+
+### Patch Changes
+
+- moving database config on config package
+
 ## 2.2.7
 
 ### Patch Changes
