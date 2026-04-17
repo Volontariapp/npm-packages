@@ -26,7 +26,7 @@ jobs:
       has_changes: ${{ steps.combine.outputs.has_changes }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.ORG_REPO_TOKEN }}
 
