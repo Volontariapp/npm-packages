@@ -52,6 +52,7 @@ jobs:
     uses: ./.github/workflows/job-release.yml
     with:
       changed_packages: ${{ needs.target.outputs.packages }}
+      json_plan: ${{ needs.target.outputs.json_plan }}
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

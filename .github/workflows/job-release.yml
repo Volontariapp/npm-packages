@@ -2,9 +2,11 @@ name: Job - Version Changelogs & Publish
 
 on:
   workflow_call:
-    inputs:
       changed_packages:
-        required: true
+        required: false
+        type: string
+      json_plan:
+        required: false
         type: string
     secrets:
       ORG_REPO_TOKEN:
@@ -53,7 +55,17 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bash scripts/ci-package-publish.sh --changed-packages '${{ inputs.changed_packages }}'
+        run: |
+          # Use the plan to feed the publish script
+          echo '${{ inputs.json_plan }}' > .changeset/.plan.json
+          bash scripts/ci-package-publish.sh --changed-packages '${{ inputs.changed_packages }}' --plan .changeset/.plan.json
+
+      - name: Download coverage artifacts
+        if: github.event_name == 'pull_request' || github.event.pull_request != null
+        uses: actions/download-artifact@v4
+        with:
+          path: coverage-artifacts
+          pattern: coverage-summary-*
 
       - name: Post Comment on PR
         if: github.event_name == 'pull_request' || github.event.pull_request != null
@@ -70,11 +82,33 @@ jobs:
             TAGS_FILE=".changeset/.snapshot-tags"
             if [ -f "$TAGS_FILE" ]; then
               while read -r tag; do
-                NAME=$(echo "$tag" | cut -d'@' -f1 | sed 's|^@volontariapp/||')
+                # Extract base package name (folder name)
                 FULL_NAME=$(echo "$tag" | cut -d'@' -f1)
+                NAME=$(echo "$FULL_NAME" | sed 's|^@volontariapp/||')
                 VER=$(echo "$tag" | cut -d'@' -f2)
                 
-                BODY="🚀 Nouvelle version (snapshot) de \`$NAME\` disponible :
+                # Try to find coverage summary for this package
+                SUMMARY_FILE="coverage-artifacts/coverage-summary-$NAME/coverage-summary.json"
+                REPORT=""
+                if [ -f "$SUMMARY_FILE" ]; then
+                  LINES=$(jq -r '.total.lines.pct' "$SUMMARY_FILE")
+                  STMTS=$(jq -r '.total.statements.pct' "$SUMMARY_FILE")
+                  FUNCS=$(jq -r '.total.functions.pct' "$SUMMARY_FILE")
+                  BRCHS=$(jq -r '.total.branches.pct' "$SUMMARY_FILE")
+                  REPORT=$(printf '### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **%s%%** |\n| 📄 Statements | **%s%%** |\n| 📞 Functions | **%s%%** |\n| 🌿 Branches | **%s%%** |\n\n[🔍 Voir le rapport HTML détaillé](https://github.com/%s/actions/runs/%s#artifacts)\n' \
+                    "$LINES" "$STMTS" "$FUNCS" "$BRCHS" "${{ github.repository }}" "${{ github.run_id }}")
+                fi
+
+                # Logic to determine if it was a Lazy Deployment
+                PLAN_INFO=$(echo '${{ inputs.json_plan }}' | jq -r ".[] | select(.name == \"$FULL_NAME\")")
+                ACTION=$(echo "$PLAN_INFO" | jq -r '.action // "BUILD"')
+                LAZY_NOTE=""
+                RECAP_ICON="🚀"
+                [ "$ACTION" == "SKIP" ] && LAZY_NOTE=" *(♻️ Idéal - Récupéré du cache)*" && RECAP_ICON="♻️"
+
+                BODY="$RECAP_ICON Nouvelle version (snapshot) de \`$FULL_NAME\` disponible$LAZY_NOTE :
+                
+                $REPORT
                 
                 **📦 Installation**
                 \`\`\`bash
