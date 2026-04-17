@@ -2,6 +2,7 @@ name: Job - Version Changelogs & Publish
 
 on:
   workflow_call:
+    inputs:
       changed_packages:
         required: false
         type: string
