@@ -40,6 +40,7 @@ jobs:
     uses: Volontariapp/ci-tools/.github/workflows/npm-packages-test-build.yml@main
     with:
       changed_packages: ${{ needs.target.outputs.packages }}
+      snapshot_suffix: ${{ needs.target.outputs.snapshot_suffix }}
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
