@@ -1,0 +1,78 @@
+name: Job - Orchestrate CI Plan
+
+# Reusable workflow: runs ci-orchestrate.py and exposes its outputs
+# as structured GitHub Actions outputs consumed by downstream jobs.
+#
+# Outputs
+# ───────
+# has_changes     "true" | "false"
+# build_matrix    JSON array of package ids   → parallel test/build matrix
+# publish_order   JSON array of package ids   → topological publish order
+# snapshot_suffix e.g. "snap-a1b2c3d"
+# json_plan       Full plan JSON (passed to publish + PR comment jobs)
+
+on:
+  workflow_call:
+    secrets:
+      ORG_REPO_TOKEN:
+        required: true
+    outputs:
+      has_changes:
+        description: Whether any packages need to be built
+        value: ${{ jobs.orchestrate.outputs.has_changes }}
+      build_matrix:
+        description: JSON array of package ids for the parallel test/build matrix
+        value: ${{ jobs.orchestrate.outputs.build_matrix }}
+      publish_order:
+        description: JSON array of package ids in topological publish order
+        value: ${{ jobs.orchestrate.outputs.publish_order }}
+      snapshot_suffix:
+        description: Shared snapshot suffix (e.g. snap-a1b2c3d)
+        value: ${{ jobs.orchestrate.outputs.snapshot_suffix }}
+      json_plan:
+        description: Full ci-orchestrate.py JSON output
+        value: ${{ jobs.orchestrate.outputs.json_plan }}
+
+jobs:
+  orchestrate:
+    name: Compute CI Plan
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes:    ${{ steps.plan.outputs.has_changes }}
+      build_matrix:   ${{ steps.plan.outputs.build_matrix }}
+      publish_order:  ${{ steps.plan.outputs.publish_order }}
+      snapshot_suffix: ${{ steps.plan.outputs.snapshot_suffix }}
+      json_plan:      ${{ steps.plan.outputs.json_plan }}
+
+    steps:
+      - name: Checkout (full history for accurate diff)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          fetch-depth: 0
+
+      - name: Run ci-orchestrate.py
+        id: plan
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: |
+          PLAN=$(python3 scripts/ci-orchestrate.py)
+
+          # Pretty-print for the Actions log
+          echo "=== Orchestration Plan ==="
+          echo "$PLAN" | python3 -m json.tool
+          echo "=========================="
+
+          # ── Multiline JSON plan (consumed as-is by publish/comment jobs)
+          {
+            echo "json_plan<<EOF"
+            echo "$PLAN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          # ── Flat outputs
+          echo "build_matrix=$(echo "$PLAN"   | jq -c '.build_matrix')"   >> "$GITHUB_OUTPUT"
+          echo "publish_order=$(echo "$PLAN"  | jq -c '.publish_order')"  >> "$GITHUB_OUTPUT"
+          echo "snapshot_suffix=$(echo "$PLAN" | jq -r '.snapshot_suffix')" >> "$GITHUB_OUTPUT"
+          echo "has_changes=$(echo "$PLAN"    | jq '.has_changes')"       >> "$GITHUB_OUTPUT"

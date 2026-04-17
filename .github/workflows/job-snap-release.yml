@@ -1,0 +1,85 @@
+name: Job - Snapshot Release
+
+# Reusable workflow: publishes BUILD packages in topological order,
+# then posts a structured PR comment with coverage + install snippets.
+#
+# No yarn install cache is used intentionally — every run is a full fresh cycle.
+
+on:
+  workflow_call:
+    inputs:
+      json_plan:
+        description: Full ci-orchestrate.py plan JSON
+        required: true
+        type: string
+    secrets:
+      ORG_REPO_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+
+jobs:
+  snap-release:
+    name: Snapshot Release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # npm provenance
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          fetch-depth: 0
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node (no cache — full fresh cycle)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Configure npm & yarn auth
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          yarn config set 'npmRegistries["//registry.npmjs.org/"].npmAuthToken' "${{ secrets.NPM_TOKEN }}"
+
+      - name: Publish snapshot packages
+        id: publish
+        env:
+          NPM_CONFIG_PROVENANCE: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          JSON_PLAN: ${{ inputs.json_plan }}
+        run: |
+          echo "$JSON_PLAN" > /tmp/ci-plan.json
+          bash scripts/ci-snap-publish.sh --plan /tmp/ci-plan.json
+
+      # Coverage artifacts are uploaded by the test-build matrix jobs
+      - name: Download coverage summaries
+        if: github.event_name == 'pull_request'
+        uses: actions/download-artifact@v4
+        with:
+          path: coverage-artifacts
+          pattern: coverage-summary-*
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JSON_PLAN: ${{ inputs.json_plan }}
+        run: |
+          echo "$JSON_PLAN" > /tmp/ci-plan.json
+          python3 scripts/ci-pr-comment.py \
+            --plan      /tmp/ci-plan.json \
+            --artifacts coverage-artifacts \
+            --pr        "${{ github.event.pull_request.number }}" \
+            --run-id    "${{ github.run_id }}" \
+            --repo      "${{ github.repository }}"
