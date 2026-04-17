@@ -3,7 +3,7 @@ import neo4j from 'neo4j-driver';
 import { InternalServerError } from '@volontariapp/errors';
 import { Logger } from '@volontariapp/logger';
 import type { IConnectionProvider } from '../interfaces/provider.interface.js';
-import type { INeo4jConfig } from '../interfaces/database.config.interface.js';
+import type { INeo4jConfig } from '@volontariapp/config';
 
 export class Neo4jProvider implements IConnectionProvider<Driver> {
   private driver: Driver | null = null;

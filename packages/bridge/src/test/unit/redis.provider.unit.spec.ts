@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals
 import { RedisProvider } from '../../providers/redis.provider.js';
 import { InternalServerError } from '@volontariapp/errors';
 import { Redis } from 'ioredis';
-import type { IRedisConfig } from '../../interfaces/database.config.interface.js';
+import type { IRedisConfig } from '@volontariapp/config';
 
 describe('RedisProvider Unit Tests', () => {
   let provider: RedisProvider;

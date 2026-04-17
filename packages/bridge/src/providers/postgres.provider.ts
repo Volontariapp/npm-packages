@@ -3,7 +3,7 @@ import type { PostgresConnectionOptions } from 'typeorm/driver/postgres/Postgres
 import { InternalServerError } from '@volontariapp/errors';
 import { Logger } from '@volontariapp/logger';
 import type { IConnectionProvider } from '../interfaces/provider.interface.js';
-import type { IPostgresConfig } from '../interfaces/database.config.interface.js';
+import type { IPostgresConfig } from '@volontariapp/config';
 
 export class PostgresProvider implements IConnectionProvider<DataSource> {
   private dataSource: DataSource;

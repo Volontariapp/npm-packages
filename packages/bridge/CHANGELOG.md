@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.5
+
+### Patch Changes
+
+- moving database config on config package
+
+- Updated dependencies []:
+  - @volontariapp/config@1.1.2
+
 ## 0.2.4
 
 ### Patch Changes

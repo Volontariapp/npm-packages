@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2
+
+### Patch Changes
+
+- moving database config on config package
+
 ## 1.1.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/bridge",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@types/geojson": "^7946.0.16",
+    "@volontariapp/config": "workspace:*",
     "@volontariapp/errors": "workspace:^",
     "@volontariapp/logger": "workspace:*",
     "ioredis": "^5.10.1",
