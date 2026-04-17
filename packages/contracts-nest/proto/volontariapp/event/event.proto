@@ -22,7 +22,7 @@ message Tag {
   string id = 1;
   string slug = 2;
   string name = 3;
-  string color = 4;
+  string balise = 4;
 }
 
 message Requirement {

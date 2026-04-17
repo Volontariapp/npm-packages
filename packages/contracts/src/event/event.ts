@@ -27,7 +27,7 @@ export interface Tag {
   id: string;
   slug: string;
   name: string;
-  color: string;
+  balise: string;
 }
 
 export interface Requirement {
