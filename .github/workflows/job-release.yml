@@ -92,40 +92,50 @@ jobs:
                 NAME=$(echo "$FULL_NAME" | sed 's|^@volontariapp/||')
                 REPORT=""
                 SUMMARY_FILE="coverage-artifacts/coverage-summary-$NAME/coverage-summary.json"
-                
-                if [ ! -f "$SUMMARY_FILE" ]; then
-                  REPORT=$(printf "> [!NOTE]\n> Pas de rapport de couverture trouvé pour ce package.")
-                else
+
+                # Fetch coverage summary for this package
+                if [ -f "$SUMMARY_FILE" ]; then
                   LINES=$(jq -r '.total.lines.pct' "$SUMMARY_FILE")
                   STMTS=$(jq -r '.total.statements.pct' "$SUMMARY_FILE")
                   FUNCS=$(jq -r '.total.functions.pct' "$SUMMARY_FILE")
                   BRCHS=$(jq -r '.total.branches.pct' "$SUMMARY_FILE")
-                  REPORT=$(printf "### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **$LINES%%** |\n| 📄 Statements | **$STMTS%%** |\n| 📞 Functions | **$FUNCS%%** |\n| 🌿 Branches | **$BRCHS%%** |")
+                  REPORT=$(printf '%s\n%s\n%s\n%s\n%s\n%s\n%s' \
+                    "### 📊 Rapport de CI" \
+                    "| Type | Couverture |" \
+                    "| :--- | :--- |" \
+                    "| 📏 Lines | **${LINES}%** |" \
+                    "| 📄 Statements | **${STMTS}%** |" \
+                    "| 📞 Functions | **${FUNCS}%** |" \
+                    "| 🌿 Branches | **${BRCHS}%** |")
+                else
+                  REPORT="> [!NOTE]
+                  Pas de rapport de couverture trouvé pour ce package."
                 fi
 
-                # Logic to determine if it was a Lazy Deployment
-                PLAN_INFO=$(echo "$JSON_PLAN" | jq -r ".[] | select(.name == \"$FULL_NAME\")")
-                ACTION=$(echo "$PLAN_INFO" | jq -r '.action // "BUILD"')
-                RECAP_ICON="🚀"
-                [ "$ACTION" == "SKIP" ] && RECAP_ICON="♻️"
+                PR_NUMBER="${{ github.event.pull_request.number }}"
+                if [ -z "$PR_NUMBER" ] && [ "${{ github.event_name }}" == "pull_request" ]; then
+                  # Try fallback for some PR events
+                  PR_NUMBER=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
+                fi
 
-                BODY="$RECAP_ICON Nouvelle version de $FULL_NAME :
+                if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+                  REPORT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts"
+                  gh pr comment "$PR_NUMBER" --body "🚀 Nouvelle version de \`$PKG\` :
+                  $REPORT
 
-$REPORT
+                  [🔍 Voir le rapport HTML détaillé]($REPORT_URL)
 
-🔍 [Voir le rapport HTML détaillé](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+                  **📦 Installation**
+                  \`\`\`bash
+                  yarn add $TAG
+                  \`\`\`
 
-📦 Installation
-\`\`\`bash
-yarn add $tag
-\`\`\`
-
-🔄 Mise à jour
-\`\`\`bash
-yarn up $tag
-\`\`\`"
-                
-                gh pr comment "$PR_NUMBER" --body "$BODY"
-              done < "$TAGS_FILE"
-            fi
-          fi
+                  **🔄 Mise à jour**
+                  \`\`\`bash
+                  yarn up $TAG
+                  \`\`\`"
+                else
+                  echo "No PR number found, skipping comment."
+                  echo "### 🚀 Nouvelle version de \`$PKG\`" >> $GITHUB_STEP_SUMMARY
+                  echo "$REPORT" >> $GITHUB_STEP_SUMMARY
+                fi
