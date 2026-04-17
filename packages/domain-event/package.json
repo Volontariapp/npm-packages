@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-event",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -33,7 +33,7 @@
     "test:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --runInBand",
     "test:all": "yarn test && yarn test:integration",
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch",
-    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\"",
     "typeorm": "typeorm-ts-node-esm",
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },

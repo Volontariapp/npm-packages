@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.15
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.2
+  - @volontariapp/bridge@0.2.4
+  - @volontariapp/config@1.1.1
+  - @volontariapp/errors-nest@0.7.4
+  - @volontariapp/health-check@0.1.6
+  - @volontariapp/logger@0.2.3
+
 ## 0.1.14
 
 ### Patch Changes
