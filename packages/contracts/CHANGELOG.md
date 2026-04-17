@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.4
+
+### Patch Changes
+
+- Fix bad versions for contracts
+
 ## 3.3.3
 
 ### Patch Changes
