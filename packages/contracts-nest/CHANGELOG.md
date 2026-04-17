@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.7
+
+### Patch Changes
+
+- Fix bad versions for contracts
+
 ## 2.2.6
 
 ### Patch Changes
