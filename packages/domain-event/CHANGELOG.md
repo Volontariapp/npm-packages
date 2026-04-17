@@ -1,11 +1,17 @@
 # Changelog
 
-## 2.2.10
+## 2.3.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @volontariapp/contracts@3.3.2
+  - @volontariapp/database@1.4.0
+
+## 2.3.0
+
+### Minor Changes
+
+- adding organizerId
 
 ## 2.2.9
 

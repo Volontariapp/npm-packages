@@ -22,9 +22,10 @@ export class GrpcDateMapper {
   /**
    * Converts a value to a JavaScript Date.
    * Supports: gRPC Timestamp object, ISO strings, or existing Date objects.
+   * Returns undefined if the input is null, undefined, or representing a zero timestamp.
    */
-  static toDate(value: Timestamp | Date | string | undefined | null): Date {
-    if (value === null || value === undefined) return new Date();
+  static toDate(value: Timestamp | Date | string | undefined | null): Date | undefined {
+    if (value === null || value === undefined) return undefined;
     if (value instanceof Date) return value;
     if (typeof value === 'string') return new Date(value);
 
@@ -32,11 +33,11 @@ export class GrpcDateMapper {
       const seconds = Number(value.seconds);
       const nanos = Number(value.nanos);
 
-      if (seconds === 0 && nanos === 0) return new Date();
+      if (seconds === 0 && nanos === 0) return undefined;
 
       return new Date(seconds * 1000 + nanos / 1e6);
     }
 
-    return new Date();
+    return undefined;
   }
 }

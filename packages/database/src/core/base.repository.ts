@@ -140,16 +140,16 @@ export abstract class BaseRepository<
   }
 
   async update(id: TId, data: Partial<TEntity>): Promise<TEntity | null> {
-    const modelData = this.toModel(data) as Record<string, unknown>;
+    const modelData = this.toModel(data);
     const where = this.buildIdWhere(id);
 
-    const relationNames = this.repository.metadata.relations.map((r) => r.propertyName);
-    const updateData = Object.fromEntries(
-      Object.entries(modelData).filter(([key]) => !relationNames.includes(key)),
-    );
+    await this.repository.save({
+      ...(modelData as Record<string, unknown>),
+      ...where,
+    } as DeepPartial<TModel>);
 
-    await this.repository.update(where, updateData as Parameters<Repository<TModel>['update']>[1]);
-    return this.findOne(where);
+    const relationNames = this.repository.metadata.relations.map((r) => r.propertyName);
+    return this.findWithRelations(where, relationNames);
   }
 
   async updateWhere(

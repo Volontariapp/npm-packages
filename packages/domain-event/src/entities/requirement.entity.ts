@@ -5,5 +5,5 @@ export class RequirementEntity {
   quantity!: number;
   currentQuantity!: number;
   isSystem!: boolean;
-  createdBy!: string;
+  createdBy?: string;
 }
