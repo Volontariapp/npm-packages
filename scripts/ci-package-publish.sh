@@ -135,12 +135,12 @@ for dir in "${SELECTED_PACKAGE_DIRS[@]}"; do
     # If using a plan, we can skip if already deployed
     SHOULD_SKIP=false
     if [ -n "$PLAN_FILE" ] && [ -f "$PLAN_FILE" ]; then
-        ACTION=$(jq -r ".[] | select(.name == \"$PKG_NAME\") | .action" "$PLAN_FILE" || echo "SKIP")
+        ACTION=$(jq -r ".[] | select(.name == \"$NAME\") | .action" "$PLAN_FILE" || echo "SKIP")
         if [ "$ACTION" == "SKIP" ] || [ -z "$ACTION" ] || [ "$ACTION" == "null" ]; then
-            echo -e "${YELLOW}♻️  Plan says SKIP for $PKG_NAME. Skipping Build/Publish.${NC}"
+            echo -e "${YELLOW}♻️  Plan says SKIP for $NAME. Skipping Build/Publish.${NC}"
             SHOULD_SKIP=true
         else
-            echo -e "${CYAN}🚀 Plan says BUILD for $PKG_NAME.${NC}"
+            echo -e "${CYAN}🚀 Plan says BUILD for $NAME.${NC}"
         fi
     fi
 
