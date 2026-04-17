@@ -1,1 +1,1 @@
-npx lint-staged --config scripts/lint-staged.config.js
+npx lint-staged --config scripts/lint-staged.config.js --allow-empty
