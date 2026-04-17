@@ -88,16 +88,17 @@ jobs:
                 NAME=$(echo "$FULL_NAME" | sed 's|^@volontariapp/||')
                 VER=$(echo "$tag" | cut -d'@' -f2)
                 
-                # Try to find coverage summary for this package
                 SUMMARY_FILE="coverage-artifacts/coverage-summary-$NAME/coverage-summary.json"
                 REPORT=""
-                if [ -f "$SUMMARY_FILE" ]; then
+                if [ ! -f "$SUMMARY_FILE" ]; then
+                  REPORT="> [!NOTE]\n> Pas de rapport de couverture trouvé pour ce package.\n"
+                else
                   LINES=$(jq -r '.total.lines.pct' "$SUMMARY_FILE")
                   STMTS=$(jq -r '.total.statements.pct' "$SUMMARY_FILE")
                   FUNCS=$(jq -r '.total.functions.pct' "$SUMMARY_FILE")
                   BRCHS=$(jq -r '.total.branches.pct' "$SUMMARY_FILE")
-                  REPORT=$(printf '### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **%s%%** |\n| 📄 Statements | **%s%%** |\n| 📞 Functions | **%s%%** |\n| 🌿 Branches | **%s%%** |\n\n🔍 [Voir le rapport HTML détaillé](https://github.com/%s/actions/runs/%s#artifacts)\n' \
-                    "$LINES" "$STMTS" "$FUNCS" "$BRCHS" "${{ github.repository }}" "${{ github.run_id }}")
+                  REPORT=$(printf '### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **%s%%** |\n| 📄 Statements | **%s%%** |\n| 📞 Functions | **%s%%** |\n| 🌿 Branches | **%s%%** |\n' \
+                    "$LINES" "$STMTS" "$FUNCS" "$BRCHS")
                 fi
 
                 # Logic to determine if it was a Lazy Deployment
@@ -111,12 +112,14 @@ jobs:
                 
                 $REPORT
                 
-                **📦 Installation**
+                🔍 [Voir le rapport HTML détaillé](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+                
+                📦 Installation
                 \`\`\`bash
                 yarn add $tag
                 \`\`\`
 
-                **🔄 Mise à jour**
+                🔄 Mise à jour
                 \`\`\`bash
                 yarn up $tag
                 \`\`\`"
