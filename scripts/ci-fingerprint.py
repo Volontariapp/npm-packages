@@ -124,6 +124,9 @@ def calculate_recursive_hashes(packages, dirty_set):
         for dep in sorted(pkg['deps']):
             if dep in packages:
                 dep_hash, dep_impacted = get_final_hash(dep)
+                # Include dep hash to ensure parent hash changes when dependency changes
+                m.update(f"{dep}:{dep_hash}".encode())
+                
                 # If content didn't change but a dep did, mark it
                 if dep_impacted:
                     impacted.add(name)
@@ -155,7 +158,9 @@ def main():
     
     output = []
     for name, h in hashes.items():
-        with open(graph[name]['path'] / 'package.json') as f:
+        pkg = graph[name]
+        is_dirty = pkg['dir'] in dirty_set
+        with open(pkg['path'] / 'package.json') as f:
             v_base = json.load(f)['version'].split('-')[0]
         
         snapshot_version = f"{v_base}-snapshot.{h}"
@@ -168,15 +173,16 @@ def main():
         reason = reasons[name] if is_impacted else "Skipped (No changes in graph)"
         if exists: reason = f"Already deployed as {snapshot_version}"
 
-        print(f"DECISION: {name} -> {action} ({reason})", file=sys.stderr)
+        print(f"DECISION: {name} [Hash: {h}] -> {action} ({reason})", file=sys.stderr)
 
         output.append({
             'name': name,
-            'id': graph[name]['dir'],
+            'id': pkg['dir'],
             'hash': h,
             'version': snapshot_version,
             'deployed': exists,
             'action': action,
+            'test': is_dirty,
             'reason': reason
         })
     

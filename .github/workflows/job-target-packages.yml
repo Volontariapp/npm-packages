@@ -11,8 +11,11 @@ on:
         required: true
     outputs:
       packages:
-        description: 'Consolidated JSON array of packages to build/publish'
+        description: 'List of all packages to build/publish'
         value: ${{ jobs.target.outputs.packages }}
+      test_packages:
+        description: 'List of packages requiring tests (dirty only)'
+        value: ${{ jobs.target.outputs.test_packages }}
       has_changes:
         description: 'Boolean indicating if any packages were detected'
         value: ${{ jobs.target.outputs.has_changes }}
@@ -29,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       packages: ${{ steps.plan.outputs.packages }}
+      test_packages: ${{ steps.plan.outputs.test_packages }}
       has_changes: ${{ steps.plan.outputs.has_changes }}
       snapshot_suffix: ${{ steps.plan.outputs.snapshot_suffix }}
       json_plan: ${{ steps.plan.outputs.json_plan }}
@@ -50,9 +54,13 @@ jobs:
           echo "$PLAN" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
           
-          # Extract only packages that need building
+          # Extract packages to build
           TO_BUILD=$(echo "$PLAN" | jq -c '[.[] | select(.action == "BUILD") | .id]')
           echo "packages=$TO_BUILD" >> "$GITHUB_OUTPUT"
+          
+          # Extract ONLY packages to test (Directly dirty)
+          TO_TEST=$(echo "$PLAN" | jq -c '[.[] | select(.test == true) | .id]')
+          echo "test_packages=$TO_TEST" >> "$GITHUB_OUTPUT"
           
           # Force string true/false for GHA comparison
           COUNT=$(echo "$TO_BUILD" | jq 'length')

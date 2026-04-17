@@ -38,7 +38,7 @@ jobs:
     if: ${{ needs.target.outputs.has_changes == 'true' }}
     uses: Volontariapp/ci-tools/.github/workflows/npm-packages-test-build.yml@main
     with:
-      changed_packages: ${{ needs.target.outputs.packages }}
+      changed_packages: ${{ needs.target.outputs.test_packages }}
       snapshot_suffix: ${{ needs.target.outputs.snapshot_suffix }}
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
