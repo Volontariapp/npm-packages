@@ -11,8 +11,12 @@ describe('RolesGuard (Unit)', () => {
   let reflector: Reflector;
 
   beforeEach(() => {
+    jest.restoreAllMocks();
     reflector = createMock<Reflector>();
     guard = new RolesGuard(reflector);
+    jest.spyOn(guard['logger'], 'debug').mockImplementation(() => undefined);
+    jest.spyOn(guard['logger'], 'warn').mockImplementation(() => undefined);
+    jest.spyOn(guard['logger'], 'error').mockImplementation(() => undefined);
   });
 
   it('should allow access if no roles are required', () => {

@@ -14,6 +14,7 @@ describe('GrpcInternalInterceptor (Unit)', () => {
     jest.restoreAllMocks();
     jwtService = createMock<JwtService>();
     interceptor = new GrpcInternalInterceptor(jwtService);
+    jest.spyOn(interceptor['logger'], 'debug').mockImplementation(() => undefined);
   });
 
   it('should call next.handle() if user is not in request', async () => {
