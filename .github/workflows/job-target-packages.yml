@@ -42,8 +42,11 @@ jobs:
         id: plan
         run: |
           PLAN=$(python3 scripts/ci-fingerprint.py)
-          echo "Full Plan: $PLAN"
-          echo "json_plan=$PLAN" >> "$GITHUB_OUTPUT"
+          
+          # Multiline output for JSON plan
+          echo "json_plan<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$PLAN" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
           
           # Extract only packages that need building
           TO_BUILD=$(echo "$PLAN" | jq -c '[.[] | select(.action == "BUILD") | .id]')
