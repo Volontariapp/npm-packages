@@ -1,8 +1,4 @@
-import type {
-  IPostgresConfig,
-  INeo4jConfig,
-  IRedisConfig,
-} from '../../interfaces/database.config.interface.js';
+import type { IPostgresConfig, INeo4jConfig, IRedisConfig } from '@volontariapp/config';
 
 export const postgresConfig: IPostgresConfig = {
   host: 'localhost',

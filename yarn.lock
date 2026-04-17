@@ -3860,6 +3860,7 @@ __metadata:
     "@types/geojson": "npm:^7946.0.16"
     "@types/jest": "npm:^30.0.0"
     "@types/pg": "npm:^8"
+    "@volontariapp/config": "workspace:*"
     "@volontariapp/errors": "workspace:^"
     "@volontariapp/logger": "workspace:*"
     ioredis: "npm:^5.10.1"
@@ -3884,9 +3885,12 @@ __metadata:
     "@volontariapp/logger": "workspace:*"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.15.1"
+    ioredis: "npm:^5.10.1"
     jest: "npm:^30.3.0"
+    neo4j-driver: "npm:^6.0.1"
     reflect-metadata: "npm:^0.2.2"
     ts-jest: "npm:^29.4.9"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
