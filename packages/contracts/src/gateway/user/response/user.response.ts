@@ -1,39 +1,22 @@
-import type { User } from '../../../user/user.js';
-import type { PaginationResponse } from '../../../common/pagination.js';
+import type { DeleteUserResponse, ListUsersResponse, UserResponse,
+  AuthResponse, LoginResponse, RefreshTokenResponse, SignUpResponse,
+  UpdateUserResponse
+ } from '../../../user/user.responses.js';
 
-export interface UserWebResponse {
-  user: User;
-}
+export interface UserWebResponse extends UserResponse {}
 
-export interface ListUsersWebResponse {
-  users: User[];
-  pagination: PaginationResponse;
-}
+export interface ListUsersWebResponse extends ListUsersResponse {}
 
-export interface GetUserWebResponse {
-  user: User;
-}
+export interface GetUserWebResponse extends UserResponse {}
 
-export interface DeleteUserWebResponse {
-}
+export interface DeleteUserWebResponse extends DeleteUserResponse {}
 
-export interface UpdateUserWebResponse {
-}
+export interface UpdateUserWebResponse extends UpdateUserResponse {}
 
-export interface AuthWebResponse {
-  accessToken: string;
-  refreshToken: string;
-}
+export interface AuthWebResponse extends AuthResponse {}
 
-export interface LoginWebResponse {
-  auth: AuthWebResponse;
-}
+export interface LoginWebResponse extends LoginResponse {}
 
-export interface RefreshTokenWebResponse {
-  auth: AuthWebResponse;
-}
+export interface RefreshTokenWebResponse extends RefreshTokenResponse {}
 
-export interface SignUpWebResponse {
-  user: User;
-  auth: AuthWebResponse;
-}
+export interface SignUpWebResponse extends SignUpResponse {}

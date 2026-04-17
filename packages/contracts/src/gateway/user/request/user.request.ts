@@ -1,4 +1,10 @@
-import type { SignUpCommand, UpdateUserCommand } from '../../../user/user.command.js';
+import type {
+  DeleteUserCommand,
+  LoginCommand,
+  RefreshTokenCommand,
+  SignUpCommand,
+  UpdateUserCommand,
+} from '../../../user/user.command.js';
 import type { GetUserQuery, ListUsersQuery } from '../../../user/user.query.js';
 
 /**
@@ -17,18 +23,10 @@ export interface UpdateUserRequest extends Partial<Omit<UpdateUserCommand, 'id'>
  */
 export interface ListUsersRequest extends Partial<ListUsersQuery> {}
 
-export interface GetUserRequest extends Partial<GetUserQuery> {}
+export interface GetUserRequest extends GetUserQuery {}
 
-export interface DeleteUserRequest {
-  userId: string;
-}
+export interface DeleteUserRequest extends DeleteUserCommand {}
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
+export interface LoginRequest extends LoginCommand {}
 
-export interface RefreshTokenRequest {
-  refreshToken: string;
-}
-
+export interface RefreshTokenRequest extends RefreshTokenCommand {}
