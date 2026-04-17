@@ -166,12 +166,26 @@ def main():
         snapshot_version = f"{v_base}-snapshot.{h}"
         exists = check_registry(name, snapshot_version)
         
-        # CRITICAL: Only BUILD if it is IMPACTED and NOT deployed
+        # DECISION LOGIC:
+        # 1. If it's DIRTY (direct user change), ALWAYS BUILD (user request)
+        # 2. If it's IMPACTED (dependency change), skip if already on registry
+        # 3. Otherwise SKIP
+        is_dirty = name in dirty_set
         is_impacted = name in impacted
-        action = 'BUILD' if (is_impacted and not exists) else 'SKIP'
         
-        reason = reasons[name] if is_impacted else "Skipped (No changes in graph)"
-        if exists: reason = f"Already deployed as {snapshot_version}"
+        if is_dirty:
+            action = 'BUILD'
+            reason = reasons.get(name, "Content change (Git Dirty)")
+        elif is_impacted:
+            if not exists:
+                action = 'BUILD'
+                reason = reasons.get(name, "Dependency change")
+            else:
+                action = 'SKIP'
+                reason = f"Already deployed as {snapshot_version}"
+        else:
+            action = 'SKIP'
+            reason = "No changes"
 
         print(f"DECISION: {name} [Hash: {h}] -> {action} ({reason})", file=sys.stderr)
 
