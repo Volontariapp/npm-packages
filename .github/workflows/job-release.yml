@@ -94,9 +94,7 @@ jobs:
                 SUMMARY_FILE="coverage-artifacts/coverage-summary-$NAME/coverage-summary.json"
                 
                 if [ ! -f "$SUMMARY_FILE" ]; then
-                  # Literal newlines for GitHub Alert format
-                  REPORT="> [!NOTE]
-> Pas de rapport de couverture trouvé pour ce package."
+                  REPORT=$(printf "> [!NOTE]\n> Pas de rapport de couverture trouvé pour ce package.")
                 else
                   LINES=$(jq -r '.total.lines.pct' "$SUMMARY_FILE")
                   STMTS=$(jq -r '.total.statements.pct' "$SUMMARY_FILE")
