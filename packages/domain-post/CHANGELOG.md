@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+### Minor Changes
+
+- add scripts for testing ci
+
 ## 2.1.2
 
 ### Patch Changes

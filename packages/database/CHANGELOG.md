@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+
+### Minor Changes
+
+- patch database update
+
 ## 1.4.0
 
 ### Minor Changes

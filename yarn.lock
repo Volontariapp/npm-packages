@@ -3977,6 +3977,7 @@ __metadata:
     pg: "npm:^8.20.0"
     reflect-metadata: "npm:^0.2.2"
     ts-jest: "npm:^29.4.6"
+    ts-node: "npm:^10.9.2"
     typeorm: "npm:^0.3.20"
     typescript: "npm:5.7.3"
   peerDependencies:
@@ -3989,7 +3990,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-post@workspace:packages/domain-post"
   dependencies:
+    "@nestjs/typeorm": "npm:^11.0.1"
     "@volontariapp/logger": "workspace:*"
+    reflect-metadata: "npm:^0.2.2"
+    ts-node: "npm:^10.9.2"
+    typeorm: "npm:^0.3.20"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4001,6 +4006,8 @@ __metadata:
     "@nestjs/typeorm": "npm:^11.0.1"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/logger": "workspace:*"
+    reflect-metadata: "npm:^0.2.2"
+    ts-node: "npm:^10.9.2"
     typeorm: "npm:^0.3.20"
     typescript: "npm:5.7.3"
   languageName: unknown

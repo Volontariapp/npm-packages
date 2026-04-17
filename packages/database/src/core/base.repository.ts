@@ -140,8 +140,14 @@ export abstract class BaseRepository<
   }
 
   async update(id: TId, data: Partial<TEntity>): Promise<TEntity | null> {
-    const modelData = this.toModel(data);
     const where = this.buildIdWhere(id);
+    const exists = await this.exists(where);
+
+    if (!exists) {
+      return null;
+    }
+
+    const modelData = this.toModel(data);
 
     await this.repository.save({
       ...(modelData as Record<string, unknown>),

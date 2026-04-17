@@ -7,6 +7,8 @@ import { TagModel } from '../models/tag.model.js';
 import { RequirementModel } from '../models/requirement.model.js';
 import { registerEventMappings } from '../models/mappers.js';
 
+const isMigrationRun = process.env.TYPEORM_MIGRATION_RUN === 'true';
+
 export const testDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
@@ -15,7 +17,9 @@ export const testDataSource = new DataSource({
   password: 'password',
   database: 'ms_event',
   entities: [EventModel, TagModel, RequirementModel],
-  migrations: [join(dirname(fileURLToPath(import.meta.url)), 'migrations', '*.ts')],
+  migrations: isMigrationRun
+    ? [join(dirname(fileURLToPath(import.meta.url)), 'migrations', '*.ts')]
+    : [],
   synchronize: false,
   logging: false,
 });
