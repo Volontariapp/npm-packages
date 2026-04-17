@@ -47,62 +47,137 @@ def get_monorepo_graph(root_dir):
             }
     return packages
 
-def calculate_recursive_hashes(packages):
-    """Calculates final hashes by including dependency hashes (propagation)."""
+def get_dirty_packages():
+    """Identifies packages with actual git changes compared to main."""
+    try:
+        # Detect base branch from GitHub env or fallback
+        base = os.environ.get('GITHUB_BASE_REF') or os.environ.get('GITHUB_DEFAULT_BRANCH') or 'main'
+        
+        # Try to find the remote base
+        remote_base = None
+        for candidate in [f"origin/{base}", f"origin/main", f"origin/master", base]:
+            check = subprocess.run(['git', 'rev-parse', '--verify', candidate], capture_output=True)
+            if check.returncode == 0:
+                remote_base = candidate
+                break
+        
+        if not remote_base:
+            # Last resort: diff against HEAD^
+            remote_base = "HEAD^"
+
+        print(f"DEBUG: Comparing against {remote_base}", file=sys.stderr)
+        
+        # Build the diff command
+        # Triple dot diff (common ancestor)
+        diff_cmd = ['git', 'diff', '--name-only', f"{remote_base}...HEAD"]
+        result = subprocess.run(diff_cmd, capture_output=True, text=True)
+        
+        if not result.stdout.strip():
+            # Fallback to simple diff if triple dot failed or empty
+            diff_cmd = ['git', 'diff', '--name-only', remote_base, 'HEAD']
+            result = subprocess.run(diff_cmd, capture_output=True, text=True)
+
+        changed_files = result.stdout.splitlines()
+        print(f"DEBUG: {len(changed_files)} files changed in git", file=sys.stderr)
+        
+        dirty = set()
+        for f in changed_files:
+            # Skip documentation and metadata for dirty detection
+            if any(f.endswith(x) for x in ['CHANGELOG.md', 'README.md', '.gitignore']):
+                continue
+            
+            if f.startswith('packages/'):
+                pkg_dir = f.split('/')[1]
+                dirty.add(pkg_dir)
+            else:
+                # Add root files as they might impact everything (e.g. yarn.lock)
+                dirty.add(f)
+        
+        print(f"DEBUG: Dirty set: {dirty}", file=sys.stderr)
+        return dirty
+    except Exception:
+        return set()
+
+def calculate_recursive_hashes(packages, dirty_set):
+    """Calculates final hashes and identifies impacted packages."""
     final_hashes = {}
+    reasons = {}
+    impacted = set()
     
     def get_final_hash(name):
-        if name in final_hashes: return final_hashes[name]
+        if name in final_hashes: return final_hashes[name], name in impacted
         
         pkg = packages[name]
+        is_dirty = pkg['dir'] in dirty_set
+        
         m = hashlib.sha1()
         m.update(pkg['content_hash'].encode())
         
-        # Add yarn.lock hash if it exists for global dependency detection
-        lock_path = Path('yarn.lock')
-        if lock_path.exists():
-            m.update(lock_path.read_bytes())
-
+        # Initial reason
+        if is_dirty:
+            reasons[name] = "Content change (Git Dirty)"
+            impacted.add(name)
+        else:
+            reasons[name] = "No changes detected"
+        
         # Recursively add internal dependencies hashes
         for dep in sorted(pkg['deps']):
             if dep in packages:
-                dep_hash = get_final_hash(dep)
-                m.update(dep_hash.encode())
+                dep_hash, dep_impacted = get_final_hash(dep)
+                # If content didn't change but a dep did, mark it
+                if dep_impacted:
+                    impacted.add(name)
+                    if not is_dirty:
+                        reasons[name] = f"Dependency {dep} is dirty"
         
-        res = m.hexdigest()[:12] # Keep it shorter for version strings
-        final_hashes[name] = res
-        return res
+        final_hashes[name] = m.hexdigest()
+        return final_hashes[name], name in impacted
 
     for name in packages:
         get_final_hash(name)
         
-    return final_hashes
+    return final_hashes, reasons, impacted
 
-def check_registry(name, version_hash):
-    """Checks if a specific snapshot version already exists on NPM."""
-    snapshot_version = f"0.0.0-snapshot.{version_hash}"
-    full_spec = f"{name}@{snapshot_version}"
+def check_registry(name, version):
+    """Checks if a specific version already exists on NPM."""
+    full_spec = f"{name}@{version}"
     try:
         result = subprocess.run(['npm', 'view', full_spec, 'version'], capture_output=True, text=True)
-        return result.returncode == 0 and result.stdout.strip() == snapshot_version
+        return result.returncode == 0 and result.stdout.strip() == version
     except Exception:
         return False
 
 def main():
     root_dir = Path.cwd()
     graph = get_monorepo_graph(root_dir)
-    hashes = calculate_recursive_hashes(graph)
+    dirty_set = get_dirty_packages()
+    hashes, reasons, impacted = calculate_recursive_hashes(graph, dirty_set)
     
     output = []
     for name, h in hashes.items():
-        exists = check_registry(name, h)
+        with open(graph[name]['path'] / 'package.json') as f:
+            v_base = json.load(f)['version'].split('-')[0]
+        
+        snapshot_version = f"{v_base}-snapshot.{h}"
+        exists = check_registry(name, snapshot_version)
+        
+        # CRITICAL: Only BUILD if it is IMPACTED and NOT deployed
+        is_impacted = name in impacted
+        action = 'BUILD' if (is_impacted and not exists) else 'SKIP'
+        
+        reason = reasons[name] if is_impacted else "Skipped (No changes in graph)"
+        if exists: reason = f"Already deployed as {snapshot_version}"
+
+        print(f"DECISION: {name} -> {action} ({reason})", file=sys.stderr)
+
         output.append({
             'name': name,
             'id': graph[name]['dir'],
             'hash': h,
-            'version': f"0.0.0-snapshot.{h}",
+            'version': snapshot_version,
             'deployed': exists,
-            'action': 'SKIP' if exists else 'BUILD'
+            'action': action,
+            'reason': reason
         })
     
     print(json.dumps(output, indent=2))

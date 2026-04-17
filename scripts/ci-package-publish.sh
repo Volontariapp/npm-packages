@@ -20,6 +20,8 @@ EOF
 }
 
 PLAN_FILE=""
+MODE=""
+CHANGED_PACKAGES_INPUT=""
 
 while [ $# -gt 0 ]; do
     case "$1" in

@@ -96,7 +96,7 @@ jobs:
                   STMTS=$(jq -r '.total.statements.pct' "$SUMMARY_FILE")
                   FUNCS=$(jq -r '.total.functions.pct' "$SUMMARY_FILE")
                   BRCHS=$(jq -r '.total.branches.pct' "$SUMMARY_FILE")
-                  REPORT=$(printf '### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **%s%%** |\n| 📄 Statements | **%s%%** |\n| 📞 Functions | **%s%%** |\n| 🌿 Branches | **%s%%** |\n\n[🔍 Voir le rapport HTML détaillé](https://github.com/%s/actions/runs/%s#artifacts)\n' \
+                  REPORT=$(printf '### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **%s%%** |\n| 📄 Statements | **%s%%** |\n| 📞 Functions | **%s%%** |\n| 🌿 Branches | **%s%%** |\n\n🔍 [Voir le rapport HTML détaillé](https://github.com/%s/actions/runs/%s#artifacts)\n' \
                     "$LINES" "$STMTS" "$FUNCS" "$BRCHS" "${{ github.repository }}" "${{ github.run_id }}")
                 fi
 
@@ -107,7 +107,7 @@ jobs:
                 RECAP_ICON="🚀"
                 [ "$ACTION" == "SKIP" ] && LAZY_NOTE=" *(♻️ Idéal - Récupéré du cache)*" && RECAP_ICON="♻️"
 
-                BODY="$RECAP_ICON Nouvelle version (snapshot) de \`$FULL_NAME\` disponible$LAZY_NOTE :
+                BODY="$RECAP_ICON Nouvelle version de $FULL_NAME :
                 
                 $REPORT
                 
