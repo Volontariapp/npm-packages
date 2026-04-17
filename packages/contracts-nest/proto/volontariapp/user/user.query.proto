@@ -4,8 +4,8 @@ package volontariapp.user;
 
 import "volontariapp/common/pagination.proto";
 
-message UserQuery {
-  string id = 1;
+message GetUserQuery {
+  string user_id = 1;
 }
 
 message ListUsersQuery {
