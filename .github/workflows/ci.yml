@@ -4,8 +4,13 @@ on:
   push:
     branches:
       - main
+      - 'features/**'
+      - 'feature/**'
+      - 'fix/**'
+      - 'chore/**'
   pull_request:
     types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
 
 permissions:
   id-token: write
