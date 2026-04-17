@@ -5,11 +5,29 @@
 // source: volontariapp/user/user.proto
 
 /* eslint-disable */
+import { Timestamp } from "../google/protobuf/timestamp.js";
+
+export interface OrganisationInfo {
+  rna: string;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  slug: string;
+  iconPath?: string | undefined;
+  description: string;
+  awardedAt: Timestamp | undefined;
+}
 
 export interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  pseudo: string;
+  bio?: string | undefined;
   role: string;
+  logoPath?: string | undefined;
+  totalImpactScore: number;
+  organisationInfo?: OrganisationInfo | undefined;
+  badges: Badge[];
 }
