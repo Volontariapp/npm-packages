@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.5.0
+
+## 2.4.0
+
+### Minor Changes
+
+- adding test solide AAA pattern unit + int
+
 ## 2.3.3
 
 ### Patch Changes
