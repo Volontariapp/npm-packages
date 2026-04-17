@@ -3962,15 +3962,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-event@workspace:packages/domain-event"
   dependencies:
+    "@jest/globals": "npm:^30.3.0"
     "@nestjs/common": "npm:^11.0.1"
     "@nestjs/typeorm": "npm:^11.0.1"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^22.10.7"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/database": "workspace:*"
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     class-transformer: "npm:^0.5.1"
+    jest: "npm:^30.3.0"
+    pg: "npm:^8.20.0"
     reflect-metadata: "npm:^0.2.2"
+    ts-jest: "npm:^29.4.6"
     typeorm: "npm:^0.3.20"
     typescript: "npm:5.7.3"
   peerDependencies:
