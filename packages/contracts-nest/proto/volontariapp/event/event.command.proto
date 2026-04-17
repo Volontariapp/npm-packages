@@ -51,13 +51,13 @@ message RemoveRequirement {
 message CreateTagCommand {
   string slug = 1;
   string name = 2;
-  string color = 3;
+  string balise = 3;
 }
 
 message UpdateTagCommand {
   string id = 1;
   string name = 2;
-  string color = 3;
+  string balise = 3;
 }
 
 message DeleteEventCommand {

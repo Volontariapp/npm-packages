@@ -52,13 +52,13 @@ export interface RemoveRequirement {
 export interface CreateTagCommand {
   slug: string;
   name: string;
-  color: string;
+  balise: string;
 }
 
 export interface UpdateTagCommand {
   id: string;
   name: string;
-  color: string;
+  balise: string;
 }
 
 export interface DeleteEventCommand {

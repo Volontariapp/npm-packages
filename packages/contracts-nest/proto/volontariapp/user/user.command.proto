@@ -2,22 +2,39 @@ syntax = "proto3";
 
 package volontariapp.user;
 
-message CreateUserCommand {
+import "volontariapp/user/user.proto";
+
+message SignUpCommand {
   string email = 1;
-  string first_name = 2;
-  string last_name = 3;
-  string password = 4;
-  string role = 5;
+  string password = 2;
+  optional string phone = 3;
+  optional string pseudo = 4;
+  optional string bio = 5;
+  optional string logo_path = 6;
+  optional OrganisationInfo organisation_info = 7;
 }
 
 message UpdateUserCommand {
-  string id = 1;
+  string user_id = 1;
   optional string email = 2;
-  optional string first_name = 3;
-  optional string last_name = 4;
-  optional string role = 5;
+  optional string previous_password = 3;
+  optional string new_password = 4;
+  optional string phone = 5;
+  optional string pseudo = 6;
+  optional string bio = 7;
+  optional string logo_path = 8;
+  optional OrganisationInfo organisation_info = 9;
 }
 
 message DeleteUserCommand {
-  string id = 1;
+  string user_id = 1;
+}
+
+message LoginCommand {
+  string email = 1;
+  string password = 2;
+}
+
+message RefreshTokenCommand {
+  string refresh_token = 1;
 }
