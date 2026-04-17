@@ -54,3 +54,39 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: bash scripts/ci-package-publish.sh --changed-packages '${{ inputs.changed_packages }}'
+
+      - name: Post Comment on PR
+        if: github.event_name == 'pull_request' || github.event.pull_request != null
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          if [ -z "$PR_NUMBER" ] && [ "${{ github.event_name }}" == "pull_request" ]; then
+             # Try fallback for some PR events
+             PR_NUMBER=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
+          fi
+
+          if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+            TAGS_FILE=".changeset/.snapshot-tags"
+            if [ -f "$TAGS_FILE" ]; then
+              while read -r tag; do
+                NAME=$(echo "$tag" | cut -d'@' -f1 | sed 's|^@volontariapp/||')
+                FULL_NAME=$(echo "$tag" | cut -d'@' -f1)
+                VER=$(echo "$tag" | cut -d'@' -f2)
+                
+                BODY="🚀 Nouvelle version (snapshot) de \`$NAME\` disponible :
+                
+                **📦 Installation**
+                \`\`\`bash
+                yarn add $tag
+                \`\`\`
+
+                **🔄 Mise à jour**
+                \`\`\`bash
+                yarn up $tag
+                \`\`\`"
+                
+                gh pr comment "$PR_NUMBER" --body "$BODY"
+              done < "$TAGS_FILE"
+            fi
+          fi
