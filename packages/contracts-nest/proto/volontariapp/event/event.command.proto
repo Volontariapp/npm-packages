@@ -3,7 +3,6 @@ syntax = "proto3";
 package volontariapp.event;
 
 import "google/protobuf/timestamp.proto";
-import "volontariapp/common/geo.proto";
 import "volontariapp/event/event.proto";
 
 message CreateEventCommand {
@@ -11,7 +10,6 @@ message CreateEventCommand {
   string description = 2;
   google.protobuf.Timestamp start_at = 3;
   google.protobuf.Timestamp end_at = 4;
-  volontariapp.common.Point location = 5;
   string localisation_name = 6;
   EventType type = 7;
   int32 awarded_impact_score = 8;
@@ -51,13 +49,13 @@ message RemoveRequirement {
 message CreateTagCommand {
   string slug = 1;
   string name = 2;
-  string color = 3;
+  string balise = 3;
 }
 
 message UpdateTagCommand {
   string id = 1;
   string name = 2;
-  string color = 3;
+  string balise = 3;
 }
 
 message DeleteEventCommand {

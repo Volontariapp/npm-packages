@@ -16,7 +16,7 @@ export class EventEntity {
   awardedImpactScore!: number;
   maxParticipants!: number;
   currentParticipants!: number;
-  organizerId!: string;
+  organizerId?: string;
   createdAt!: Date;
   updatedAt!: Date;
 

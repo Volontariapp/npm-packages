@@ -1,10 +1,16 @@
 # Changelog
 
-## 2.2.5
+## 2.2.6
 
 ### Patch Changes
 
 - Auto-generated proto typings update for both pure contracts and NestJS integration.
+
+## 2.2.5
+
+### Patch Changes
+
+- fix: date mappers to return undefined instead of new Date()
 
 ## 2.2.4
 
