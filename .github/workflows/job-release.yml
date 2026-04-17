@@ -56,10 +56,12 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          JSON_PLAN: ${{ inputs.json_plan }}
+          CHANGED_PACKAGES: ${{ inputs.changed_packages }}
         run: |
           # Use the plan to feed the publish script
-          echo '${{ inputs.json_plan }}' > .changeset/.plan.json
-          bash scripts/ci-package-publish.sh --changed-packages '${{ inputs.changed_packages }}' --plan .changeset/.plan.json
+          echo "$JSON_PLAN" > .changeset/.plan.json
+          bash scripts/ci-package-publish.sh --changed-packages "$CHANGED_PACKAGES" --plan .changeset/.plan.json
 
       - name: Download coverage artifacts
         if: github.event_name == 'pull_request' || github.event.pull_request != null
@@ -72,6 +74,7 @@ jobs:
         if: github.event_name == 'pull_request' || github.event.pull_request != null
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JSON_PLAN: ${{ inputs.json_plan }}
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
           if [ -z "$PR_NUMBER" ] && [ "${{ github.event_name }}" == "pull_request" ]; then
@@ -85,44 +88,51 @@ jobs:
               while read -r tag; do
                 # Extract base package name (folder name)
                 FULL_NAME=$(echo "$tag" | cut -d'@' -f1)
+                # Try to find coverage summary
                 NAME=$(echo "$FULL_NAME" | sed 's|^@volontariapp/||')
-                VER=$(echo "$tag" | cut -d'@' -f2)
-                
-                SUMMARY_FILE="coverage-artifacts/coverage-summary-$NAME/coverage-summary.json"
                 REPORT=""
+                SUMMARY_FILE="coverage-artifacts/coverage-summary-$NAME/coverage-summary.json"
+                
                 if [ ! -f "$SUMMARY_FILE" ]; then
-                  REPORT="> [!NOTE]\n> Pas de rapport de couverture trouvé pour ce package.\n"
+                  # Literal newlines for GitHub Alert format
+                  REPORT="> [!NOTE]
+> Pas de rapport de couverture trouvé pour ce package."
                 else
                   LINES=$(jq -r '.total.lines.pct' "$SUMMARY_FILE")
                   STMTS=$(jq -r '.total.statements.pct' "$SUMMARY_FILE")
                   FUNCS=$(jq -r '.total.functions.pct' "$SUMMARY_FILE")
                   BRCHS=$(jq -r '.total.branches.pct' "$SUMMARY_FILE")
-                  REPORT=$(printf '### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **%s%%** |\n| 📄 Statements | **%s%%** |\n| 📞 Functions | **%s%%** |\n| 🌿 Branches | **%s%%** |\n' \
-                    "$LINES" "$STMTS" "$FUNCS" "$BRCHS")
+                  REPORT="### 📊 Rapport de CI
+
+| Type | Couverture |
+| :--- | :--- |
+| 📏 Lines | **$LINES%** |
+| 📄 Statements | **$STMTS%** |
+| 📞 Functions | **$FUNCS%** |
+| 🌿 Branches | **$BRCHS%** |"
                 fi
 
                 # Logic to determine if it was a Lazy Deployment
-                PLAN_INFO=$(echo '${{ inputs.json_plan }}' | jq -r ".[] | select(.name == \"$FULL_NAME\")")
+                PLAN_INFO=$(echo "$JSON_PLAN" | jq -r ".[] | select(.name == \"$FULL_NAME\")")
                 ACTION=$(echo "$PLAN_INFO" | jq -r '.action // "BUILD"')
-                LAZY_NOTE=""
                 RECAP_ICON="🚀"
-                [ "$ACTION" == "SKIP" ] && LAZY_NOTE=" *(♻️ Idéal - Récupéré du cache)*" && RECAP_ICON="♻️"
+                [ "$ACTION" == "SKIP" ] && RECAP_ICON="♻️"
 
                 BODY="$RECAP_ICON Nouvelle version de $FULL_NAME :
-                
-                $REPORT
-                
-                🔍 [Voir le rapport HTML détaillé](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
-                
-                📦 Installation
-                \`\`\`bash
-                yarn add $tag
-                \`\`\`
 
-                🔄 Mise à jour
-                \`\`\`bash
-                yarn up $tag
-                \`\`\`"
+$REPORT
+
+🔍 [Voir le rapport HTML détaillé](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+
+📦 Installation
+\`\`\`bash
+yarn add $tag
+\`\`\`
+
+🔄 Mise à jour
+\`\`\`bash
+yarn up $tag
+\`\`\`"
                 
                 gh pr comment "$PR_NUMBER" --body "$BODY"
               done < "$TAGS_FILE"
