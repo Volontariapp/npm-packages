@@ -16,12 +16,14 @@ export enum GRPC_SERVICES {
   EVENT_QUERY_SERVICE = 'EventQueryService',
   TAG_COMMAND_SERVICE = 'TagCommandService',
   TAG_QUERY_SERVICE = 'TagQueryService',
+  SOCIAL_SERVICE = 'SocialService',
 }
 
 export enum GRPC_MICROSERVICES {
   USER = 'USER',
   POST = 'POST',
   EVENT = 'EVENT',
+  SOCIAL = 'SOCIAL',
 }
 
 export const GRPC_SERVICES_CONFIG = {
@@ -39,6 +41,11 @@ export const GRPC_SERVICES_CONFIG = {
     package: 'volontariapp.event',
     protoFileName: 'event.services.proto',
     domain: 'event',
+  },
+  SOCIAL: {
+    package: 'volontariapp.social',
+    protoFileName: 'social.services.proto',
+    domain: 'social',
   },
 };
 
