@@ -100,14 +100,7 @@ jobs:
                   STMTS=$(jq -r '.total.statements.pct' "$SUMMARY_FILE")
                   FUNCS=$(jq -r '.total.functions.pct' "$SUMMARY_FILE")
                   BRCHS=$(jq -r '.total.branches.pct' "$SUMMARY_FILE")
-                  REPORT="### 📊 Rapport de CI
-
-| Type | Couverture |
-| :--- | :--- |
-| 📏 Lines | **$LINES%** |
-| 📄 Statements | **$STMTS%** |
-| 📞 Functions | **$FUNCS%** |
-| 🌿 Branches | **$BRCHS%** |"
+                  REPORT=$(printf "### 📊 Rapport de CI\n\n| Type | Couverture |\n| :--- | :--- |\n| 📏 Lines | **$LINES%%** |\n| 📄 Statements | **$STMTS%%** |\n| 📞 Functions | **$FUNCS%%** |\n| 🌿 Branches | **$BRCHS%%** |")
                 fi
 
                 # Logic to determine if it was a Lazy Deployment
