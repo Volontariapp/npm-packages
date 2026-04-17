@@ -37,11 +37,12 @@ jobs:
       changed_packages: ${{ needs.target.outputs.packages }}
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release:
     name: Release
-    needs: [check-changelogs, target]
-    if: needs.target.outputs.has_changes == 'true' && (github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+    needs: [check-changelogs, target, test-build]
+    if: needs.target.outputs.has_changes == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/job-release.yml
     with:
       changed_packages: ${{ needs.target.outputs.packages }}
