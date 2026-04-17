@@ -7,8 +7,8 @@
 /* eslint-disable */
 import { PaginationRequest } from "../common/pagination.js";
 
-export interface UserQuery {
-  id: string;
+export interface GetUserQuery {
+  userId: string;
 }
 
 export interface ListUsersQuery {

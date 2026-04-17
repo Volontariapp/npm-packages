@@ -8,16 +8,13 @@
 import { PaginationResponse } from "../common/pagination.js";
 import { User } from "./user.js";
 
-export interface GetUserResponse {
+export interface UserResponse {
   user: User | undefined;
 }
 
-export interface CreateUserResponse {
+export interface SignUpResponse {
   user: User | undefined;
-}
-
-export interface UpdateUserResponse {
-  user: User | undefined;
+  auth: AuthResponse | undefined;
 }
 
 export interface ListUsersResponse {
@@ -25,6 +22,21 @@ export interface ListUsersResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface UpdateUserResponse {
+}
+
 export interface DeleteUserResponse {
-  success: boolean;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface LoginResponse {
+  auth: AuthResponse | undefined;
+}
+
+export interface RefreshTokenResponse {
+  auth: AuthResponse | undefined;
 }
