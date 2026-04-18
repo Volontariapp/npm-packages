@@ -1,3 +1,4 @@
+import neo4j from 'neo4j-driver';
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import type { PaginationRequest, PaginationResponse } from '@volontariapp/contracts';
 import { DATABASE_QUERY_ERROR } from '@volontariapp/errors-nest';
@@ -70,7 +71,11 @@ export abstract class Neo4jBaseRepository {
 
     try {
       const [dataResult, countResult] = await Promise.all([
-        dataSession.run(dataCypher, { ...params, skip, limit: safeLimit }),
+        dataSession.run(dataCypher, {
+          ...params,
+          skip: neo4j.int(skip),
+          limit: neo4j.int(safeLimit),
+        }),
         countSession.run(countCypher, params),
       ]);
 
