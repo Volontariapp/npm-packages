@@ -57,4 +57,14 @@ export class Neo4jInteractionRepository
       pagination,
     );
   }
+
+  async likeExists(userId: string, postId: string): Promise<boolean> {
+    const result = await this.readOne(
+      `MATCH (:SocialUser {userId: $userId})-[r:LIKE]->(:SocialPost {postId: $postId})
+       RETURN r`,
+      { userId, postId },
+      () => true,
+    );
+    return result === true;
+  }
 }

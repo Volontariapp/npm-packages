@@ -19,15 +19,26 @@ describe('ParticipationService (Unit)', () => {
   // ─── createEvent ──────────────────────────────────────────────────────────
 
   describe('createEvent()', () => {
-    it('should call repository.createEventNode with the eventId', async () => {
+    it('should call repository.createEventNode with the eventId if not exists', async () => {
+      mockRepository.eventExists.mockResolvedValue(false);
       mockRepository.createEventNode.mockResolvedValue(undefined);
 
       await service.createEvent('event-1');
 
+      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
       expect(mockRepository.createEventNode).toHaveBeenCalledWith('event-1');
     });
 
+    it('should throw SOCIAL_EVENT_ALREADY_EXISTS if event already exists', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
+
+      await expect(service.createEvent('event-1')).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.eventExists.mockResolvedValue(false);
       mockRepository.createEventNode.mockRejectedValue(new Error('Write failed'));
 
       await expect(service.createEvent('event-1')).rejects.toMatchObject({
@@ -48,15 +59,26 @@ describe('ParticipationService (Unit)', () => {
   // ─── deleteEvent ──────────────────────────────────────────────────────────
 
   describe('deleteEvent()', () => {
-    it('should call repository.deleteEventNode with the eventId', async () => {
+    it('should call repository.deleteEventNode with the eventId if it exists', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
       mockRepository.deleteEventNode.mockResolvedValue(undefined);
 
       await service.deleteEvent('event-1');
 
+      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
       expect(mockRepository.deleteEventNode).toHaveBeenCalledWith('event-1');
     });
 
+    it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
+      mockRepository.eventExists.mockResolvedValue(false);
+
+      await expect(service.deleteEvent('event-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
       mockRepository.deleteEventNode.mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.deleteEvent('event-1')).rejects.toMatchObject({
@@ -96,15 +118,26 @@ describe('ParticipationService (Unit)', () => {
   // ─── setEventCreator ──────────────────────────────────────────────────────
 
   describe('setEventCreator()', () => {
-    it('should call repository.createUserEvent with correct args', async () => {
+    it('should call repository.createUserEvent with correct args if event exists', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
       mockRepository.createUserEvent.mockResolvedValue(undefined);
 
       await service.setEventCreator('user-1', 'event-1');
 
+      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
       expect(mockRepository.createUserEvent).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
+    it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
+      mockRepository.eventExists.mockResolvedValue(false);
+
+      await expect(service.setEventCreator('user-1', 'event-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
       mockRepository.createUserEvent.mockRejectedValue(new Error('Merge failed'));
 
       await expect(service.setEventCreator('user-1', 'event-1')).rejects.toMatchObject({
@@ -116,15 +149,26 @@ describe('ParticipationService (Unit)', () => {
   // ─── removeEventCreator ───────────────────────────────────────────────────
 
   describe('removeEventCreator()', () => {
-    it('should call repository.deleteUserEvent with correct args', async () => {
+    it('should call repository.deleteUserEvent with correct args if event exists', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
       mockRepository.deleteUserEvent.mockResolvedValue(undefined);
 
       await service.removeEventCreator('user-1', 'event-1');
 
+      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
       expect(mockRepository.deleteUserEvent).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
+    it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
+      mockRepository.eventExists.mockResolvedValue(false);
+
+      await expect(service.removeEventCreator('user-1', 'event-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
       mockRepository.deleteUserEvent.mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.removeEventCreator('user-1', 'event-1')).rejects.toMatchObject({
@@ -136,15 +180,38 @@ describe('ParticipationService (Unit)', () => {
   // ─── participateEvent ─────────────────────────────────────────────────────
 
   describe('participateEvent()', () => {
-    it('should call repository.createParticipation with correct args', async () => {
+    it('should call repository.createParticipation if event exists and not participating', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
+      mockRepository.participationExists.mockResolvedValue(false);
       mockRepository.createParticipation.mockResolvedValue(undefined);
 
       await service.participateEvent('user-1', 'event-1');
 
+      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
+      expect(mockRepository.participationExists).toHaveBeenCalledWith('user-1', 'event-1');
       expect(mockRepository.createParticipation).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
+    it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
+      mockRepository.eventExists.mockResolvedValue(false);
+
+      await expect(service.participateEvent('user-1', 'event-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw SOCIAL_PARTICIPATION_ALREADY_EXISTS if already participating', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
+      mockRepository.participationExists.mockResolvedValue(true);
+
+      await expect(service.participateEvent('user-1', 'event-1')).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
+      mockRepository.participationExists.mockResolvedValue(false);
       mockRepository.createParticipation.mockRejectedValue(new Error('Merge failed'));
 
       await expect(service.participateEvent('user-1', 'event-1')).rejects.toMatchObject({
@@ -156,15 +223,38 @@ describe('ParticipationService (Unit)', () => {
   // ─── leaveEvent ───────────────────────────────────────────────────────────
 
   describe('leaveEvent()', () => {
-    it('should call repository.deleteParticipation with correct args', async () => {
+    it('should call repository.deleteParticipation with correct args if exists', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
+      mockRepository.participationExists.mockResolvedValue(true);
       mockRepository.deleteParticipation.mockResolvedValue(undefined);
 
       await service.leaveEvent('user-1', 'event-1');
 
+      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
+      expect(mockRepository.participationExists).toHaveBeenCalledWith('user-1', 'event-1');
       expect(mockRepository.deleteParticipation).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
+    it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
+      mockRepository.eventExists.mockResolvedValue(false);
+
+      await expect(service.leaveEvent('user-1', 'event-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw SOCIAL_PARTICIPATION_NOT_FOUND if not participating', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
+      mockRepository.participationExists.mockResolvedValue(false);
+
+      await expect(service.leaveEvent('user-1', 'event-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.eventExists.mockResolvedValue(true);
+      mockRepository.participationExists.mockResolvedValue(true);
       mockRepository.deleteParticipation.mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.leaveEvent('user-1', 'event-1')).rejects.toMatchObject({

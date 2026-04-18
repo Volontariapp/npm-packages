@@ -6,4 +6,5 @@ export interface IInteractionRepository {
   deleteLike(userId: string, postId: string): Promise<void>;
   getUserLikes(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
   getPostLikers(postId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
+  likeExists(userId: string, postId: string): Promise<boolean>;
 }

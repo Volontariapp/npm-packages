@@ -68,6 +68,16 @@ export class Neo4jParticipationRepository
     );
   }
 
+  async participationExists(userId: string, eventId: string): Promise<boolean> {
+    const result = await this.readOne(
+      `MATCH (:SocialUser {userId: $userId})-[r:PARTICIPATE]->(:SocialEvent {eventId: $eventId})
+       RETURN r`,
+      { userId, eventId },
+      () => true,
+    );
+    return result === true;
+  }
+
   async getUserEvents(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:CREATED]->(e:SocialEvent)

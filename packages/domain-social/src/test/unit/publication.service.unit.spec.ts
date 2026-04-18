@@ -19,15 +19,26 @@ describe('PublicationService (Unit)', () => {
   // ─── createPost ───────────────────────────────────────────────────────────
 
   describe('createPost()', () => {
-    it('should call repository.createPostNode with the postId', async () => {
+    it('should call repository.createPostNode with the postId if not exists', async () => {
+      mockRepository.postExists.mockResolvedValue(false);
       mockRepository.createPostNode.mockResolvedValue(undefined);
 
       await service.createPost('post-1');
 
+      expect(mockRepository.postExists).toHaveBeenCalledWith('post-1');
       expect(mockRepository.createPostNode).toHaveBeenCalledWith('post-1');
     });
 
+    it('should throw SOCIAL_POST_ALREADY_EXISTS if post already exists', async () => {
+      mockRepository.postExists.mockResolvedValue(true);
+
+      await expect(service.createPost('post-1')).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.postExists.mockResolvedValue(false);
       mockRepository.createPostNode.mockRejectedValue(new Error('Write failed'));
 
       await expect(service.createPost('post-1')).rejects.toMatchObject({
@@ -48,15 +59,26 @@ describe('PublicationService (Unit)', () => {
   // ─── deletePost ───────────────────────────────────────────────────────────
 
   describe('deletePost()', () => {
-    it('should call repository.deletePostNode with the postId', async () => {
+    it('should call repository.deletePostNode with the postId if it exists', async () => {
+      mockRepository.postExists.mockResolvedValue(true);
       mockRepository.deletePostNode.mockResolvedValue(undefined);
 
       await service.deletePost('post-1');
 
+      expect(mockRepository.postExists).toHaveBeenCalledWith('post-1');
       expect(mockRepository.deletePostNode).toHaveBeenCalledWith('post-1');
     });
 
+    it('should throw SOCIAL_POST_NOT_FOUND if post does not exist', async () => {
+      mockRepository.postExists.mockResolvedValue(false);
+
+      await expect(service.deletePost('post-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.postExists.mockResolvedValue(true);
       mockRepository.deletePostNode.mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.deletePost('post-1')).rejects.toMatchObject({ code: 'DATABASE_ERROR' });

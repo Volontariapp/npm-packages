@@ -19,15 +19,26 @@ describe('RelationshipService (Unit)', () => {
   // ─── followUser ───────────────────────────────────────────────────────────
 
   describe('followUser()', () => {
-    it('should call repository.createFollow with correct args', async () => {
+    it('should call repository.createFollow with correct args if not exists', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(false);
       mockRepository.createFollow.mockResolvedValue(undefined);
 
       await service.followUser('follower-1', 'followed-1');
 
+      expect(mockRepository.relationshipExists).toHaveBeenCalledWith('follower-1', 'followed-1', 'FOLLOW');
       expect(mockRepository.createFollow).toHaveBeenCalledWith('follower-1', 'followed-1');
     });
 
+    it('should throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS if already following', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(true);
+
+      await expect(service.followUser('follower-1', 'followed-1')).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(false);
       mockRepository.createFollow.mockRejectedValue(new Error('Neo4j error'));
 
       await expect(service.followUser('f1', 'f2')).rejects.toMatchObject({
@@ -48,15 +59,26 @@ describe('RelationshipService (Unit)', () => {
   // ─── unfollowUser ─────────────────────────────────────────────────────────
 
   describe('unfollowUser()', () => {
-    it('should call repository.deleteFollow with correct args', async () => {
+    it('should call repository.deleteFollow with correct args if exists', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(true);
       mockRepository.deleteFollow.mockResolvedValue(undefined);
 
       await service.unfollowUser('follower-1', 'followed-1');
 
+      expect(mockRepository.relationshipExists).toHaveBeenCalledWith('follower-1', 'followed-1', 'FOLLOW');
       expect(mockRepository.deleteFollow).toHaveBeenCalledWith('follower-1', 'followed-1');
     });
 
+    it('should throw SOCIAL_RELATIONSHIP_NOT_FOUND if not following', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(false);
+
+      await expect(service.unfollowUser('follower-1', 'followed-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(true);
       mockRepository.deleteFollow.mockRejectedValue(new Error('Neo4j error'));
 
       await expect(service.unfollowUser('f1', 'f2')).rejects.toMatchObject({
@@ -68,15 +90,26 @@ describe('RelationshipService (Unit)', () => {
   // ─── blockUser ────────────────────────────────────────────────────────────
 
   describe('blockUser()', () => {
-    it('should call repository.createBlock with correct args', async () => {
+    it('should call repository.createBlock with correct args if not exists', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(false);
       mockRepository.createBlock.mockResolvedValue(undefined);
 
       await service.blockUser('blocker-1', 'blocked-1');
 
+      expect(mockRepository.relationshipExists).toHaveBeenCalledWith('blocker-1', 'blocked-1', 'BLOCK');
       expect(mockRepository.createBlock).toHaveBeenCalledWith('blocker-1', 'blocked-1');
     });
 
+    it('should throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS if already blocked', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(true);
+
+      await expect(service.blockUser('blocker-1', 'blocked-1')).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(false);
       mockRepository.createBlock.mockRejectedValue(new Error('Neo4j error'));
 
       await expect(service.blockUser('b1', 'b2')).rejects.toMatchObject({
@@ -88,15 +121,26 @@ describe('RelationshipService (Unit)', () => {
   // ─── unblockUser ──────────────────────────────────────────────────────────
 
   describe('unblockUser()', () => {
-    it('should call repository.deleteBlock with correct args', async () => {
+    it('should call repository.deleteBlock with correct args if exists', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(true);
       mockRepository.deleteBlock.mockResolvedValue(undefined);
 
       await service.unblockUser('blocker-1', 'blocked-1');
 
+      expect(mockRepository.relationshipExists).toHaveBeenCalledWith('blocker-1', 'blocked-1', 'BLOCK');
       expect(mockRepository.deleteBlock).toHaveBeenCalledWith('blocker-1', 'blocked-1');
     });
 
+    it('should throw SOCIAL_RELATIONSHIP_NOT_FOUND if not blocked', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(false);
+
+      await expect(service.unblockUser('blocker-1', 'blocked-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.relationshipExists.mockResolvedValue(true);
       mockRepository.deleteBlock.mockRejectedValue(new Error('Neo4j error'));
 
       await expect(service.unblockUser('b1', 'b2')).rejects.toMatchObject({

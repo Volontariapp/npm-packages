@@ -10,4 +10,5 @@ export interface IRelationshipRepository {
   getFollowers(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
   getBlocks(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
   getWhoBlockedMe(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
+  relationshipExists(fromId: string, toId: string, type: string): Promise<boolean>;
 }

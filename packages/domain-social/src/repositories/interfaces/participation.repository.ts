@@ -9,6 +9,7 @@ export interface IParticipationRepository {
   deleteUserEvent(userId: string, eventId: string): Promise<void>;
   createParticipation(userId: string, eventId: string): Promise<void>;
   deleteParticipation(userId: string, eventId: string): Promise<void>;
+  participationExists(userId: string, eventId: string): Promise<boolean>;
   getUserEvents(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
   getUserParticipations(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
   getEventParticipants(eventId: string, pagination: PaginationRequest): Promise<PaginatedIds>;

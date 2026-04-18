@@ -1,7 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import type { PaginationRequest } from '@volontariapp/contracts';
-import { DATABASE_ERROR } from '@volontariapp/errors-nest';
+import {
+  DATABASE_ERROR,
+  SOCIAL_RELATIONSHIP_ALREADY_EXISTS,
+  SOCIAL_RELATIONSHIP_NOT_FOUND,
+} from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
 import { Neo4jInteractionRepository } from '../repositories/neo4j-interaction.repository.js';
 import type { IInteractionRepository } from '../repositories/interfaces/interaction.repository.js';
@@ -19,6 +23,9 @@ export class InteractionService {
   async likePost(userId: string, postId: string): Promise<void> {
     try {
       this.logger.log(`Creating like: user ${userId} -> post ${postId}`);
+      if (await this.repository.likeExists(userId, postId)) {
+        throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS(userId, postId, 'LIKE');
+      }
       await this.repository.createLike(userId, postId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -30,6 +37,9 @@ export class InteractionService {
   async unlikePost(userId: string, postId: string): Promise<void> {
     try {
       this.logger.log(`Deleting like: user ${userId} -> post ${postId}`);
+      if (!(await this.repository.likeExists(userId, postId))) {
+        throw SOCIAL_RELATIONSHIP_NOT_FOUND(userId, postId, 'LIKE');
+      }
       await this.repository.deleteLike(userId, postId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;

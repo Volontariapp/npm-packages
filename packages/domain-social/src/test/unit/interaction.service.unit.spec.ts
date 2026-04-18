@@ -19,15 +19,26 @@ describe('InteractionService (Unit)', () => {
   // ─── likePost ─────────────────────────────────────────────────────────────
 
   describe('likePost()', () => {
-    it('should call repository.createLike with correct args', async () => {
+    it('should call repository.createLike with correct args if not exists', async () => {
+      mockRepository.likeExists.mockResolvedValue(false);
       mockRepository.createLike.mockResolvedValue(undefined);
 
       await service.likePost('user-1', 'post-1');
 
+      expect(mockRepository.likeExists).toHaveBeenCalledWith('user-1', 'post-1');
       expect(mockRepository.createLike).toHaveBeenCalledWith('user-1', 'post-1');
     });
 
+    it('should throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS if already liked', async () => {
+      mockRepository.likeExists.mockResolvedValue(true);
+
+      await expect(service.likePost('user-1', 'post-1')).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.likeExists.mockResolvedValue(false);
       mockRepository.createLike.mockRejectedValue(new Error('Merge failed'));
 
       await expect(service.likePost('user-1', 'post-1')).rejects.toMatchObject({
@@ -50,15 +61,26 @@ describe('InteractionService (Unit)', () => {
   // ─── unlikePost ───────────────────────────────────────────────────────────
 
   describe('unlikePost()', () => {
-    it('should call repository.deleteLike with correct args', async () => {
+    it('should call repository.deleteLike with correct args if exists', async () => {
+      mockRepository.likeExists.mockResolvedValue(true);
       mockRepository.deleteLike.mockResolvedValue(undefined);
 
       await service.unlikePost('user-1', 'post-1');
 
+      expect(mockRepository.likeExists).toHaveBeenCalledWith('user-1', 'post-1');
       expect(mockRepository.deleteLike).toHaveBeenCalledWith('user-1', 'post-1');
     });
 
+    it('should throw SOCIAL_RELATIONSHIP_NOT_FOUND if not liked', async () => {
+      mockRepository.likeExists.mockResolvedValue(false);
+
+      await expect(service.unlikePost('user-1', 'post-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.likeExists.mockResolvedValue(true);
       mockRepository.deleteLike.mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.unlikePost('user-1', 'post-1')).rejects.toMatchObject({

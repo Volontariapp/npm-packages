@@ -10,6 +10,7 @@ export const createParticipationRepositoryMock = (): jest.Mocked<IParticipationR
     deleteUserEvent: jest.fn(),
     createParticipation: jest.fn(),
     deleteParticipation: jest.fn(),
+    participationExists: jest.fn(),
     getUserEvents: jest.fn(),
     getUserParticipations: jest.fn(),
     getEventParticipants: jest.fn(),

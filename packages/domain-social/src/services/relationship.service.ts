@@ -1,7 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import type { PaginationRequest } from '@volontariapp/contracts';
-import { DATABASE_ERROR } from '@volontariapp/errors-nest';
+import {
+  DATABASE_ERROR,
+  SOCIAL_RELATIONSHIP_ALREADY_EXISTS,
+  SOCIAL_RELATIONSHIP_NOT_FOUND,
+} from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
 import { Neo4jRelationshipRepository } from '../repositories/neo4j-relationship.repository.js';
 import type { IRelationshipRepository } from '../repositories/interfaces/relationship.repository.js';
@@ -19,6 +23,9 @@ export class RelationshipService {
   async followUser(followerId: string, followedId: string): Promise<void> {
     try {
       this.logger.log(`Creating follow: ${followerId} -> ${followedId}`);
+      if (await this.repository.relationshipExists(followerId, followedId, 'FOLLOW')) {
+        throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS(followerId, followedId, 'FOLLOW');
+      }
       await this.repository.createFollow(followerId, followedId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -30,6 +37,9 @@ export class RelationshipService {
   async unfollowUser(followerId: string, followedId: string): Promise<void> {
     try {
       this.logger.log(`Deleting follow: ${followerId} -> ${followedId}`);
+      if (!(await this.repository.relationshipExists(followerId, followedId, 'FOLLOW'))) {
+        throw SOCIAL_RELATIONSHIP_NOT_FOUND(followerId, followedId, 'FOLLOW');
+      }
       await this.repository.deleteFollow(followerId, followedId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -41,6 +51,9 @@ export class RelationshipService {
   async blockUser(blockerId: string, blockedId: string): Promise<void> {
     try {
       this.logger.log(`Creating block: ${blockerId} -> ${blockedId}`);
+      if (await this.repository.relationshipExists(blockerId, blockedId, 'BLOCK')) {
+        throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS(blockerId, blockedId, 'BLOCK');
+      }
       await this.repository.createBlock(blockerId, blockedId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -52,6 +65,9 @@ export class RelationshipService {
   async unblockUser(blockerId: string, blockedId: string): Promise<void> {
     try {
       this.logger.log(`Deleting block: ${blockerId} -> ${blockedId}`);
+      if (!(await this.repository.relationshipExists(blockerId, blockedId, 'BLOCK'))) {
+        throw SOCIAL_RELATIONSHIP_NOT_FOUND(blockerId, blockedId, 'BLOCK');
+      }
       await this.repository.deleteBlock(blockerId, blockedId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;

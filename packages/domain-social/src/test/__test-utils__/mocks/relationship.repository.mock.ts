@@ -11,4 +11,5 @@ export const createRelationshipRepositoryMock = (): jest.Mocked<IRelationshipRep
     getFollowers: jest.fn(),
     getBlocks: jest.fn(),
     getWhoBlockedMe: jest.fn(),
+    relationshipExists: jest.fn(),
   }) as unknown as jest.Mocked<IRelationshipRepository>;

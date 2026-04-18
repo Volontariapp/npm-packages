@@ -1,7 +1,13 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import type { PaginationRequest } from '@volontariapp/contracts';
-import { DATABASE_ERROR } from '@volontariapp/errors-nest';
+import {
+  DATABASE_ERROR,
+  SOCIAL_EVENT_NOT_FOUND,
+  SOCIAL_EVENT_ALREADY_EXISTS,
+  SOCIAL_PARTICIPATION_ALREADY_EXISTS,
+  SOCIAL_PARTICIPATION_NOT_FOUND,
+} from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
 import { Neo4jParticipationRepository } from '../repositories/neo4j-participation.repository.js';
 import type { IParticipationRepository } from '../repositories/interfaces/participation.repository.js';
@@ -19,6 +25,9 @@ export class ParticipationService {
   async createEvent(eventId: string): Promise<void> {
     try {
       this.logger.log(`Creating social event node: ${eventId}`);
+      if (await this.repository.eventExists(eventId)) {
+        throw SOCIAL_EVENT_ALREADY_EXISTS(eventId);
+      }
       await this.repository.createEventNode(eventId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -30,6 +39,9 @@ export class ParticipationService {
   async deleteEvent(eventId: string): Promise<void> {
     try {
       this.logger.log(`Deleting social event node: ${eventId}`);
+      if (!(await this.repository.eventExists(eventId))) {
+        throw SOCIAL_EVENT_NOT_FOUND(eventId);
+      }
       await this.repository.deleteEventNode(eventId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -51,6 +63,9 @@ export class ParticipationService {
   async setEventCreator(userId: string, eventId: string): Promise<void> {
     try {
       this.logger.log(`Setting event creator: user ${userId} -> event ${eventId}`);
+      if (!(await this.repository.eventExists(eventId))) {
+        throw SOCIAL_EVENT_NOT_FOUND(eventId);
+      }
       await this.repository.createUserEvent(userId, eventId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -62,6 +77,9 @@ export class ParticipationService {
   async removeEventCreator(userId: string, eventId: string): Promise<void> {
     try {
       this.logger.log(`Removing event creator: user ${userId} -> event ${eventId}`);
+      if (!(await this.repository.eventExists(eventId))) {
+        throw SOCIAL_EVENT_NOT_FOUND(eventId);
+      }
       await this.repository.deleteUserEvent(userId, eventId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -73,6 +91,12 @@ export class ParticipationService {
   async participateEvent(userId: string, eventId: string): Promise<void> {
     try {
       this.logger.log(`Creating participation: user ${userId} -> event ${eventId}`);
+      if (!(await this.repository.eventExists(eventId))) {
+        throw SOCIAL_EVENT_NOT_FOUND(eventId);
+      }
+      if (await this.repository.participationExists(userId, eventId)) {
+        throw SOCIAL_PARTICIPATION_ALREADY_EXISTS(userId, eventId);
+      }
       await this.repository.createParticipation(userId, eventId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -84,6 +108,12 @@ export class ParticipationService {
   async leaveEvent(userId: string, eventId: string): Promise<void> {
     try {
       this.logger.log(`Deleting participation: user ${userId} -> event ${eventId}`);
+      if (!(await this.repository.eventExists(eventId))) {
+        throw SOCIAL_EVENT_NOT_FOUND(eventId);
+      }
+      if (!(await this.repository.participationExists(userId, eventId))) {
+        throw SOCIAL_PARTICIPATION_NOT_FOUND(userId, eventId);
+      }
       await this.repository.deleteParticipation(userId, eventId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;

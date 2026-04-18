@@ -98,4 +98,14 @@ export class Neo4jRelationshipRepository
       pagination,
     );
   }
+
+  async relationshipExists(fromId: string, toId: string, type: string): Promise<boolean> {
+    const result = await this.readOne(
+      `MATCH (:SocialUser {userId: $fromId})-[r:${type}]->(:SocialUser {userId: $toId})
+       RETURN r`,
+      { fromId, toId },
+      () => true,
+    );
+    return result === true;
+  }
 }

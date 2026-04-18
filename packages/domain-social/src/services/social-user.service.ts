@@ -1,6 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { DATABASE_ERROR } from '@volontariapp/errors-nest';
+import {
+  DATABASE_ERROR,
+  SOCIAL_USER_ALREADY_EXISTS,
+  SOCIAL_USER_NOT_FOUND,
+} from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
 import { Neo4jSocialUserRepository } from '../repositories/neo4j-social-user.repository.js';
 import type { ISocialUserRepository } from '../repositories/interfaces/social-user.repository.js';
@@ -17,6 +21,9 @@ export class SocialUserService {
   async createUser(userId: string): Promise<void> {
     try {
       this.logger.log(`Creating social user node: ${userId}`);
+      if (await this.repository.exists(userId)) {
+        throw SOCIAL_USER_ALREADY_EXISTS(userId);
+      }
       await this.repository.createNode(userId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -28,6 +35,9 @@ export class SocialUserService {
   async deleteUser(userId: string): Promise<void> {
     try {
       this.logger.log(`Deleting social user node: ${userId}`);
+      if (!(await this.repository.exists(userId))) {
+        throw SOCIAL_USER_NOT_FOUND(userId);
+      }
       await this.repository.deleteNode(userId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;

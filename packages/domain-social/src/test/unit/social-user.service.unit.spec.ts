@@ -16,12 +16,24 @@ describe('SocialUserService (Unit)', () => {
   // ─── createUser ───────────────────────────────────────────────────────────
 
   describe('createUser()', () => {
-    it('should call repository.createNode with the userId', async () => {
+    it('should call repository.createNode with the userId if user does not exist', async () => {
+      mockRepository.exists.mockResolvedValue(false);
       mockRepository.createNode.mockResolvedValue(undefined);
 
       await service.createUser('user-1');
 
+      expect(mockRepository.exists).toHaveBeenCalledWith('user-1');
       expect(mockRepository.createNode).toHaveBeenCalledWith('user-1');
+    });
+
+    it('should throw SOCIAL_USER_ALREADY_EXISTS if user already exists', async () => {
+      mockRepository.exists.mockResolvedValue(true);
+
+      await expect(service.createUser('user-1')).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+
+      expect(mockRepository.createNode).not.toHaveBeenCalled();
     });
 
     it('should rethrow a BaseError without wrapping', async () => {
@@ -37,6 +49,7 @@ describe('SocialUserService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.exists.mockResolvedValue(false);
       mockRepository.createNode.mockRejectedValue(new Error('Neo4j write failed'));
 
       await expect(service.createUser('user-1')).rejects.toMatchObject({
@@ -48,12 +61,24 @@ describe('SocialUserService (Unit)', () => {
   // ─── deleteUser ───────────────────────────────────────────────────────────
 
   describe('deleteUser()', () => {
-    it('should call repository.deleteNode with the userId', async () => {
+    it('should call repository.deleteNode with the userId if user exists', async () => {
+      mockRepository.exists.mockResolvedValue(true);
       mockRepository.deleteNode.mockResolvedValue(undefined);
 
       await service.deleteUser('user-1');
 
+      expect(mockRepository.exists).toHaveBeenCalledWith('user-1');
       expect(mockRepository.deleteNode).toHaveBeenCalledWith('user-1');
+    });
+
+    it('should throw SOCIAL_USER_NOT_FOUND if user does not exist', async () => {
+      mockRepository.exists.mockResolvedValue(false);
+
+      await expect(service.deleteUser('user-1')).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+
+      expect(mockRepository.deleteNode).not.toHaveBeenCalled();
     });
 
     it('should rethrow a BaseError without wrapping', async () => {
@@ -65,6 +90,7 @@ describe('SocialUserService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      mockRepository.exists.mockResolvedValue(true);
       mockRepository.deleteNode.mockRejectedValue(new Error('Neo4j delete failed'));
 
       await expect(service.deleteUser('user-1')).rejects.toMatchObject({

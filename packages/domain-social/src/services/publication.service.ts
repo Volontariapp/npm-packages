@@ -1,7 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import type { PaginationRequest } from '@volontariapp/contracts';
-import { DATABASE_ERROR } from '@volontariapp/errors-nest';
+import {
+  DATABASE_ERROR,
+  SOCIAL_POST_ALREADY_EXISTS,
+  SOCIAL_POST_NOT_FOUND,
+} from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
 import { Neo4jPublicationRepository } from '../repositories/neo4j-publication.repository.js';
 import type { IPublicationRepository } from '../repositories/interfaces/publication.repository.js';
@@ -19,6 +23,9 @@ export class PublicationService {
   async createPost(postId: string): Promise<void> {
     try {
       this.logger.log(`Creating social post node: ${postId}`);
+      if (await this.repository.postExists(postId)) {
+        throw SOCIAL_POST_ALREADY_EXISTS(postId);
+      }
       await this.repository.createPostNode(postId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -30,6 +37,9 @@ export class PublicationService {
   async deletePost(postId: string): Promise<void> {
     try {
       this.logger.log(`Deleting social post node: ${postId}`);
+      if (!(await this.repository.postExists(postId))) {
+        throw SOCIAL_POST_NOT_FOUND(postId);
+      }
       await this.repository.deletePostNode(postId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
