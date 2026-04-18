@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.7
+
+### Patch Changes
+
+- neo4j link providers fix
+
 ## 0.3.6
 
 ### Patch Changes
