@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/health-check",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "publishConfig": {
     "access": "public",
     "provenance": true

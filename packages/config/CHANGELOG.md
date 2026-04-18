@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.5
+
+### Patch Changes
+
+- ms-social not optional
+
 ## 1.1.4
 
 ### Patch Changes
