@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.1.5
+## 2.0.0
 
-### Patch Changes
+### Major Changes
 
 - ms-social not optional
 
