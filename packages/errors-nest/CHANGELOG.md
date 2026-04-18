@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- social errors
+
 ## 0.7.4
 
 ### Patch Changes

@@ -1,0 +1,3 @@
+[submodule "ci-tools"]
+	path = ci-tools
+	url = git@github.com:Volontariapp/ci-tools.git
