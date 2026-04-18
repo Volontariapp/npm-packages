@@ -1,5 +1,4 @@
-import type { jest } from '@jest/globals';
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { InteractionService } from '../../services/interaction.service.js';
 import type { IInteractionRepository } from '../../repositories/interfaces/interaction.repository.js';
 import { createInteractionRepositoryMock } from '../__test-utils__/mocks/interaction.repository.mock.js';
@@ -16,21 +15,25 @@ describe('InteractionService (Unit)', () => {
     service = new InteractionService(mockRepository);
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   // ─── likePost ─────────────────────────────────────────────────────────────
 
   describe('likePost()', () => {
     it('should call repository.createLike with correct args if not exists', async () => {
-      mockRepository.likeExists.mockResolvedValue(false);
-      mockRepository.createLike.mockResolvedValue(undefined);
+      const likeExistsSpy = jest.spyOn(mockRepository, 'likeExists').mockResolvedValue(false);
+      const createLikeSpy = jest.spyOn(mockRepository, 'createLike').mockResolvedValue(undefined);
 
       await service.likePost('user-1', 'post-1');
 
-      expect(mockRepository.likeExists).toHaveBeenCalledWith('user-1', 'post-1');
-      expect(mockRepository.createLike).toHaveBeenCalledWith('user-1', 'post-1');
+      expect(likeExistsSpy).toHaveBeenCalledWith('user-1', 'post-1');
+      expect(createLikeSpy).toHaveBeenCalledWith('user-1', 'post-1');
     });
 
     it('should throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS if already liked', async () => {
-      mockRepository.likeExists.mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'likeExists').mockResolvedValue(true);
 
       await expect(service.likePost('user-1', 'post-1')).rejects.toMatchObject({
         code: 'CONFLICT',
@@ -38,8 +41,8 @@ describe('InteractionService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.likeExists.mockResolvedValue(false);
-      mockRepository.createLike.mockRejectedValue(new Error('Merge failed'));
+      jest.spyOn(mockRepository, 'likeExists').mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'createLike').mockRejectedValue(new Error('Merge failed'));
 
       await expect(service.likePost('user-1', 'post-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -47,7 +50,7 @@ describe('InteractionService (Unit)', () => {
     });
 
     it('should rethrow a BaseError without wrapping', async () => {
-      mockRepository.createLike.mockRejectedValue({
+      jest.spyOn(mockRepository, 'createLike').mockRejectedValue({
         code: 'DATABASE_QUERY_ERROR',
         isBaseError: true,
       });
@@ -62,17 +65,17 @@ describe('InteractionService (Unit)', () => {
 
   describe('unlikePost()', () => {
     it('should call repository.deleteLike with correct args if exists', async () => {
-      mockRepository.likeExists.mockResolvedValue(true);
-      mockRepository.deleteLike.mockResolvedValue(undefined);
+      const likeExistsSpy = jest.spyOn(mockRepository, 'likeExists').mockResolvedValue(true);
+      const deleteLikeSpy = jest.spyOn(mockRepository, 'deleteLike').mockResolvedValue(undefined);
 
       await service.unlikePost('user-1', 'post-1');
 
-      expect(mockRepository.likeExists).toHaveBeenCalledWith('user-1', 'post-1');
-      expect(mockRepository.deleteLike).toHaveBeenCalledWith('user-1', 'post-1');
+      expect(likeExistsSpy).toHaveBeenCalledWith('user-1', 'post-1');
+      expect(deleteLikeSpy).toHaveBeenCalledWith('user-1', 'post-1');
     });
 
     it('should throw SOCIAL_RELATIONSHIP_NOT_FOUND if not liked', async () => {
-      mockRepository.likeExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'likeExists').mockResolvedValue(false);
 
       await expect(service.unlikePost('user-1', 'post-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
@@ -80,8 +83,8 @@ describe('InteractionService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.likeExists.mockResolvedValue(true);
-      mockRepository.deleteLike.mockRejectedValue(new Error('Delete failed'));
+      jest.spyOn(mockRepository, 'likeExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'deleteLike').mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.unlikePost('user-1', 'post-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -94,16 +97,16 @@ describe('InteractionService (Unit)', () => {
   describe('getUserLikes()', () => {
     it('should return paginated liked post ids', async () => {
       const expected = PaginatedIdsFactory.buildWithRandomIds(4);
-      mockRepository.getUserLikes.mockResolvedValue(expected);
+      const getUserLikesSpy = jest.spyOn(mockRepository, 'getUserLikes').mockResolvedValue(expected);
 
       const result = await service.getUserLikes('user-1', PAGINATION);
 
       expect(result).toEqual(expected);
-      expect(mockRepository.getUserLikes).toHaveBeenCalledWith('user-1', PAGINATION);
+      expect(getUserLikesSpy).toHaveBeenCalledWith('user-1', PAGINATION);
     });
 
     it('should return empty result when user has no likes', async () => {
-      mockRepository.getUserLikes.mockResolvedValue(PaginatedIdsFactory.buildEmpty());
+      jest.spyOn(mockRepository, 'getUserLikes').mockResolvedValue(PaginatedIdsFactory.buildEmpty());
 
       const result = await service.getUserLikes('user-1', PAGINATION);
 
@@ -111,7 +114,7 @@ describe('InteractionService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.getUserLikes.mockRejectedValue(new Error('Query failed'));
+      jest.spyOn(mockRepository, 'getUserLikes').mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getUserLikes('user-1', PAGINATION)).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -124,16 +127,16 @@ describe('InteractionService (Unit)', () => {
   describe('getPostLikers()', () => {
     it('should return paginated user ids who liked the post', async () => {
       const expected = PaginatedIdsFactory.buildWithRandomIds(2);
-      mockRepository.getPostLikers.mockResolvedValue(expected);
+      const getPostLikersSpy = jest.spyOn(mockRepository, 'getPostLikers').mockResolvedValue(expected);
 
       const result = await service.getPostLikers('post-1', PAGINATION);
 
       expect(result).toEqual(expected);
-      expect(mockRepository.getPostLikers).toHaveBeenCalledWith('post-1', PAGINATION);
+      expect(getPostLikersSpy).toHaveBeenCalledWith('post-1', PAGINATION);
     });
 
     it('should return empty result when post has no likers', async () => {
-      mockRepository.getPostLikers.mockResolvedValue(PaginatedIdsFactory.buildEmpty());
+      jest.spyOn(mockRepository, 'getPostLikers').mockResolvedValue(PaginatedIdsFactory.buildEmpty());
 
       const result = await service.getPostLikers('post-1', PAGINATION);
 
@@ -141,7 +144,7 @@ describe('InteractionService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.getPostLikers.mockRejectedValue(new Error('Query failed'));
+      jest.spyOn(mockRepository, 'getPostLikers').mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getPostLikers('post-1', PAGINATION)).rejects.toMatchObject({
         code: 'DATABASE_ERROR',

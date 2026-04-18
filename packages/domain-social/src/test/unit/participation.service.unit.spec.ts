@@ -1,5 +1,4 @@
-import type { jest } from '@jest/globals';
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { ParticipationService } from '../../services/participation.service.js';
 import type { IParticipationRepository } from '../../repositories/interfaces/participation.repository.js';
 import { createParticipationRepositoryMock } from '../__test-utils__/mocks/participation.repository.mock.js';
@@ -16,21 +15,27 @@ describe('ParticipationService (Unit)', () => {
     service = new ParticipationService(mockRepository);
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   // ─── createEvent ──────────────────────────────────────────────────────────
 
   describe('createEvent()', () => {
     it('should call repository.createEventNode with the eventId if not exists', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
-      mockRepository.createEventNode.mockResolvedValue(undefined);
+      const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
+      const createEventNodeSpy = jest
+        .spyOn(mockRepository, 'createEventNode')
+        .mockResolvedValue(undefined);
 
       await service.createEvent('event-1');
 
-      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
-      expect(mockRepository.createEventNode).toHaveBeenCalledWith('event-1');
+      expect(eventExistsSpy).toHaveBeenCalledWith('event-1');
+      expect(createEventNodeSpy).toHaveBeenCalledWith('event-1');
     });
 
     it('should throw SOCIAL_EVENT_ALREADY_EXISTS if event already exists', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
 
       await expect(service.createEvent('event-1')).rejects.toMatchObject({
         code: 'CONFLICT',
@@ -38,8 +43,8 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
-      mockRepository.createEventNode.mockRejectedValue(new Error('Write failed'));
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'createEventNode').mockRejectedValue(new Error('Write failed'));
 
       await expect(service.createEvent('event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -47,7 +52,7 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should rethrow a BaseError without wrapping', async () => {
-      mockRepository.createEventNode.mockRejectedValue({
+      jest.spyOn(mockRepository, 'createEventNode').mockRejectedValue({
         code: 'DATABASE_QUERY_ERROR',
         isBaseError: true,
       });
@@ -60,17 +65,19 @@ describe('ParticipationService (Unit)', () => {
 
   describe('deleteEvent()', () => {
     it('should call repository.deleteEventNode with the eventId if it exists', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.deleteEventNode.mockResolvedValue(undefined);
+      const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      const deleteEventNodeSpy = jest
+        .spyOn(mockRepository, 'deleteEventNode')
+        .mockResolvedValue(undefined);
 
       await service.deleteEvent('event-1');
 
-      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
-      expect(mockRepository.deleteEventNode).toHaveBeenCalledWith('event-1');
+      expect(eventExistsSpy).toHaveBeenCalledWith('event-1');
+      expect(deleteEventNodeSpy).toHaveBeenCalledWith('event-1');
     });
 
     it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
 
       await expect(service.deleteEvent('event-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
@@ -78,8 +85,8 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.deleteEventNode.mockRejectedValue(new Error('Delete failed'));
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'deleteEventNode').mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.deleteEvent('event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -91,7 +98,7 @@ describe('ParticipationService (Unit)', () => {
 
   describe('getEventExists()', () => {
     it('should return true when the event node exists', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
 
       const result = await service.getEventExists('event-1');
 
@@ -99,7 +106,7 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should return false when the event node does not exist', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
 
       const result = await service.getEventExists('event-missing');
 
@@ -107,7 +114,7 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.eventExists.mockRejectedValue(new Error('Query failed'));
+      jest.spyOn(mockRepository, 'eventExists').mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getEventExists('event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -119,17 +126,19 @@ describe('ParticipationService (Unit)', () => {
 
   describe('setEventCreator()', () => {
     it('should call repository.createUserEvent with correct args if event exists', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.createUserEvent.mockResolvedValue(undefined);
+      const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      const createUserEventSpy = jest
+        .spyOn(mockRepository, 'createUserEvent')
+        .mockResolvedValue(undefined);
 
       await service.setEventCreator('user-1', 'event-1');
 
-      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
-      expect(mockRepository.createUserEvent).toHaveBeenCalledWith('user-1', 'event-1');
+      expect(eventExistsSpy).toHaveBeenCalledWith('event-1');
+      expect(createUserEventSpy).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
     it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
 
       await expect(service.setEventCreator('user-1', 'event-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
@@ -137,8 +146,8 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.createUserEvent.mockRejectedValue(new Error('Merge failed'));
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'createUserEvent').mockRejectedValue(new Error('Merge failed'));
 
       await expect(service.setEventCreator('user-1', 'event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -150,17 +159,19 @@ describe('ParticipationService (Unit)', () => {
 
   describe('removeEventCreator()', () => {
     it('should call repository.deleteUserEvent with correct args if event exists', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.deleteUserEvent.mockResolvedValue(undefined);
+      const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      const deleteUserEventSpy = jest
+        .spyOn(mockRepository, 'deleteUserEvent')
+        .mockResolvedValue(undefined);
 
       await service.removeEventCreator('user-1', 'event-1');
 
-      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
-      expect(mockRepository.deleteUserEvent).toHaveBeenCalledWith('user-1', 'event-1');
+      expect(eventExistsSpy).toHaveBeenCalledWith('event-1');
+      expect(deleteUserEventSpy).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
     it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
 
       await expect(service.removeEventCreator('user-1', 'event-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
@@ -168,8 +179,8 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.deleteUserEvent.mockRejectedValue(new Error('Delete failed'));
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'deleteUserEvent').mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.removeEventCreator('user-1', 'event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -181,19 +192,23 @@ describe('ParticipationService (Unit)', () => {
 
   describe('participateEvent()', () => {
     it('should call repository.createParticipation if event exists and not participating', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.participationExists.mockResolvedValue(false);
-      mockRepository.createParticipation.mockResolvedValue(undefined);
+      const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      const participationExistsSpy = jest
+        .spyOn(mockRepository, 'participationExists')
+        .mockResolvedValue(false);
+      const createParticipationSpy = jest
+        .spyOn(mockRepository, 'createParticipation')
+        .mockResolvedValue(undefined);
 
       await service.participateEvent('user-1', 'event-1');
 
-      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
-      expect(mockRepository.participationExists).toHaveBeenCalledWith('user-1', 'event-1');
-      expect(mockRepository.createParticipation).toHaveBeenCalledWith('user-1', 'event-1');
+      expect(eventExistsSpy).toHaveBeenCalledWith('event-1');
+      expect(participationExistsSpy).toHaveBeenCalledWith('user-1', 'event-1');
+      expect(createParticipationSpy).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
     it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
 
       await expect(service.participateEvent('user-1', 'event-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
@@ -201,8 +216,8 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw SOCIAL_PARTICIPATION_ALREADY_EXISTS if already participating', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.participationExists.mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'participationExists').mockResolvedValue(true);
 
       await expect(service.participateEvent('user-1', 'event-1')).rejects.toMatchObject({
         code: 'CONFLICT',
@@ -210,9 +225,11 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.participationExists.mockResolvedValue(false);
-      mockRepository.createParticipation.mockRejectedValue(new Error('Merge failed'));
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'participationExists').mockResolvedValue(false);
+      jest
+        .spyOn(mockRepository, 'createParticipation')
+        .mockRejectedValue(new Error('Merge failed'));
 
       await expect(service.participateEvent('user-1', 'event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -224,19 +241,23 @@ describe('ParticipationService (Unit)', () => {
 
   describe('leaveEvent()', () => {
     it('should call repository.deleteParticipation with correct args if exists', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.participationExists.mockResolvedValue(true);
-      mockRepository.deleteParticipation.mockResolvedValue(undefined);
+      const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      const participationExistsSpy = jest
+        .spyOn(mockRepository, 'participationExists')
+        .mockResolvedValue(true);
+      const deleteParticipationSpy = jest
+        .spyOn(mockRepository, 'deleteParticipation')
+        .mockResolvedValue(undefined);
 
       await service.leaveEvent('user-1', 'event-1');
 
-      expect(mockRepository.eventExists).toHaveBeenCalledWith('event-1');
-      expect(mockRepository.participationExists).toHaveBeenCalledWith('user-1', 'event-1');
-      expect(mockRepository.deleteParticipation).toHaveBeenCalledWith('user-1', 'event-1');
+      expect(eventExistsSpy).toHaveBeenCalledWith('event-1');
+      expect(participationExistsSpy).toHaveBeenCalledWith('user-1', 'event-1');
+      expect(deleteParticipationSpy).toHaveBeenCalledWith('user-1', 'event-1');
     });
 
     it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
-      mockRepository.eventExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
 
       await expect(service.leaveEvent('user-1', 'event-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
@@ -244,8 +265,8 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw SOCIAL_PARTICIPATION_NOT_FOUND if not participating', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.participationExists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'participationExists').mockResolvedValue(false);
 
       await expect(service.leaveEvent('user-1', 'event-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
@@ -253,9 +274,11 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.eventExists.mockResolvedValue(true);
-      mockRepository.participationExists.mockResolvedValue(true);
-      mockRepository.deleteParticipation.mockRejectedValue(new Error('Delete failed'));
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'participationExists').mockResolvedValue(true);
+      jest
+        .spyOn(mockRepository, 'deleteParticipation')
+        .mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.leaveEvent('user-1', 'event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -268,16 +291,20 @@ describe('ParticipationService (Unit)', () => {
   describe('getUserEvents()', () => {
     it('should return paginated event ids created by the user', async () => {
       const expected = PaginatedIdsFactory.buildWithRandomIds(2);
-      mockRepository.getUserEvents.mockResolvedValue(expected);
+      const getUserEventsSpy = jest
+        .spyOn(mockRepository, 'getUserEvents')
+        .mockResolvedValue(expected);
 
       const result = await service.getUserEvents('user-1', PAGINATION);
 
       expect(result).toEqual(expected);
-      expect(mockRepository.getUserEvents).toHaveBeenCalledWith('user-1', PAGINATION);
+      expect(getUserEventsSpy).toHaveBeenCalledWith('user-1', PAGINATION);
     });
 
     it('should return empty result when user created no events', async () => {
-      mockRepository.getUserEvents.mockResolvedValue(PaginatedIdsFactory.buildEmpty());
+      jest
+        .spyOn(mockRepository, 'getUserEvents')
+        .mockResolvedValue(PaginatedIdsFactory.buildEmpty());
 
       const result = await service.getUserEvents('user-1', PAGINATION);
 
@@ -285,7 +312,7 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.getUserEvents.mockRejectedValue(new Error('Query failed'));
+      jest.spyOn(mockRepository, 'getUserEvents').mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getUserEvents('user-1', PAGINATION)).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -298,7 +325,7 @@ describe('ParticipationService (Unit)', () => {
   describe('getUserParticipations()', () => {
     it('should return paginated event ids the user participates in', async () => {
       const expected = PaginatedIdsFactory.buildWithRandomIds(3);
-      mockRepository.getUserParticipations.mockResolvedValue(expected);
+      jest.spyOn(mockRepository, 'getUserParticipations').mockResolvedValue(expected);
 
       const result = await service.getUserParticipations('user-1', PAGINATION);
 
@@ -306,7 +333,9 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.getUserParticipations.mockRejectedValue(new Error('Query failed'));
+      jest
+        .spyOn(mockRepository, 'getUserParticipations')
+        .mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getUserParticipations('user-1', PAGINATION)).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -319,16 +348,20 @@ describe('ParticipationService (Unit)', () => {
   describe('getEventParticipants()', () => {
     it('should return paginated participant user ids for an event', async () => {
       const expected = PaginatedIdsFactory.buildWithRandomIds(5);
-      mockRepository.getEventParticipants.mockResolvedValue(expected);
+      const getEventParticipantsSpy = jest
+        .spyOn(mockRepository, 'getEventParticipants')
+        .mockResolvedValue(expected);
 
       const result = await service.getEventParticipants('event-1', PAGINATION);
 
       expect(result).toEqual(expected);
-      expect(mockRepository.getEventParticipants).toHaveBeenCalledWith('event-1', PAGINATION);
+      expect(getEventParticipantsSpy).toHaveBeenCalledWith('event-1', PAGINATION);
     });
 
     it('should return empty result when event has no participants', async () => {
-      mockRepository.getEventParticipants.mockResolvedValue(PaginatedIdsFactory.buildEmpty());
+      jest
+        .spyOn(mockRepository, 'getEventParticipants')
+        .mockResolvedValue(PaginatedIdsFactory.buildEmpty());
 
       const result = await service.getEventParticipants('event-1', PAGINATION);
 
@@ -336,7 +369,9 @@ describe('ParticipationService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.getEventParticipants.mockRejectedValue(new Error('Query failed'));
+      jest
+        .spyOn(mockRepository, 'getEventParticipants')
+        .mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getEventParticipants('event-1', PAGINATION)).rejects.toMatchObject({
         code: 'DATABASE_ERROR',

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+### Minor Changes
+
+- refacto: clean archi + DDD
+
 ## 0.1.2
 
 ### Patch Changes

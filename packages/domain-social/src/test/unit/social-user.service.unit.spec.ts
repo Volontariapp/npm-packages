@@ -1,5 +1,4 @@
-import type { jest } from '@jest/globals';
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { SocialUserService } from '../../services/social-user.service.js';
 import type { ISocialUserRepository } from '../../repositories/interfaces/social-user.repository.js';
 import { createSocialUserRepositoryMock } from '../__test-utils__/mocks/social-user.repository.mock.js';
@@ -13,31 +12,36 @@ describe('SocialUserService (Unit)', () => {
     service = new SocialUserService(mockRepository);
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   // ─── createUser ───────────────────────────────────────────────────────────
 
   describe('createUser()', () => {
     it('should call repository.createNode with the userId if user does not exist', async () => {
-      mockRepository.exists.mockResolvedValue(false);
-      mockRepository.createNode.mockResolvedValue(undefined);
+      const existsSpy = jest.spyOn(mockRepository, 'exists').mockResolvedValue(false);
+      const createNodeSpy = jest.spyOn(mockRepository, 'createNode').mockResolvedValue(undefined);
 
       await service.createUser('user-1');
 
-      expect(mockRepository.exists).toHaveBeenCalledWith('user-1');
-      expect(mockRepository.createNode).toHaveBeenCalledWith('user-1');
+      expect(existsSpy).toHaveBeenCalledWith('user-1');
+      expect(createNodeSpy).toHaveBeenCalledWith('user-1');
     });
 
     it('should throw SOCIAL_USER_ALREADY_EXISTS if user already exists', async () => {
-      mockRepository.exists.mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'exists').mockResolvedValue(true);
+      const createNodeSpy = jest.spyOn(mockRepository, 'createNode');
 
       await expect(service.createUser('user-1')).rejects.toMatchObject({
         code: 'CONFLICT',
       });
 
-      expect(mockRepository.createNode).not.toHaveBeenCalled();
+      expect(createNodeSpy).not.toHaveBeenCalled();
     });
 
     it('should rethrow a BaseError without wrapping', async () => {
-      mockRepository.createNode.mockRejectedValue({
+      jest.spyOn(mockRepository, 'createNode').mockRejectedValue({
         code: 'DATABASE_QUERY_ERROR',
         isBaseError: true,
       });
@@ -49,8 +53,8 @@ describe('SocialUserService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.exists.mockResolvedValue(false);
-      mockRepository.createNode.mockRejectedValue(new Error('Neo4j write failed'));
+      jest.spyOn(mockRepository, 'exists').mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'createNode').mockRejectedValue(new Error('Neo4j write failed'));
 
       await expect(service.createUser('user-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -62,27 +66,28 @@ describe('SocialUserService (Unit)', () => {
 
   describe('deleteUser()', () => {
     it('should call repository.deleteNode with the userId if user exists', async () => {
-      mockRepository.exists.mockResolvedValue(true);
-      mockRepository.deleteNode.mockResolvedValue(undefined);
+      const existsSpy = jest.spyOn(mockRepository, 'exists').mockResolvedValue(true);
+      const deleteNodeSpy = jest.spyOn(mockRepository, 'deleteNode').mockResolvedValue(undefined);
 
       await service.deleteUser('user-1');
 
-      expect(mockRepository.exists).toHaveBeenCalledWith('user-1');
-      expect(mockRepository.deleteNode).toHaveBeenCalledWith('user-1');
+      expect(existsSpy).toHaveBeenCalledWith('user-1');
+      expect(deleteNodeSpy).toHaveBeenCalledWith('user-1');
     });
 
     it('should throw SOCIAL_USER_NOT_FOUND if user does not exist', async () => {
-      mockRepository.exists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'exists').mockResolvedValue(false);
+      const deleteNodeSpy = jest.spyOn(mockRepository, 'deleteNode');
 
       await expect(service.deleteUser('user-1')).rejects.toMatchObject({
         code: 'NOT_FOUND',
       });
 
-      expect(mockRepository.deleteNode).not.toHaveBeenCalled();
+      expect(deleteNodeSpy).not.toHaveBeenCalled();
     });
 
     it('should rethrow a BaseError without wrapping', async () => {
-      mockRepository.deleteNode.mockRejectedValue({ code: 'NOT_FOUND', isBaseError: true });
+      jest.spyOn(mockRepository, 'deleteNode').mockRejectedValue({ code: 'NOT_FOUND', isBaseError: true });
 
       await expect(service.deleteUser('user-1')).rejects.toMatchObject({
         isBaseError: true,
@@ -90,8 +95,8 @@ describe('SocialUserService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.exists.mockResolvedValue(true);
-      mockRepository.deleteNode.mockRejectedValue(new Error('Neo4j delete failed'));
+      jest.spyOn(mockRepository, 'exists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'deleteNode').mockRejectedValue(new Error('Neo4j delete failed'));
 
       await expect(service.deleteUser('user-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -103,16 +108,16 @@ describe('SocialUserService (Unit)', () => {
 
   describe('getUserExists()', () => {
     it('should return true when the user node exists', async () => {
-      mockRepository.exists.mockResolvedValue(true);
+      const existsSpy = jest.spyOn(mockRepository, 'exists').mockResolvedValue(true);
 
       const result = await service.getUserExists('user-1');
 
       expect(result).toBe(true);
-      expect(mockRepository.exists).toHaveBeenCalledWith('user-1');
+      expect(existsSpy).toHaveBeenCalledWith('user-1');
     });
 
     it('should return false when the user node does not exist', async () => {
-      mockRepository.exists.mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'exists').mockResolvedValue(false);
 
       const result = await service.getUserExists('user-missing');
 
@@ -120,7 +125,7 @@ describe('SocialUserService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      mockRepository.exists.mockRejectedValue(new Error('Query failed'));
+      jest.spyOn(mockRepository, 'exists').mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getUserExists('user-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',

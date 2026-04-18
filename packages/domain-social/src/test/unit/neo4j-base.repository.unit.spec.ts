@@ -49,14 +49,15 @@ describe('Neo4jBaseRepository (Unit)', () => {
   describe('read()', () => {
     it('should throw DATABASE_QUERY_ERROR when the driver fails', async () => {
       const errorMsg = 'Cypher syntax error';
-      mockSession.run.mockRejectedValue(new Error(errorMsg));
+      jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
+      const closeSpy = jest.spyOn(mockSession, 'close');
 
       await expect(repository.testRead('MATCH (n) RETURN n')).rejects.toMatchObject({
         code: 'DATABASE_QUERY_ERROR',
         message: expect.stringContaining(errorMsg),
       });
 
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 
@@ -65,14 +66,15 @@ describe('Neo4jBaseRepository (Unit)', () => {
   describe('write()', () => {
     it('should throw DATABASE_QUERY_ERROR when the driver fails', async () => {
       const errorMsg = 'Constraint violation';
-      mockSession.run.mockRejectedValue(new Error(errorMsg));
+      jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
+      const closeSpy = jest.spyOn(mockSession, 'close');
 
       await expect(repository.testWrite('CREATE (n:User { id: "1" })')).rejects.toMatchObject({
         code: 'DATABASE_QUERY_ERROR',
         message: expect.stringContaining(errorMsg),
       });
 
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 
@@ -81,7 +83,8 @@ describe('Neo4jBaseRepository (Unit)', () => {
   describe('readPaginated()', () => {
     it('should throw DATABASE_QUERY_ERROR when the driver fails on data query', async () => {
       const errorMsg = 'Pagination query failed';
-      mockSession.run.mockRejectedValue(new Error(errorMsg));
+      jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
+      const closeSpy = jest.spyOn(mockSession, 'close');
 
       await expect(
         repository.testReadPaginated('MATCH (n) RETURN n', 'MATCH (n) RETURN count(n)'),
@@ -91,7 +94,7 @@ describe('Neo4jBaseRepository (Unit)', () => {
       });
 
       // Close is called once per session (data and count)
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 });
