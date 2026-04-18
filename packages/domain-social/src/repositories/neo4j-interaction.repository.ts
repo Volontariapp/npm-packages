@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { NestNeo4jProvider } from '@volontariapp/bridge-nest';
+import { NestNeo4jProvider, NEST_NEO4J_PROVIDER } from '@volontariapp/bridge-nest';
 import { Neo4jBaseRepository } from './base/neo4j-base.repository.js';
 import type { IInteractionRepository } from './interfaces/interaction.repository.js';
 import { PaginatedIdsVO } from '../value-objects/paginated-ids.vo.js';
@@ -16,7 +16,7 @@ export class Neo4jInteractionRepository
   implements IInteractionRepository
 {
   constructor(
-    @Inject(NestNeo4jProvider)
+    @Inject(NEST_NEO4J_PROVIDER)
     provider: NestNeo4jProvider,
   ) {
     super(provider);

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { NestNeo4jProvider } from '@volontariapp/bridge-nest';
+import { NestNeo4jProvider, NEST_NEO4J_PROVIDER } from '@volontariapp/bridge-nest';
 import { Neo4jBaseRepository } from './base/neo4j-base.repository.js';
 import type { ISocialUserRepository } from './interfaces/social-user.repository.js';
 import { SocialUserMapper } from '../mappers/social-user.mapper.js';
@@ -11,7 +11,7 @@ export class Neo4jSocialUserRepository
   implements ISocialUserRepository
 {
   constructor(
-    @Inject(NestNeo4jProvider)
+    @Inject(NEST_NEO4J_PROVIDER)
     provider: NestNeo4jProvider,
   ) {
     super(provider);

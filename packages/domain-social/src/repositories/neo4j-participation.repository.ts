@@ -6,7 +6,7 @@ import { SocialUserMapper } from '../mappers/social-user.mapper.js';
 import { SocialEventMapper } from '../mappers/social-event.mapper.js';
 import type { IParticipationRepository } from '../repositories/interfaces/participation.repository.js';
 import { Injectable, Inject } from '@nestjs/common';
-import { NestNeo4jProvider } from '@volontariapp/bridge-nest';
+import { NestNeo4jProvider, NEST_NEO4J_PROVIDER } from '@volontariapp/bridge-nest';
 import { Neo4jBaseRepository } from './base/neo4j-base.repository.js';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class Neo4jParticipationRepository
   implements IParticipationRepository
 {
   constructor(
-    @Inject(NestNeo4jProvider)
+    @Inject(NEST_NEO4J_PROVIDER)
     provider: NestNeo4jProvider,
   ) {
     super(provider);
