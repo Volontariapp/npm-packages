@@ -23,7 +23,9 @@ describe('EventPostLinkService (Unit)', () => {
 
   describe('linkPostToEvent()', () => {
     it('should call repository.linkPostToEvent with correct args', async () => {
-      const linkPostToEventSpy = jest.spyOn(mockRepository, 'linkPostToEvent').mockResolvedValue(undefined);
+      const linkPostToEventSpy = jest
+        .spyOn(mockRepository, 'linkPostToEvent')
+        .mockResolvedValue(undefined);
 
       await service.linkPostToEvent('post-1', 'event-1');
 
@@ -54,7 +56,9 @@ describe('EventPostLinkService (Unit)', () => {
 
   describe('unlinkPostFromEvent()', () => {
     it('should call repository.unlinkPostFromEvent with correct args', async () => {
-      const unlinkPostFromEventSpy = jest.spyOn(mockRepository, 'unlinkPostFromEvent').mockResolvedValue(undefined);
+      const unlinkPostFromEventSpy = jest
+        .spyOn(mockRepository, 'unlinkPostFromEvent')
+        .mockResolvedValue(undefined);
 
       await service.unlinkPostFromEvent('post-1', 'event-1');
 
@@ -62,7 +66,9 @@ describe('EventPostLinkService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      jest.spyOn(mockRepository, 'unlinkPostFromEvent').mockRejectedValue(new Error('Delete failed'));
+      jest
+        .spyOn(mockRepository, 'unlinkPostFromEvent')
+        .mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.unlinkPostFromEvent('post-1', 'event-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -74,7 +80,9 @@ describe('EventPostLinkService (Unit)', () => {
 
   describe('getEventRelatedToPost()', () => {
     it('should return the event id when a link exists', async () => {
-      const getEventRelatedToPostSpy = jest.spyOn(mockRepository, 'getEventRelatedToPost').mockResolvedValue('event-1');
+      const getEventRelatedToPostSpy = jest
+        .spyOn(mockRepository, 'getEventRelatedToPost')
+        .mockResolvedValue('event-1');
 
       const result = await service.getEventRelatedToPost('post-1');
 
@@ -91,7 +99,9 @@ describe('EventPostLinkService (Unit)', () => {
     });
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
-      jest.spyOn(mockRepository, 'getEventRelatedToPost').mockRejectedValue(new Error('Query failed'));
+      jest
+        .spyOn(mockRepository, 'getEventRelatedToPost')
+        .mockRejectedValue(new Error('Query failed'));
 
       await expect(service.getEventRelatedToPost('post-1')).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -104,7 +114,9 @@ describe('EventPostLinkService (Unit)', () => {
   describe('getEventPosts()', () => {
     it('should return paginated post ids for the event', async () => {
       const expected = PaginatedIdsFactory.buildWithRandomIds(3);
-      const getEventPostsSpy = jest.spyOn(mockRepository, 'getEventPosts').mockResolvedValue(expected);
+      const getEventPostsSpy = jest
+        .spyOn(mockRepository, 'getEventPosts')
+        .mockResolvedValue(expected);
 
       const result = await service.getEventPosts('event-1', PAGINATION);
 
@@ -113,7 +125,9 @@ describe('EventPostLinkService (Unit)', () => {
     });
 
     it('should return empty result when event has no linked posts', async () => {
-      jest.spyOn(mockRepository, 'getEventPosts').mockResolvedValue(PaginatedIdsFactory.buildEmpty());
+      jest
+        .spyOn(mockRepository, 'getEventPosts')
+        .mockResolvedValue(PaginatedIdsFactory.buildEmpty());
 
       const result = await service.getEventPosts('event-1', PAGINATION);
 
