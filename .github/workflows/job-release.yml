@@ -1,0 +1,118 @@
+name: Job - Release (definitive)
+
+# Reusable workflow: publishes BUILD packages as definitive semver versions.
+#
+# Only packages whose version in package.json is a clean semver (no pre-release
+# suffix, e.g. "1.2.3") are published. Snapshot versions are skipped.
+#
+# Outputs
+# ───────
+# released_tags   Comma-separated list of "name@version" for released packages
+
+on:
+  workflow_call:
+    inputs:
+      json_plan:
+        description: Full ci-orchestrate.py plan JSON
+        required: true
+        type: string
+    secrets:
+      ORG_REPO_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+    outputs:
+      released_tags:
+        description: Comma-separated list of name@version released
+        value: ${{ jobs.release.outputs.released_tags }}
+
+jobs:
+  release:
+    name: Definitive Release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # npm provenance
+      contents: write
+      pull-requests: write
+
+    outputs:
+      released_tags: ${{ steps.publish.outputs.released_tags }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          fetch-depth: 0
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Configure npm & yarn auth
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          yarn config set 'npmRegistries["//registry.npmjs.org/"].npmAuthToken' "${{ secrets.NPM_TOKEN }}"
+
+      - name: Resolve workspace:* references
+        run: node scripts/resolve-workspaces.js
+
+      - name: Build packages (topological)
+        env:
+          JSON_PLAN: ${{ inputs.json_plan }}
+        run: |
+          BUILD_FROM_ARGS=()
+          while IFS= read -r PKG_ID; do
+            PKG_NAME=$(node -p "require('./packages/$PKG_ID/package.json').name")
+            BUILD_FROM_ARGS+=("--from" "$PKG_NAME")
+          done < <(echo "$JSON_PLAN" | jq -r '.packages[] | select(.action == "BUILD") | .id')
+
+          yarn workspaces foreach -vpt "${BUILD_FROM_ARGS[@]}" -R run build
+
+      - name: Publish definitive versions
+        id: publish
+        env:
+          NPM_CONFIG_PROVENANCE: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          JSON_PLAN: ${{ inputs.json_plan }}
+        run: |
+          TAGS_FILE=$(mktemp)
+          SEMVER_RE='^[0-9]+\.[0-9]+\.[0-9]+$'
+
+          while IFS= read -r PKG_ID; do
+            ACTION=$(echo "$JSON_PLAN" | jq -r ".packages[] | select(.id == \"$PKG_ID\") | .action")
+            [[ "$ACTION" != "BUILD" ]] && continue
+
+            PKG_JSON="packages/$PKG_ID/package.json"
+            PKG_NAME=$(node -p "require('./$PKG_JSON').name")
+            PKG_VER=$(node -p "require('./$PKG_JSON').version")
+
+            # Skip pre-release / snapshot versions
+            if ! [[ "$PKG_VER" =~ $SEMVER_RE ]]; then
+              echo "  SKIP $PKG_NAME@$PKG_VER (pre-release suffix)"
+              continue
+            fi
+
+            echo "  Publishing $PKG_NAME@$PKG_VER …"
+            (
+              cd "packages/$PKG_ID"
+              yarn npm publish --access public --tag latest
+            )
+            echo "${PKG_NAME}@${PKG_VER}" >> "$TAGS_FILE"
+            echo "  ✓ $PKG_NAME@$PKG_VER"
+          done < <(echo "$JSON_PLAN" | jq -r '.publish_order[]')
+
+          TAGS_CSV=$(paste -sd',' "$TAGS_FILE")
+          echo "released_tags=$TAGS_CSV" >> "$GITHUB_OUTPUT"
+          echo ""
+          echo "=== Released packages ==="
+          cat "$TAGS_FILE"
