@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { Neo4jBaseRepository } from '../../repositories/base/neo4j-base.repository.js';
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import type { Driver, Session } from 'neo4j-driver';
+import { PaginationFactory } from '../__test-utils__/factories/pagination.factory.js';
 
 class TestRepository extends Neo4jBaseRepository {
   async testRead(cypher: string, params: Record<string, unknown> = {}) {
@@ -13,7 +14,7 @@ class TestRepository extends Neo4jBaseRepository {
   }
 
   async testReadPaginated(cypher: string, count: string, params: Record<string, unknown> = {}) {
-    return this.readPaginated(cypher, count, params, { page: 1, limit: 10 });
+    return this.readPaginated(cypher, count, params, PaginationFactory.build());
   }
 }
 
@@ -49,14 +50,15 @@ describe('Neo4jBaseRepository (Unit)', () => {
   describe('read()', () => {
     it('should throw DATABASE_QUERY_ERROR when the driver fails', async () => {
       const errorMsg = 'Cypher syntax error';
-      mockSession.run.mockRejectedValue(new Error(errorMsg));
+      jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
+      const closeSpy = jest.spyOn(mockSession, 'close');
 
       await expect(repository.testRead('MATCH (n) RETURN n')).rejects.toMatchObject({
         code: 'DATABASE_QUERY_ERROR',
         message: expect.stringContaining(errorMsg),
       });
 
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 
@@ -65,14 +67,15 @@ describe('Neo4jBaseRepository (Unit)', () => {
   describe('write()', () => {
     it('should throw DATABASE_QUERY_ERROR when the driver fails', async () => {
       const errorMsg = 'Constraint violation';
-      mockSession.run.mockRejectedValue(new Error(errorMsg));
+      jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
+      const closeSpy = jest.spyOn(mockSession, 'close');
 
       await expect(repository.testWrite('CREATE (n:User { id: "1" })')).rejects.toMatchObject({
         code: 'DATABASE_QUERY_ERROR',
         message: expect.stringContaining(errorMsg),
       });
 
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 
@@ -80,8 +83,9 @@ describe('Neo4jBaseRepository (Unit)', () => {
 
   describe('readPaginated()', () => {
     it('should throw DATABASE_QUERY_ERROR when the driver fails on data query', async () => {
-      const errorMsg = 'Pagination query failed';
-      mockSession.run.mockRejectedValue(new Error(errorMsg));
+      const errorMsg = 'PaginationVO query failed';
+      jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
+      const closeSpy = jest.spyOn(mockSession, 'close');
 
       await expect(
         repository.testReadPaginated('MATCH (n) RETURN n', 'MATCH (n) RETURN count(n)'),
@@ -91,7 +95,7 @@ describe('Neo4jBaseRepository (Unit)', () => {
       });
 
       // Close is called once per session (data and count)
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 });

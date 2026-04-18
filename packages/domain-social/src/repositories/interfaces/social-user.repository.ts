@@ -1,5 +1,7 @@
+import type { SocialUserEntity } from '../../entities/social-user.entity.js';
+
 export interface ISocialUserRepository {
-  createNode(userId: string): Promise<void>;
-  deleteNode(userId: string): Promise<void>;
-  exists(userId: string): Promise<boolean>;
+  createNode(entity: SocialUserEntity): Promise<void>;
+  deleteNode(entity: SocialUserEntity): Promise<void>;
+  exists(entity: SocialUserEntity): Promise<boolean>;
 }

@@ -1,9 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { NestNeo4jProvider } from '@volontariapp/bridge-nest';
-import type { PaginationRequest } from '@volontariapp/contracts';
 import { Neo4jBaseRepository } from './base/neo4j-base.repository.js';
 import type { IRelationshipRepository } from './interfaces/relationship.repository.js';
-import type { PaginatedIds } from '../entities/paginated-ids.entity.js';
+import type { PaginatedIdsVO } from '../value-objects/paginated-ids.vo.js';
+import { SocialUserEntity } from '../entities/social-user.entity.js';
+import { SocialUserMapper } from '../mappers/social-user.mapper.js';
+import { PaginationVO } from '../value-objects/pagination.vo.js';
 
 @Injectable()
 export class Neo4jRelationshipRepository
@@ -17,93 +19,123 @@ export class Neo4jRelationshipRepository
     super(provider);
   }
 
-  async createFollow(followerId: string, followedId: string): Promise<void> {
+  async createFollow(follower: SocialUserEntity, followed: SocialUserEntity): Promise<void> {
+    const followerModel = SocialUserMapper.toModel(follower);
+    const followedModel = SocialUserMapper.toModel(followed);
     await this.write(
       `MATCH (f:SocialUser {userId: $followerId})
        MATCH (t:SocialUser {userId: $followedId})
        MERGE (f)-[:FOLLOW]->(t)`,
-      { followerId, followedId },
+      {
+        followerId: followerModel.id.value,
+        followedId: followedModel.id.value,
+      },
     );
   }
 
-  async deleteFollow(followerId: string, followedId: string): Promise<void> {
+  async deleteFollow(follower: SocialUserEntity, followed: SocialUserEntity): Promise<void> {
+    const followerModel = SocialUserMapper.toModel(follower);
+    const followedModel = SocialUserMapper.toModel(followed);
     await this.write(
       `MATCH (:SocialUser {userId: $followerId})-[r:FOLLOW]->(:SocialUser {userId: $followedId})
        DELETE r`,
-      { followerId, followedId },
+      {
+        followerId: followerModel.id.value,
+        followedId: followedModel.id.value,
+      },
     );
   }
 
-  async createBlock(blockerId: string, blockedId: string): Promise<void> {
+  async createBlock(blocker: SocialUserEntity, blocked: SocialUserEntity): Promise<void> {
+    const blockerModel = SocialUserMapper.toModel(blocker);
+    const blockedModel = SocialUserMapper.toModel(blocked);
     await this.write(
       `MATCH (b:SocialUser {userId: $blockerId})
        MATCH (t:SocialUser {userId: $blockedId})
        MERGE (b)-[:BLOCK]->(t)`,
-      { blockerId, blockedId },
+      {
+        blockerId: blockerModel.id.value,
+        blockedId: blockedModel.id.value,
+      },
     );
   }
 
-  async deleteBlock(blockerId: string, blockedId: string): Promise<void> {
+  async deleteBlock(blocker: SocialUserEntity, blocked: SocialUserEntity): Promise<void> {
+    const blockerModel = SocialUserMapper.toModel(blocker);
+    const blockedModel = SocialUserMapper.toModel(blocked);
     await this.write(
       `MATCH (:SocialUser {userId: $blockerId})-[r:BLOCK]->(:SocialUser {userId: $blockedId})
        DELETE r`,
-      { blockerId, blockedId },
+      {
+        blockerId: blockerModel.id.value,
+        blockedId: blockedModel.id.value,
+      },
     );
   }
 
-  async getFollows(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getFollows(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const model = SocialUserMapper.toModel(user);
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:FOLLOW]->(u:SocialUser)
        RETURN u.userId AS id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:FOLLOW]->(u:SocialUser)
        RETURN count(u) AS total`,
-      { userId },
+      { userId: model.id.value },
       pagination,
     );
   }
 
-  async getFollowers(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getFollowers(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const model = SocialUserMapper.toModel(user);
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})<-[:FOLLOW]-(u:SocialUser)
        RETURN u.userId AS id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})<-[:FOLLOW]-(u:SocialUser)
        RETURN count(u) AS total`,
-      { userId },
+      { userId: model.id.value },
       pagination,
     );
   }
 
-  async getBlocks(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getBlocks(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const model = SocialUserMapper.toModel(user);
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:BLOCK]->(u:SocialUser)
        RETURN u.userId AS id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:BLOCK]->(u:SocialUser)
        RETURN count(u) AS total`,
-      { userId },
+      { userId: model.id.value },
       pagination,
     );
   }
 
-  async getWhoBlockedMe(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getWhoBlockedMe(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const model = SocialUserMapper.toModel(user);
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})<-[:BLOCK]-(u:SocialUser)
        RETURN u.userId AS id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})<-[:BLOCK]-(u:SocialUser)
        RETURN count(u) AS total`,
-      { userId },
+      { userId: model.id.value },
       pagination,
     );
   }
 
-  async relationshipExists(fromId: string, toId: string, type: string): Promise<boolean> {
+  async relationshipExists(
+    from: SocialUserEntity,
+    to: SocialUserEntity,
+    type: string,
+  ): Promise<boolean> {
+    const fromModel = SocialUserMapper.toModel(from);
+    const toModel = SocialUserMapper.toModel(to);
     const result = await this.readOne(
       `MATCH (:SocialUser {userId: $fromId})-[r:${type}]->(:SocialUser {userId: $toId})
        RETURN r`,
-      { fromId, toId },
+      { fromId: fromModel.id.value, toId: toModel.id.value },
       () => true,
     );
     return result === true;

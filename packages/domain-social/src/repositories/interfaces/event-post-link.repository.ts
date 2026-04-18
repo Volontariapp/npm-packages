@@ -1,9 +1,11 @@
-import type { PaginationRequest } from '@volontariapp/contracts';
-import type { PaginatedIds } from '../../entities/paginated-ids.entity.js';
+import type { SocialPostEntity } from '../../entities/social-post.entity.js';
+import type { SocialEventEntity } from '../../entities/social-event.entity.js';
+import type { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
+import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 export interface IEventPostLinkRepository {
-  linkPostToEvent(postId: string, eventId: string): Promise<void>;
-  unlinkPostFromEvent(postId: string, eventId: string): Promise<void>;
-  getEventRelatedToPost(postId: string): Promise<string | null>;
-  getEventPosts(eventId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
+  linkPostToEvent(post: SocialPostEntity, event: SocialEventEntity): Promise<void>;
+  unlinkPostFromEvent(post: SocialPostEntity, event: SocialEventEntity): Promise<void>;
+  getEventRelatedToPost(post: SocialPostEntity): Promise<string | null>;
+  getEventPosts(event: SocialEventEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
 }

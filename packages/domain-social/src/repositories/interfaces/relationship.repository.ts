@@ -1,14 +1,15 @@
-import type { PaginationRequest } from '@volontariapp/contracts';
-import type { PaginatedIds } from '../../entities/paginated-ids.entity.js';
+import type { SocialUserEntity } from '../../entities/social-user.entity.js';
+import type { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
+import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 export interface IRelationshipRepository {
-  createFollow(followerId: string, followedId: string): Promise<void>;
-  deleteFollow(followerId: string, followedId: string): Promise<void>;
-  createBlock(blockerId: string, blockedId: string): Promise<void>;
-  deleteBlock(blockerId: string, blockedId: string): Promise<void>;
-  getFollows(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
-  getFollowers(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
-  getBlocks(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
-  getWhoBlockedMe(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
-  relationshipExists(fromId: string, toId: string, type: string): Promise<boolean>;
+  createFollow(follower: SocialUserEntity, followed: SocialUserEntity): Promise<void>;
+  deleteFollow(follower: SocialUserEntity, followed: SocialUserEntity): Promise<void>;
+  createBlock(blocker: SocialUserEntity, blocked: SocialUserEntity): Promise<void>;
+  deleteBlock(blocker: SocialUserEntity, blocked: SocialUserEntity): Promise<void>;
+  getFollows(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  getFollowers(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  getBlocks(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  getWhoBlockedMe(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  relationshipExists(from: SocialUserEntity, to: SocialUserEntity, type: string): Promise<boolean>;
 }

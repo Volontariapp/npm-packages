@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import type { PaginationRequest } from '@volontariapp/contracts';
 import {
   DATABASE_ERROR,
   SOCIAL_RELATIONSHIP_ALREADY_EXISTS,
@@ -9,7 +8,11 @@ import {
 import { isBaseError } from '@volontariapp/errors';
 import { Neo4jRelationshipRepository } from '../repositories/neo4j-relationship.repository.js';
 import type { IRelationshipRepository } from '../repositories/interfaces/relationship.repository.js';
-import type { PaginatedIds } from '../entities/paginated-ids.entity.js';
+import type { PaginatedIdsVO } from '../value-objects/paginated-ids.vo.js';
+
+import { SocialUserMapper } from '../mappers/social-user.mapper.js';
+import { UserId } from '../value-objects/ids.vo.js';
+import { PaginationVO } from '../value-objects/pagination.vo.js';
 
 @Injectable()
 export class RelationshipService {
@@ -20,98 +23,122 @@ export class RelationshipService {
     private readonly repository: IRelationshipRepository,
   ) {}
 
-  async followUser(followerId: string, followedId: string): Promise<void> {
+  async followUser(followerId: UserId, followedId: UserId): Promise<void> {
+    const follower = SocialUserMapper.toEntity(followerId);
+    const followed = SocialUserMapper.toEntity(followedId);
     try {
-      this.logger.log(`Creating follow: ${followerId} -> ${followedId}`);
-      if (await this.repository.relationshipExists(followerId, followedId, 'FOLLOW')) {
-        throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS(followerId, followedId, 'FOLLOW');
+      this.logger.log(`Creating follow: ${followerId.value} -> ${followedId.value}`);
+      if (await this.repository.relationshipExists(follower, followed, 'FOLLOW')) {
+        throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS(followerId.value, followedId.value, 'FOLLOW');
       }
-      await this.repository.createFollow(followerId, followedId);
+      await this.repository.createFollow(follower, followed);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to create follow: ${followerId} -> ${followedId}`, error as Error);
+      this.logger.error(
+        `Failed to create follow: ${followerId.value} -> ${followedId.value}`,
+        error as Error,
+      );
       throw DATABASE_ERROR('creating follow relationship', (error as Error).message);
     }
   }
 
-  async unfollowUser(followerId: string, followedId: string): Promise<void> {
+  async unfollowUser(followerId: UserId, followedId: UserId): Promise<void> {
+    const follower = SocialUserMapper.toEntity(followerId);
+    const followed = SocialUserMapper.toEntity(followedId);
     try {
-      this.logger.log(`Deleting follow: ${followerId} -> ${followedId}`);
-      if (!(await this.repository.relationshipExists(followerId, followedId, 'FOLLOW'))) {
-        throw SOCIAL_RELATIONSHIP_NOT_FOUND(followerId, followedId, 'FOLLOW');
+      this.logger.log(`Deleting follow: ${followerId.value} -> ${followedId.value}`);
+      if (!(await this.repository.relationshipExists(follower, followed, 'FOLLOW'))) {
+        throw SOCIAL_RELATIONSHIP_NOT_FOUND(followerId.value, followedId.value, 'FOLLOW');
       }
-      await this.repository.deleteFollow(followerId, followedId);
+      await this.repository.deleteFollow(follower, followed);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to delete follow: ${followerId} -> ${followedId}`, error as Error);
+      this.logger.error(
+        `Failed to delete follow: ${followerId.value} -> ${followedId.value}`,
+        error as Error,
+      );
       throw DATABASE_ERROR('deleting follow relationship', (error as Error).message);
     }
   }
 
-  async blockUser(blockerId: string, blockedId: string): Promise<void> {
+  async blockUser(blockerId: UserId, blockedId: UserId): Promise<void> {
+    const blocker = SocialUserMapper.toEntity(blockerId);
+    const blocked = SocialUserMapper.toEntity(blockedId);
     try {
-      this.logger.log(`Creating block: ${blockerId} -> ${blockedId}`);
-      if (await this.repository.relationshipExists(blockerId, blockedId, 'BLOCK')) {
-        throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS(blockerId, blockedId, 'BLOCK');
+      this.logger.log(`Creating block: ${blockerId.value} -> ${blockedId.value}`);
+      if (await this.repository.relationshipExists(blocker, blocked, 'BLOCK')) {
+        throw SOCIAL_RELATIONSHIP_ALREADY_EXISTS(blockerId.value, blockedId.value, 'BLOCK');
       }
-      await this.repository.createBlock(blockerId, blockedId);
+      await this.repository.createBlock(blocker, blocked);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to create block: ${blockerId} -> ${blockedId}`, error as Error);
+      this.logger.error(
+        `Failed to create block: ${blockerId.value} -> ${blockedId.value}`,
+        error as Error,
+      );
       throw DATABASE_ERROR('creating block relationship', (error as Error).message);
     }
   }
 
-  async unblockUser(blockerId: string, blockedId: string): Promise<void> {
+  async unblockUser(blockerId: UserId, blockedId: UserId): Promise<void> {
+    const blocker = SocialUserMapper.toEntity(blockerId);
+    const blocked = SocialUserMapper.toEntity(blockedId);
     try {
-      this.logger.log(`Deleting block: ${blockerId} -> ${blockedId}`);
-      if (!(await this.repository.relationshipExists(blockerId, blockedId, 'BLOCK'))) {
-        throw SOCIAL_RELATIONSHIP_NOT_FOUND(blockerId, blockedId, 'BLOCK');
+      this.logger.log(`Deleting block: ${blockerId.value} -> ${blockedId.value}`);
+      if (!(await this.repository.relationshipExists(blocker, blocked, 'BLOCK'))) {
+        throw SOCIAL_RELATIONSHIP_NOT_FOUND(blockerId.value, blockedId.value, 'BLOCK');
       }
-      await this.repository.deleteBlock(blockerId, blockedId);
+      await this.repository.deleteBlock(blocker, blocked);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to delete block: ${blockerId} -> ${blockedId}`, error as Error);
+      this.logger.error(
+        `Failed to delete block: ${blockerId.value} -> ${blockedId.value}`,
+        error as Error,
+      );
       throw DATABASE_ERROR('deleting block relationship', (error as Error).message);
     }
   }
 
-  async getFollows(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getFollows(userId: UserId, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const user = SocialUserMapper.toEntity(userId);
     try {
-      return await this.repository.getFollows(userId, pagination);
+      return await this.repository.getFollows(user, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get follows for: ${userId}`, error as Error);
+      this.logger.error(`Failed to get follows for: ${userId.value}`, error as Error);
       throw DATABASE_ERROR('fetching follows', (error as Error).message);
     }
   }
 
-  async getFollowers(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getFollowers(userId: UserId, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const user = SocialUserMapper.toEntity(userId);
     try {
-      return await this.repository.getFollowers(userId, pagination);
+      return await this.repository.getFollowers(user, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get followers for: ${userId}`, error as Error);
+      this.logger.error(`Failed to get followers for: ${userId.value}`, error as Error);
       throw DATABASE_ERROR('fetching followers', (error as Error).message);
     }
   }
 
-  async getBlocks(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getBlocks(userId: UserId, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const user = SocialUserMapper.toEntity(userId);
     try {
-      return await this.repository.getBlocks(userId, pagination);
+      return await this.repository.getBlocks(user, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get blocks for: ${userId}`, error as Error);
+      this.logger.error(`Failed to get blocks for: ${userId.value}`, error as Error);
       throw DATABASE_ERROR('fetching blocks', (error as Error).message);
     }
   }
 
-  async getWhoBlockedMe(userId: string, pagination: PaginationRequest): Promise<PaginatedIds> {
+  async getWhoBlockedMe(userId: UserId, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const user = SocialUserMapper.toEntity(userId);
     try {
-      return await this.repository.getWhoBlockedMe(userId, pagination);
+      return await this.repository.getWhoBlockedMe(user, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get who blocked: ${userId}`, error as Error);
+      this.logger.error(`Failed to get who blocked: ${userId.value}`, error as Error);
       throw DATABASE_ERROR('fetching who blocked me', (error as Error).message);
     }
   }
