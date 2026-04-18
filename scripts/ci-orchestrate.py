@@ -55,6 +55,7 @@ def get_commit_sha() -> str:
 
 def resolve_base_ref() -> str:
     """Find the best reference to diff against (PR base, origin/main, HEAD^)."""
+    sha = _git("rev-parse", "HEAD")
     candidates = [
         os.environ.get("GITHUB_BASE_REF", ""),
         "origin/main",
@@ -63,19 +64,33 @@ def resolve_base_ref() -> str:
         "master",
     ]
     for ref in candidates:
-        if ref and _git("rev-parse", "--verify", ref):
+        if not ref:
+            continue
+        ref_sha = _git("rev-parse", "--verify", ref)
+        if ref_sha and ref_sha != sha:
+            _log(f"found valid base_ref: {ref} ({ref_sha[:7]})")
             return ref
+
+    _log("no valid remote or main base_ref found (or already on up-to-date main), falling back to HEAD^")
     return "HEAD^"
 
 
 def get_changed_files(base_ref: str) -> set[str]:
     """Return file paths changed between base_ref and HEAD (3-dot diff)."""
-    out = _git("diff", "--name-only", f"{base_ref}...HEAD")
+    # 3-dot diff: from common ancestor of base_ref and HEAD, to HEAD.
+    # This is perfect for PRs.
+    diff_expr = f"{base_ref}...HEAD"
+    out = _git("diff", "--name-only", diff_expr)
+
     if not out:
         # Fallback: simple two-dot diff
+        _log(f"3-dot diff ({diff_expr}) empty, trying 2-dot diff ({base_ref}..HEAD)")
         out = _git("diff", "--name-only", base_ref, "HEAD")
+
     files = set(out.splitlines()) if out else set()
     _log(f"{len(files)} file(s) changed vs {base_ref!r}")
+    if files:
+        _log(f"changed files: {sorted(files)[:10]}{' ...' if len(files) > 10 else ''}")
     return files
 
 

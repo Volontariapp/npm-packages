@@ -67,7 +67,7 @@ describe('Config Classes Unit Tests', () => {
   });
 
   describe('Neo4jConfig', () => {
-    it('should handle mandatory scheme', () => {
+    it('should handle mandatory fields', () => {
       const plain = {
         host: 'localhost',
         port: '7687',
@@ -75,9 +75,13 @@ describe('Config Classes Unit Tests', () => {
         password: 'p',
         database: 'd',
         scheme: 'bolt',
+        authScheme: 'basic',
+        realm: 'neo4j',
       };
       const neo = plainToInstance(Neo4jConfig, plain, { enableImplicitConversion: true });
       expect(neo.scheme).toBe('bolt');
+      expect(neo.authScheme).toBe('basic');
+      expect(neo.realm).toBe('neo4j');
     });
   });
 

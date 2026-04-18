@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.4
+
+### Patch Changes
+
+- neo4j config up
+
 ## 1.1.3
 
 ### Patch Changes
