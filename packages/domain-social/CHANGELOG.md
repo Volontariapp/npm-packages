@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.2
+
+### Patch Changes
+
+- neo4j link providers fix
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.7
+
 ## 0.2.1
 
 ### Patch Changes
