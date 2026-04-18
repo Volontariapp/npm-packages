@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-user",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -35,7 +35,6 @@
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "dependencies": {
-    "@volontariapp/contracts": "workspace:*",
     "@volontariapp/logger": "workspace:*"
   },
   "devDependencies": {

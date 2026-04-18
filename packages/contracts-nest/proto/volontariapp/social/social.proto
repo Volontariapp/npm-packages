@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package volontariapp.social;
+
+message SocialUser {
+  string user_id = 1;
+}
+
+message SocialPost {
+  string post_id = 1;
+}
+
+message SocialEvent {
+  string event_id = 1;
+}

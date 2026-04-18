@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package volontariapp.social;
+
+import "volontariapp/common/pagination.proto";
+
+message GetSocialUserQuery {
+  string user_id = 1;
+}
+
+message GetMyFollowsQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetMyFollowersQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetMyBlocksQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetWhoBlockedMeQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetSocialPostQuery {
+  string post_id = 1;
+}
+
+message GetUserPostsQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetFeedQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetUserLikesQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetPostLikersQuery {
+  string post_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetUserEventQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetUserParticipateEventQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetEventParticipantsQuery {
+  string event_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetEventRelatedToPostQuery {
+  string post_id = 1;
+}
+
+message GetEventPostsQuery {
+  string event_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}

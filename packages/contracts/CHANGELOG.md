@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0
+
+### Patch Changes
+
+- Contract social added
+
 ## 3.3.4
 
 ### Patch Changes
