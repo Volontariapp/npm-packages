@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { Neo4jBaseRepository } from '../../repositories/base/neo4j-base.repository.js';
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import type { Driver, Session } from 'neo4j-driver';
+import { PaginationFactory } from '../__test-utils__/factories/pagination.factory.js';
 
 class TestRepository extends Neo4jBaseRepository {
   async testRead(cypher: string, params: Record<string, unknown> = {}) {
@@ -13,7 +14,7 @@ class TestRepository extends Neo4jBaseRepository {
   }
 
   async testReadPaginated(cypher: string, count: string, params: Record<string, unknown> = {}) {
-    return this.readPaginated(cypher, count, params, { page: 1, limit: 10 });
+    return this.readPaginated(cypher, count, params, PaginationFactory.build());
   }
 }
 
@@ -82,7 +83,7 @@ describe('Neo4jBaseRepository (Unit)', () => {
 
   describe('readPaginated()', () => {
     it('should throw DATABASE_QUERY_ERROR when the driver fails on data query', async () => {
-      const errorMsg = 'Pagination query failed';
+      const errorMsg = 'PaginationVO query failed';
       jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
       const closeSpy = jest.spyOn(mockSession, 'close');
 

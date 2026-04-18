@@ -2,6 +2,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import { Neo4jBaseRepository } from './base/neo4j-base.repository.js';
 import type { ISocialUserRepository } from './interfaces/social-user.repository.js';
+import { SocialUserMapper } from '../mappers/social-user.mapper.js';
+import { SocialUserEntity } from '../index.js';
 
 @Injectable()
 export class Neo4jSocialUserRepository
@@ -15,18 +17,25 @@ export class Neo4jSocialUserRepository
     super(provider);
   }
 
-  async createNode(userId: string): Promise<void> {
-    await this.write('MERGE (u:SocialUser {userId: $userId})', { userId });
+  async createNode(entity: SocialUserEntity): Promise<void> {
+    const model = SocialUserMapper.toModel(entity);
+    await this.write('MERGE (u:SocialUser {userId: $userId})', {
+      userId: model.id.value,
+    });
   }
 
-  async deleteNode(userId: string): Promise<void> {
-    await this.write('MATCH (u:SocialUser {userId: $userId}) DETACH DELETE u', { userId });
+  async deleteNode(entity: SocialUserEntity): Promise<void> {
+    const model = SocialUserMapper.toModel(entity);
+    await this.write('MATCH (u:SocialUser {userId: $userId}) DETACH DELETE u', {
+      userId: model.id.value,
+    });
   }
 
-  async exists(userId: string): Promise<boolean> {
+  async exists(entity: SocialUserEntity): Promise<boolean> {
+    const model = SocialUserMapper.toModel(entity);
     const result = await this.readOne(
       'MATCH (u:SocialUser {userId: $userId}) RETURN u.userId AS id',
-      { userId },
+      { userId: model.id.value },
       (r) => r.get('id') as string,
     );
     return result !== null;

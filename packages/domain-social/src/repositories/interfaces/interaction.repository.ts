@@ -1,10 +1,12 @@
-import type { PaginationRequest } from '@volontariapp/contracts';
-import type { PaginatedIds } from '../../entities/paginated-ids.entity.js';
+import type { SocialUserEntity } from '../../entities/social-user.entity.js';
+import type { SocialPostEntity } from '../../entities/social-post.entity.js';
+import type { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
+import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 export interface IInteractionRepository {
-  createLike(userId: string, postId: string): Promise<void>;
-  deleteLike(userId: string, postId: string): Promise<void>;
-  getUserLikes(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
-  getPostLikers(postId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
-  likeExists(userId: string, postId: string): Promise<boolean>;
+  createLike(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
+  deleteLike(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
+  getUserLikes(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  getPostLikers(post: SocialPostEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  likeExists(user: SocialUserEntity, post: SocialPostEntity): Promise<boolean>;
 }

@@ -1,8 +1,9 @@
 import neo4j from 'neo4j-driver';
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
-import type { PaginationRequest, PaginationResponse } from '@volontariapp/contracts';
 import { DATABASE_QUERY_ERROR } from '@volontariapp/errors-nest';
-import type { PaginatedIds } from '../../entities/paginated-ids.entity.js';
+import { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
+import { PaginationResultVO } from '../../value-objects/pagination-result.vo.js';
+import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 type Neo4jRecord = { get(key: string): unknown };
 
@@ -58,9 +59,9 @@ export abstract class Neo4jBaseRepository {
     dataCypher: string,
     countCypher: string,
     params: Record<string, unknown>,
-    pagination: PaginationRequest,
+    pagination: PaginationVO,
     idKey = 'id',
-  ): Promise<PaginatedIds> {
+  ): Promise<PaginatedIdsVO> {
     const safePage = pagination.page > 0 ? pagination.page : 1;
     const safeLimit = pagination.limit > 0 ? pagination.limit : 10;
     const skip = (safePage - 1) * safeLimit;
@@ -83,14 +84,9 @@ export abstract class Neo4jBaseRepository {
       const total = toSafeInt(countResult.records[0]?.get('total'));
       const totalPages = Math.ceil(total / safeLimit);
 
-      const paginationResponse: PaginationResponse = {
-        page: safePage,
-        limit: safeLimit,
-        total,
-        totalPages,
-      };
+      const paginationResponse = new PaginationResultVO(safePage, safeLimit, total, totalPages);
 
-      return { ids, pagination: paginationResponse };
+      return new PaginatedIdsVO(ids, paginationResponse);
     } catch (error: unknown) {
       throw DATABASE_QUERY_ERROR((error as Error).message);
     } finally {

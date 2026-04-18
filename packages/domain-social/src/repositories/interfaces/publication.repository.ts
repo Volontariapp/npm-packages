@@ -1,12 +1,14 @@
-import type { PaginationRequest } from '@volontariapp/contracts';
-import type { PaginatedIds } from '../../entities/paginated-ids.entity.js';
+import type { SocialUserEntity } from '../../entities/social-user.entity.js';
+import type { SocialPostEntity } from '../../entities/social-post.entity.js';
+import type { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
+import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 export interface IPublicationRepository {
-  createPostNode(postId: string): Promise<void>;
-  deletePostNode(postId: string): Promise<void>;
-  postExists(postId: string): Promise<boolean>;
-  createOwnership(userId: string, postId: string): Promise<void>;
-  deleteOwnership(userId: string, postId: string): Promise<void>;
-  getUserPosts(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
-  getFeed(userId: string, pagination: PaginationRequest): Promise<PaginatedIds>;
+  createPostNode(post: SocialPostEntity): Promise<void>;
+  deletePostNode(post: SocialPostEntity): Promise<void>;
+  postExists(post: SocialPostEntity): Promise<boolean>;
+  createOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
+  deleteOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
+  getUserPosts(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  getFeed(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
 }
