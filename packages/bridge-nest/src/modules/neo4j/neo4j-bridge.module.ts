@@ -1,9 +1,8 @@
-import { Module, Global } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import type { Provider, DynamicModule } from '@nestjs/common';
 import type { INeo4jConfig } from '@volontariapp/bridge';
 import { NestNeo4jProvider } from '../../providers/neo4j.provider.js';
 
-@Global()
 @Module({})
 export class Neo4jBridgeModule {
   static register(config: INeo4jConfig): DynamicModule {
@@ -16,6 +15,7 @@ export class Neo4jBridgeModule {
       module: Neo4jBridgeModule,
       providers: [provider],
       exports: [provider],
+      global: true,
     };
   }
 }
