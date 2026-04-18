@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals
 import { Neo4jProvider } from '../../providers/neo4j.provider.js';
 import { InternalServerError } from '@volontariapp/errors';
 import neo4j from 'neo4j-driver';
-import type { INeo4jConfig } from '../../interfaces/database.config.interface.js';
+import type { INeo4jConfig } from '@volontariapp/config';
 
 describe('Neo4jProvider Unit Tests', () => {
   let provider: Neo4jProvider;

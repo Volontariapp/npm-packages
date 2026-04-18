@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals
 import { PostgresProvider } from '../../providers/postgres.provider.js';
 import { InternalServerError } from '@volontariapp/errors';
 import { DataSource } from 'typeorm';
-import type { IPostgresConfig } from '../../interfaces/database.config.interface.js';
+import type { IPostgresConfig } from '@volontariapp/config';
 import { postgresConfig } from '../integration/config.example.js';
 
 describe('PostgresProvider Unit Tests', () => {
