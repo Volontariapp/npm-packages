@@ -4003,6 +4003,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/domain-social@workspace:packages/domain-social":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/domain-social@workspace:packages/domain-social"
+  dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@nestjs/common": "npm:^11.0.1"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^22.10.7"
+    "@volontariapp/bridge-nest": "workspace:*"
+    "@volontariapp/contracts": "workspace:*"
+    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors-nest": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
+    jest: "npm:^30.3.0"
+    neo4j-driver: "npm:^6.0.1"
+    reflect-metadata: "npm:^0.2.2"
+    ts-jest: "npm:^29.4.6"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/domain-user@workspace:packages/domain-user":
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-user@workspace:packages/domain-user"

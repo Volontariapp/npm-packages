@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.1
+
+### Patch Changes
+
+- merging coverage
+
 ## 4.0.0
 
 ### Patch Changes
