@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package volontariapp.social;
+
+import "volontariapp/social/social.command.proto";
+import "volontariapp/social/social.query.proto";
+import "volontariapp/social/social.responses.proto";
+
+service SocialUserNodeCommandService {
+  rpc CreateUserNode(CreateSocialUserCommand) returns (CreateUserNodeResponse);
+  rpc DeleteUserNode(DeleteSocialUserCommand) returns (DeleteUserNodeResponse);
+}
+
+service SocialUserNodeQueryService {
+  rpc GetUserNode(GetSocialUserQuery) returns (GetUserNodeResponse);
+}
+
+service RelationshipCommandService {
+  rpc PostFollowUser(PostFollowUserCommand) returns (PostFollowUserResponse);
+  rpc DeleteFollowUser(DeleteFollowUserCommand) returns (DeleteFollowUserResponse);
+  rpc PostBlockUser(PostBlockUserCommand) returns (PostBlockUserResponse);
+  rpc DeleteBlockUser(DeleteBlockUserCommand) returns (DeleteBlockUserResponse);
+}
+
+service RelationshipQueryService {
+  rpc GetMyFollows(GetMyFollowsQuery) returns (GetMyFollowsResponse);
+  rpc GetMyFollowers(GetMyFollowersQuery) returns (GetMyFollowersResponse);
+  rpc GetMyBlocks(GetMyBlocksQuery) returns (GetMyBlocksResponse);
+  rpc GetWhoBlockedMe(GetWhoBlockedMeQuery) returns (GetWhoBlockedMeResponse);
+}
+
+service PublicationCommandService {
+  rpc CreatePostNode(CreateSocialPostCommand) returns (CreatePostNodeResponse);
+  rpc DeletePostNode(DeleteSocialPostCommand) returns (DeletePostNodeResponse);
+  rpc PostUserOwn(PostUserOwnCommand) returns (PostUserOwnResponse);
+  rpc DeleteUserOwn(DeleteUserOwnCommand) returns (DeleteUserOwnResponse);
+}
+
+service PublicationQueryService {
+  rpc GetPostNode(GetSocialPostQuery) returns (GetPostNodeResponse);
+  rpc GetUserPosts(GetUserPostsQuery) returns (GetUserPostsResponse);
+  rpc GetFeed(GetFeedQuery) returns (GetFeedResponse);
+}
+
+service InteractionCommandService {
+  rpc PostLikePost(PostLikePostCommand) returns (PostLikePostResponse);
+  rpc DeleteLikePost(DeleteLikePostCommand) returns (DeleteLikePostResponse);
+}
+
+service InteractionQueryService {
+  rpc GetUserLikes(GetUserLikesQuery) returns (GetUserLikesResponse);
+  rpc GetPostLikers(GetPostLikersQuery) returns (GetPostLikersResponse);
+}
+
+service ParticipationCommandService {
+  rpc CreateEventNode(CreateSocialEventCommand) returns (CreateEventNodeResponse);
+  rpc DeleteEventNode(DeleteSocialEventCommand) returns (DeleteEventNodeResponse);
+  rpc PostUserEvent(PostUserEventCommand) returns (PostUserEventResponse);
+  rpc DeleteUserEvent(DeleteUserEventCommand) returns (DeleteUserEventResponse);
+  rpc PostUserParticipateEvent(PostUserParticipateEventCommand) returns (PostUserParticipateEventResponse);
+  rpc DeleteUserParticipateEvent(DeleteUserParticipateEventCommand) returns (DeleteUserParticipateEventResponse);
+}
+
+service ParticipationQueryService {
+  rpc GetUserEvent(GetUserEventQuery) returns (GetUserEventResponse);
+  rpc GetUserParticipateEvent(GetUserParticipateEventQuery) returns (GetUserParticipateEventResponse);
+  rpc GetEventParticipants(GetEventParticipantsQuery) returns (GetEventParticipantsResponse);
+}
+
+service EventPostLinkCommandService {
+  rpc LinkPostToEvent(LinkPostToEventCommand) returns (LinkPostToEventResponse);
+  rpc UnlinkPostFromEvent(UnlinkPostFromEventCommand) returns (UnlinkPostFromEventResponse);
+}
+
+service EventPostLinkQueryService {
+  rpc GetEventRelatedToPost(GetEventRelatedToPostQuery) returns (GetEventRelatedToPostResponse);
+  rpc GetEventPosts(GetEventPostsQuery) returns (GetEventPostsResponse);
+}

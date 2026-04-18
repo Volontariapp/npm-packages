@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package volontariapp.social;
+
+message CreateSocialUserCommand {
+  string user_id = 1;
+}
+
+message DeleteSocialUserCommand {
+  string user_id = 1;
+}
+
+message PostFollowUserCommand {
+  string follower_id = 1;
+  string followed_id = 2;
+}
+
+message DeleteFollowUserCommand {
+  string follower_id = 1;
+  string followed_id = 2;
+}
+
+message PostBlockUserCommand {
+  string blocker_id = 1;
+  string blocked_id = 2;
+}
+
+message DeleteBlockUserCommand {
+  string blocker_id = 1;
+  string blocked_id = 2;
+}
+
+message CreateSocialPostCommand {
+  string post_id = 1;
+}
+
+message DeleteSocialPostCommand {
+  string post_id = 1;
+}
+
+message PostUserOwnCommand {
+  string user_id = 1;
+  string post_id = 2;
+}
+
+message DeleteUserOwnCommand {
+  string user_id = 1;
+  string post_id = 2;
+}
+
+message PostLikePostCommand {
+  string user_id = 1;
+  string post_id = 2;
+}
+
+message DeleteLikePostCommand {
+  string user_id = 1;
+  string post_id = 2;
+}
+
+message CreateSocialEventCommand {
+  string event_id = 1;
+}
+
+message DeleteSocialEventCommand {
+  string event_id = 1;
+}
+
+message PostUserEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
+message DeleteUserEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
+message PostUserParticipateEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
+message DeleteUserParticipateEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
+message LinkPostToEventCommand {
+  string post_id = 1;
+  string event_id = 2;
+}
+
+message UnlinkPostFromEventCommand {
+  string post_id = 1;
+  string event_id = 2;
+}

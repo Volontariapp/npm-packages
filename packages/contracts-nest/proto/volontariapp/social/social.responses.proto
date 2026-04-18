@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package volontariapp.social;
+
+import "volontariapp/common/pagination.proto";
+
+message CreateUserNodeResponse {}
+message DeleteUserNodeResponse {}
+message GetUserNodeResponse {
+  bool exists = 1;
+}
+
+message PostFollowUserResponse {}
+message DeleteFollowUserResponse {}
+message PostBlockUserResponse {}
+message DeleteBlockUserResponse {}
+
+message GetMyFollowsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetMyFollowersResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetMyBlocksResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetWhoBlockedMeResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message CreatePostNodeResponse {}
+message DeletePostNodeResponse {}
+message PostUserOwnResponse {}
+message DeleteUserOwnResponse {}
+
+message GetPostNodeResponse {
+  bool exists = 1;
+}
+message GetUserPostsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetFeedResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message PostLikePostResponse {}
+message DeleteLikePostResponse {}
+
+message GetUserLikesResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetPostLikersResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message CreateEventNodeResponse {}
+message DeleteEventNodeResponse {}
+message PostUserEventResponse {}
+message DeleteUserEventResponse {}
+message PostUserParticipateEventResponse {}
+message DeleteUserParticipateEventResponse {}
+
+message GetUserEventResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetUserParticipateEventResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetEventParticipantsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message LinkPostToEventResponse {}
+message UnlinkPostFromEventResponse {}
+
+message GetEventRelatedToPostResponse {
+  string event_id = 1;
+}
+message GetEventPostsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
