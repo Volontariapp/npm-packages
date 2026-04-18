@@ -1,0 +1,57 @@
+{
+  "name": "@volontariapp/domain-social",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
+  },
+  "description": "Domain social services and repositories for Volontariapp",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/",
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --runInBand",
+    "test:all": "yarn test && yarn test:integration",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@volontariapp/bridge-nest": "workspace:*",
+    "@volontariapp/contracts": "workspace:*",
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
+    "@volontariapp/logger": "workspace:*",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.10.7",
+    "jest": "^30.3.0",
+    "neo4j-driver": "^6.0.1",
+    "ts-jest": "^29.4.6",
+    "typescript": "5.7.3"
+  }
+}
