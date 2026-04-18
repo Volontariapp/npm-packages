@@ -1,10 +1,10 @@
 # Changelog
 
-## 2.0.0
+## 1.1.5
 
-### Major Changes
+### Patch Changes
 
-- ms-social not optional
+- bump config
 
 ## 1.1.4
 
