@@ -15,5 +15,5 @@ export class MSURLsConfig {
 
   @IsOptional()
   @IsNotEmpty()
-  msSocialUrl?: string;
+  msSocialUrl!: string;
 }

@@ -102,6 +102,12 @@ jobs:
               continue
             fi
 
+            # Skip if version already exists on the registry (IMPACTED but not bumped)
+            if npm view "${PKG_NAME}@${PKG_VER}" version &>/dev/null 2>&1; then
+              echo "  SKIP $PKG_NAME@$PKG_VER (already published — version not bumped)"
+              continue
+            fi
+
             echo "  Publishing $PKG_NAME@$PKG_VER …"
             (
               cd "packages/$PKG_ID"

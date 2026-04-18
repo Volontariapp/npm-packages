@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@1.1.5
+  - @volontariapp/bridge@0.2.8
+  - @volontariapp/health-check@0.1.10
+
 ## 0.1.18
 
 ### Patch Changes

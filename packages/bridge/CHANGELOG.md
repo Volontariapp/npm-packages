@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@1.1.5
+
 ## 0.2.7
 
 ### Patch Changes
