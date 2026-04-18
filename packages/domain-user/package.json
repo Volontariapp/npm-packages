@@ -36,6 +36,8 @@
   },
   "dependencies": {
     "@volontariapp/contracts": "workspace:*",
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*"
   },
   "devDependencies": {

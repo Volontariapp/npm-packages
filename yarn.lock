@@ -4005,6 +4005,8 @@ __metadata:
   dependencies:
     "@nestjs/typeorm": "npm:^11.0.1"
     "@volontariapp/contracts": "workspace:*"
+    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     reflect-metadata: "npm:^0.2.2"
     ts-node: "npm:^10.9.2"
