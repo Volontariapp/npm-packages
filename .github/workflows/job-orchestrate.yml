@@ -55,7 +55,9 @@ jobs:
         id: plan
         env:
           GITHUB_SHA: ${{ github.sha }}
-          GITHUB_BASE_REF: ${{ github.base_ref }}
+          # base_ref is only set on pull_request events; for push events use
+          # event.before (the SHA before the push) so the diff is non-empty.
+          GITHUB_BASE_REF: ${{ github.event_name == 'push' && github.event.before || github.base_ref }}
         run: |
           PLAN=$(python3 scripts/ci-orchestrate.py)
 

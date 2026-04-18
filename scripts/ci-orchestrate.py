@@ -236,18 +236,24 @@ def _log(msg: str) -> None:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
+    force_all = "--force-all" in sys.argv
+
     root = Path.cwd()
     sha = get_commit_sha()
     base_ref = resolve_base_ref()
     snapshot_suffix = f"snap-{sha}"
 
-    _log(f"sha={sha}  base={base_ref}  suffix={snapshot_suffix}")
+    _log(f"sha={sha}  base={base_ref}  suffix={snapshot_suffix}  force_all={force_all}")
 
     packages = build_package_graph(root)
     _log(f"{len(packages)} workspace package(s) found")
 
-    changed_files = get_changed_files(base_ref)
-    dirty = find_dirty_packages(changed_files, packages)
+    if force_all:
+        dirty = {name: "force-all" for name in packages}
+        _log(f"force-all: marking all {len(dirty)} package(s) as dirty")
+    else:
+        changed_files = get_changed_files(base_ref)
+        dirty = find_dirty_packages(changed_files, packages)
     _log(f"dirty: {sorted(dirty)}")
 
     impacted = propagate_impact(packages, dirty)

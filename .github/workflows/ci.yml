@@ -56,17 +56,29 @@ jobs:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
       NPM_TOKEN:      ${{ secrets.NPM_TOKEN }}
 
-  # ── Stage 4: Snapshot publish + PR comment ────────────────────────────────
+  # ── Stage 4a: Snapshot publish + PR comment (PRs only) ───────────────────
   snap-publish:
     name: Snapshot Publish
     needs: [check-changelogs, orchestrate, test-build]
     if: |
       needs.orchestrate.outputs.has_changes == 'true' &&
-      (
-        github.event_name == 'pull_request' ||
-        (github.event_name == 'push' && github.ref == 'refs/heads/main')
-      )
+      github.event_name == 'pull_request'
     uses: ./.github/workflows/job-snap-release.yml
+    with:
+      json_plan: ${{ needs.orchestrate.outputs.json_plan }}
+    secrets:
+      ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
+      NPM_TOKEN:      ${{ secrets.NPM_TOKEN }}
+
+  # ── Stage 4b: Definitive release (main only) ──────────────────────────────
+  release:
+    name: Release
+    needs: [check-changelogs, orchestrate, test-build]
+    if: |
+      needs.orchestrate.outputs.has_changes == 'true' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/job-release.yml
     with:
       json_plan: ${{ needs.orchestrate.outputs.json_plan }}
     secrets:
