@@ -1,10 +1,10 @@
 # Changelog
 
-## 3.3.5
+## 4.0.0
 
 ### Patch Changes
 
-- Auto-generated proto typings update for both pure contracts and NestJS integration.
+- Contract social added
 
 ## 3.3.4
 

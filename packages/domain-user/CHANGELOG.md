@@ -5,7 +5,7 @@
 ### Patch Changes
 
 - Updated dependencies []:
-  - @volontariapp/contracts@3.3.5
+  - remove @volontariapp/contracts
 
 ## 2.3.1
 
