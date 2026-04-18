@@ -13,6 +13,7 @@ export default {
       },
     ],
   },
+  coverageDirectory: 'coverage/unit',
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/', '/src/test/'],
   testMatch: ['**/*.unit.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],

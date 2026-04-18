@@ -52,6 +52,7 @@ export enum PARTICIPATION_METHODS {
   GET_USER_EVENT = 'getUserEvent',
   GET_USER_PARTICIPATE_EVENT = 'getUserParticipateEvent',
   GET_EVENT_PARTICIPANTS = 'getEventParticipants',
+  GET_EVENT_NODE = 'getEventNode',
 }
 
 export enum EVENT_POST_LINK_METHODS {

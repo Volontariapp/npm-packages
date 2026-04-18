@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.4.4
+
+### Patch Changes
+
+- merging coverage
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.1
+
 ## 2.4.3
 
 ### Patch Changes

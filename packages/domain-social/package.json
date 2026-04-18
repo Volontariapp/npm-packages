@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-social",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -34,7 +34,8 @@
     "test:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --runInBand",
     "test:all": "yarn test && yarn test:integration",
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch",
-    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
+    "test:coverage:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --runInBand"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
