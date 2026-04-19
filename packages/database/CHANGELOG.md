@@ -1,11 +1,20 @@
 # Changelog
 
-
-## 1.4.0
+## 1.6.0
 
 ### Minor Changes
 
 - Added generic representation of an outbox model
+
+## 1.5.1
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.3
+
 
 ## 1.3.0
 
