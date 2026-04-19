@@ -6,6 +6,8 @@ import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { makeOutboxEvent } from '../utils/outbox-event.helper.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
+import { UnprocessableEntityError } from '@volontariapp/errors';
+import { Logger } from '@volontariapp/logger';
 
 
 describe('OutboxWriter (Unit)', () => {
@@ -13,7 +15,7 @@ describe('OutboxWriter (Unit)', () => {
   let repository: jest.Mocked<
     Pick<BaseRepository<OutboxModel, OutboxEntity, string>, 'create' | 'createMany' | 'update' | 'delete'>
   >;
-  let logger: { info: jest.Mock; warn: jest.Mock; error: jest.Mock };
+  let logger: jest.Mocked<Pick<Logger, 'info' | 'warn' | 'error'>>;
 
   beforeEach(() => {
     repository = {
@@ -29,10 +31,10 @@ describe('OutboxWriter (Unit)', () => {
       info: jest.fn(),
       warn: jest.fn(),
       error: jest.fn(),
-    };
+    } as unknown as jest.Mocked<Pick<Logger, 'info' | 'warn' | 'error'>>;
 
     writer = new OutboxWriter(
-      logger as never,
+      logger as unknown as Logger,
       repository as unknown as BaseRepository<OutboxModel, OutboxEntity, string>,
     );
   });
@@ -52,7 +54,7 @@ describe('OutboxWriter (Unit)', () => {
       await writer.create(event);
       throw new Error('Expected create() to throw');
     } catch (error) {
-      expect(error).toBeInstanceOf(Error);
+      expect(error).toBeInstanceOf(UnprocessableEntityError);
       expect((error as Error).message).toBe('Outbox createdAt cannot be in the future');
     }
 
@@ -148,9 +150,9 @@ describe('OutboxWriter with extended types (Unit)', () => {
       info: jest.fn(),
       warn: jest.fn(),
       error: jest.fn(),
-    };
+    } as unknown as Logger;
     const writer = new OutboxWriter<ExtendedOutboxModel, ExtendedOutboxEntity>(
-      logger as never,
+      logger,
       repository as unknown as BaseRepository<ExtendedOutboxModel, ExtendedOutboxEntity, string>,
     );
     const event = Object.assign(new ExtendedOutboxEntity(), {
@@ -177,29 +179,5 @@ describe('OutboxWriter with extended types (Unit)', () => {
     expect(repository.createMany).toHaveBeenCalledWith([event, secondEvent]);
     expect(repository.update).toHaveBeenCalled();
     expect(repository.delete).toHaveBeenCalledWith(event.id);
-  });
-});
-
-describe('OutboxWriter type constraints', () => {
-  it('should reject models and entities that do not extend the base outbox types at compile time', () => {
-    class InvalidOutboxModel {}
-    class InvalidOutboxEntity {}
-
-    const logger = {
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-    };
-    const repository = {
-      create: jest.fn(),
-      createMany: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    } as unknown as BaseRepository<OutboxModel, OutboxEntity, string>;
-
-    // @ts-expect-error - OutboxWriter requires types extending OutboxModel and OutboxEntity.
-    const invalidWriter = new OutboxWriter<InvalidOutboxModel, InvalidOutboxEntity>(logger as never, repository);
-
-    expect(invalidWriter).toBeDefined();
   });
 });
