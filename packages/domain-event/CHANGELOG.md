@@ -76,15 +76,11 @@
 - Updated dependencies []:
   - @volontariapp/database@1.4.0
 
-# <<<<<<< HEAD
-
 ## 2.3.0
 
 ### Minor Changes
 
 - adding organizerId
-
-> > > > > > > main
 
 ## 2.2.9
 
