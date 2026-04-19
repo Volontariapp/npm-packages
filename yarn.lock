@@ -3947,6 +3947,8 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^22.10.7"
     "@types/pg": "npm:^8"
+    "@volontariapp/bridge": "workspace:*"
+    "@volontariapp/errors": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
