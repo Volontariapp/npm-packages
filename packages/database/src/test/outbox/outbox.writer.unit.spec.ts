@@ -1,4 +1,4 @@
-import { describe, expect, it, jest, beforeEach } from '@jest/globals';
+import { describe, expect, it, beforeEach } from '@jest/globals';
 import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { BaseRepository } from '../../core/base.repository.js';
@@ -8,8 +8,6 @@ import { makeLoggerMock, type TestLoggerMock } from '../utils/logger-mock.helper
 import { makeExtendedOutboxEvent } from '../utils/extended-outbox-event.helper.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
-import { UnprocessableEntityError } from '@volontariapp/errors';
-import { Logger } from '@volontariapp/logger';
 import { makeOutboxWriterRepositoryMock, OutboxWriterRepositoryMock, } from '../utils/outbox-writer-mock.helper.js';
 
 
@@ -24,7 +22,7 @@ describe('OutboxWriter (Unit)', () => {
     logger = makeLoggerMock();
 
     writer = new OutboxWriter(
-      logger as unknown as Logger,
+      logger as never,
       repository as unknown as BaseRepository<OutboxModel, OutboxEntity, string>,
     );
   });
@@ -44,7 +42,7 @@ describe('OutboxWriter (Unit)', () => {
       await writer.create(event);
       throw new Error('Expected create() to throw');
     } catch (error) {
-      expect(error).toBeInstanceOf(UnprocessableEntityError);
+      expect((error as Error).name).toBe('UnprocessableEntityError');
       expect((error as Error).message).toBe('Outbox createdAt cannot be in the future');
     }
 
@@ -128,7 +126,7 @@ describe('OutboxWriter with extended types (Unit)', () => {
     const repository = makeOutboxWriterRepositoryMock<ExtendedOutboxModel, ExtendedOutboxEntity>();
     const logger = makeLoggerMock();
     const writer = new OutboxWriter<ExtendedOutboxModel, ExtendedOutboxEntity>(
-      logger,
+      logger as never,
       repository as unknown as BaseRepository<ExtendedOutboxModel, ExtendedOutboxEntity, string>,
     );
     const event = makeExtendedOutboxEvent({

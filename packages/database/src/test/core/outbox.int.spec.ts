@@ -141,13 +141,11 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
   it('createMany() should persist extended outbox entities', async () => {
     const events = [
       makeExtendedOutboxEvent({
-        id: 'extended-created',
         type: 'extended.created',
         createdAt: new Date(Date.now() - 60_000),
         channel: 'sms',
       }),
       makeExtendedOutboxEvent({
-        id: 'extended-updated',
         type: 'extended.updated',
         createdAt: new Date(Date.now() - 30_000),
         channel: 'email',

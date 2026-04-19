@@ -3,6 +3,9 @@ import { UnprocessableEntityError } from '@volontariapp/errors';
 import { OutboxEntity } from '../entities/outbox.entity.js';
 import { OutboxModel } from '../models/outbox.model.js';
 import { Logger } from '@volontariapp/logger';
+import { databaseMapper } from '../../core/mapper.service.js';
+
+databaseMapper.registerBidirectional(OutboxModel, OutboxEntity);
 
 
 export class OutboxWriter<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {

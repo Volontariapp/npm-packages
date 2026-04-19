@@ -5,7 +5,6 @@ export const makeExtendedOutboxEvent = (
   overrides: Partial<ExtendedOutboxEntity> = {},
 ): ExtendedOutboxEntity => {
   return Object.assign(new ExtendedOutboxEntity(), {
-    id: 'extended-outbox-id',
     type: 'extended.created',
     emitter: 'database-tests',
     status: OutboxStatus.PENDING,

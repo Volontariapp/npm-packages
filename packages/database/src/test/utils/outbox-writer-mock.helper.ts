@@ -1,4 +1,5 @@
-import { BaseRepository } from "../../core/base.repository.js";
+import { jest } from '@jest/globals';
+import { BaseRepository } from '../../core/base.repository.js';
 import { OutboxEntity } from "../../outbox/entities/outbox.entity.js";
 import { OutboxModel } from "../../outbox/models/outbox.model.js";
 

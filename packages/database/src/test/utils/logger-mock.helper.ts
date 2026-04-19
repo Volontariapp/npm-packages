@@ -1,7 +1,12 @@
 import { jest } from '@jest/globals';
-import type { Logger } from '@volontariapp/logger';
 
-export type TestLoggerMock = jest.Mocked<Pick<Logger, 'info' | 'warn' | 'error'>>;
+type LoggerLike = {
+  info: (...args: unknown[]) => void;
+  warn: (...args: unknown[]) => void;
+  error: (...args: unknown[]) => void;
+};
+
+export type TestLoggerMock = LoggerLike & jest.Mocked<Pick<LoggerLike, 'info' | 'warn' | 'error'>>;
 
 export const makeLoggerMock = (): TestLoggerMock => {
   return {
