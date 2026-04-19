@@ -6,8 +6,9 @@ import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { databaseMapper } from '../../core/mapper.service.js';
 import { makeOutboxEvent } from '../utils/outbox-event.helper.js';
+import { makeExtendedOutboxEvent } from '../utils/extended-outbox-event.helper.js';
 import { TestOutboxWriterRepository } from '../utils/outbox-test.repository.js';
-import { TestExtendedOutboxWriterRepository } from '../utils/outbox-extended-test.repository.js';
+import { TestExtendedOutboxWriter } from '../utils/outbox-extended-test.repository.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
 
@@ -99,8 +100,7 @@ describe('Outbox Writer (Full Integration)', () => {
 });
 
 describe('Outbox Writer with extended model/entity (Full Integration)', () => {
-  let outboxWriter: OutboxWriter<ExtendedOutboxModel, ExtendedOutboxEntity>;
-  let repository: TestExtendedOutboxWriterRepository;
+  let outboxWriter: TestExtendedOutboxWriter;
   const logger = {
     info: () => undefined,
     warn: () => undefined,
@@ -110,8 +110,10 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(ExtendedOutboxModel, ExtendedOutboxEntity);
-    repository = new TestExtendedOutboxWriterRepository(testDataSource.getRepository(ExtendedOutboxModel));
-    outboxWriter = new OutboxWriter(logger as never, repository);
+    outboxWriter = new TestExtendedOutboxWriter(
+      logger as never,
+      testDataSource.getRepository(ExtendedOutboxModel),
+    );
   });
 
   afterAll(async () => {
@@ -123,13 +125,8 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
   });
 
   it('create() should persist an extended outbox entity', async () => {
-    const event = Object.assign(new ExtendedOutboxEntity(), {
+    const event = makeExtendedOutboxEvent({
       type: 'extended.created',
-      emitter: 'database-tests',
-      status: OutboxStatus.PENDING,
-      attempts: 0,
-      createdAt: new Date(Date.now() - 60_000),
-      updatedAt: new Date(),
       channel: 'sms',
     });
 
@@ -143,22 +140,16 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
 
   it('createMany() should persist extended outbox entities', async () => {
     const events = [
-      Object.assign(new ExtendedOutboxEntity(), {
+      makeExtendedOutboxEvent({
+        id: 'extended-created',
         type: 'extended.created',
-        emitter: 'database-tests',
-        status: OutboxStatus.PENDING,
-        attempts: 0,
         createdAt: new Date(Date.now() - 60_000),
-        updatedAt: new Date(),
         channel: 'sms',
       }),
-      Object.assign(new ExtendedOutboxEntity(), {
+      makeExtendedOutboxEvent({
+        id: 'extended-updated',
         type: 'extended.updated',
-        emitter: 'database-tests',
-        status: OutboxStatus.PENDING,
-        attempts: 0,
         createdAt: new Date(Date.now() - 30_000),
-        updatedAt: new Date(),
         channel: 'email',
       }),
     ];
@@ -172,13 +163,8 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
   });
 
   it('update() should persist channel and status updates on extended entities', async () => {
-    const event = Object.assign(new ExtendedOutboxEntity(), {
+    const event = makeExtendedOutboxEvent({
       type: 'extended.to-update',
-      emitter: 'database-tests',
-      status: OutboxStatus.PENDING,
-      attempts: 0,
-      createdAt: new Date(Date.now() - 60_000),
-      updatedAt: new Date(),
       channel: 'push',
     });
 
@@ -187,7 +173,8 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
     const created = await testDataSource
       .getRepository(ExtendedOutboxModel)
       .findOneByOrFail({ type: 'extended.to-update' });
-    const toUpdate = Object.assign(new ExtendedOutboxEntity(), created, {
+    const toUpdate = makeExtendedOutboxEvent({
+      ...created,
       status: OutboxStatus.PROCESSING,
       attempts: 2,
       channel: 'sms',
@@ -202,13 +189,8 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
   });
 
   it('delete() should remove an extended outbox entity', async () => {
-    const event = Object.assign(new ExtendedOutboxEntity(), {
+    const event = makeExtendedOutboxEvent({
       type: 'extended.to-delete',
-      emitter: 'database-tests',
-      status: OutboxStatus.PENDING,
-      attempts: 0,
-      createdAt: new Date(Date.now() - 60_000),
-      updatedAt: new Date(),
       channel: 'sms',
     });
     await outboxWriter.create(event);

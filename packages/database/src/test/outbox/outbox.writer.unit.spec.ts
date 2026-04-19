@@ -4,34 +4,24 @@ import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { makeOutboxEvent } from '../utils/outbox-event.helper.js';
+import { makeLoggerMock, type TestLoggerMock } from '../utils/logger-mock.helper.js';
+import { makeExtendedOutboxEvent } from '../utils/extended-outbox-event.helper.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
 import { UnprocessableEntityError } from '@volontariapp/errors';
 import { Logger } from '@volontariapp/logger';
+import { makeOutboxWriterRepositoryMock, OutboxWriterRepositoryMock, } from '../utils/outbox-writer-mock.helper.js';
 
 
 describe('OutboxWriter (Unit)', () => {
   let writer: OutboxWriter<OutboxModel, OutboxEntity>;
-  let repository: jest.Mocked<
-    Pick<BaseRepository<OutboxModel, OutboxEntity, string>, 'create' | 'createMany' | 'update' | 'delete'>
-  >;
-  let logger: jest.Mocked<Pick<Logger, 'info' | 'warn' | 'error'>>;
+  let repository: OutboxWriterRepositoryMock<OutboxModel, OutboxEntity>;
+  let logger: TestLoggerMock;
 
   beforeEach(() => {
-    repository = {
-      create: jest.fn(async () => ({} as OutboxEntity)),
-      createMany: jest.fn(async () => [] as OutboxEntity[]),
-      update: jest.fn(async () => ({} as OutboxEntity)),
-      delete: jest.fn(async () => true),
-    } as unknown as jest.Mocked<
-      Pick<BaseRepository<OutboxModel, OutboxEntity, string>, 'create' | 'createMany' | 'update' | 'delete'>
-    >;
+    repository = makeOutboxWriterRepositoryMock<OutboxModel, OutboxEntity>();
 
-    logger = {
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-    } as unknown as jest.Mocked<Pick<Logger, 'info' | 'warn' | 'error'>>;
+    logger = makeLoggerMock();
 
     writer = new OutboxWriter(
       logger as unknown as Logger,
@@ -135,34 +125,20 @@ describe('OutboxWriter (Unit)', () => {
 
 describe('OutboxWriter with extended types (Unit)', () => {
   it('should support an extended outbox model/entity pair across all writer methods', async () => {
-    const repository = {
-      create: jest.fn(async () => ({} as ExtendedOutboxEntity)),
-      createMany: jest.fn(async () => [] as ExtendedOutboxEntity[]),
-      update: jest.fn(async () => ({} as ExtendedOutboxEntity)),
-      delete: jest.fn(async () => true),
-    } as unknown as jest.Mocked<
-      Pick<
-        BaseRepository<ExtendedOutboxModel, ExtendedOutboxEntity, string>,
-        'create' | 'createMany' | 'update' | 'delete'
-      >
-    >;
-    const logger = {
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-    } as unknown as Logger;
+    const repository = makeOutboxWriterRepositoryMock<ExtendedOutboxModel, ExtendedOutboxEntity>();
+    const logger = makeLoggerMock();
     const writer = new OutboxWriter<ExtendedOutboxModel, ExtendedOutboxEntity>(
       logger,
       repository as unknown as BaseRepository<ExtendedOutboxModel, ExtendedOutboxEntity, string>,
     );
-    const event = Object.assign(new ExtendedOutboxEntity(), {
+    const event = makeExtendedOutboxEvent({
       id: 'extended-1',
       type: 'extended.created',
       emitter: 'unit-tests',
       channel: 'sms',
       createdAt: new Date(Date.now() - 60_000),
     });
-    const secondEvent = Object.assign(new ExtendedOutboxEntity(), {
+    const secondEvent = makeExtendedOutboxEvent({
       id: 'extended-2',
       type: 'extended.updated',
       emitter: 'unit-tests',
@@ -172,7 +148,7 @@ describe('OutboxWriter with extended types (Unit)', () => {
 
     await writer.create(event);
     await writer.createMany([event, secondEvent]);
-    await writer.update(Object.assign(new ExtendedOutboxEntity(), event, { channel: 'push' }));
+    await writer.update(makeExtendedOutboxEvent({ ...event, channel: 'push' }));
     await writer.delete(event.id);
 
     expect(repository.create).toHaveBeenCalledWith(event);

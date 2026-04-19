@@ -1,10 +1,5 @@
 # Changelog
 
-## 1.6.0
-
-### Minor Changes
-
-- added outbox base model & entity
 
 ## 1.4.0
 
