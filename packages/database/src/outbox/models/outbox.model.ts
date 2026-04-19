@@ -19,6 +19,8 @@ export class OutboxModel {
   @Column({ type: 'varchar', length: 100 })
   emitter!: string;
 
+  @Column({ name: 'updated_at', type: 'timestamp'})
+  updatedAt?: Date;
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date = new Date();
 }

@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { UserModel } from './example/models/user.model.js';
 import { ProfileModel } from './example/models/profile.model.js';
 import { OutboxModel } from '../outbox/models/outbox.model.js';
+import { ExtendedOutboxModel } from './example/models/extended-outbox.model.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -10,7 +11,7 @@ export const testDataSource = new DataSource({
   username: 'testuser',
   password: 'testpassword',
   database: 'volontariapp_test',
-  entities: [UserModel, ProfileModel, OutboxModel],
+  entities: [UserModel, ProfileModel, OutboxModel, ExtendedOutboxModel],
   synchronize: true,
   logging: false,
   dropSchema: true,

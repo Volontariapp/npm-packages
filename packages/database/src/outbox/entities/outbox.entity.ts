@@ -12,4 +12,5 @@ export class OutboxEntity {
   emitter!: string;
 
   createdAt!: Date;
+  updatedAt?: Date;
 }

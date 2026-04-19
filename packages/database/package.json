@@ -35,6 +35,8 @@
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },
   "dependencies": {
+    "@volontariapp/bridge": "workspace:*",
+    "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

@@ -6,6 +6,9 @@ export default {
   maxWorkers: 1,
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@volontariapp/bridge$': '<rootDir>/../bridge/src/index.ts',
+    '^@volontariapp/logger$': '<rootDir>/../logger/src/index.ts',
+    '^@volontariapp/errors$': '<rootDir>/../errors/src/index.ts',
   },
   transform: {
     '^.+\\.tsx?$': [

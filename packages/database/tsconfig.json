@@ -6,6 +6,11 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "baseUrl": "./",
+    "paths": {
+      "@volontariapp/bridge": ["../bridge/src/index.ts"],
+      "@volontariapp/logger": ["../logger/src/index.ts"],
+      "@volontariapp/errors": ["../errors/src/index.ts"]
+    },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "types": ["jest", "node"]
