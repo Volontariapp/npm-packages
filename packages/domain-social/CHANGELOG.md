@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.8
+
 ## 0.2.2
 
 ### Patch Changes

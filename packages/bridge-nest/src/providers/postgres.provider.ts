@@ -1,7 +1,7 @@
 import type { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { PostgresProvider } from '@volontariapp/bridge';
-import { BRIDGE_CONNECTION_FAILED, BRIDGE_DISCONNECTION_FAILED } from '@volontariapp/errors-nest';
+import { BRIDGE_DISCONNECTION_FAILED } from '@volontariapp/errors-nest';
 
 @Injectable()
 export class NestPostgresProvider
@@ -14,7 +14,7 @@ export class NestPostgresProvider
       this.logger.info('Nest Postgres Bridge initialized successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
-      throw BRIDGE_CONNECTION_FAILED('Postgres', message);
+      this.logger.error(`Nest Postgres Bridge failed to initialize: ${message}`);
     }
   }
 

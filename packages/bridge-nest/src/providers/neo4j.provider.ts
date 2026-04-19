@@ -1,7 +1,7 @@
 import type { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Neo4jProvider } from '@volontariapp/bridge';
-import { BRIDGE_CONNECTION_FAILED, BRIDGE_DISCONNECTION_FAILED } from '@volontariapp/errors-nest';
+import { BRIDGE_DISCONNECTION_FAILED } from '@volontariapp/errors-nest';
 
 @Injectable()
 export class NestNeo4jProvider extends Neo4jProvider implements OnModuleInit, OnModuleDestroy {
@@ -11,7 +11,7 @@ export class NestNeo4jProvider extends Neo4jProvider implements OnModuleInit, On
       this.logger.info('Nest Neo4j Bridge initialized successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
-      throw BRIDGE_CONNECTION_FAILED('Neo4j', message);
+      this.logger.error(`Nest Neo4j Bridge failed to initialize: ${message}`);
     }
   }
 

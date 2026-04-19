@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.8
+
+### Patch Changes
+
+- update providors to not throw error on starting
+
 ## 0.3.7
 
 ### Patch Changes
