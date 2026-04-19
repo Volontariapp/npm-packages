@@ -1,11 +1,90 @@
 # Changelog
 
-## 2.2.10
+## 2.4.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.6.0
+
+## 2.4.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.8.0
+
+## 2.4.4
+
+### Patch Changes
+
+- merging coverage
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.1
+
+## 2.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.0
+
+## 2.4.2
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/database@1.5.1
+  - @volontariapp/errors-nest@0.7.4
+  - @volontariapp/logger@0.2.3
+  - @volontariapp/contracts@3.3.4
+  - @volontariapp/errors@0.4.4
+
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.5.0
+
+## 2.4.0
+
+### Minor Changes
+
+- adding test solide AAA pattern unit + int
+
+## 2.3.3
+
+### Patch Changes
+
+- update entity & models according to proto contract
+
+## 2.3.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@3.3.3
+
+## 2.3.1
 
 ### Patch Changes
 
 - Updated dependencies []:
   - @volontariapp/database@1.4.0
+
+# <<<<<<< HEAD
+
+## 2.3.0
+
+### Minor Changes
+
+- adding organizerId
+
+> > > > > > > main
 
 ## 2.2.9
 

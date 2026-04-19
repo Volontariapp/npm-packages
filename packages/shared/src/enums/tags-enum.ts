@@ -1,0 +1,6 @@
+export enum TagsNames {
+  ECOLOGIE = 'ECOLOGIE',
+  SOCIAL = 'SOCIAL',
+  BENEVOLAT = 'BENEVOLAT',
+  CERTIFIED = 'CERTIFIED',
+}

@@ -2,7 +2,7 @@ import { Redis } from 'ioredis';
 import { InternalServerError } from '@volontariapp/errors';
 import { Logger } from '@volontariapp/logger';
 import type { IConnectionProvider } from '../interfaces/provider.interface.js';
-import type { IRedisConfig } from '../interfaces/database.config.interface.js';
+import type { IRedisConfig } from '@volontariapp/config';
 
 export class RedisProvider implements IConnectionProvider<Redis> {
   private redis: Redis | null = null;

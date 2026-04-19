@@ -1,5 +1,36 @@
 # Changelog
 
+## 4.0.1
+
+### Patch Changes
+
+- merging coverage
+
+## 4.0.0
+
+### Patch Changes
+
+- Contract social added
+
+## 3.3.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.3
+
+## 3.3.3
+
+### Patch Changes
+
+- Auto-generated proto typings update for both pure contracts and NestJS integration.
+
+## 3.3.2
+
+### Patch Changes
+
+- Auto-generated proto typings update for both pure contracts and NestJS integration.
+
 ## 3.3.1
 
 ### Patch Changes

@@ -22,18 +22,6 @@
     "check-changelogs": "bash scripts/check-changelogs.sh",
     "release:ci": "bash scripts/ci-package-publish.sh"
   },
-  "lint-staged": {
-    "*.{ts,js,mjs,cjs}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.json": [
-      "prettier --write"
-    ],
-    "CHANGELOG.md": [
-      "node scripts/resolve-changelog.js"
-    ]
-  },
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",

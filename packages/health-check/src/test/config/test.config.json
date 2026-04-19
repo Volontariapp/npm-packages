@@ -19,7 +19,9 @@
     "port": 7687,
     "username": "neo4j",
     "password": "password",
-    "database": "neo4j"
+    "database": "neo4j",
+    "authScheme": "basic",
+    "realm": "neo4j"
   },
   "redis": {
     "host": "localhost",

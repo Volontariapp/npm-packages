@@ -15,6 +15,9 @@ describe('GrpcInternalGuard (Unit)', () => {
     jest.restoreAllMocks();
     jwtService = createMock<JwtService>();
     guard = new GrpcInternalGuard(jwtService);
+    jest.spyOn(guard['logger'], 'debug').mockImplementation(() => undefined);
+    jest.spyOn(guard['logger'], 'warn').mockImplementation(() => undefined);
+    jest.spyOn(guard['logger'], 'error').mockImplementation(() => undefined);
   });
 
   it('should throw UnauthorizedError if metadata is missing internal token', async () => {

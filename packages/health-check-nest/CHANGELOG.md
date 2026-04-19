@@ -1,5 +1,89 @@
 # Changelog
 
+## 0.1.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.8
+
+## 0.1.22
+
+### Patch Changes
+
+- neo4j link providers fix
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.7
+
+## 0.1.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.6
+
+## 0.1.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.8.0
+  - @volontariapp/bridge-nest@0.3.4
+
+## 0.1.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@1.1.5
+  - @volontariapp/bridge@0.2.8
+  - @volontariapp/health-check@0.1.10
+
+## 0.1.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@1.1.4
+  - @volontariapp/bridge@0.2.7
+  - @volontariapp/health-check@0.1.9
+
+## 0.1.17
+
+### Patch Changes
+
+- publish
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.6
+  - @volontariapp/bridge-nest@0.3.3
+  - @volontariapp/config@1.1.3
+  - @volontariapp/health-check@0.1.8
+
+## 0.1.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.5
+  - @volontariapp/config@1.1.2
+  - @volontariapp/health-check@0.1.7
+
+## 0.1.15
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.2
+  - @volontariapp/bridge@0.2.4
+  - @volontariapp/config@1.1.1
+  - @volontariapp/errors-nest@0.7.4
+  - @volontariapp/health-check@0.1.6
+  - @volontariapp/logger@0.2.3
+
 ## 0.1.14
 
 ### Patch Changes

@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.0.0
+
+### Major Changes
+
+- ms-social not optional
+
+## 1.1.4
+
+### Patch Changes
+
+- neo4j config up
+
+## 1.1.3
+
+### Patch Changes
+
+- publish
+
+## 1.1.2
+
+### Patch Changes
+
+- moving database config on config package
+
+## 1.1.1
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.3
+
 ## 1.1.0
 
 ### Minor Changes

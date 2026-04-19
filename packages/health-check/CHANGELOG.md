@@ -1,5 +1,50 @@
 # Changelog
 
+## 0.1.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@1.1.5
+  - @volontariapp/bridge@0.2.8
+
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@1.1.4
+  - @volontariapp/bridge@0.2.7
+
+## 0.1.8
+
+### Patch Changes
+
+- publish
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.6
+  - @volontariapp/config@1.1.3
+
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.5
+  - @volontariapp/config@1.1.2
+
+## 0.1.6
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.4
+  - @volontariapp/config@1.1.1
+  - @volontariapp/errors@0.4.4
+
 ## 0.1.5
 
 ### Patch Changes

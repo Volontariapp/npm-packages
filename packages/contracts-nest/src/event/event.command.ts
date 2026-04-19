@@ -6,7 +6,6 @@
 
 /* eslint-disable */
 import { Timestamp } from "../google/protobuf/timestamp.js";
-import { Point } from "../common/geo.js";
 import { Event, EventState, EventType } from "./event.js";
 
 export interface CreateEventCommand {
@@ -14,7 +13,6 @@ export interface CreateEventCommand {
   description: string;
   startAt: Timestamp | undefined;
   endAt: Timestamp | undefined;
-  location: Point | undefined;
   localisationName: string;
   type: EventType;
   awardedImpactScore: number;
@@ -52,13 +50,13 @@ export interface RemoveRequirement {
 export interface CreateTagCommand {
   slug: string;
   name: string;
-  color: string;
+  balise: string;
 }
 
 export interface UpdateTagCommand {
   id: string;
   name: string;
-  color: string;
+  balise: string;
 }
 
 export interface DeleteEventCommand {

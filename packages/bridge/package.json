@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/bridge",
-  "version": "0.2.3",
+  "version": "0.2.8",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -31,6 +31,7 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "devDependencies": {
@@ -44,6 +45,7 @@
   },
   "dependencies": {
     "@types/geojson": "^7946.0.16",
+    "@volontariapp/config": "workspace:*",
     "@volontariapp/errors": "workspace:^",
     "@volontariapp/logger": "workspace:*",
     "ioredis": "^5.10.1",

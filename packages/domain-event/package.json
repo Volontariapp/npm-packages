@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-event",
-  "version": "2.2.10",
+  "version": "2.4.6",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -29,10 +29,24 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --runInBand",
+    "test:all": "yarn test && yarn test:integration",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\"",
+    "test:coverage:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\" --runInBand",
+    "typeorm": "typeorm-ts-node-esm",
+    "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
     "@nestjs/typeorm": "^11.0.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.10.7",
+    "jest": "^30.3.0",
+    "pg": "^8.20.0",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
     "typeorm": "^0.3.20",
     "typescript": "5.7.3"
   },

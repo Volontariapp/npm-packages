@@ -1,0 +1,87 @@
+name: Emergency Release
+
+# Manual trigger — republish all current package versions that are missing
+# from the npm registry. Already-published versions are automatically skipped.
+#
+# Use this when a merge to main did not trigger the release pipeline, or when
+# you need to force a full re-publish of the current workspace state.
+#
+# Inputs
+# ──────
+# dry_run   Print what would be published without actually publishing (default: false)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: list missing packages without publishing"
+        type: boolean
+        default: false
+
+concurrency:
+  group: emergency-release
+  cancel-in-progress: false   # never cancel an in-progress publish
+
+permissions:
+  id-token: write   # npm provenance
+  contents: read
+
+jobs:
+  emergency-release:
+    name: Emergency Release
+    runs-on: ubuntu-latest
+
+    outputs:
+      published_tags: ${{ steps.publish.outputs.published_tags }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          fetch-depth: 0
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Configure npm & yarn auth
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          yarn config set 'npmRegistries["//registry.npmjs.org/"].npmAuthToken' "${{ secrets.NPM_TOKEN }}"
+
+      - name: Build orchestration plan (all packages)
+        id: plan
+        run: |
+          PLAN=$(python3 scripts/ci-orchestrate.py --force-all)
+
+          echo "=== Orchestration Plan (force-all) ==="
+          echo "$PLAN" | python3 -m json.tool
+          echo "======================================"
+
+          {
+            echo "json_plan<<EOF"
+            echo "$PLAN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish missing versions
+        id: publish
+        env:
+          NPM_CONFIG_PROVENANCE: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          echo '${{ steps.plan.outputs.json_plan }}' > /tmp/emergency-plan.json
+          EXTRA_ARGS=""
+          [[ "$DRY_RUN" == "true" ]] && EXTRA_ARGS="--dry-run"
+          bash scripts/ci-emergency-publish.sh --plan /tmp/emergency-plan.json $EXTRA_ARGS

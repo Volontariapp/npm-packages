@@ -1,5 +1,54 @@
 # Changelog
 
+## 3.0.1
+
+### Patch Changes
+
+- merging coverage
+
+## 3.0.0
+
+### Patch Changes
+
+- Contract social added
+
+## 2.2.9
+
+### Patch Changes
+
+- publish
+
+## 2.2.8
+
+### Patch Changes
+
+- moving database config on config package
+
+## 2.2.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.3
+
+## 2.2.6
+
+### Patch Changes
+
+- Auto-generated proto typings update for both pure contracts and NestJS integration.
+
+## 2.2.5
+
+### Patch Changes
+
+- fix: date mappers to return undefined instead of new Date()
+
+## 2.2.4
+
+### Patch Changes
+
+- Auto-generated proto typings update for both pure contracts and NestJS integration.
+
 ## 2.2.3
 
 ### Patch Changes

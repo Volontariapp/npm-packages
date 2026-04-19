@@ -1,5 +1,54 @@
 # Changelog
 
+## 2.3.3
+
+### Patch Changes
+
+- Fix UserEntity in domain-user: Rename 'name' property into 'pseudo' and add 'role' property
+
+## 2.3.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - remove @volontariapp/contracts
+
+## 2.3.1
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.3
+  - @volontariapp/contracts@3.3.4
+
+## 2.3.0
+
+### Minor Changes
+
+- add scripts for testing ci
+
+## 2.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@3.3.3
+
+## 2.2.0
+
+### Minor Changes
+
+- Add User and Badge models and entities
+
+## 2.1.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@3.3.2
+
 ## 2.1.22
 
 ### Patch Changes

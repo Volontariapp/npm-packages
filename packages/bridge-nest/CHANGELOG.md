@@ -1,5 +1,58 @@
 # Changelog
 
+## 0.3.8
+
+### Patch Changes
+
+- update providors to not throw error on starting
+
+## 0.3.7
+
+### Patch Changes
+
+- neo4j link providers fix
+
+## 0.3.6
+
+### Patch Changes
+
+- neo4j link providers
+
+## 0.3.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.7
+
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.8.0
+
+## 0.3.3
+
+### Patch Changes
+
+- publish
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.6
+
+## 0.3.2
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.4
+  - @volontariapp/errors-nest@0.7.4
+  - @volontariapp/logger@0.2.3
+  - @volontariapp/errors@0.4.4
+
 ## 0.3.1
 
 ### Patch Changes

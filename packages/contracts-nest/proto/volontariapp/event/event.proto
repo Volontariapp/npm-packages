@@ -22,7 +22,7 @@ message Tag {
   string id = 1;
   string slug = 2;
   string name = 3;
-  string color = 4;
+  string balise = 4;
 }
 
 message Requirement {
@@ -46,7 +46,7 @@ message Event {
   int32 awarded_impact_score = 10;
   int32 max_participants = 11;
   int32 current_participants = 12;
-  string organizer_id = 13;
+  optional string organizer_id = 13;
   repeated Tag tags = 14;
   repeated Requirement requirements = 15;
 }

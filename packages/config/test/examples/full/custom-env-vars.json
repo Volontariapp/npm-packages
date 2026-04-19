@@ -16,7 +16,13 @@
   },
   "neo4j": {
     "host": "NEO4J_HOST",
-    "port": "NEO4J_PORT"
+    "port": "NEO4J_PORT",
+    "scheme": "NEO4J_SCHEME",
+    "username": "NEO4J_USERNAME",
+    "password": "NEO4J_PASSWORD",
+    "database": "NEO4J_DATABASE",
+    "authScheme": "NEO4J_AUTH_SCHEME",
+    "realm": "NEO4J_REALM"
   },
   "auth": {
     "internalPrivateKeyPath": "INTERNAL_TOKEN_PRIVATE_KEY_PATH",

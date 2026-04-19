@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { RedisProvider } from '@volontariapp/bridge';
-import { BRIDGE_CONNECTION_FAILED, BRIDGE_DISCONNECTION_FAILED } from '@volontariapp/errors-nest';
+import { BRIDGE_DISCONNECTION_FAILED } from '@volontariapp/errors-nest';
 
 @Injectable()
 export class NestRedisProvider extends RedisProvider implements OnModuleInit, OnModuleDestroy {
@@ -10,7 +10,7 @@ export class NestRedisProvider extends RedisProvider implements OnModuleInit, On
       this.logger.info('Nest Redis Bridge initialized successfully');
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Unknown connection error';
-      throw BRIDGE_CONNECTION_FAILED('Redis', message);
+      this.logger.error(`Nest Redis Bridge failed to initialize: ${message}`);
     }
   }
 

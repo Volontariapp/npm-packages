@@ -23,7 +23,12 @@
   "neo4j": {
     "host": "localhost",
     "port": 7687,
-    "scheme": "bolt"
+    "scheme": "bolt",
+    "username": "neo4j",
+    "password": "password",
+    "database": "neo4j",
+    "authScheme": "basic",
+    "realm": "neo4j"
   },
   "auth": {
     "internalPublicKeyPath": "/app/keys/internal.pub",

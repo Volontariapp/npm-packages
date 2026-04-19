@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/errors-nest",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -30,7 +30,8 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest"
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
   },
   "devDependencies": {
     "@nestjs/common": "^11.0.0",

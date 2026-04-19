@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/auth",
-  "version": "2.1.11",
+  "version": "2.1.13",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -31,6 +31,7 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "dependencies": {
@@ -62,7 +63,7 @@
     "@types/supertest": "^7.2.0",
     "jest": "^30.3.0",
     "supertest": "^7.2.2",
-    "ts-jest": "^29.4.6",
+    "ts-jest": "^29.4.9",
     "typescript": "5.7.3"
   }
 }

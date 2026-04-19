@@ -70,6 +70,7 @@ cat > "${PKG_DIR}/package.json" << EOF
     "node": ">=24.14.0"
   },
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "echo \"No tests yet\""

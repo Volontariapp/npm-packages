@@ -27,7 +27,7 @@ export interface Tag {
   id: string;
   slug: string;
   name: string;
-  color: string;
+  balise: string;
 }
 
 export interface Requirement {
@@ -51,7 +51,7 @@ export interface Event {
   awardedImpactScore: number;
   maxParticipants: number;
   currentParticipants: number;
-  organizerId: string;
+  organizerId?: string | undefined;
   tags: Tag[];
   requirements: Requirement[];
 }

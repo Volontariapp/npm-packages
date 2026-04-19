@@ -12,8 +12,8 @@ export class TagModel {
   @Column({ type: 'varchar', length: 100, unique: true })
   slug!: string;
 
-  @Column({ type: 'varchar', length: 7 })
-  color!: string;
+  @Column({ type: 'varchar', length: 100 })
+  balise!: string;
 
   @ManyToMany(() => EventModel, (event) => event.tags)
   events?: EventModel[];

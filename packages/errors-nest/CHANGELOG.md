@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- social errors
+
+## 0.7.4
+
+### Patch Changes
+
+- Standardize test and coverage scripts across packages. Add test:coverage with json-summary reporter for CI reporting.
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.3
+  - @volontariapp/errors@0.4.4
+
 ## 0.7.3
 
 ### Patch Changes
