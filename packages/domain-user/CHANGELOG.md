@@ -5,6 +5,8 @@
 ### Patch Changes
 
 - Updated typeORM version to match database package version
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.8.1
 
 ## 2.3.4
 
