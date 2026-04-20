@@ -86,6 +86,16 @@ message DeleteUserParticipateEventCommand {
   string event_id = 2;
 }
 
+message PostUserWishEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
+message DeleteUserWishEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
 message LinkPostToEventCommand {
   string post_id = 1;
   string event_id = 2;

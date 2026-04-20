@@ -27,8 +27,11 @@ import type {
   DeleteUserEventResponse,
   PostUserParticipateEventResponse,
   DeleteUserParticipateEventResponse,
+  PostUserWishEventResponse,
+  DeleteUserWishEventResponse,
   GetUserEventResponse,
   GetUserParticipateEventResponse,
+  GetUserWishEventResponse,
   GetEventParticipantsResponse,
   LinkPostToEventResponse,
   UnlinkPostFromEventResponse,
@@ -76,9 +79,12 @@ export interface PostUserEventWebResponse extends PostUserEventResponse {}
 export interface DeleteUserEventWebResponse extends DeleteUserEventResponse {}
 export interface PostUserParticipateEventWebResponse extends PostUserParticipateEventResponse {}
 export interface DeleteUserParticipateEventWebResponse extends DeleteUserParticipateEventResponse {}
+export interface PostUserWishEventWebResponse extends PostUserWishEventResponse {}
+export interface DeleteUserWishEventWebResponse extends DeleteUserWishEventResponse {}
 
 export interface GetUserEventWebResponse extends GetUserEventResponse {}
 export interface GetUserParticipateEventWebResponse extends GetUserParticipateEventResponse {}
+export interface GetUserWishEventWebResponse extends GetUserWishEventResponse {}
 export interface GetEventParticipantsWebResponse extends GetEventParticipantsResponse {}
 
 // Event-Post links
