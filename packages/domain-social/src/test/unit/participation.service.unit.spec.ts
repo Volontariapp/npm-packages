@@ -221,6 +221,8 @@ describe('ParticipationService (Unit)', () => {
       const participationExistsSpy = jest
         .spyOn(mockRepository, 'participationExists')
         .mockResolvedValue(false);
+      const wishExistsSpy = jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(false);
+      const deleteWishSpy = jest.spyOn(mockRepository, 'deleteWish');
       const createParticipationSpy = jest
         .spyOn(mockRepository, 'createParticipation')
         .mockResolvedValue(undefined);
@@ -232,6 +234,29 @@ describe('ParticipationService (Unit)', () => {
 
       expect(eventExistsSpy).toHaveBeenCalledWith(eventEntity);
       expect(participationExistsSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+      expect(wishExistsSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+      expect(deleteWishSpy).not.toHaveBeenCalled();
+      expect(createParticipationSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+    });
+
+    it('should delete wish if it exists before creating participation', async () => {
+      const userEntity = SocialUserFactory.build({ userId: 'user-1' });
+      const eventEntity = SocialEventFactory.build({ eventId: 'event-1' });
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'participationExists').mockResolvedValue(false);
+      const wishExistsSpy = jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(true);
+      const deleteWishSpy = jest.spyOn(mockRepository, 'deleteWish').mockResolvedValue(undefined);
+      const createParticipationSpy = jest
+        .spyOn(mockRepository, 'createParticipation')
+        .mockResolvedValue(undefined);
+
+      await service.participateEvent(
+        UserIdFactory.build('user-1'),
+        EventIdFactory.build('event-1'),
+      );
+
+      expect(wishExistsSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+      expect(deleteWishSpy).toHaveBeenCalledWith(userEntity, eventEntity);
       expect(createParticipationSpy).toHaveBeenCalledWith(userEntity, eventEntity);
     });
 
@@ -255,6 +280,7 @@ describe('ParticipationService (Unit)', () => {
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
       jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
       jest.spyOn(mockRepository, 'participationExists').mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(false);
       jest
         .spyOn(mockRepository, 'createParticipation')
         .mockRejectedValue(new Error('Merge failed'));
@@ -262,6 +288,96 @@ describe('ParticipationService (Unit)', () => {
       await expect(
         service.participateEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1')),
       ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
+  // ─── wishEvent ────────────────────────────────────────────────────────────
+
+  describe('wishEvent()', () => {
+    it('should call repository.createWish if event exists and not wished', async () => {
+      const userEntity = SocialUserFactory.build({ userId: 'user-1' });
+      const eventEntity = SocialEventFactory.build({ eventId: 'event-1' });
+      const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      const wishExistsSpy = jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(false);
+      const createWishSpy = jest.spyOn(mockRepository, 'createWish').mockResolvedValue(undefined);
+
+      await service.wishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1'));
+
+      expect(eventExistsSpy).toHaveBeenCalledWith(eventEntity);
+      expect(wishExistsSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+      expect(createWishSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+    });
+
+    it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(false);
+
+      await expect(
+        service.wishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1')),
+      ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    });
+
+    it('should throw SOCIAL_WISH_ALREADY_EXISTS if already wished', async () => {
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(true);
+
+      await expect(
+        service.wishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1')),
+      ).rejects.toMatchObject({ code: 'CONFLICT' });
+    });
+
+    it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(false);
+      jest.spyOn(mockRepository, 'createWish').mockRejectedValue(new Error('Merge failed'));
+
+      await expect(
+        service.wishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1')),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
+  // ─── unwishEvent ──────────────────────────────────────────────────────────
+
+  describe('unwishEvent()', () => {
+    it('should call repository.deleteWish if wish exists', async () => {
+      const userEntity = SocialUserFactory.build({ userId: 'user-1' });
+      const eventEntity = SocialEventFactory.build({ eventId: 'event-1' });
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      const wishExistsSpy = jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(true);
+      const deleteWishSpy = jest.spyOn(mockRepository, 'deleteWish').mockResolvedValue(undefined);
+
+      await service.unwishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1'));
+
+      expect(wishExistsSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+      expect(deleteWishSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+    });
+
+    it('should throw SOCIAL_WISH_NOT_FOUND if wish does not exist', async () => {
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(false);
+
+      await expect(
+        service.unwishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1')),
+      ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    });
+  });
+
+  // ─── getUserWishes ────────────────────────────────────────────────────────
+
+  describe('getUserWishes()', () => {
+    it('should return paginated event ids the user wished for', async () => {
+      const expected = PaginatedIdsFactory.buildWithRandomIds(4);
+      const getUserWishesSpy = jest
+        .spyOn(mockRepository, 'getUserWishes')
+        .mockResolvedValue(expected);
+
+      const result = await service.getUserWishes(UserIdFactory.build('user-1'), PAGINATION);
+
+      expect(result).toEqual(expected);
+      expect(getUserWishesSpy).toHaveBeenCalledWith(
+        SocialUserFactory.build({ userId: 'user-1' }),
+        PAGINATION,
+      );
     });
   });
 

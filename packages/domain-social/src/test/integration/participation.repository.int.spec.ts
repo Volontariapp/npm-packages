@@ -232,4 +232,57 @@ describe('Neo4jParticipationRepository (Integration)', () => {
       expect(page1.pagination.totalPages).toBe(2);
     });
   });
+
+  // ─── createWish / deleteWish / wishExists (WISH_TO_PARTICIPATE) ────────────
+
+  describe('createWish() / deleteWish() / wishExists()', () => {
+    it('should create a WISH_TO_PARTICIPATE relationship', async () => {
+      await repository.createWish(USER_A, EVENT_1);
+
+      expect(await repository.wishExists(USER_A, EVENT_1)).toBe(true);
+      const wishes = await repository.getUserWishes(USER_A, PAGINATION);
+      expect(wishes.ids).toContain('event-1');
+    });
+
+    it('should be idempotent', async () => {
+      await repository.createWish(USER_A, EVENT_1);
+      await repository.createWish(USER_A, EVENT_1);
+
+      const wishes = await repository.getUserWishes(USER_A, PAGINATION);
+      expect(wishes.ids).toHaveLength(1);
+    });
+
+    it('should delete the WISH_TO_PARTICIPATE relationship', async () => {
+      await repository.createWish(USER_A, EVENT_1);
+      await repository.deleteWish(USER_A, EVENT_1);
+
+      expect(await repository.wishExists(USER_A, EVENT_1)).toBe(false);
+    });
+
+    it('should return false if wish does not exist', async () => {
+      expect(await repository.wishExists(USER_A, EVENT_1)).toBe(false);
+    });
+  });
+
+  // ─── getUserWishes ────────────────────────────────────────────────────────
+
+  describe('getUserWishes()', () => {
+    it('should return event ids the user wished for', async () => {
+      await repository.createWish(USER_A, EVENT_1);
+      await repository.createWish(USER_A, EVENT_2);
+
+      const result = await repository.getUserWishes(USER_A, PAGINATION);
+
+      expect(result.ids).toHaveLength(2);
+      expect(result.ids).toContain('event-1');
+      expect(result.ids).toContain('event-2');
+    });
+
+    it('should not include participations in wish list', async () => {
+      await repository.createParticipation(USER_A, EVENT_1);
+
+      const result = await repository.getUserWishes(USER_A, PAGINATION);
+      expect(result.ids).toHaveLength(0);
+    });
+  });
 });

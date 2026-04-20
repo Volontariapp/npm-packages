@@ -29,3 +29,9 @@ export const SOCIAL_PARTICIPATION_ALREADY_EXISTS = (userId: string, eventId: str
 
 export const SOCIAL_PARTICIPATION_NOT_FOUND = (userId: string, eventId: string) =>
   new NotFoundError(`Participation of user ${userId} in event ${eventId} not found`);
+
+export const SOCIAL_WISH_ALREADY_EXISTS = (userId: string, eventId: string) =>
+  new ConflictError(`Wish of user ${userId} for event ${eventId} already exists`);
+
+export const SOCIAL_WISH_NOT_FOUND = (userId: string, eventId: string) =>
+  new NotFoundError(`Wish of user ${userId} for event ${eventId} not found`);

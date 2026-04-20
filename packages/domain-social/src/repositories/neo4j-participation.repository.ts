@@ -99,6 +99,39 @@ export class Neo4jParticipationRepository
     return result === true;
   }
 
+  async createWish(user: SocialUserEntity, event: SocialEventEntity): Promise<void> {
+    const userModel = SocialUserMapper.toModel(user);
+    const eventModel = SocialEventMapper.toModel(event);
+    await this.write(
+      `MATCH (u:SocialUser {userId: $userId})
+       MATCH (e:SocialEvent {eventId: $eventId})
+       MERGE (u)-[:WISH_TO_PARTICIPATE]->(e)`,
+      { userId: userModel.id.value, eventId: eventModel.id.value },
+    );
+  }
+
+  async deleteWish(user: SocialUserEntity, event: SocialEventEntity): Promise<void> {
+    const userModel = SocialUserMapper.toModel(user);
+    const eventModel = SocialEventMapper.toModel(event);
+    await this.write(
+      `MATCH (:SocialUser {userId: $userId})-[r:WISH_TO_PARTICIPATE]->(:SocialEvent {eventId: $eventId})
+       DELETE r`,
+      { userId: userModel.id.value, eventId: eventModel.id.value },
+    );
+  }
+
+  async wishExists(user: SocialUserEntity, event: SocialEventEntity): Promise<boolean> {
+    const userModel = SocialUserMapper.toModel(user);
+    const eventModel = SocialEventMapper.toModel(event);
+    const result = await this.readOne(
+      `MATCH (:SocialUser {userId: $userId})-[r:WISH_TO_PARTICIPATE]->(:SocialEvent {eventId: $eventId})
+       RETURN r`,
+      { userId: userModel.id.value, eventId: eventModel.id.value },
+      () => true,
+    );
+    return result === true;
+  }
+
   async getUserEvents(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO> {
     const userModel = SocialUserMapper.toModel(user);
     return this.readPaginated(
@@ -122,6 +155,19 @@ export class Neo4jParticipationRepository
        RETURN e.eventId AS id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:PARTICIPATE]->(e:SocialEvent)
+       RETURN count(e) AS total`,
+      { userId: userModel.id.value },
+      pagination,
+    );
+  }
+
+  async getUserWishes(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const userModel = SocialUserMapper.toModel(user);
+    return this.readPaginated(
+      `MATCH (:SocialUser {userId: $userId})-[:WISH_TO_PARTICIPATE]->(e:SocialEvent)
+       RETURN e.eventId AS id
+       SKIP $skip LIMIT $limit`,
+      `MATCH (:SocialUser {userId: $userId})-[:WISH_TO_PARTICIPATE]->(e:SocialEvent)
        RETURN count(e) AS total`,
       { userId: userModel.id.value },
       pagination,
