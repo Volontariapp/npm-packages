@@ -3,7 +3,17 @@ import { Logger } from '@volontariapp/logger';
 import { PostgresUserRepository } from '../repositories/postgres-user.repository.js';
 import type { IUserRepository } from '../repositories/index.js';
 import { UserEntity } from '../entities/user.entity.js';
-import { isBaseError } from '@volontariapp/errors';
+import { isBaseError, isDatabaseDriverError } from '@volontariapp/errors';
+import {
+  USER_NOT_FOUND,
+  USER_ALREADY_EXISTS,
+  USER_ALREADY_HAS_BADGE,
+  USER_BADGE_NOT_FOUND,
+  INVALID_RNA,
+  INVALID_SCORE_INCREMENT,
+  DATABASE_ERROR,
+} from '@volontariapp/errors-nest';
+import { BadgeService } from './badge.service.js';
 
 @Injectable()
 export class UserService {
@@ -12,149 +22,181 @@ export class UserService {
   constructor(
     @Inject(PostgresUserRepository)
     private readonly userRepository: IUserRepository,
+    private readonly badgeService: BadgeService,
   ) {}
 
-  async findById(id: string) : Promise<UserEntity> {
+  async findById(id: string): Promise<UserEntity> {
     try {
       const user = await this.userRepository.findById(id);
       if (!user) {
         this.logger.warn(`User with id ${id} not found`);
-        throw new Error('User not found');
+        throw USER_NOT_FOUND(id);
       }
       return user;
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Error while finding user by id ${id}: ${err.message}`);
-      throw new Error('Error while finding user');
+      throw DATABASE_ERROR(`finding user by id ${id}`, err.message);
     }
   }
 
-  async findByEmail(email: string) : Promise<UserEntity> {
+  async findByEmail(email: string): Promise<UserEntity> {
     try {
       const user = await this.userRepository.findByEmail(email);
       if (!user) {
         this.logger.warn(`User with email ${email} not found`);
-        throw new Error('User not found');
+        throw USER_NOT_FOUND(email, 'email');
       }
       return user;
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Error while finding user by email ${email}: ${err.message}`);
-      throw new Error('Error while finding user');
+      throw DATABASE_ERROR(`finding user by email ${email}`, err.message);
     }
   }
 
-  async findByRna(rna: string) : Promise<UserEntity> {
+  async findByRna(rna: string): Promise<UserEntity> {
     try {
       const user = await this.userRepository.findByRna(rna);
       if (!user) {
         this.logger.warn(`User with rna ${rna} not found`);
-        throw new Error('User not found');
+        throw USER_NOT_FOUND(rna, 'rna');
       }
       return user;
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Error while finding user by rna ${rna}: ${err.message}`);
-      throw new Error('Error while finding user');
+      throw DATABASE_ERROR(`finding user by rna ${rna}`, err.message);
     }
   }
 
-  async findAll(limit?: number, offset?: number) : Promise<[UserEntity[], number]> {
+  async findAll(limit?: number, offset?: number): Promise<[UserEntity[], number]> {
     try {
       return await this.userRepository.findAll(limit, offset);
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Error while finding all users: ${err.message}`);
-      throw new Error('Error while finding users');
+      throw DATABASE_ERROR('finding all users', err.message);
     }
   }
 
-  async create(user: Partial<UserEntity>) : Promise<UserEntity> {
+  async create(user: Partial<UserEntity>): Promise<UserEntity> {
     try {
+      if (user.rna != null && !UserEntity.isValidRna(user.rna)) {
+        this.logger.warn(`Invalid RNA ${user.rna} for new user`);
+        throw INVALID_RNA(user.rna);
+      }
       return await this.userRepository.create(user);
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
+
+      if (isDatabaseDriverError(error) && error.code === '23505') {
+        throw USER_ALREADY_EXISTS(user.email ?? 'unknown');
+      }
+
       const err = error as Error;
       this.logger.error(`Error while creating user: ${err.message}`);
-      throw new Error('Error while creating user');
+      throw DATABASE_ERROR('creating user', err.message);
     }
   }
 
-  async update(id: string, data: Partial<UserEntity>) : Promise<UserEntity> {
+  async update(id: string, data: Partial<UserEntity>): Promise<UserEntity> {
     try {
+      if (data.rna != null && !UserEntity.isValidRna(data.rna)) {
+        this.logger.warn(`Invalid RNA ${data.rna} for user update with id ${id}`);
+        throw INVALID_RNA(data.rna);
+      }
       const updatedUser = await this.userRepository.update(id, data);
       if (!updatedUser) {
         this.logger.warn(`User with id ${id} not found for update`);
-        throw new Error('User not found');
+        throw USER_NOT_FOUND(id);
       }
       return updatedUser;
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Error while updating user with id ${id}: ${err.message}`);
-      throw new Error('Error while updating user');
+      throw DATABASE_ERROR(`updating user with id ${id}`, err.message);
     }
   }
 
-  async delete(id: string) : Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
       const deleted = await this.userRepository.delete(id);
       if (!deleted) {
         this.logger.warn(`User with id ${id} not found for deletion`);
-        throw new Error('User not found');
+        throw USER_NOT_FOUND(id);
       }
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Error while deleting user with id ${id}: ${err.message}`);
-      throw new Error('Error while deleting user');
+      throw DATABASE_ERROR(`deleting user with id ${id}`, err.message);
     }
   }
 
-  async addBadgeToUser(userId: string, badgeId: string) : Promise<void> {
+  async addBadgeToUser(userId: string, badgeId: string): Promise<void> {
     try {
+      const user = await this.findById(userId);
+      await this.badgeService.findById(badgeId);
+
+      if (user.badges.some((b) => b.id === badgeId)) {
+        this.logger.warn(`User with id ${userId} already has badge with id ${badgeId}`);
+        throw USER_ALREADY_HAS_BADGE(userId, badgeId);
+      }
+
       await this.userRepository.addBadgeToUser(userId, badgeId);
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Error while adding badge ${badgeId} to user ${userId}: ${err.message}`);
-      throw new Error('Error while adding badge to user');
+      throw DATABASE_ERROR(`adding badge ${badgeId} to user ${userId}`, err.message);
     }
   }
 
-  async removeBadgeFromUser(userId: string, badgeId: string) : Promise<void> {
+  async removeBadgeFromUser(userId: string, badgeId: string): Promise<void> {
     try {
+      const user = await this.findById(userId);
+
+      if (!user.badges.some((badge) => badge.id === badgeId)) {
+        this.logger.warn(
+          `User with id ${userId} does not have badge with id ${badgeId} for removal`,
+        );
+        throw USER_BADGE_NOT_FOUND(userId, badgeId);
+      }
+
       await this.userRepository.removeBadgeFromUser(userId, badgeId);
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while removing badge ${badgeId} from user ${userId}: ${err.message}`);
-      throw new Error('Error while removing badge from user');
+      this.logger.error(
+        `Error while removing badge ${badgeId} from user ${userId}: ${err.message}`,
+      );
+      throw DATABASE_ERROR(`removing badge ${badgeId} from user ${userId}`, err.message);
     }
   }
 
-  async incrementImpactScore(userId: string, score: number) : Promise<void> {
+  async incrementImpactScore(userId: string, score: number): Promise<void> {
     try {
+      if (score <= 0) {
+        this.logger.warn(`Invalid score increment of ${score.toString()} for user ${userId}`);
+        throw INVALID_SCORE_INCREMENT(score);
+      }
       await this.userRepository.incrementImpactScore(userId, score);
-    }
-    catch (error) {
+    } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while incrementing impact score of user ${userId} by ${score.toString()}: ${err.message}`);
-      throw new Error('Error while incrementing impact score');
+      this.logger.error(
+        `Error while incrementing impact score of user ${userId} by ${score.toString()}: ${err.message}`,
+      );
+      throw DATABASE_ERROR(
+        `incrementing impact score of user ${userId} by ${score.toString()}`,
+        err.message,
+      );
     }
   }
 }

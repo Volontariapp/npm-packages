@@ -5,3 +5,4 @@ export * from './event.errors.js';
 export * from './database.errors.js';
 export * from './common.errors.js';
 export * from './social.errors.js';
+export * from './user.errors.js';

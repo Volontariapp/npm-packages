@@ -11,4 +11,10 @@ export class UserEntity {
   role!: UserRoles;
   totalImpactScore!: number;
   badges!: BadgeEntity[];
+
+  static isValidRna(rna?: string): boolean {
+    if (rna == null) return true;
+    const rnaRegex = /^W[0-9]{9}$/;
+    return rnaRegex.test(rna);
+  }
 }
