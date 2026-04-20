@@ -67,12 +67,18 @@ message PostUserEventResponse {}
 message DeleteUserEventResponse {}
 message PostUserParticipateEventResponse {}
 message DeleteUserParticipateEventResponse {}
+message PostUserWishEventResponse {}
+message DeleteUserWishEventResponse {}
 
 message GetUserEventResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
 message GetUserParticipateEventResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message GetUserWishEventResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
@@ -90,4 +96,8 @@ message GetEventRelatedToPostResponse {
 message GetEventPostsResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message GetEventNodeResponse {
+  bool exists = 1;
 }

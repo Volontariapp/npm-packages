@@ -62,6 +62,11 @@ message GetUserParticipateEventQuery {
   volontariapp.common.PaginationRequest pagination = 2;
 }
 
+message GetUserWishEventQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
 message GetEventParticipantsQuery {
   string event_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
@@ -74,4 +79,8 @@ message GetEventRelatedToPostQuery {
 message GetEventPostsQuery {
   string event_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetSocialEventQuery {
+  string event_id = 1;
 }

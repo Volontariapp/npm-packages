@@ -11,6 +11,8 @@ import type {
   DeleteUserEventCommand,
   PostUserParticipateEventCommand,
   DeleteUserParticipateEventCommand,
+  PostUserWishEventCommand,
+  DeleteUserWishEventCommand,
   LinkPostToEventCommand,
   UnlinkPostFromEventCommand,
   CreateSocialUserCommand,
@@ -31,6 +33,7 @@ import type {
   GetPostLikersQuery,
   GetUserEventQuery,
   GetUserParticipateEventQuery,
+  GetUserWishEventQuery,
   GetEventParticipantsQuery,
   GetEventPostsQuery,
   GetSocialUserQuery,
@@ -80,9 +83,12 @@ export interface PostUserParticipateEventWebRequest
   extends Partial<PostUserParticipateEventCommand> {}
 export interface DeleteUserParticipateEventWebRequest
   extends Partial<DeleteUserParticipateEventCommand> {}
+export interface PostUserWishEventWebRequest extends Partial<PostUserWishEventCommand> {}
+export interface DeleteUserWishEventWebRequest extends Partial<DeleteUserWishEventCommand> {}
 
 export interface GetUserEventWebRequest extends Partial<GetUserEventQuery> {}
 export interface GetUserParticipateEventWebRequest extends Partial<GetUserParticipateEventQuery> {}
+export interface GetUserWishEventWebRequest extends Partial<GetUserWishEventQuery> {}
 export interface GetEventParticipantsWebRequest extends Partial<GetEventParticipantsQuery> {}
 
 // Event-Post links
