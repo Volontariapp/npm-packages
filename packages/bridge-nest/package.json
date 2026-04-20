@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/bridge-nest",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "publishConfig": {
     "access": "public",
     "provenance": true
