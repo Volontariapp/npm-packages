@@ -35,6 +35,8 @@
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "dependencies": {
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/shared": "workspace:*"
   },

@@ -4028,6 +4028,8 @@ __metadata:
   resolution: "@volontariapp/domain-user@workspace:packages/domain-user"
   dependencies:
     "@nestjs/typeorm": "npm:^11.0.1"
+    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/shared": "workspace:*"
     reflect-metadata: "npm:^0.2.2"
