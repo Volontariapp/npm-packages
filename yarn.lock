@@ -4030,6 +4030,7 @@ __metadata:
   dependencies:
     "@nestjs/typeorm": "npm:^11.0.1"
     "@volontariapp/logger": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
     reflect-metadata: "npm:^0.2.2"
     ts-node: "npm:^10.9.2"
     typeorm: "npm:^0.3.20"
@@ -4195,6 +4196,7 @@ __metadata:
   dependencies:
     "@changesets/changelog-github": "npm:^0.6.0"
     "@changesets/cli": "npm:^2.30.0"
+    "@volontariapp/shared": "workspace:^"
     eslint: "npm:9.18.0"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^16.4.0"
@@ -4203,7 +4205,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/shared@workspace:packages/shared":
+"@volontariapp/shared@workspace:*, @volontariapp/shared@workspace:^, @volontariapp/shared@workspace:packages/shared":
   version: 0.0.0-use.local
   resolution: "@volontariapp/shared@workspace:packages/shared"
   dependencies:
