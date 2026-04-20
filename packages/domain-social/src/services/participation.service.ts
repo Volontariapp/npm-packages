@@ -6,6 +6,8 @@ import {
   SOCIAL_EVENT_ALREADY_EXISTS,
   SOCIAL_PARTICIPATION_ALREADY_EXISTS,
   SOCIAL_PARTICIPATION_NOT_FOUND,
+  SOCIAL_WISH_ALREADY_EXISTS,
+  SOCIAL_WISH_NOT_FOUND,
 } from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
 import { Neo4jParticipationRepository } from '../repositories/neo4j-participation.repository.js';
@@ -115,6 +117,10 @@ export class ParticipationService {
       if (await this.repository.participationExists(user, event)) {
         throw SOCIAL_PARTICIPATION_ALREADY_EXISTS(userId.value, eventId.value);
       }
+      if (await this.repository.wishExists(user, event)) {
+        this.logger.log(`Deleting wish before participation: ${userId.value} -> ${eventId.value}`);
+        await this.repository.deleteWish(user, event);
+      }
       await this.repository.createParticipation(user, event);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
@@ -178,6 +184,61 @@ export class ParticipationService {
       if (isBaseError(error)) throw error;
       this.logger.error(`Failed to get participants for event: ${eventId.value}`, error as Error);
       throw DATABASE_ERROR('fetching event participants', (error as Error).message);
+    }
+  }
+
+  async wishEvent(userId: UserId, eventId: EventId): Promise<void> {
+    const user = SocialUserMapper.toEntity(userId);
+    const event = SocialEventMapper.toEntity(eventId);
+    try {
+      this.logger.log(`Creating wish: user ${userId.value} -> event ${eventId.value}`);
+      if (!(await this.repository.eventExists(event))) {
+        throw SOCIAL_EVENT_NOT_FOUND(eventId.value);
+      }
+      if (await this.repository.wishExists(user, event)) {
+        throw SOCIAL_WISH_ALREADY_EXISTS(userId.value, eventId.value);
+      }
+      await this.repository.createWish(user, event);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to create wish: ${userId.value} -> ${eventId.value}`,
+        error as Error,
+      );
+      throw DATABASE_ERROR('creating event wish', (error as Error).message);
+    }
+  }
+
+  async unwishEvent(userId: UserId, eventId: EventId): Promise<void> {
+    const user = SocialUserMapper.toEntity(userId);
+    const event = SocialEventMapper.toEntity(eventId);
+    try {
+      this.logger.log(`Deleting wish: user ${userId.value} -> event ${eventId.value}`);
+      if (!(await this.repository.eventExists(event))) {
+        throw SOCIAL_EVENT_NOT_FOUND(eventId.value);
+      }
+      if (!(await this.repository.wishExists(user, event))) {
+        throw SOCIAL_WISH_NOT_FOUND(userId.value, eventId.value);
+      }
+      await this.repository.deleteWish(user, event);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to delete wish: ${userId.value} -> ${eventId.value}`,
+        error as Error,
+      );
+      throw DATABASE_ERROR('deleting event wish', (error as Error).message);
+    }
+  }
+
+  async getUserWishes(userId: UserId, pagination: PaginationVO): Promise<PaginatedIdsVO> {
+    const user = SocialUserMapper.toEntity(userId);
+    try {
+      return await this.repository.getUserWishes(user, pagination);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to get wishes for user: ${userId.value}`, error as Error);
+      throw DATABASE_ERROR('fetching user wishes', (error as Error).message);
     }
   }
 }
