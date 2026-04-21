@@ -18,6 +18,7 @@
 ### Patch Changes
 
 - Updated dependencies []:
+  - @volontariapp/database@1.6.0
   - @volontariapp/errors-nest@0.9.0
 
 ## 2.4.5
