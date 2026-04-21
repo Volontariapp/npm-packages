@@ -7,7 +7,7 @@ export class JobsOutboxModel extends OutboxModel {
   @Column({ type: 'varchar', length: 100 })
   target!: string;
 
-  @Column({ type: 'json' })
+  @Column({ type: 'jsonb' })
   payload: any;
 
   @Column({ name: 'scheduled_at', type: 'timestamp' })

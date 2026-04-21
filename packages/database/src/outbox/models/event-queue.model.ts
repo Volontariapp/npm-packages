@@ -4,11 +4,11 @@ import { Column, Entity } from 'typeorm';
 @Entity('event_queue')
 export class EventQueueModel extends OutboxModel {
   // Event metaadata
-  @Column({ type: 'number' })
+  @Column({ type: 'integer' })
   version!: number;
 
   // Data
-  @Column({ type: 'json' })
+  @Column({ type: 'jsonb' })
   payload!: {
     before?: any;
     after: any;
