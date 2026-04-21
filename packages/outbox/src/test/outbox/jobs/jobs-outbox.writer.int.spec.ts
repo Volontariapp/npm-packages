@@ -1,10 +1,13 @@
 import { describe, expect, it, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { databaseMapper } from '../../../core/mapper.service.js';
+import {
+  databaseMapper,
+  JobsOutboxModel,
+  JobsOutboxEntity,
+  OutboxStatus,
+  type Repository,
+} from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { JobsOutboxWriter } from '../../../outbox/writer/jobs-outbox.writer.js';
-import { JobsOutboxModel } from '../../../outbox/models/jobs-outbox.model.js';
-import { JobsOutboxEntity } from '../../../outbox/entities/jobs-outbox.entity.js';
-import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { TestJobsOutboxWriterRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
 
@@ -22,7 +25,9 @@ describe('JobsOutboxWriter (Full Integration)', () => {
     databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
     writer = new JobsOutboxWriter(
       logger as never,
-      new TestJobsOutboxWriterRepository(testDataSource.getRepository(JobsOutboxModel)),
+      new TestJobsOutboxWriterRepository(
+        testDataSource.getRepository(JobsOutboxModel) as unknown as Repository<JobsOutboxModel>,
+      ),
     );
   });
 
@@ -47,6 +52,7 @@ describe('JobsOutboxWriter (Full Integration)', () => {
     expect(row.attempts).toBe(0);
     expect(row.target).toBe('queue:default');
     expect(row.payload).toEqual({ action: 'process-user', data: { userId: 'u-1' } });
+    expect(row.scheduledAt).toEqual(event.scheduledAt);
   });
 
   it('create() should persist overridden values', async () => {
@@ -56,6 +62,7 @@ describe('JobsOutboxWriter (Full Integration)', () => {
       attempts: 4,
       target: 'queue:critical',
       payload: { action: 'retry-job', data: { userId: 'u-99' } },
+      scheduledAt: new Date('2030-01-02T00:00:00.000Z'),
     });
 
     await writer.create(event);
@@ -68,5 +75,6 @@ describe('JobsOutboxWriter (Full Integration)', () => {
     expect(row.attempts).toBe(4);
     expect(row.target).toBe('queue:critical');
     expect(row.payload).toEqual({ action: 'retry-job', data: { userId: 'u-99' } });
+    expect(row.scheduledAt).toEqual(event.scheduledAt);
   });
 });

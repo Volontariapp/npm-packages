@@ -1,9 +1,11 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import type { BaseRepository } from '../../../core/base.repository.js';
-import { EventQueueEntity } from '../../../outbox/entities/event-queue.entity.js';
-import { EventQueueModel } from '../../../outbox/models/event-queue.model.js';
+import {
+  type BaseRepository,
+  EventQueueEntity,
+  EventQueueModel,
+  OutboxStatus,
+} from '@volontariapp/database';
 import { EventQueueWriter } from '../../../outbox/writer/event-queue.writer.js';
-import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import {

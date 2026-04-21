@@ -1,10 +1,13 @@
 import { describe, expect, it, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { databaseMapper } from '../../../core/mapper.service.js';
+import {
+  databaseMapper,
+  EventQueueModel,
+  EventQueueEntity,
+  OutboxStatus,
+  type Repository,
+} from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { EventQueueWriter } from '../../../outbox/writer/event-queue.writer.js';
-import { EventQueueModel } from '../../../outbox/models/event-queue.model.js';
-import { EventQueueEntity } from '../../../outbox/entities/event-queue.entity.js';
-import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
 import { TestEventQueueWriterRepository } from '../../utils/repositories/event-queue-test.repository.js';
 
@@ -22,7 +25,9 @@ describe('EventQueueWriter (Full Integration)', () => {
     databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
     writer = new EventQueueWriter(
       logger as never,
-      new TestEventQueueWriterRepository(testDataSource.getRepository(EventQueueModel)),
+      new TestEventQueueWriterRepository(
+        testDataSource.getRepository(EventQueueModel) as unknown as Repository<EventQueueModel>,
+      ),
     );
   });
 

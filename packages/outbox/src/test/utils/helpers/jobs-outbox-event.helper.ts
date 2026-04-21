@@ -1,5 +1,4 @@
-import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
-import { JobsOutboxEntity } from '../../../outbox/entities/jobs-outbox.entity.js';
+import { OutboxStatus, JobsOutboxEntity } from '@volontariapp/database';
 
 export const makeJobsOutboxEvent = (
   overrides: Partial<JobsOutboxEntity> = {},
@@ -11,6 +10,7 @@ export const makeJobsOutboxEvent = (
     payload: { action: 'process-user', data: { userId: 'u-1' } },
     status: OutboxStatus.PENDING,
     attempts: 0,
+    scheduledAt: new Date('2030-01-01T00:00:00.000Z'),
     createdAt: new Date(Date.now() - 60_000),
     updatedAt: new Date(),
     ...overrides,

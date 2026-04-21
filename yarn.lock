@@ -4207,6 +4207,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/outbox@workspace:packages/outbox":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/outbox@workspace:packages/outbox"
+  dependencies:
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/shared@workspace:*, @volontariapp/shared@workspace:^, @volontariapp/shared@workspace:packages/shared":
   version: 0.0.0-use.local
   resolution: "@volontariapp/shared@workspace:packages/shared"

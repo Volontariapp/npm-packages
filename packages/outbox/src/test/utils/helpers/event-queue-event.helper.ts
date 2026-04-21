@@ -1,5 +1,4 @@
-import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
-import { EventQueueEntity } from '../../../outbox/entities/event-queue.entity.js';
+import { OutboxStatus, EventQueueEntity } from '@volontariapp/database';
 
 export const makeEventQueueEvent = (
   overrides: Partial<EventQueueEntity> = {},

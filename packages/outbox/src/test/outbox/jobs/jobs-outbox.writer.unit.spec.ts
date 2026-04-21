@@ -1,9 +1,11 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import type { BaseRepository } from '../../../core/base.repository.js';
-import { JobsOutboxEntity } from '../../../outbox/entities/jobs-outbox.entity.js';
-import { JobsOutboxModel } from '../../../outbox/models/jobs-outbox.model.js';
+import {
+  type BaseRepository,
+  JobsOutboxEntity,
+  JobsOutboxModel,
+  OutboxStatus,
+} from '@volontariapp/database';
 import { JobsOutboxWriter } from '../../../outbox/writer/jobs-outbox.writer.js';
-import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import {
