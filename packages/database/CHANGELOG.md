@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.0
+
+### Minor Changes
+
+- Added job-outbox and event-queue
+
 ## 1.6.0
 
 ### Minor Changes
@@ -14,7 +20,6 @@
 
 - Updated dependencies []:
   - @volontariapp/logger@0.2.3
-
 
 ## 1.3.0
 
