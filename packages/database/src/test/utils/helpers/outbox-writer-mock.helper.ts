@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
-import { BaseRepository } from '../../core/base.repository.js';
-import { OutboxEntity } from "../../outbox/entities/outbox.entity.js";
-import { OutboxModel } from "../../outbox/models/outbox.model.js";
+import { BaseRepository } from '../../../core/base.repository.js';
+import { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
+import { OutboxModel } from '../../../outbox/models/outbox.model.js';
 
 export type OutboxWriterRepositoryMock<TModel extends OutboxModel, TEntity extends OutboxEntity> = jest.Mocked<
   Pick<BaseRepository<TModel, TEntity, string>, 'create' | 'createMany' | 'update' | 'delete'>

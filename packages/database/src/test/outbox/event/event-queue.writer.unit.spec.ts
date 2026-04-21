@@ -1,0 +1,64 @@
+import { describe, expect, it, beforeEach } from '@jest/globals';
+import type { BaseRepository } from '../../../core/base.repository.js';
+import { EventQueueEntity } from '../../../outbox/entities/event-queue.entity.js';
+import { EventQueueModel } from '../../../outbox/models/event-queue.model.js';
+import { EventQueueWriter } from '../../../outbox/writer/event-queue.writer.js';
+import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
+import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
+import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import {
+  makeOutboxWriterRepositoryMock,
+  type OutboxWriterRepositoryMock,
+} from '../../utils/helpers/outbox-writer-mock.helper.js';
+
+describe('EventQueueWriter (Unit)', () => {
+  let writer: EventQueueWriter;
+  let repository: OutboxWriterRepositoryMock<EventQueueModel, EventQueueEntity>;
+  let logger: TestLoggerMock;
+
+  beforeEach(() => {
+    repository = makeOutboxWriterRepositoryMock<EventQueueModel, EventQueueEntity>();
+    logger = makeLoggerMock();
+    writer = new EventQueueWriter(
+      logger as never,
+      repository as unknown as BaseRepository<EventQueueModel, EventQueueEntity, string>,
+    );
+  });
+
+  it('create() should pass default values when not overridden', async () => {
+    const event = makeEventQueueEvent();
+
+    await writer.create(event);
+
+    expect(repository.create).toHaveBeenCalledTimes(1);
+    const created = repository.create.mock.calls[0][0];
+    expect(created.status).toBe(OutboxStatus.PENDING);
+    expect(created.attempts).toBe(0);
+    expect(created.version).toBe(1);
+    expect(created.payload).toEqual({ after: { id: 'entity-1', state: 'created' } });
+  });
+
+  it('create() should keep overridden values when provided', async () => {
+    const event = makeEventQueueEvent({
+      status: OutboxStatus.FAILED,
+      attempts: 2,
+      version: 7,
+      payload: {
+        before: { id: 'entity-1', state: 'draft' },
+        after: { id: 'entity-1', state: 'published' },
+      },
+    });
+
+    await writer.create(event);
+
+    expect(repository.create).toHaveBeenCalledTimes(1);
+    const created = repository.create.mock.calls[0][0];
+    expect(created.status).toBe(OutboxStatus.FAILED);
+    expect(created.attempts).toBe(2);
+    expect(created.version).toBe(7);
+    expect(created.payload).toEqual({
+      before: { id: 'entity-1', state: 'draft' },
+      after: { id: 'entity-1', state: 'published' },
+    });
+  });
+});

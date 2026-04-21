@@ -1,4 +1,4 @@
-import { OutboxModel } from "../../outbox/models/outbox.model.js";
+import { OutboxModel } from '../../../outbox/models/outbox.model.js';
 
 export const makeOutboxEvent = (overrides: Partial<OutboxModel> = {}): OutboxModel => {
   const event = new OutboxModel();
