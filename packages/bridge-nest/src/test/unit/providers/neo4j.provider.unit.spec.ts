@@ -28,16 +28,30 @@ describe('NestNeo4jProvider (Unit)', () => {
     expect(logSpy).toHaveBeenCalledWith('Nest Neo4j Bridge initialized successfully');
   });
 
-  it('should throw BRIDGE_CONNECTION_FAILED when connection fails', async () => {
+  it('should log error when connection fails', async () => {
     jest.spyOn(provider, 'connect').mockRejectedValue(new Error('Connection failed'));
+    const logSpy = jest
+      .spyOn((provider as unknown as { logger: { error: (msg: string) => void } }).logger, 'error')
+      .mockImplementation(() => {});
 
-    await expect(provider.onModuleInit()).rejects.toThrow();
+    await provider.onModuleInit();
+
+    expect(logSpy).toHaveBeenCalledWith(
+      'Nest Neo4j Bridge failed to initialize: Connection failed',
+    );
   });
 
   it('should handle non-Error catch in onModuleInit', async () => {
     jest.spyOn(provider, 'connect').mockRejectedValue('String error');
+    const logSpy = jest
+      .spyOn((provider as unknown as { logger: { error: (msg: string) => void } }).logger, 'error')
+      .mockImplementation(() => {});
 
-    await expect(provider.onModuleInit()).rejects.toThrow();
+    await provider.onModuleInit();
+
+    expect(logSpy).toHaveBeenCalledWith(
+      'Nest Neo4j Bridge failed to initialize: Unknown connection error',
+    );
   });
 
   it('should call disconnect on destruction', async () => {

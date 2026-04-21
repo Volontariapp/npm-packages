@@ -12,7 +12,11 @@ export interface IParticipationRepository {
   createParticipation(user: SocialUserEntity, event: SocialEventEntity): Promise<void>;
   deleteParticipation(user: SocialUserEntity, event: SocialEventEntity): Promise<void>;
   participationExists(user: SocialUserEntity, event: SocialEventEntity): Promise<boolean>;
+  createWish(user: SocialUserEntity, event: SocialEventEntity): Promise<void>;
+  deleteWish(user: SocialUserEntity, event: SocialEventEntity): Promise<void>;
+  wishExists(user: SocialUserEntity, event: SocialEventEntity): Promise<boolean>;
   getUserEvents(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getUserParticipations(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  getUserWishes(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getEventParticipants(event: SocialEventEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
 }

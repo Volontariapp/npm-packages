@@ -1,11 +1,25 @@
 # Changelog
 
+## 2.4.8
+
+### Patch Changes
+
+- patch localisationName
+
+## 2.4.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.2
+
 ## 2.4.6
 
 ### Patch Changes
 
 - Updated dependencies []:
   - @volontariapp/database@1.6.0
+  - @volontariapp/errors-nest@0.9.0
 
 ## 2.4.5
 

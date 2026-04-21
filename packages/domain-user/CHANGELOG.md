@@ -1,10 +1,12 @@
 # Changelog
 
-## 2.3.3
+## 2.3.4
 
 ### Patch Changes
 
 - Fix UserEntity in domain-user: Rename 'name' property into 'pseudo' and add 'role' property
+
+- [#90](https://github.com/Volontariapp/npm-packages/pull/90) [`2bc8562`](https://github.com/Volontariapp/npm-packages/commit/2bc8562e92c70244864c6d4bcdfadc7da2962ca0) Thanks [@Dami1LD](https://github.com/Dami1LD)! - Changed UserEntity role property type to UserRoles
 
 ## 2.3.2
 

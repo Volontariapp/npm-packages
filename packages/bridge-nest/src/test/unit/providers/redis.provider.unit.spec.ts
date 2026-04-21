@@ -28,16 +28,30 @@ describe('NestRedisProvider (Unit)', () => {
     expect(logSpy).toHaveBeenCalledWith('Nest Redis Bridge initialized successfully');
   });
 
-  it('should throw error when connection fails', async () => {
+  it('should log error when connection fails', async () => {
     jest.spyOn(provider, 'connect').mockRejectedValue(new Error('Connection failed'));
+    const logSpy = jest
+      .spyOn((provider as unknown as { logger: { error: (msg: string) => void } }).logger, 'error')
+      .mockImplementation(() => {});
 
-    await expect(provider.onModuleInit()).rejects.toThrow();
+    await provider.onModuleInit();
+
+    expect(logSpy).toHaveBeenCalledWith(
+      'Nest Redis Bridge failed to initialize: Connection failed',
+    );
   });
 
   it('should handle non-Error catch in onModuleInit', async () => {
     jest.spyOn(provider, 'connect').mockRejectedValue('String error');
+    const logSpy = jest
+      .spyOn((provider as unknown as { logger: { error: (msg: string) => void } }).logger, 'error')
+      .mockImplementation(() => {});
 
-    await expect(provider.onModuleInit()).rejects.toThrow();
+    await provider.onModuleInit();
+
+    expect(logSpy).toHaveBeenCalledWith(
+      'Nest Redis Bridge failed to initialize: Unknown connection error',
+    );
   });
 
   it('should call disconnect on destruction', async () => {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0
+
+### Minor Changes
+
+- adding user-wish event
+
 ## 0.8.0
 
 ### Minor Changes

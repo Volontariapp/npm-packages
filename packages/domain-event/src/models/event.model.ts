@@ -82,6 +82,9 @@ export class EventModel {
   @Column({ type: 'uuid', nullable: true })
   organizerId?: string;
 
+  @Column({ type: 'varchar', length: 255, default: '' })
+  localisationName!: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 

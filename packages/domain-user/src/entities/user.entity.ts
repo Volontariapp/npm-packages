@@ -1,4 +1,5 @@
 import type { BadgeEntity } from './badge.entity.js';
+import type { UserRoles } from '@volontariapp/shared';
 
 export class UserEntity {
   id!: string;
@@ -7,7 +8,7 @@ export class UserEntity {
   logoPath?: string;
   rna?: string;
   bio?: string;
-  role!: string;
+  role!: UserRoles;
   totalImpactScore!: number;
   badges!: BadgeEntity[];
 }
