@@ -6,3 +6,5 @@ export * from './models/jobs-outbox.model.js';
 
 export * from './writer/event-queue.writer.js';
 export * from './writer/jobs-outbox.writer.js';
+
+export * from './types/outbox.status.js';
