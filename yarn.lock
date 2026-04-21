@@ -4211,6 +4211,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/outbox@workspace:packages/outbox"
   dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^22.10.7"
+    "@types/pg": "npm:^8"
+    "@volontariapp/database": "workspace:*"
+    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
+    jest: "npm:^30.3.0"
+    ts-jest: "npm:^29.4.6"
+    ts-node: "npm:^10.9.2"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
