@@ -8,22 +8,19 @@ import {
 import { JobsOutboxWriter } from '../../../outbox/writer/jobs-outbox.writer.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import {
-  makeOutboxWriterRepositoryMock,
-  type OutboxWriterRepositoryMock,
-} from '../../utils/helpers/outbox-writer-mock.helper.js';
+import { makeJobsOutboxRepositoryMock } from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
 
 describe('JobsOutboxWriter (Unit)', () => {
   let writer: JobsOutboxWriter;
-  let repository: OutboxWriterRepositoryMock<JobsOutboxModel, JobsOutboxEntity>;
+  let repository: BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>;
   let logger: TestLoggerMock;
 
   beforeEach(() => {
-    repository = makeOutboxWriterRepositoryMock<JobsOutboxModel, JobsOutboxEntity>();
+    repository = makeJobsOutboxRepositoryMock();
     logger = makeLoggerMock();
     writer = new JobsOutboxWriter(
       logger as never,
-      repository as unknown as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
+      repository,
     );
   });
 

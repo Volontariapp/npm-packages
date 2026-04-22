@@ -11,7 +11,9 @@ export type OutboxWriterRepositoryMock<
 export const makeOutboxWriterRepositoryMock = <
   TModel extends OutboxModel,
   TEntity extends OutboxEntity,
->(): OutboxWriterRepositoryMock<TModel, TEntity> => {
+>(
+  repository: unknown,
+): OutboxWriterRepositoryMock<TModel, TEntity> => {
   return {
     create: jest.fn(async () => ({}) as TEntity),
     createMany: jest.fn(async () => [] as TEntity[]),

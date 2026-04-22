@@ -8,22 +8,19 @@ import {
 import { EventQueueWriter } from '../../../outbox/writer/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import {
-  makeOutboxWriterRepositoryMock,
-  type OutboxWriterRepositoryMock,
-} from '../../utils/helpers/outbox-writer-mock.helper.js';
+import { makeEventQueueRepositoryMock } from '../../utils/helpers/event-queue-repository-mock.helper.js';
 
 describe('EventQueueWriter (Unit)', () => {
   let writer: EventQueueWriter;
-  let repository: OutboxWriterRepositoryMock<EventQueueModel, EventQueueEntity>;
+  let repository: BaseRepository<EventQueueModel, EventQueueEntity, string>;
   let logger: TestLoggerMock;
 
   beforeEach(() => {
-    repository = makeOutboxWriterRepositoryMock<EventQueueModel, EventQueueEntity>();
+    repository = makeEventQueueRepositoryMock();
     logger = makeLoggerMock();
     writer = new EventQueueWriter(
       logger as never,
-      repository as unknown as BaseRepository<EventQueueModel, EventQueueEntity, string>,
+      repository,
     );
   });
 
