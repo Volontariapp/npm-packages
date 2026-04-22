@@ -30,8 +30,9 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
-    "test:watch": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --watch",
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch",
     "db:up": "docker-compose -f ../../docker-compose.test.yml up -d",
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },

@@ -19,7 +19,14 @@ export default {
       },
     ],
   },
-  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/', '/src/test/'],
+  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
+  coverageProvider: 'v8',
+  collectCoverageFrom: [
+    '**/src/outbox/**/*.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
+    '!**/index.ts',
+  ],
   testMatch: ['**/*.int.spec.ts', '**/*.unit.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
 };
