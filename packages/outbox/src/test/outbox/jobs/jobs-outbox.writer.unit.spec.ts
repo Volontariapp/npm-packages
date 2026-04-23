@@ -1,18 +1,16 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import {
-  type BaseRepository,
-  JobsOutboxEntity,
-  JobsOutboxModel,
-  OutboxStatus,
-} from '@volontariapp/database';
+import { OutboxStatus } from '@volontariapp/database';
 import { JobsOutboxWriter } from '../../../outbox/writer/jobs-outbox.writer.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import { makeJobsOutboxRepositoryMock } from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
+import {
+  makeJobsOutboxRepositoryMock,
+  type JobsOutboxRepositoryMock,
+} from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
 
 describe('JobsOutboxWriter (Unit)', () => {
   let writer: JobsOutboxWriter;
-  let repository: BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>;
+  let repository: JobsOutboxRepositoryMock;
   let logger: TestLoggerMock;
 
   beforeEach(() => {
@@ -20,7 +18,7 @@ describe('JobsOutboxWriter (Unit)', () => {
     logger = makeLoggerMock();
     writer = new JobsOutboxWriter(
       logger as never,
-      repository,
+      repository as any,
     );
   });
 
