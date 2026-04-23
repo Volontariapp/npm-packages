@@ -1,6 +1,6 @@
 {
-  "name": "@volontariapp/database",
-  "version": "1.7.0",
+  "name": "@volontariapp/outbox",
+  "version": "0.1.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -27,6 +27,7 @@
     "node": ">=24.14.0"
   },
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
@@ -36,13 +37,9 @@
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },
   "dependencies": {
-    "@volontariapp/bridge": "workspace:*",
+    "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
-    "@volontariapp/logger": "workspace:*",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
-    "pg": "^8.20.0",
-    "reflect-metadata": "^0.2.2"
+    "@volontariapp/logger": "workspace:*"
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
@@ -54,8 +51,5 @@
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.28",
     "typescript": "5.7.3"
-  },
-  "peerDependencies": {
-    "typeorm": "^0.3.20"
   }
 }

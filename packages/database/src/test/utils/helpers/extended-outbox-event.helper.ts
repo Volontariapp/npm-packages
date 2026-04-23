@@ -1,5 +1,5 @@
-import { OutboxStatus } from '../../outbox/types/outbox.status.js';
-import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
+import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
+import { ExtendedOutboxEntity } from '../../example/entities/extended-outbox.entity.js';
 
 export const makeExtendedOutboxEvent = (
   overrides: Partial<ExtendedOutboxEntity> = {},

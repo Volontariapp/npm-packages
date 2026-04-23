@@ -5,10 +5,10 @@ import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { databaseMapper } from '../../core/mapper.service.js';
-import { makeOutboxEvent } from '../utils/outbox-event.helper.js';
-import { makeExtendedOutboxEvent } from '../utils/extended-outbox-event.helper.js';
-import { TestOutboxWriterRepository } from '../utils/outbox-test.repository.js';
-import { TestExtendedOutboxWriter } from '../utils/outbox-extended-test.repository.js';
+import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
+import { makeExtendedOutboxEvent } from '../utils/helpers/extended-outbox-event.helper.js';
+import { TestOutboxWriterRepository } from '../utils/repositories/outbox-test.repository.js';
+import { TestExtendedOutboxWriter } from '../utils/repositories/outbox-extended-test.repository.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
 

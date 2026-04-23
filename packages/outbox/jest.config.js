@@ -1,0 +1,32 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+export default {
+  preset: 'ts-jest/presets/default-esm',
+  testEnvironment: 'node',
+  globalSetup: '<rootDir>/src/test/global-setup.ts',
+  maxWorkers: 1,
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@volontariapp/bridge$': '<rootDir>/../bridge/src/index.ts',
+    '^@volontariapp/logger$': '<rootDir>/../logger/src/index.ts',
+    '^@volontariapp/errors$': '<rootDir>/../errors/src/index.ts',
+    '^@volontariapp/database$': '<rootDir>/../database/src/index.ts',
+  },
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
+  },
+  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
+  coverageProvider: 'v8',
+  collectCoverageFrom: [
+    '**/src/outbox/**/*.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
+    '!**/index.ts',
+  ],
+  testMatch: ['**/*.int.spec.ts', '**/*.unit.spec.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
+};

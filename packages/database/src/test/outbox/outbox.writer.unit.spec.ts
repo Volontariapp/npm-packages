@@ -3,12 +3,12 @@ import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
-import { makeOutboxEvent } from '../utils/outbox-event.helper.js';
-import { makeLoggerMock, type TestLoggerMock } from '../utils/logger-mock.helper.js';
-import { makeExtendedOutboxEvent } from '../utils/extended-outbox-event.helper.js';
+import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
+import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
+import { makeExtendedOutboxEvent } from '../utils/helpers/extended-outbox-event.helper.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
-import { makeOutboxWriterRepositoryMock, OutboxWriterRepositoryMock, } from '../utils/outbox-writer-mock.helper.js';
+import { makeOutboxWriterRepositoryMock, OutboxWriterRepositoryMock, } from '../utils/helpers/outbox-writer-mock.helper.js';
 
 
 describe('OutboxWriter (Unit)', () => {
