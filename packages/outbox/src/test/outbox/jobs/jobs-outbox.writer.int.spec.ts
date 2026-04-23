@@ -10,15 +10,12 @@ import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source
 import { JobsOutboxWriter } from '../../../outbox/writer/jobs-outbox.writer.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { TestJobsOutboxWriterRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
+import { makeLoggerMock, TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 
 describe('JobsOutboxWriter (Full Integration)', () => {
   let writer: JobsOutboxWriter;
 
-  const logger = {
-    info: () => undefined,
-    warn: () => undefined,
-    error: () => undefined,
-  };
+  const logger: TestLoggerMock = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
