@@ -3786,7 +3786,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volontariapp/auth@workspace:packages/auth":
+"@volontariapp/auth@workspace:*, @volontariapp/auth@workspace:packages/auth":
   version: 0.0.0-use.local
   resolution: "@volontariapp/auth@workspace:packages/auth"
   dependencies:
@@ -4028,6 +4028,7 @@ __metadata:
   resolution: "@volontariapp/domain-user@workspace:packages/domain-user"
   dependencies:
     "@nestjs/typeorm": "npm:^11.0.1"
+    "@volontariapp/auth": "workspace:*"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/crypto": "workspace:*"
     "@volontariapp/errors": "workspace:*"
