@@ -7,7 +7,7 @@ import {
   type Repository,
 } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
-import { JobsOutboxWriter } from '../../../outbox/writer/jobs-outbox.writer.js';
+import { JobsOutboxWriter } from '../../../outbox/writers/jobs-outbox.writer.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { TestJobsOutboxWriterRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
 import { makeLoggerMock, TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';

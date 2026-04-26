@@ -7,7 +7,7 @@ import {
   type Repository,
 } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
-import { EventQueueWriter } from '../../../outbox/writer/event-queue.writer.js';
+import { EventQueueWriter } from '../../../outbox/writers/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
 import { TestEventQueueWriterRepository } from '../../utils/repositories/event-queue-test.repository.js';
 

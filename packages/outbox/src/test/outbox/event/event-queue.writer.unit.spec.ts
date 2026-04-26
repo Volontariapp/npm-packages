@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
 import { OutboxStatus } from '@volontariapp/database';
-import { EventQueueWriter } from '../../../outbox/writer/event-queue.writer.js';
+import { EventQueueWriter } from '../../../outbox/writers/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import {
@@ -16,10 +16,7 @@ describe('EventQueueWriter (Unit)', () => {
   beforeEach(() => {
     repository = makeEventQueueRepositoryMock();
     logger = makeLoggerMock();
-    writer = new EventQueueWriter(
-      logger as never,
-      repository as any,
-    );
+    writer = new EventQueueWriter(logger as never, repository as any);
   });
 
   it('create() should pass default values when not overridden', async () => {

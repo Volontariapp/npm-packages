@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
 import { OutboxStatus } from '@volontariapp/database';
-import { JobsOutboxWriter } from '../../../outbox/writer/jobs-outbox.writer.js';
+import { JobsOutboxWriter } from '../../../outbox/writers/jobs-outbox.writer.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import {
@@ -16,10 +16,7 @@ describe('JobsOutboxWriter (Unit)', () => {
   beforeEach(() => {
     repository = makeJobsOutboxRepositoryMock();
     logger = makeLoggerMock();
-    writer = new JobsOutboxWriter(
-      logger as never,
-      repository as any,
-    );
+    writer = new JobsOutboxWriter(logger as never, repository as any);
   });
 
   it('create() should pass default values when not overridden', async () => {

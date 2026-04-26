@@ -1,2 +1,2 @@
-export * from './writer/event-queue.writer.js';
-export * from './writer/jobs-outbox.writer.js';
+export * from './writers/event-queue.writer.js';
+export * from './writers/jobs-outbox.writer.js';

@@ -37,7 +37,7 @@
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },
   "dependencies": {
-    "@volontariapp/database": "workspace:*",
+    "@volontariapp/database": "1.8.1-snap-53c712c",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*"
   },
