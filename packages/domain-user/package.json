@@ -41,7 +41,8 @@
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
-    "@volontariapp/shared": "workspace:*"
+    "@volontariapp/shared": "workspace:*",
+    "@volontariapp/auth": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/typeorm": "^11.0.1",

@@ -11,6 +11,7 @@ import {
 } from '@volontariapp/errors-nest';
 import { hashPassword, verifyPassword } from '@volontariapp/crypto';
 import { isBaseError, isDatabaseDriverError } from '@volontariapp/errors';
+import { JwtService } from '@volontariapp/auth';
 
 @Injectable()
 export class AuthService {
@@ -19,9 +20,10 @@ export class AuthService {
   constructor(
     @Inject(repositories.PostgresUserRepository)
     private readonly userRepository: repositories.IUserRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(command: SignUpCommand): Promise<UserEntity> {
+  async signUp(command: SignUpCommand): Promise<{ accessToken: string; refreshToken: string }> {
     const existingUser = await this.userRepository.findByEmail(command.email);
     if (existingUser) {
       this.logger.warn(`Attempt to sign up with already registered email: ${command.email}`);
@@ -40,7 +42,13 @@ export class AuthService {
         this.logger.warn(`Invalid RNA ${user.rna} for new user`);
         throw INVALID_RNA(user.rna);
       }
-      return await this.userRepository.createWithHashedPassword(user, hashedPassword);
+      const userEntity = await this.userRepository.createWithHashedPassword(user, hashedPassword);
+      const authUser = { id: userEntity.id, email: userEntity.email, role: userEntity.role };
+      const [accessToken, refreshToken] = await Promise.all([
+        this.jwtService.signAccessToken(authUser),
+        this.jwtService.signRefreshToken(authUser),
+      ]);
+      return { accessToken, refreshToken };
     } catch (error) {
       if (isBaseError(error)) throw error;
 
@@ -54,7 +62,7 @@ export class AuthService {
     }
   }
 
-  async logIn(command: LoginCommand): Promise<UserEntity> {
+  async logIn(command: LoginCommand): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.userRepository.findByEmail(command.email);
     if (!user) {
       this.logger.warn(`Login attempt with non-existent email: ${command.email}`);
@@ -65,6 +73,11 @@ export class AuthService {
       this.logger.warn(`Invalid password attempt for email: ${command.email}`);
       throw USER_NOT_FOUND(command.email, 'email');
     }
-    return user;
+    const authUser = { id: user.id, email: user.email, role: user.role };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAccessToken(authUser),
+      this.jwtService.signRefreshToken(authUser),
+    ]);
+    return { accessToken, refreshToken };
   }
 }
