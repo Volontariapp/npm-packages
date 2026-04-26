@@ -23,7 +23,7 @@ describe('BaseOutboxConsumer (Integration)', () => {
       synchronize: true,
       dropSchema: true,
       entities: [OutboxModel],
-    } as any);
+    });
     await provider.connect();
     repository = new TestOutboxRepository(provider.getDriver().getRepository(OutboxModel));
     consumer = new BaseOutboxConsumer(repository);
@@ -40,8 +40,14 @@ describe('BaseOutboxConsumer (Integration)', () => {
 
   it('should fetch waiting items and mark them as processing', async () => {
     const repo = provider.getDriver().getRepository(OutboxModel);
-    const event1 = makeOutboxEvent({ id: '00000000-0000-0000-0000-000000000001', status: OutboxStatus.PENDING });
-    const event2 = makeOutboxEvent({ id: '00000000-0000-0000-0000-000000000002', status: OutboxStatus.PENDING });
+    const event1 = makeOutboxEvent({
+      id: '00000000-0000-0000-0000-000000000001',
+      status: OutboxStatus.PENDING,
+    });
+    const event2 = makeOutboxEvent({
+      id: '00000000-0000-0000-0000-000000000002',
+      status: OutboxStatus.PENDING,
+    });
     await repo.save([event1, event2]);
 
     const items = await consumer.fetchWaitingItems(1);

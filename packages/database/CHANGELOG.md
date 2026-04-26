@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.5.0
+  - @volontariapp/bridge@0.2.9
+
+## 1.8.0
+
+### Minor Changes
+
+- Added outbox consumer first implementation
+
 ## 1.7.0
 
 ### Minor Changes

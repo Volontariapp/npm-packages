@@ -1,15 +1,17 @@
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import type { QueryRunner, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { BaseOutboxConsumer } from '../../outbox/consumers/base.outbox.consumer.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
+import { BaseRepository } from '../../core/base.repository.js';
 
 describe('BaseOutboxConsumer (Unit)', () => {
   let consumer: BaseOutboxConsumer<OutboxModel, OutboxEntity>;
-  let repositoryMock: any;
-  let queryRunnerMock: any;
-  let queryBuilderMock: any;
+  let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
+  let queryRunnerMock: jest.Mocked<QueryRunner>;
+  let queryBuilderMock: jest.Mocked<SelectQueryBuilder<OutboxModel> & UpdateQueryBuilder<OutboxModel>>;
 
   beforeEach(() => {
     queryBuilderMock = {
@@ -18,26 +20,26 @@ describe('BaseOutboxConsumer (Unit)', () => {
       where: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
-      getMany: jest.fn<any>().mockResolvedValue([]),
+      getMany: jest.fn<() => Promise<OutboxModel[]>>().mockResolvedValue([]),
       update: jest.fn().mockReturnThis(),
       set: jest.fn().mockReturnThis(),
       whereInIds: jest.fn().mockReturnThis(),
-      execute: jest.fn<any>().mockResolvedValue({}),
-    };
+      execute: jest.fn<() => Promise<any>>().mockResolvedValue({}),
+    } as unknown as jest.Mocked<SelectQueryBuilder<OutboxModel> & UpdateQueryBuilder<OutboxModel>>;
 
     queryRunnerMock = {
       manager: {
         createQueryBuilder: jest.fn().mockReturnValue(queryBuilderMock),
       },
-    };
+    } as unknown as jest.Mocked<QueryRunner>;
 
     repositoryMock = {
       metadata: {
         target: OutboxModel,
       },
-      executeInTransaction: jest.fn((work: any) => work(queryRunnerMock)),
-      toEntities: jest.fn((models: any[]) => models),
-    };
+      executeInTransaction: jest.fn((work: (qr: QueryRunner) => Promise<any>) => work(queryRunnerMock)),
+      toEntities: jest.fn((models: OutboxModel[]) => models as unknown as OutboxEntity[]),
+    } as unknown as jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
 
     consumer = new BaseOutboxConsumer(repositoryMock);
   });

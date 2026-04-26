@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- Added new error type for invalid outbox consumer fetch size
+
 ## 0.4.4
 
 ### Patch Changes

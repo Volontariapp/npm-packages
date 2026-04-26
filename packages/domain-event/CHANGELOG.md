@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.4.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.5.0
+  - @volontariapp/database@1.8.1
+  - @volontariapp/errors-nest@0.9.1
+
+## 2.4.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.8.0
+
 ## 2.4.9
 
 ### Patch Changes
