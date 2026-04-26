@@ -4031,6 +4031,7 @@ __metadata:
     "@volontariapp/auth": "workspace:*"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/crypto": "workspace:*"
+    "@volontariapp/database": "workspace:*"
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
