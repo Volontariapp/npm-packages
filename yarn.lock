@@ -3983,10 +3983,8 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     ts-jest: "npm:^29.4.6"
     ts-node: "npm:^10.9.2"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
-  peerDependencies:
-    "@nestjs/typeorm": ^11.0.1
-    typeorm: ^0.3.28
   languageName: unknown
   linkType: soft
 

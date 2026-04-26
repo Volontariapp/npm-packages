@@ -5,4 +5,5 @@ export * from './core/mapper.service.js';
 
 export * from './outbox/index.js';
 
-export type { Repository, ObjectLiteral } from 'typeorm';
+export type { Repository, ObjectLiteral, FindOptionsWhere } from 'typeorm';
+export { ILike, Like, In } from 'typeorm';
