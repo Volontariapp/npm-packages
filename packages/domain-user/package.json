@@ -36,13 +36,13 @@
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "dependencies": {
+    "@volontariapp/auth": "workspace:*",
     "@volontariapp/contracts": "workspace:*",
     "@volontariapp/crypto": "workspace:*",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
-    "@volontariapp/shared": "workspace:*",
-    "@volontariapp/auth": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/typeorm": "^11.0.1",
