@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
+import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';

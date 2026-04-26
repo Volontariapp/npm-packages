@@ -10,3 +10,4 @@ export * from './exceptions/not-found.error.js';
 export * from './exceptions/unauthorized.error.js';
 export * from './exceptions/unprocessable-entity.error.js';
 export * from './exceptions/too-many-requests.error.js';
+export * from './exceptions/invalid-outbox-size.error.js';

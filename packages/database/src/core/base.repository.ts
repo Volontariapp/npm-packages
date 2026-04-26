@@ -48,11 +48,11 @@ export abstract class BaseRepository<
     protected readonly modelClass: Constructor<TModel>,
   ) {}
 
-  protected toEntity(model: TModel): TEntity {
+  public toEntity(model: TModel): TEntity {
     return this.mapper.map(model, this.modelClass, this.entityClass);
   }
 
-  protected toEntities(models: TModel[]): TEntity[] {
+  public toEntities(models: TModel[]): TEntity[] {
     return this.mapper.mapArray(models, this.modelClass, this.entityClass);
   }
 

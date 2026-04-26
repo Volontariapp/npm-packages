@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import { testDataSource, initializeTestDb, closeTestDb } from '../data-source.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
-import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
+import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { databaseMapper } from '../../core/mapper.service.js';
 import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
 import { makeExtendedOutboxEvent } from '../utils/helpers/extended-outbox-event.helper.js';
-import { TestOutboxWriterRepository } from '../utils/repositories/outbox-test.repository.js';
+import { TestOutboxRepository } from '../utils/repositories/outbox-test.repository.js';
 import { TestExtendedOutboxWriter } from '../utils/repositories/outbox-extended-test.repository.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
@@ -16,7 +16,7 @@ import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js'
 
 describe('Outbox Writer (Full Integration)', () => {
   let outboxWriter: OutboxWriter<OutboxModel, OutboxEntity>;
-  let repository: TestOutboxWriterRepository;
+  let repository: TestOutboxRepository;
   const logger = {
     info: () => undefined,
     warn: () => undefined,
@@ -25,7 +25,7 @@ describe('Outbox Writer (Full Integration)', () => {
 
   beforeAll(async () => {
     await initializeTestDb();
-    repository = new TestOutboxWriterRepository(testDataSource.getRepository(OutboxModel));
+    repository = new TestOutboxRepository(testDataSource.getRepository(OutboxModel));
     outboxWriter = new OutboxWriter(logger as never, repository);
   });
 
