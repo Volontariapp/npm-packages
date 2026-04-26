@@ -13,4 +13,6 @@ export const createUserRepositoryMock = (): jest.Mocked<IUserRepository> =>
     addBadgeToUser: jest.fn(),
     removeBadgeFromUser: jest.fn(),
     incrementImpactScore: jest.fn(),
+    createWithHashedPassword: jest.fn(),
+    findPasswordHashByEmail: jest.fn(),
   }) as unknown as jest.Mocked<IUserRepository>;

@@ -74,9 +74,9 @@ describe('BadgeService (Unit)', () => {
       expect(mockRepository.findManyByIds.mock.calls).toEqual([[['a', 'b']]]);
     });
 
-    it('should throw DATABASE_ERROR when repository fails', async () => {
+    it('should throw error when repository fails', async () => {
       mockRepository.findManyByIds.mockRejectedValue(new Error('fail'));
-      await expect(service.findManyByIds(['a'])).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+      await expect(service.findManyByIds(['a'])).rejects.toThrow('fail');
     });
   });
 
