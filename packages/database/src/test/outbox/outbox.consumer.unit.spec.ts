@@ -1,17 +1,19 @@
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
 import type { QueryRunner, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
-import { BaseOutboxConsumer } from '../../outbox/consumers/base.outbox.consumer.js';
+import { OutboxConsumer } from '../../outbox/consumers/outbox.consumer.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { BaseRepository } from '../../core/base.repository.js';
 
-describe('BaseOutboxConsumer (Unit)', () => {
-  let consumer: BaseOutboxConsumer<OutboxModel, OutboxEntity>;
+describe('OutboxConsumer (Unit)', () => {
+  let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;
   let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
   let queryRunnerMock: jest.Mocked<QueryRunner>;
-  let queryBuilderMock: jest.Mocked<SelectQueryBuilder<OutboxModel> & UpdateQueryBuilder<OutboxModel>>;
+  let queryBuilderMock: jest.Mocked<
+    SelectQueryBuilder<OutboxModel> & UpdateQueryBuilder<OutboxModel>
+  >;
 
   beforeEach(() => {
     queryBuilderMock = {
@@ -37,11 +39,13 @@ describe('BaseOutboxConsumer (Unit)', () => {
       metadata: {
         target: OutboxModel,
       },
-      executeInTransaction: jest.fn((work: (qr: QueryRunner) => Promise<any>) => work(queryRunnerMock)),
+      executeInTransaction: jest.fn((work: (qr: QueryRunner) => Promise<any>) =>
+        work(queryRunnerMock),
+      ),
       toEntities: jest.fn((models: OutboxModel[]) => models as unknown as OutboxEntity[]),
     } as unknown as jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
 
-    consumer = new BaseOutboxConsumer(repositoryMock);
+    consumer = new OutboxConsumer(repositoryMock);
   });
 
   describe('fetchWaitingItems', () => {
@@ -59,8 +63,22 @@ describe('BaseOutboxConsumer (Unit)', () => {
 
     it('should fetch, mark as processing, and return items', async () => {
       const mockModels: OutboxModel[] = [
-        { id: '1', status: OutboxStatus.PENDING, attempts: 0, type: 'test', emitter: 'test', createdAt: new Date() } as OutboxModel,
-        { id: '2', status: OutboxStatus.PENDING, attempts: 0, type: 'test', emitter: 'test', createdAt: new Date() } as OutboxModel,
+        {
+          id: '1',
+          status: OutboxStatus.PENDING,
+          attempts: 0,
+          type: 'test',
+          emitter: 'test',
+          createdAt: new Date(),
+        } as OutboxModel,
+        {
+          id: '2',
+          status: OutboxStatus.PENDING,
+          attempts: 0,
+          type: 'test',
+          emitter: 'test',
+          createdAt: new Date(),
+        } as OutboxModel,
       ];
       queryBuilderMock.getMany
         .mockResolvedValueOnce(mockModels) // First call to get items

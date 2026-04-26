@@ -5,10 +5,7 @@ import { OutboxEntity } from '../entities/outbox.entity.js';
 import { OutboxStatus } from '../types/outbox.status.js';
 import { OutboxModel } from '../models/outbox.model.js';
 
-export class BaseOutboxConsumer<
-  TOutboxModel extends OutboxModel,
-  TOutboxEntity extends OutboxEntity,
-> {
+export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   constructor(protected readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>) {}
 
   async fetchWaitingItems(size: number): Promise<TOutboxEntity[]> {

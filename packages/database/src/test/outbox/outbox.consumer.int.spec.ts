@@ -2,15 +2,15 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/glo
 import { PostgresProvider } from '@volontariapp/bridge';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
-import { BaseOutboxConsumer } from '../../outbox/consumers/base.outbox.consumer.js';
+import { OutboxConsumer } from '../../outbox/consumers/outbox.consumer.js';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
 import { TestOutboxRepository } from '../utils/repositories/outbox-test.repository.js';
 
-describe('BaseOutboxConsumer (Integration)', () => {
+describe('OutboxConsumer (Integration)', () => {
   let provider: PostgresProvider;
   let repository: TestOutboxRepository;
-  let consumer: BaseOutboxConsumer<OutboxModel, OutboxEntity>;
+  let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;
 
   beforeAll(async () => {
     provider = new PostgresProvider({
@@ -25,7 +25,7 @@ describe('BaseOutboxConsumer (Integration)', () => {
     });
     await provider.connect();
     repository = new TestOutboxRepository(provider.getDriver().getRepository(OutboxModel));
-    consumer = new BaseOutboxConsumer(repository);
+    consumer = new OutboxConsumer(repository);
   });
 
   afterAll(async () => {

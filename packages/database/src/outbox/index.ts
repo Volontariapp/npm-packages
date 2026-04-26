@@ -9,3 +9,5 @@ export * from './models/outbox.model.js';
 export * from './writers/outbox.writer.js';
 
 export * from './types/outbox.status.js';
+
+export * from './consumers/outbox.consumer.js';
