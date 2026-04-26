@@ -22,7 +22,7 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
     this.logger.debug('Fetching pending outbox items', { tableName, batchSize: this.batchSize });
 
     return this.repository.executeInTransaction(async (queryRunner) => {
-      const result = await queryRunner.query<TOutboxModel[] | [TOutboxModel[], number]>(
+      const result = (await queryRunner.query(
         `
           UPDATE "${tableName}"
           SET
@@ -39,12 +39,12 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
           RETURNING *, "created_at" AS "createdAt", "updated_at" AS "updatedAt";
         `,
         [OutboxStatus.PROCESSING, OutboxStatus.PENDING, this.batchSize],
-      );
+      )) as unknown;
 
       // Handle driver result formats: [rows, count] or just rows
       const rawRows =
-        Array.isArray(result) && Array.isArray(result[0])
-          ? (result[0] as TOutboxModel[])
+        Array.isArray(result) && Array.isArray((result as unknown[])[0])
+          ? ((result as unknown[])[0] as TOutboxModel[])
           : (result as TOutboxModel[]);
 
       if (rawRows.length === 0) {
