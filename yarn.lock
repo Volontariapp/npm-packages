@@ -3969,6 +3969,7 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:^30.3.0"
     "@nestjs/common": "npm:^11.0.1"
+    "@nestjs/typeorm": "npm:^11.0.1"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^22.10.7"
     "@volontariapp/contracts": "workspace:*"
