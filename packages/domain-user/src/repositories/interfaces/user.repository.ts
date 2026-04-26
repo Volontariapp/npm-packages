@@ -1,4 +1,4 @@
-import type { UserEntity } from "../../entities/user.entity.js";
+import type { UserEntity } from '../../entities/user.entity.js';
 
 export interface IUserRepository {
   findById(id: string): Promise<UserEntity | null>;
@@ -11,4 +11,6 @@ export interface IUserRepository {
   addBadgeToUser(userId: string, badgeId: string): Promise<void>;
   removeBadgeFromUser(userId: string, badgeId: string): Promise<void>;
   incrementImpactScore(userId: string, score: number): Promise<void>;
+  createWithHashedPassword(user: Partial<UserEntity>, password: string): Promise<UserEntity>;
+  findPasswordHashByEmail(email: string): Promise<string | null>;
 }

@@ -3925,7 +3925,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/crypto@workspace:packages/crypto":
+"@volontariapp/crypto@workspace:*, @volontariapp/crypto@workspace:packages/crypto":
   version: 0.0.0-use.local
   resolution: "@volontariapp/crypto@workspace:packages/crypto"
   dependencies:
@@ -4028,6 +4028,8 @@ __metadata:
   resolution: "@volontariapp/domain-user@workspace:packages/domain-user"
   dependencies:
     "@nestjs/typeorm": "npm:^11.0.1"
+    "@volontariapp/contracts": "workspace:*"
+    "@volontariapp/crypto": "workspace:*"
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"

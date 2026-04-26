@@ -3,10 +3,9 @@ import { Logger } from '@volontariapp/logger';
 import { PostgresUserRepository } from '../repositories/postgres-user.repository.js';
 import type { IUserRepository } from '../repositories/index.js';
 import { UserEntity } from '../entities/user.entity.js';
-import { isBaseError, isDatabaseDriverError } from '@volontariapp/errors';
+import { isBaseError } from '@volontariapp/errors';
 import {
   USER_NOT_FOUND,
-  USER_ALREADY_EXISTS,
   USER_ALREADY_HAS_BADGE,
   USER_BADGE_NOT_FOUND,
   INVALID_RNA,
@@ -81,26 +80,6 @@ export class UserService {
       const err = error as Error;
       this.logger.error(`Error while finding all users: ${err.message}`);
       throw DATABASE_ERROR('finding all users', err.message);
-    }
-  }
-
-  async create(user: Partial<UserEntity>): Promise<UserEntity> {
-    try {
-      if (user.rna != null && !UserEntity.isValidRna(user.rna)) {
-        this.logger.warn(`Invalid RNA ${user.rna} for new user`);
-        throw INVALID_RNA(user.rna);
-      }
-      return await this.userRepository.create(user);
-    } catch (error) {
-      if (isBaseError(error)) throw error;
-
-      if (isDatabaseDriverError(error) && error.code === '23505') {
-        throw USER_ALREADY_EXISTS(user.email ?? 'unknown');
-      }
-
-      const err = error as Error;
-      this.logger.error(`Error while creating user: ${err.message}`);
-      throw DATABASE_ERROR('creating user', err.message);
     }
   }
 

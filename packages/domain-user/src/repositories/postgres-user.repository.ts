@@ -46,4 +46,19 @@ export class PostgresUserRepository
     const where = this.buildIdWhere(userId);
     await this.increment(where, 'impactScore' as keyof UserModel, score);
   }
+  async createWithHashedPassword(user: Partial<UserEntity>, password: string): Promise<UserEntity> {
+    const model = this.repository.create({
+      ...user,
+      passwordHash: password,
+    });
+    const savedModel = await this.repository.save(model);
+    return this.toEntity(savedModel);
+  }
+  async findPasswordHashByEmail(email: string): Promise<string | null> {
+    const user = await this.repository.findOne({
+      where: { email },
+      select: ['passwordHash'],
+    });
+    return user ? user.passwordHash : null;
+  }
 }
