@@ -58,7 +58,10 @@ describe('BaseOutboxConsumer (Unit)', () => {
     });
 
     it('should fetch, mark as processing, and return items', async () => {
-      const mockModels = [{ id: '1' }, { id: '2' }];
+      const mockModels: OutboxModel[] = [
+        { id: '1', status: OutboxStatus.PENDING, attempts: 0, type: 'test', emitter: 'test', createdAt: new Date() } as OutboxModel,
+        { id: '2', status: OutboxStatus.PENDING, attempts: 0, type: 'test', emitter: 'test', createdAt: new Date() } as OutboxModel,
+      ];
       queryBuilderMock.getMany
         .mockResolvedValueOnce(mockModels) // First call to get items
         .mockResolvedValueOnce(mockModels); // Second call after update

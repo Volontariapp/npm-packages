@@ -3957,10 +3957,9 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     ts-jest: "npm:^29.4.6"
     ts-node: "npm:^10.9.2"
-    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   peerDependencies:
-    typeorm: ^0.3.20
+    typeorm: ^0.3.28
   languageName: unknown
   linkType: soft
 
@@ -3984,11 +3983,11 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     ts-jest: "npm:^29.4.6"
     ts-node: "npm:^10.9.2"
-    typeorm: "npm:^0.3.20"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   peerDependencies:
     "@nestjs/typeorm": ^11.0.1
-    typeorm: ^0.3.20
+    typeorm: ^0.3.28
   languageName: unknown
   linkType: soft
 
@@ -4000,7 +3999,7 @@ __metadata:
     "@volontariapp/logger": "workspace:*"
     reflect-metadata: "npm:^0.2.2"
     ts-node: "npm:^10.9.2"
-    typeorm: "npm:^0.3.20"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4035,7 +4034,7 @@ __metadata:
     "@volontariapp/shared": "workspace:*"
     reflect-metadata: "npm:^0.2.2"
     ts-node: "npm:^10.9.2"
-    typeorm: "npm:^0.3.20"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -4203,6 +4202,7 @@ __metadata:
     husky: "npm:^9.1.7"
     lint-staged: "npm:^16.4.0"
     prettier: "npm:3.4.2"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -10815,7 +10815,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typeorm@npm:^0.3.20, typeorm@npm:^0.3.28":
+"typeorm@npm:^0.3.28":
   version: 0.3.28
   resolution: "typeorm@npm:0.3.28"
   dependencies:

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import { PostgresProvider } from '@volontariapp/bridge';
-import { BaseRepository } from '../../core/base.repository.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { BaseOutboxConsumer } from '../../outbox/consumers/base.outbox.consumer.js';
