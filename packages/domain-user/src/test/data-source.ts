@@ -10,11 +10,11 @@ const isMigrationRun = process.env.TYPEORM_MIGRATION_RUN === 'true';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5433,
-  username: 'testuser',
-  password: 'testpassword',
-  database: 'volontariapp_test',
+  host: process.env.DB_HOST ?? 'localhost',
+  port: Number(process.env.DB_PORT ?? 5433),
+  username: process.env.DB_USER ?? 'testuser',
+  password: process.env.DB_PASSWORD ?? 'testpassword',
+  database: process.env.DB_NAME ?? 'volontariapp_test',
   entities: [UserModel, BadgeModel, UserBadgeModel],
   migrationsRun: true,
   migrations: isMigrationRun ? [InitialUserSchema1776334421317] : [],
