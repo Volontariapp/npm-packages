@@ -1,7 +1,7 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class BadRequestError extends BaseError {
+export class BadRequestError extends BaseApiError {
   public readonly statusCode = 400;
   public readonly grpcCode = GrpcStatus.INVALID_ARGUMENT;
 

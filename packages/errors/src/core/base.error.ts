@@ -5,8 +5,6 @@ type ErrorConstructorV8 = ErrorConstructor & {
 };
 
 export abstract class BaseError extends Error {
-  public abstract readonly statusCode: number;
-  public abstract readonly grpcCode: GrpcStatus;
   public readonly isBaseError = true;
 
   constructor(
@@ -20,10 +18,25 @@ export abstract class BaseError extends Error {
   }
 }
 
+export abstract class BaseApiError extends BaseError {
+  public abstract readonly statusCode: number;
+  public abstract readonly grpcCode: GrpcStatus;
+  public readonly isBaseApiError = true;
+}
+
 export function isBaseError(error: unknown): error is BaseError {
   return (
     typeof error === 'object' &&
     error !== null &&
-    (error as Record<string, unknown>).isBaseError === true
+    'isBaseError' in error &&
+    (error as { isBaseError: unknown }).isBaseError === true
+  );
+}
+
+export function isBaseApiError(error: unknown): error is BaseApiError {
+  return (
+    isBaseError(error) &&
+    'isBaseApiError' in error &&
+    (error as { isBaseApiError: unknown }).isBaseApiError === true
   );
 }

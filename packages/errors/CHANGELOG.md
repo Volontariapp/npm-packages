@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- Added new error type for invalid outbox consumer fetch size
+- Added new error type for invalid outbox consumer fetch size, and renamed BaseError to BaseApiError, and added a new BaseError not API related
 
 ## 0.4.4
 

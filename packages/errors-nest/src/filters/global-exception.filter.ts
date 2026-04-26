@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { GrpcStatus, isBaseError } from '@volontariapp/errors';
+import { GrpcStatus, isBaseError, isBaseApiError } from '@volontariapp/errors';
 import { Logger } from '@volontariapp/logger';
 import { throwError, Observable } from 'rxjs';
 import type { ErrorResponseDto } from '../swagger/error-response.dto.js';
@@ -50,12 +50,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
     }
 
-    if (isBaseError(errorData)) {
+    if (isBaseApiError(errorData)) {
       status = errorData.statusCode;
+      grpcCode = errorData.grpcCode;
       message = errorData.message;
       code = errorData.code;
       details = errorData.details;
-      grpcCode = errorData.grpcCode;
+    } else if (isBaseError(errorData)) {
+      message = errorData.message;
+      code = errorData.code;
+      details = errorData.details;
     } else if (errorData instanceof HttpException) {
       status = errorData.getStatus();
       const response = errorData.getResponse();
@@ -103,7 +107,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       };
 
       const rpcException = new RpcException({
-        code: isBaseError(exception) ? exception.grpcCode : grpcCode,
+        code: isBaseApiError(exception) ? exception.grpcCode : grpcCode,
         message: JSON.stringify(rpcErrorBody),
       });
 

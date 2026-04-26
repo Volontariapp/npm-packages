@@ -1,54 +1,71 @@
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
-import { BaseRepository } from '../../core/base.repository.js';
-import { OutboxEntity } from '../entities/outbox.entity.js';
+import type { BaseRepository } from '../../core/base.repository.js';
+import type { OutboxEntity } from '../entities/outbox.entity.js';
 import { OutboxStatus } from '../types/outbox.status.js';
-import { OutboxModel } from '../models/outbox.model.js';
+import type { OutboxModel } from '../models/outbox.model.js';
+import type { Logger } from '@volontariapp/logger';
 
 export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
-  constructor(protected readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>) {}
-
-  async fetchWaitingItems(size: number): Promise<TOutboxEntity[]> {
-    if (size <= 0) {
+  constructor(
+    private readonly logger: Logger,
+    protected readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
+    private readonly batchSize: number,
+  ) {
+    if (this.batchSize <= 0) {
       throw new InvalidOutboxSizeError();
     }
+  }
+
+  async fetchPendingItems(): Promise<TOutboxEntity[]> {
+    const tableName = this.repository.metadata.tableName;
+
+    this.logger.debug('Fetching pending outbox items', { tableName, batchSize: this.batchSize });
 
     return this.repository.executeInTransaction(async (queryRunner) => {
-      const models = await queryRunner.manager
-        .createQueryBuilder<TOutboxModel>(this.repository.metadata.target, 'outbox')
-        .setLock('pessimistic_write')
-        .setOnLocked('skip_locked')
-        .where('outbox.status = :status', { status: OutboxStatus.PENDING })
-        .orderBy('outbox.createdAt', 'ASC')
-        .take(size)
-        .getMany();
+      const result = await queryRunner.query<TOutboxModel[] | [TOutboxModel[], number]>(
+        `
+          UPDATE "${tableName}"
+          SET
+            "status" = $1,
+            "updated_at" = NOW()
+          WHERE "id" IN (
+            SELECT "id"
+            FROM "${tableName}"
+            WHERE "status" = $2
+            ORDER BY "created_at" ASC
+            LIMIT $3
+            FOR UPDATE SKIP LOCKED
+          )
+          RETURNING *, "created_at" AS "createdAt", "updated_at" AS "updatedAt";
+        `,
+        [OutboxStatus.PROCESSING, OutboxStatus.PENDING, this.batchSize],
+      );
 
-      if (models.length === 0) {
+      // Handle driver result formats: [rows, count] or just rows
+      const rawRows =
+        Array.isArray(result) && Array.isArray(result[0])
+          ? (result[0] as TOutboxModel[])
+          : (result as TOutboxModel[]);
+
+      if (rawRows.length === 0) {
+        this.logger.debug('No pending outbox items found', { tableName });
         return [];
       }
 
-      const ids = models.map((m) => m.id);
+      this.logger.info(`Fetched ${rawRows.length.toString()} pending outbox items`, {
+        tableName,
+        ids: rawRows.map((row) => row.id),
+      });
 
-      await queryRunner.manager
-        .createQueryBuilder(this.repository.metadata.target, 'outbox')
-        .update()
-        .set({
-          status: OutboxStatus.PROCESSING,
-          updatedAt: new Date(),
-        } as unknown as QueryDeepPartialEntity<TOutboxModel>)
-        .whereInIds(ids)
-        .execute();
-
-      const updatedModels = await queryRunner.manager
-        .createQueryBuilder<TOutboxModel>(this.repository.metadata.target, 'outbox')
-        .whereInIds(ids)
-        .getMany();
-
-      return this.repository.toEntities(updatedModels);
+      return this.repository.toEntities(rawRows);
     });
   }
 
-  processItems(): void {}
+  processItems(): void {
+    this.logger.debug('Processing outbox items');
+  }
 
-  markItemsAsDispatched(): void {}
+  markItemsAsDispatched(): void {
+    this.logger.debug('Marking outbox items as dispatched');
+  }
 }

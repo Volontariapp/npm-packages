@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import type { Repository } from 'typeorm';
 import { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
 import { OutboxModel } from '../../../outbox/models/outbox.model.js';
 import { BaseRepository } from '../../../core/base.repository.js';

@@ -2,7 +2,7 @@ import type { Type } from '@nestjs/common';
 import { applyDecorators } from '@nestjs/common';
 import type { ApiResponseOptions } from '@nestjs/swagger';
 import { ApiResponse, getSchemaPath } from '@nestjs/swagger';
-import type { BaseError } from '@volontariapp/errors';
+import type { BaseApiError } from '@volontariapp/errors';
 import {
   BadRequestError,
   ConflictError,
@@ -61,21 +61,22 @@ export function ApiErrorResponse(
   return applyDecorators(ApiResponse(responseOptions));
 }
 
-function createErrorDecorator<T extends BaseError>(ErrorClass: Type<T>) {
+function createErrorDecorator<T extends BaseApiError>(ErrorClass: Type<T>) {
   return (options?: string | ApiErrorOptions) => {
-    const error = new (ErrorClass as unknown as { new (): T })();
+    const ErrorConstructor = ErrorClass as new () => T;
+    const errorInstance = new ErrorConstructor();
     const isString = typeof options === 'string';
     const description = isString ? options : options?.description;
     const example = isString ? undefined : options?.example;
     const type = isString ? undefined : options?.type;
 
     return ApiErrorResponse({
-      status: error.statusCode,
-      description: description ?? error.message,
+      status: errorInstance.statusCode,
+      description: description ?? errorInstance.message,
       example: example ?? {
-        statusCode: error.statusCode,
-        code: error.code,
-        message: error.message,
+        statusCode: errorInstance.statusCode,
+        code: errorInstance.code,
+        message: errorInstance.message,
       },
       type,
     });
@@ -92,19 +93,19 @@ export const ApiUnprocessableEntityResponse = createErrorDecorator(Unprocessable
 export const ApiTooManyRequestsResponse = createErrorDecorator(TooManyRequestsError);
 
 export function CustomApiError(
-  errorFactory: (...args: unknown[]) => BaseError,
+  errorFactory: (...args: unknown[]) => BaseApiError,
   options?: ApiErrorOptions,
 ) {
-  const error = errorFactory();
-  const description = options?.description ?? error.message;
+  const errorInstance = errorFactory();
+  const description = options?.description ?? errorInstance.message;
 
   return ApiErrorResponse({
-    status: error.statusCode,
+    status: errorInstance.statusCode,
     description,
     example: options?.example ?? {
-      statusCode: error.statusCode,
-      code: error.code,
-      message: error.message,
+      statusCode: errorInstance.statusCode,
+      code: errorInstance.code,
+      message: errorInstance.message,
     },
     type: options?.type,
   });

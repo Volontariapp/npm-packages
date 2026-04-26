@@ -1,7 +1,7 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class UnauthorizedError extends BaseError {
+export class UnauthorizedError extends BaseApiError {
   public readonly statusCode = 401;
   public readonly grpcCode = GrpcStatus.UNAUTHENTICATED;
 

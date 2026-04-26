@@ -1,11 +1,15 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class InternalServerError extends BaseError {
+export class InternalServerError extends BaseApiError {
   public readonly statusCode = 500;
   public readonly grpcCode = GrpcStatus.INTERNAL;
 
-  constructor(message = 'Internal Server Error', code = 'INTERNAL_ERROR', details?: Record<string, unknown>) {
+  constructor(
+    message = 'Internal Server Error',
+    code = 'INTERNAL_ERROR',
+    details?: Record<string, unknown>,
+  ) {
     super(message, code, details);
   }
 }

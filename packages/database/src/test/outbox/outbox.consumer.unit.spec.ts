@@ -1,104 +1,90 @@
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
-import type { QueryRunner, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import type { QueryRunner } from 'typeorm';
 import { OutboxConsumer } from '../../outbox/consumers/outbox.consumer.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
-import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
+import type { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
-import { BaseRepository } from '../../core/base.repository.js';
+import type { BaseRepository } from '../../core/base.repository.js';
+import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
 
 describe('OutboxConsumer (Unit)', () => {
   let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;
   let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
   let queryRunnerMock: jest.Mocked<QueryRunner>;
-  let queryBuilderMock: jest.Mocked<
-    SelectQueryBuilder<OutboxModel> & UpdateQueryBuilder<OutboxModel>
-  >;
+  let loggerMock: TestLoggerMock;
 
   beforeEach(() => {
-    queryBuilderMock = {
-      setLock: jest.fn().mockReturnThis(),
-      setOnLocked: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      take: jest.fn().mockReturnThis(),
-      getMany: jest.fn<() => Promise<OutboxModel[]>>().mockResolvedValue([]),
-      update: jest.fn().mockReturnThis(),
-      set: jest.fn().mockReturnThis(),
-      whereInIds: jest.fn().mockReturnThis(),
-      execute: jest.fn<() => Promise<any>>().mockResolvedValue({}),
-    } as unknown as jest.Mocked<SelectQueryBuilder<OutboxModel> & UpdateQueryBuilder<OutboxModel>>;
-
+    loggerMock = makeLoggerMock();
     queryRunnerMock = {
-      manager: {
-        createQueryBuilder: jest.fn().mockReturnValue(queryBuilderMock),
-      },
+      query: jest.fn<() => Promise<unknown>>().mockResolvedValue([]),
     } as unknown as jest.Mocked<QueryRunner>;
 
     repositoryMock = {
       metadata: {
         target: OutboxModel,
+        tableName: 'outbox',
       },
-      executeInTransaction: jest.fn((work: (qr: QueryRunner) => Promise<any>) =>
+      executeInTransaction: jest.fn((work: (qr: QueryRunner) => Promise<unknown>) =>
         work(queryRunnerMock),
       ),
       toEntities: jest.fn((models: OutboxModel[]) => models as unknown as OutboxEntity[]),
     } as unknown as jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
 
-    consumer = new OutboxConsumer(repositoryMock);
+    consumer = new OutboxConsumer(loggerMock as never, repositoryMock, 10);
   });
 
-  describe('fetchWaitingItems', () => {
-    it('should throw InvalidOutboxSizeError if size <= 0', async () => {
-      await expect(consumer.fetchWaitingItems(0)).rejects.toThrow(InvalidOutboxSizeError);
-      await expect(consumer.fetchWaitingItems(-1)).rejects.toThrow(InvalidOutboxSizeError);
+  describe('constructor', () => {
+    it('should throw InvalidOutboxSizeError if batchSize <= 0', () => {
+      expect(() => new OutboxConsumer(loggerMock as never, repositoryMock, 0)).toThrow(
+        InvalidOutboxSizeError,
+      );
+      expect(() => new OutboxConsumer(loggerMock as never, repositoryMock, -1)).toThrow(
+        InvalidOutboxSizeError,
+      );
     });
+  });
 
+  describe('fetchPendingItems', () => {
     it('should return empty array if no items found', async () => {
-      queryBuilderMock.getMany.mockResolvedValueOnce([]);
-      const result = await consumer.fetchWaitingItems(10);
+      queryRunnerMock.query.mockResolvedValueOnce([]);
+      const result = await consumer.fetchPendingItems();
       expect(result).toEqual([]);
-      expect(queryBuilderMock.update).not.toHaveBeenCalled();
     });
 
     it('should fetch, mark as processing, and return items', async () => {
-      const mockModels: OutboxModel[] = [
+      const rawRows = [
         {
           id: '1',
           status: OutboxStatus.PENDING,
           attempts: 0,
           type: 'test',
           emitter: 'test',
-          createdAt: new Date(),
-        } as OutboxModel,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
         {
           id: '2',
           status: OutboxStatus.PENDING,
           attempts: 0,
           type: 'test',
           emitter: 'test',
-          createdAt: new Date(),
-        } as OutboxModel,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
       ];
-      queryBuilderMock.getMany
-        .mockResolvedValueOnce(mockModels) // First call to get items
-        .mockResolvedValueOnce(mockModels); // Second call after update
 
-      const result = await consumer.fetchWaitingItems(2);
+      queryRunnerMock.query.mockResolvedValueOnce(rawRows);
+
+      const result = await consumer.fetchPendingItems();
 
       expect(repositoryMock.executeInTransaction).toHaveBeenCalled();
-      expect(queryBuilderMock.setLock).toHaveBeenCalledWith('pessimistic_write');
-      expect(queryBuilderMock.setOnLocked).toHaveBeenCalledWith('skip_locked');
-      expect(queryBuilderMock.where).toHaveBeenCalledWith('outbox.status = :status', {
-        status: OutboxStatus.PENDING,
-      });
-      expect(queryBuilderMock.update).toHaveBeenCalled();
-      expect(queryBuilderMock.set).toHaveBeenCalledWith(
-        expect.objectContaining({
-          status: OutboxStatus.PROCESSING,
-        }),
-      );
-      expect(queryBuilderMock.whereInIds).toHaveBeenCalledWith(['1', '2']);
+      expect(queryRunnerMock.query).toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
+        OutboxStatus.PROCESSING,
+        OutboxStatus.PENDING,
+        10,
+      ]);
+
       expect(result).toHaveLength(2);
     });
   });

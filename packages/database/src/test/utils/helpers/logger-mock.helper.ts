@@ -4,14 +4,17 @@ type LoggerLike = {
   info: (...args: unknown[]) => void;
   warn: (...args: unknown[]) => void;
   error: (...args: unknown[]) => void;
+  debug: (...args: unknown[]) => void;
 };
 
-export type TestLoggerMock = LoggerLike & jest.Mocked<Pick<LoggerLike, 'info' | 'warn' | 'error'>>;
+export type TestLoggerMock = LoggerLike &
+  jest.Mocked<Pick<LoggerLike, 'info' | 'warn' | 'error' | 'debug'>>;
 
 export const makeLoggerMock = (): TestLoggerMock => {
   return {
     info: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
+    debug: jest.fn(),
   } as unknown as TestLoggerMock;
 };
