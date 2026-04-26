@@ -29,22 +29,22 @@ export class PostgresUserRepository
     return [this.toEntities(models), total];
   }
   async addBadgeToUser(userId: string, badgeId: string): Promise<void> {
-    await this.repository
-      .createQueryBuilder()
-      .relation(UserModel, 'badges')
-      .of(userId)
-      .add(badgeId);
+    const userBadgeRepo = this.repository.manager.getRepository('UserBadgeModel');
+    await userBadgeRepo.save({
+      user: { id: userId },
+      badge: { id: badgeId },
+    });
   }
   async removeBadgeFromUser(userId: string, badgeId: string): Promise<void> {
-    await this.repository
-      .createQueryBuilder()
-      .relation(UserModel, 'badges')
-      .of(userId)
-      .remove(badgeId);
+    const userBadgeRepo = this.repository.manager.getRepository('UserBadgeModel');
+    await userBadgeRepo.delete({
+      user: { id: userId },
+      badge: { id: badgeId },
+    });
   }
   async incrementImpactScore(userId: string, score: number): Promise<void> {
     const where = this.buildIdWhere(userId);
-    await this.increment(where, 'impactScore' as keyof UserModel, score);
+    await this.increment(where, 'totalImpactScore', score);
   }
   async createWithHashedPassword(user: Partial<UserEntity>, password: string): Promise<UserEntity> {
     const model = this.repository.create({

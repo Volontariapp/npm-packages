@@ -1,7 +1,8 @@
-import type { Repository } from 'typeorm';
+import type { Repository } from '@volontariapp/database';
 import { DataSource } from 'typeorm';
-import { UserEntity } from '../entities/user.entity.js';
-import { BadgeEntity } from '../entities/badge.entity.js';
+import { UserModel } from '../models/user.model.js';
+import { BadgeModel } from '../models/badge.model.js';
+import { UserBadgeModel } from '../models/user-badge.model.js';
 import { InitialUserSchema1776334421317 } from './migrations/1776334421317-InitialUserSchema.js';
 import { registerUserMappings } from '../models/mapper.js';
 
@@ -10,18 +11,19 @@ const isMigrationRun = process.env.TYPEORM_MIGRATION_RUN === 'true';
 export const testDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
-  port: 5434,
-  username: 'user',
-  password: 'password',
-  database: 'ms_event',
-  entities: [UserEntity, BadgeEntity, UserEntity],
+  port: 5433,
+  username: 'testuser',
+  password: 'testpassword',
+  database: 'volontariapp_test',
+  entities: [UserModel, BadgeModel, UserBadgeModel],
+  migrationsRun: true,
   migrations: isMigrationRun ? [InitialUserSchema1776334421317] : [],
   synchronize: false,
   logging: false,
 });
 
-export const getTestRepository = <T extends object>(EntityClass: new () => T): Repository<T> =>
-  testDataSource.getRepository(EntityClass) as unknown as Repository<T>;
+export const getTestRepository = <T extends object>(ModelClass: new () => T): Repository<T> =>
+  testDataSource.getRepository(ModelClass) as unknown as Repository<T>;
 
 export const initializeTestDb = async (): Promise<void> => {
   if (!testDataSource.isInitialized) {

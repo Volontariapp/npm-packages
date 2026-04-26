@@ -30,8 +30,11 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules ../../node_modules/.bin/jest",
+    "test:integration": "node --experimental-vm-modules ../../node_modules/.bin/jest --config jest.integration.config.js --runInBand",
+    "test:all": "yarn test && yarn test:integration",
     "test:watch": "node --experimental-vm-modules ../../node_modules/.bin/jest --watch",
     "test:coverage": "node --experimental-vm-modules ../../node_modules/.bin/jest --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\"",
+    "test:coverage:integration": "node --experimental-vm-modules ../../node_modules/.bin/jest --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\" --runInBand",
     "typeorm": "typeorm-ts-node-esm",
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
