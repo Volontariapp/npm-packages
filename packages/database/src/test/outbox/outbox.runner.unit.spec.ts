@@ -19,7 +19,7 @@ jest.mock('node:timers/promises', () => ({
 jest.mock('@volontariapp/logger');
 
 describe('OutboxRunner (Unit)', () => {
-  // Define runner as optional to satisfy linter checks in afterEach
+  // Define runner as potentially undefined to allow safe checks
   let runner: OutboxRunner<OutboxModel, OutboxEntity> | undefined;
   let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
   let fetchPendingItemsSpy: jest.SpiedFunction<
@@ -59,17 +59,18 @@ describe('OutboxRunner (Unit)', () => {
       'fetchPendingItems',
     ) as jest.SpiedFunction<OutboxConsumer<OutboxModel, OutboxEntity>['fetchPendingItems']>;
 
-    // Re-configure the mock implementation for each test
+    // Re-configure the mock implementation for each test using unknown to satisfy TS
     internalMockSetTimeout.mockImplementation(
-      (ms: number | undefined, value: unknown, options: { signal?: AbortSignal } | undefined) => {
+      (ms: unknown, value: unknown, options: unknown): Promise<unknown> => {
         return new Promise((resolve, reject) => {
-          const delay = ms ?? 1;
+          const delay = typeof ms === 'number' ? ms : 1;
           const timeout = global.setTimeout(() => {
             resolve(value);
           }, delay);
 
-          if (options?.signal) {
-            const signal = options.signal;
+          const timerOptions = options as { signal?: AbortSignal } | undefined;
+          if (timerOptions?.signal) {
+            const signal = timerOptions.signal;
             if (signal.aborted) {
               global.clearTimeout(timeout);
               const error = new Error('The operation was aborted');
@@ -96,7 +97,8 @@ describe('OutboxRunner (Unit)', () => {
   });
 
   afterEach(async () => {
-    if (runner) {
+    // Explicit comparison to satisfy strict boolean checks
+    if (runner !== undefined) {
       await runner.stop();
     }
     internalMockSetTimeout.mockReset();
@@ -106,7 +108,9 @@ describe('OutboxRunner (Unit)', () => {
 
   it('should call fetchPendingItems periodically after start', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-    if (runner) runner.start();
+    if (runner !== undefined) {
+      runner.start();
+    }
 
     await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
@@ -122,7 +126,9 @@ describe('OutboxRunner (Unit)', () => {
 
   it('runCycle() should execute a single fetch and return', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-    if (runner) await runner.runCycle();
+    if (runner !== undefined) {
+      await runner.runCycle();
+    }
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -131,7 +137,9 @@ describe('OutboxRunner (Unit)', () => {
     fetchPendingItemsSpy.mockRejectedValueOnce(error);
     fetchPendingItemsSpy.mockResolvedValue([]);
 
-    if (runner) runner.start();
+    if (runner !== undefined) {
+      runner.start();
+    }
     await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
@@ -142,11 +150,13 @@ describe('OutboxRunner (Unit)', () => {
 
   it('should stop running when stop is called', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-    if (runner) runner.start();
+    if (runner !== undefined) {
+      runner.start();
+    }
     await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
-    if (runner) {
+    if (runner !== undefined) {
       const stopPromise = runner.stop();
       await flush();
       jest.advanceTimersByTime(0);
@@ -167,11 +177,13 @@ describe('OutboxRunner (Unit)', () => {
       return [];
     });
 
-    if (runner) runner.start();
+    if (runner !== undefined) {
+      runner.start();
+    }
     await flush();
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
-    if (runner) {
+    if (runner !== undefined) {
       const stopPromise = runner.stop();
       await flush();
       expect(cycleFinished).toBe(false);
@@ -184,14 +196,18 @@ describe('OutboxRunner (Unit)', () => {
   });
 
   it('should not start multiple times', () => {
-    if (runner) runner.start();
+    if (runner !== undefined) {
+      runner.start();
+    }
     const loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn');
-    if (runner) runner.start();
+    if (runner !== undefined) {
+      runner.start();
+    }
     expect(loggerWarnSpy).toHaveBeenCalledWith('Outbox runner is already running');
   });
 
   it('isRunning should reflect correct state', async () => {
-    if (runner) {
+    if (runner !== undefined) {
       expect(runner.isRunning).toBe(false);
       runner.start();
       await waitForCalls(1);
