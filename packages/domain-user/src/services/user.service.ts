@@ -14,6 +14,26 @@ import {
   DATABASE_ERROR,
 } from '@volontariapp/errors-nest';
 import { BadgeService } from './badge.service.js';
+import {
+  UserId,
+  UserEmail,
+  UserRna,
+  UpdateUserInput,
+  PaginationInput,
+  UserListResult,
+  ImpactScore,
+} from '../value-objects/index.js';
+import { BadgeId } from '../value-objects/index.js';
+
+export {
+  UserId,
+  UserEmail,
+  UserRna,
+  UpdateUserInput,
+  PaginationInput,
+  UserListResult,
+  ImpactScore,
+};
 
 @Injectable()
 export class UserService {
@@ -25,59 +45,65 @@ export class UserService {
     private readonly badgeService: BadgeService,
   ) {}
 
-  async findById(id: string): Promise<UserEntity> {
+  async findById(id: UserId): Promise<UserEntity> {
     try {
-      const user = await this.userRepository.findById(id);
+      const user = await this.userRepository.findById(id.value);
       if (!user) {
-        this.logger.warn(`User with id ${id} not found`);
-        throw USER_NOT_FOUND(id);
+        this.logger.warn(`User with id ${id.value} not found`);
+        throw USER_NOT_FOUND(id.value);
       }
       return user;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while finding user by id ${id}: ${err.message}`);
-      throw DATABASE_ERROR(`finding user by id ${id}`, err.message);
+      this.logger.error(`Error while finding user by id ${id.value}: ${err.message}`);
+      throw DATABASE_ERROR(`finding user by id ${id.value}`, err.message);
     }
   }
 
-  async findByEmail(email: string): Promise<UserEntity> {
+  async findByEmail(email: UserEmail): Promise<UserEntity> {
     try {
-      const user = await this.userRepository.findByEmail(email);
+      const user = await this.userRepository.findByEmail(email.value);
       if (!user) {
-        this.logger.warn(`User with email hash ${calculateHash(email).slice(0, 8)} not found`);
-        throw USER_NOT_FOUND(email, 'email');
+        this.logger.warn(
+          `User with email hash ${calculateHash(email.value).slice(0, 8)} not found`,
+        );
+        throw USER_NOT_FOUND(email.value, 'email');
       }
       return user;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(
-        `Error while finding user by email hash ${calculateHash(email).slice(0, 8)}: ${err.message}`,
+        `Error while finding user by email hash ${calculateHash(email.value).slice(0, 8)}: ${err.message}`,
       );
-      throw DATABASE_ERROR(`finding user by email ${email}`, err.message);
+      throw DATABASE_ERROR(`finding user by email ${email.value}`, err.message);
     }
   }
 
-  async findByRna(rna: string): Promise<UserEntity> {
+  async findByRna(rna: UserRna): Promise<UserEntity> {
     try {
-      const user = await this.userRepository.findByRna(rna);
+      const user = await this.userRepository.findByRna(rna.value);
       if (!user) {
-        this.logger.warn(`User with rna ${rna} not found`);
-        throw USER_NOT_FOUND(rna, 'rna');
+        this.logger.warn(`User with rna ${rna.value} not found`);
+        throw USER_NOT_FOUND(rna.value, 'rna');
       }
       return user;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while finding user by rna ${rna}: ${err.message}`);
-      throw DATABASE_ERROR(`finding user by rna ${rna}`, err.message);
+      this.logger.error(`Error while finding user by rna ${rna.value}: ${err.message}`);
+      throw DATABASE_ERROR(`finding user by rna ${rna.value}`, err.message);
     }
   }
 
-  async findAll(limit?: number, offset?: number): Promise<[UserEntity[], number]> {
+  async findAll(pagination?: PaginationInput): Promise<UserListResult> {
     try {
-      return await this.userRepository.findAll(limit, offset);
+      const [users, total] = await this.userRepository.findAll(
+        pagination?.limit,
+        pagination?.offset,
+      );
+      return new UserListResult(users, total);
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
@@ -86,97 +112,109 @@ export class UserService {
     }
   }
 
-  async update(id: string, data: Partial<UserEntity>): Promise<UserEntity> {
+  async update(id: UserId, input: UpdateUserInput): Promise<UserEntity> {
     try {
-      if (data.rna != null && !UserEntity.isValidRna(data.rna)) {
-        this.logger.warn(`Invalid RNA ${data.rna} for user update with id ${id}`);
-        throw INVALID_RNA(data.rna);
+      if (input.rna != null && !UserEntity.isValidRna(input.rna)) {
+        this.logger.warn(`Invalid RNA ${input.rna} for user update with id ${id.value}`);
+        throw INVALID_RNA(input.rna);
       }
-      const updatedUser = await this.userRepository.update(id, data);
+      const updatedUser = await this.userRepository.update(id.value, {
+        pseudo: input.pseudo,
+        bio: input.bio,
+        logoPath: input.logoPath,
+        rna: input.rna,
+      });
       if (!updatedUser) {
-        this.logger.warn(`User with id ${id} not found for update`);
-        throw USER_NOT_FOUND(id);
+        this.logger.warn(`User with id ${id.value} not found for update`);
+        throw USER_NOT_FOUND(id.value);
       }
       return updatedUser;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while updating user with id ${id}: ${err.message}`);
-      throw DATABASE_ERROR(`updating user with id ${id}`, err.message);
+      this.logger.error(`Error while updating user with id ${id.value}: ${err.message}`);
+      throw DATABASE_ERROR(`updating user with id ${id.value}`, err.message);
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: UserId): Promise<void> {
     try {
-      const deleted = await this.userRepository.delete(id);
+      const deleted = await this.userRepository.delete(id.value);
       if (!deleted) {
-        this.logger.warn(`User with id ${id} not found for deletion`);
-        throw USER_NOT_FOUND(id);
+        this.logger.warn(`User with id ${id.value} not found for deletion`);
+        throw USER_NOT_FOUND(id.value);
       }
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while deleting user with id ${id}: ${err.message}`);
-      throw DATABASE_ERROR(`deleting user with id ${id}`, err.message);
+      this.logger.error(`Error while deleting user with id ${id.value}: ${err.message}`);
+      throw DATABASE_ERROR(`deleting user with id ${id.value}`, err.message);
     }
   }
 
-  async addBadgeToUser(userId: string, badgeId: string): Promise<void> {
+  async addBadgeToUser(userId: UserId, badgeId: BadgeId): Promise<void> {
     try {
       const user = await this.findById(userId);
       await this.badgeService.findById(badgeId);
 
-      if (user.badges.some((b) => b.id === badgeId)) {
-        this.logger.warn(`User with id ${userId} already has badge with id ${badgeId}`);
-        throw USER_ALREADY_HAS_BADGE(userId, badgeId);
+      if (user.badges.some((b) => b.id === badgeId.value)) {
+        this.logger.warn(`User with id ${userId.value} already has badge with id ${badgeId.value}`);
+        throw USER_ALREADY_HAS_BADGE(userId.value, badgeId.value);
       }
 
-      await this.userRepository.addBadgeToUser(userId, badgeId);
+      await this.userRepository.addBadgeToUser(userId.value, badgeId.value);
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while adding badge ${badgeId} to user ${userId}: ${err.message}`);
-      throw DATABASE_ERROR(`adding badge ${badgeId} to user ${userId}`, err.message);
+      this.logger.error(
+        `Error while adding badge ${badgeId.value} to user ${userId.value}: ${err.message}`,
+      );
+      throw DATABASE_ERROR(`adding badge ${badgeId.value} to user ${userId.value}`, err.message);
     }
   }
 
-  async removeBadgeFromUser(userId: string, badgeId: string): Promise<void> {
+  async removeBadgeFromUser(userId: UserId, badgeId: BadgeId): Promise<void> {
     try {
       const user = await this.findById(userId);
 
-      if (!user.badges.some((badge) => badge.id === badgeId)) {
+      if (!user.badges.some((badge) => badge.id === badgeId.value)) {
         this.logger.warn(
-          `User with id ${userId} does not have badge with id ${badgeId} for removal`,
+          `User with id ${userId.value} does not have badge with id ${badgeId.value} for removal`,
         );
-        throw USER_BADGE_NOT_FOUND(userId, badgeId);
+        throw USER_BADGE_NOT_FOUND(userId.value, badgeId.value);
       }
 
-      await this.userRepository.removeBadgeFromUser(userId, badgeId);
+      await this.userRepository.removeBadgeFromUser(userId.value, badgeId.value);
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(
-        `Error while removing badge ${badgeId} from user ${userId}: ${err.message}`,
+        `Error while removing badge ${badgeId.value} from user ${userId.value}: ${err.message}`,
       );
-      throw DATABASE_ERROR(`removing badge ${badgeId} from user ${userId}`, err.message);
+      throw DATABASE_ERROR(
+        `removing badge ${badgeId.value} from user ${userId.value}`,
+        err.message,
+      );
     }
   }
 
-  async incrementImpactScore(userId: string, score: number): Promise<void> {
+  async incrementImpactScore(userId: UserId, score: ImpactScore): Promise<void> {
     try {
-      if (score <= 0) {
-        this.logger.warn(`Invalid score increment of ${score.toString()} for user ${userId}`);
-        throw INVALID_SCORE_INCREMENT(score);
+      if (score.value <= 0) {
+        this.logger.warn(
+          `Invalid score increment of ${score.value.toString()} for user ${userId.value}`,
+        );
+        throw INVALID_SCORE_INCREMENT(score.value);
       }
-      await this.userRepository.incrementImpactScore(userId, score);
+      await this.userRepository.incrementImpactScore(userId.value, score.value);
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(
-        `Error while incrementing impact score of user ${userId} by ${score.toString()}: ${err.message}`,
+        `Error while incrementing impact score of user ${userId.value} by ${score.value.toString()}: ${err.message}`,
       );
       throw DATABASE_ERROR(
-        `incrementing impact score of user ${userId} by ${score.toString()}`,
+        `incrementing impact score of user ${userId.value} by ${score.value.toString()}`,
         err.message,
       );
     }

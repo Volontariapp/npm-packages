@@ -77,12 +77,10 @@ export class PostgresUserRepository
     await this.increment(where, 'totalImpactScore', score);
   }
 
-  async createWithHashedPassword(user: Partial<UserEntity>, password: string): Promise<UserEntity> {
-    const model = this.repository.create({
-      ...user,
-      email: user.email != null ? this.encryptEmail(user.email) : undefined,
-      passwordHash: password,
-    });
+  async createWithHashedPassword(user: UserEntity, password: string): Promise<UserEntity> {
+    const modelData = this.toModel(user);
+    modelData.passwordHash = password;
+    const model = this.repository.create(modelData);
     const savedModel = await this.repository.save(model);
     return this.toEntity(savedModel);
   }

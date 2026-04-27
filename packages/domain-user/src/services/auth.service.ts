@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import * as repositories from '../repositories/index.js';
 import { UserEntity } from '../entities/user.entity.js';
 import {
   DATABASE_ERROR,
@@ -11,39 +10,23 @@ import {
 import { hashPassword, verifyPassword, calculateHash } from '@volontariapp/crypto';
 import { isBaseError, isDatabaseDriverError } from '@volontariapp/errors';
 import { JwtService } from '@volontariapp/auth';
+import { PostgresUserRepository } from '../repositories/postgres-user.repository.js';
+import type { IUserRepository } from '../repositories/interfaces/user.repository.js';
+import { SignUpInput, LoginInput, AuthTokens, SignUpOutput } from '../value-objects/index.js';
 
-export interface SignUpData {
-  email: string;
-  pseudo?: string;
-  password: string;
-  organisationInfo?: {
-    rna: string;
-  };
-  bio?: string;
-  logoPath?: string;
-}
-
-export interface LoginData {
-  email: string;
-  password: string;
-}
-
-export type AuthResult = {
-  accessToken: string;
-  refreshToken: string;
-};
+export { SignUpInput, LoginInput, AuthTokens };
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger({ context: AuthService.name });
 
   constructor(
-    @Inject(repositories.PostgresUserRepository)
-    private readonly userRepository: repositories.IUserRepository,
+    @Inject(PostgresUserRepository)
+    private readonly userRepository: IUserRepository,
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(command: SignUpData): Promise<AuthResult> {
+  async signUp(command: SignUpInput): Promise<SignUpOutput> {
     const existingUser = await this.userRepository.findByEmail(command.email);
     if (existingUser) {
       this.logger.warn(
@@ -54,7 +37,7 @@ export class AuthService {
     const user = UserEntity.create({
       email: command.email,
       pseudo: command.pseudo,
-      rna: command.organisationInfo?.rna,
+      rna: command.rna,
       bio: command.bio,
       logoPath: command.logoPath,
     });
@@ -70,7 +53,7 @@ export class AuthService {
         this.jwtService.signAccessToken(authUser),
         this.jwtService.signRefreshToken(authUser),
       ]);
-      return { accessToken, refreshToken };
+      return new SignUpOutput(userEntity, new AuthTokens(accessToken, refreshToken));
     } catch (error) {
       if (isBaseError(error)) throw error;
 
@@ -84,7 +67,7 @@ export class AuthService {
     }
   }
 
-  async logIn(command: LoginData): Promise<AuthResult> {
+  async logIn(command: LoginInput): Promise<AuthTokens> {
     const user = await this.userRepository.findByEmail(command.email);
     if (!user) {
       this.logger.warn(
@@ -104,6 +87,6 @@ export class AuthService {
       this.jwtService.signAccessToken(authUser),
       this.jwtService.signRefreshToken(authUser),
     ]);
-    return { accessToken, refreshToken };
+    return new AuthTokens(accessToken, refreshToken);
   }
 }

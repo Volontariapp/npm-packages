@@ -5,6 +5,9 @@ import type { IBadgeRepository } from '../repositories/index.js';
 import { BadgeEntity } from '../entities/badge.entity.js';
 import { isBaseError, isDatabaseDriverError } from '@volontariapp/errors';
 import { BADGE_NOT_FOUND, BADGE_ALREADY_EXISTS, DATABASE_ERROR } from '@volontariapp/errors-nest';
+import { BadgeId, BadgeSlug, CreateBadgeInput, UpdateBadgeInput } from '../value-objects/index.js';
+
+export { BadgeId, BadgeSlug, CreateBadgeInput, UpdateBadgeInput };
 
 @Injectable()
 export class BadgeService {
@@ -15,35 +18,35 @@ export class BadgeService {
     private readonly badgeRepository: IBadgeRepository,
   ) {}
 
-  async findById(id: string): Promise<BadgeEntity> {
+  async findById(id: BadgeId): Promise<BadgeEntity> {
     try {
-      const badge = await this.badgeRepository.findById(id);
+      const badge = await this.badgeRepository.findById(id.value);
       if (!badge) {
-        this.logger.warn(`Badge with id ${id} not found`);
-        throw BADGE_NOT_FOUND(id, 'id');
+        this.logger.warn(`Badge with id ${id.value} not found`);
+        throw BADGE_NOT_FOUND(id.value, 'id');
       }
       return badge;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while finding badge by id ${id}: ${err.message}`);
-      throw DATABASE_ERROR(`finding badge by id ${id}`, err.message);
+      this.logger.error(`Error while finding badge by id ${id.value}: ${err.message}`);
+      throw DATABASE_ERROR(`finding badge by id ${id.value}`, err.message);
     }
   }
 
-  async findBySlug(slug: string): Promise<BadgeEntity> {
+  async findBySlug(slug: BadgeSlug): Promise<BadgeEntity> {
     try {
-      const badge = await this.badgeRepository.findBySlug(slug);
+      const badge = await this.badgeRepository.findBySlug(slug.value);
       if (!badge) {
-        this.logger.warn(`Badge with slug ${slug} not found`);
-        throw BADGE_NOT_FOUND(slug, 'slug');
+        this.logger.warn(`Badge with slug ${slug.value} not found`);
+        throw BADGE_NOT_FOUND(slug.value, 'slug');
       }
       return badge;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while finding badge by slug ${slug}: ${err.message}`);
-      throw DATABASE_ERROR(`finding badge by slug ${slug}`, err.message);
+      this.logger.error(`Error while finding badge by slug ${slug.value}: ${err.message}`);
+      throw DATABASE_ERROR(`finding badge by slug ${slug.value}`, err.message);
     }
   }
 
@@ -58,25 +61,31 @@ export class BadgeService {
     }
   }
 
-  findManyByIds(ids: string[]): Promise<BadgeEntity[]> {
+  async findManyByIds(ids: BadgeId[]): Promise<BadgeEntity[]> {
     try {
-      return this.badgeRepository.findManyByIds(ids);
+      return await this.badgeRepository.findManyByIds(ids.map((id) => id.value));
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while finding badges by ids ${ids.join(', ')}: ${err.message}`);
-      throw DATABASE_ERROR(`finding badges by ids ${ids.join(', ')}`, err.message);
+      const raw = ids.map((id) => id.value).join(', ');
+      this.logger.error(`Error while finding badges by ids ${raw}: ${err.message}`);
+      throw DATABASE_ERROR(`finding badges by ids ${raw}`, err.message);
     }
   }
 
-  async create(badgeData: Partial<BadgeEntity>): Promise<BadgeEntity> {
+  async create(input: CreateBadgeInput): Promise<BadgeEntity> {
     try {
-      return await this.badgeRepository.create(badgeData);
+      return await this.badgeRepository.create({
+        name: input.name,
+        slug: input.slug,
+        description: input.description,
+        iconPath: input.iconPath,
+      });
     } catch (error) {
       if (isBaseError(error)) throw error;
       if (isDatabaseDriverError(error) && error.code === '23505') {
-        this.logger.warn(`Badge with slug ${badgeData.slug ?? 'unknown'} already exists`);
-        throw BADGE_ALREADY_EXISTS(badgeData.slug ?? 'unknown');
+        this.logger.warn(`Badge with slug ${input.slug} already exists`);
+        throw BADGE_ALREADY_EXISTS(input.slug);
       }
       const err = error as Error;
       this.logger.error(`Error while creating badge: ${err.message}`);
@@ -84,34 +93,39 @@ export class BadgeService {
     }
   }
 
-  async update(id: string, badgeData: Partial<BadgeEntity>): Promise<BadgeEntity> {
+  async update(id: BadgeId, input: UpdateBadgeInput): Promise<BadgeEntity> {
     try {
-      const updatedBadge = await this.badgeRepository.update(id, badgeData);
+      const updatedBadge = await this.badgeRepository.update(id.value, {
+        name: input.name,
+        slug: input.slug,
+        description: input.description,
+        iconPath: input.iconPath,
+      });
       if (!updatedBadge) {
-        this.logger.warn(`Badge with id ${id} not found for update`);
-        throw BADGE_NOT_FOUND(id, 'id');
+        this.logger.warn(`Badge with id ${id.value} not found for update`);
+        throw BADGE_NOT_FOUND(id.value, 'id');
       }
       return updatedBadge;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while updating badge with id ${id}: ${err.message}`);
-      throw DATABASE_ERROR(`updating badge with id ${id}`, err.message);
+      this.logger.error(`Error while updating badge with id ${id.value}: ${err.message}`);
+      throw DATABASE_ERROR(`updating badge with id ${id.value}`, err.message);
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: BadgeId): Promise<void> {
     try {
-      const deleted = await this.badgeRepository.delete(id);
+      const deleted = await this.badgeRepository.delete(id.value);
       if (!deleted) {
-        this.logger.warn(`Badge with id ${id} not found for deletion`);
-        throw BADGE_NOT_FOUND(id, 'id');
+        this.logger.warn(`Badge with id ${id.value} not found for deletion`);
+        throw BADGE_NOT_FOUND(id.value, 'id');
       }
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while deleting badge with id ${id}: ${err.message}`);
-      throw DATABASE_ERROR(`deleting badge with id ${id}`, err.message);
+      this.logger.error(`Error while deleting badge with id ${id.value}: ${err.message}`);
+      throw DATABASE_ERROR(`deleting badge with id ${id.value}`, err.message);
     }
   }
 }
