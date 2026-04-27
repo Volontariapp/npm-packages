@@ -1,31 +1,32 @@
 import { jest } from '@jest/globals';
 import type { OutboxEntity, OutboxModel } from '@volontariapp/database';
 import { type BaseRepository } from '@volontariapp/database';
-import type { QueryRunner, SelectQueryBuilder } from 'typeorm';
+import type { QueryRunner, SelectQueryBuilder, UpdateResult, EntityMetadata } from 'typeorm';
 
 export type OutboxConsumerRepositoryMock<
-  TModel extends ObjectLiteral,
-  TEntity extends object,
+  TModel extends OutboxModel,
+  TEntity extends OutboxEntity,
 > = jest.Mocked<Omit<BaseRepository<TModel, TEntity, string>, 'mapper' | 'logger'>>;
-
-// Helper type to avoid importing ObjectLiteral from typeorm if possible
-type ObjectLiteral = Record<string, unknown>;
 
 export function makeOutboxConsumerRepositoryMock<
   TModel extends OutboxModel,
   TEntity extends OutboxEntity,
->(modelClass: typeof OutboxModel): OutboxConsumerRepositoryMock<TModel, TEntity> {
+>(modelClass: new () => TModel): OutboxConsumerRepositoryMock<TModel, TEntity> {
   const queryBuilderMock = {
     setLock: jest.fn().mockReturnThis(),
     setOnLocked: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
     take: jest.fn().mockReturnThis(),
-    getMany: jest.fn().mockResolvedValue([]),
+    getMany: jest.fn<() => Promise<TModel[]>>().mockResolvedValue([]),
     update: jest.fn().mockReturnThis(),
     set: jest.fn().mockReturnThis(),
     whereInIds: jest.fn().mockReturnThis(),
-    execute: jest.fn().mockResolvedValue({}),
+    returning: jest.fn().mockReturnThis(),
+    execute: jest.fn<() => Promise<UpdateResult>>().mockResolvedValue({
+      raw: [{ id: 'dummy-id' }],
+      generatedMaps: [],
+    } as UpdateResult),
   } as unknown as SelectQueryBuilder<TModel>;
 
   const queryRunnerMock = {
@@ -38,12 +39,12 @@ export function makeOutboxConsumerRepositoryMock<
     metadata: {
       target: modelClass,
       tableName: 'test_table',
-    },
-    executeInTransaction: jest.fn((work: (queryRunner: QueryRunner) => Promise<unknown>) =>
-      work(queryRunnerMock),
+    } as unknown as EntityMetadata,
+    executeInTransaction: jest.fn(
+      <T>(work: (queryRunner: QueryRunner) => Promise<T>): Promise<T> => work(queryRunnerMock),
     ),
-    toEntities: jest.fn((models: TModel[]) => models as TEntity[]),
-    toEntity: jest.fn(),
+    toEntities: jest.fn((models: TModel[]) => models as unknown as TEntity[]),
+    toEntity: jest.fn((model: TModel) => model as unknown as TEntity),
     find: jest.fn(),
     findOne: jest.fn(),
     findOneOrFail: jest.fn(),

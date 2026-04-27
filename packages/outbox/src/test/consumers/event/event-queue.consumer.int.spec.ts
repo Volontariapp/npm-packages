@@ -35,13 +35,15 @@ describe('EventQueueConsumer (Integration)', () => {
     consumer = new EventQueueConsumer(logger, testRepository, 10);
 
     // 1. Seed the database with a pending item
+    const eventId = '00000000-0000-0000-0000-000000000001';
     const pendingItem = repository.create({
-      id: 'event-1',
+      id: eventId,
       type: 'test.event',
       emitter: 'test.service',
       status: OutboxStatus.PENDING,
-      payload: { data: 'test' },
+      payload: { after: { data: 'test' } },
       createdAt: new Date(),
+      updatedAt: new Date(),
       version: 1,
       attempts: 0,
     } as Partial<EventQueueModel>);
@@ -53,11 +55,11 @@ describe('EventQueueConsumer (Integration)', () => {
     // 3. Assertions
     expect(fetchedItems).toHaveLength(1);
     expect(fetchedItems[0]).toBeInstanceOf(EventQueueEntity);
-    expect(fetchedItems[0].id).toBe('event-1');
+    expect(fetchedItems[0].id).toBe(eventId);
     expect(fetchedItems[0].status).toBe(OutboxStatus.PROCESSING);
 
     // 4. Verify in database
-    const dbItem = await repository.findOneByOrFail({ id: 'event-1' });
+    const dbItem = await repository.findOneByOrFail({ id: eventId });
     expect(dbItem.status).toBe(OutboxStatus.PROCESSING);
     expect(dbItem.updatedAt).toBeDefined();
   });
@@ -77,12 +79,13 @@ describe('EventQueueConsumer (Integration)', () => {
     // Seed 3 items
     const items = [1, 2, 3].map((i) =>
       repository.create({
-        id: `event-${i.toString()}`,
+        id: `00000000-0000-0000-0000-00000000000${i.toString()}`,
         type: 'test.event',
         emitter: 'test.service',
         status: OutboxStatus.PENDING,
-        payload: { i },
+        payload: { after: { i } },
         createdAt: new Date(Date.now() + i), // ensuring deterministic order if needed
+        updatedAt: new Date(),
         version: 1,
         attempts: 0,
       } as Partial<EventQueueModel>),

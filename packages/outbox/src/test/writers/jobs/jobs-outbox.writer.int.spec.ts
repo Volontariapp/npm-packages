@@ -4,28 +4,24 @@ import {
   JobsOutboxModel,
   JobsOutboxEntity,
   OutboxStatus,
-  type Repository,
 } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { JobsOutboxWriter } from '../../../writers/jobs-outbox.writer.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
 import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
-import type { TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import type { Logger } from '@volontariapp/logger';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 
 describe('JobsOutboxWriter (Full Integration)', () => {
   let writer: JobsOutboxWriter;
-
-  const logger: TestLoggerMock = makeLoggerMock();
+  const logger: Logger = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
     writer = new JobsOutboxWriter(
-      logger as never,
-      new TestJobsOutboxRepository(
-        testDataSource.getRepository(JobsOutboxModel) as unknown as Repository<JobsOutboxModel>,
-      ),
+      logger,
+      new TestJobsOutboxRepository(testDataSource.getRepository(JobsOutboxModel)),
     );
   });
 

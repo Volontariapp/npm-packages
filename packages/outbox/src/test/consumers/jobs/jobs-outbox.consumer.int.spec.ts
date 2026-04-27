@@ -34,13 +34,16 @@ describe('JobsOutboxConsumer (Integration)', () => {
     const testRepository = new TestJobsOutboxRepository(repository);
     consumer = new JobsOutboxConsumer(logger, testRepository, 10);
 
+    const jobId = '00000000-0000-0000-0000-000000000001';
     const pendingItem = repository.create({
-      id: 'job-1',
+      id: jobId,
       type: 'test.job',
       emitter: 'test.service',
       status: OutboxStatus.PENDING,
       payload: { data: 'test' },
       createdAt: new Date(),
+      updatedAt: new Date(),
+      scheduledAt: new Date(),
       version: 1,
       attempts: 0,
       target: 'test.target',
@@ -51,10 +54,10 @@ describe('JobsOutboxConsumer (Integration)', () => {
 
     expect(fetchedItems).toHaveLength(1);
     expect(fetchedItems[0]).toBeInstanceOf(JobsOutboxEntity);
-    expect(fetchedItems[0].id).toBe('job-1');
+    expect(fetchedItems[0].id).toBe(jobId);
     expect(fetchedItems[0].status).toBe(OutboxStatus.PROCESSING);
 
-    const dbItem = await repository.findOneByOrFail({ id: 'job-1' });
+    const dbItem = await repository.findOneByOrFail({ id: jobId });
     expect(dbItem.status).toBe(OutboxStatus.PROCESSING);
   });
 });

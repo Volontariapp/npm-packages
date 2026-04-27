@@ -35,17 +35,15 @@ describe('JobsOutboxWriter (Unit)', () => {
     const created = repository.create.mock.calls[0][0];
     expect(created.status).toBe(OutboxStatus.PENDING);
     expect(created.attempts).toBe(0);
-    expect(created.version).toBe(1);
-    expect(created.payload).toEqual({ jobName: 'test-job', data: { id: 'entity-1' } });
+    expect(created.payload).toEqual({ action: 'process-user', data: { userId: 'u-1' } });
   });
 
   it('create() should keep overridden values when provided', async () => {
     const event = makeJobsOutboxEvent({
       status: OutboxStatus.FAILED,
       attempts: 2,
-      version: 7,
       payload: {
-        jobName: 'overridden-job',
+        action: 'overridden-job',
         data: { id: 'entity-2' },
       },
     });
@@ -56,9 +54,8 @@ describe('JobsOutboxWriter (Unit)', () => {
     const created = repository.create.mock.calls[0][0];
     expect(created.status).toBe(OutboxStatus.FAILED);
     expect(created.attempts).toBe(2);
-    expect(created.version).toBe(7);
     expect(created.payload).toEqual({
-      jobName: 'overridden-job',
+      action: 'overridden-job',
       data: { id: 'entity-2' },
     });
   });
