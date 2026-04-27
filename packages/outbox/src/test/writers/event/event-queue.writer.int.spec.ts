@@ -4,8 +4,8 @@ import {
   EventQueueModel,
   EventQueueEntity,
   OutboxStatus,
-  type Repository,
 } from '@volontariapp/database';
+import type { Repository } from 'typeorm';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { EventQueueWriter } from '../../../writers/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';

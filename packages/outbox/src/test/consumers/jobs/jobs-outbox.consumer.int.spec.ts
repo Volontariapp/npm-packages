@@ -4,8 +4,8 @@ import {
   JobsOutboxModel,
   JobsOutboxEntity,
   OutboxStatus,
-  type Repository,
 } from '@volontariapp/database';
+import type { Repository } from 'typeorm';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { JobsOutboxConsumer } from '../../../consumers/jobs-outbox.consumer.js';
 import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
