@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - Auto-generated proto typings update for both pure contracts and NestJS integration.
+- Add gRPC helpers for ms user
 
 ## 3.0.2
 
