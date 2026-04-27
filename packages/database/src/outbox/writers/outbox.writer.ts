@@ -2,11 +2,10 @@ import type { BaseRepository } from '../../core/base.repository.js';
 import { UnprocessableEntityError } from '@volontariapp/errors';
 import { OutboxEntity } from '../entities/outbox.entity.js';
 import { OutboxModel } from '../models/outbox.model.js';
-import { Logger } from '@volontariapp/logger';
+import type { Logger } from '@volontariapp/logger';
 import { databaseMapper } from '../../core/mapper.service.js';
 
 databaseMapper.registerBidirectional(OutboxModel, OutboxEntity);
-
 
 export class OutboxWriter<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   constructor(
@@ -23,9 +22,13 @@ export class OutboxWriter<TOutboxModel extends OutboxModel, TOutboxEntity extend
         emitter: outboxModel.emitter,
         createdAt,
       });
-      throw new UnprocessableEntityError('Outbox createdAt must be a valid date', 'OUTBOX_INVALID_CREATED_AT', {
-        field: 'createdAt',
-      });
+      throw new UnprocessableEntityError(
+        'Outbox createdAt must be a valid date',
+        'OUTBOX_INVALID_CREATED_AT',
+        {
+          field: 'createdAt',
+        },
+      );
     }
 
     if (createdAt.getTime() > Date.now()) {
@@ -63,7 +66,9 @@ export class OutboxWriter<TOutboxModel extends OutboxModel, TOutboxEntity extend
     this.logger.info('Creating outbox events batch', { count: outboxEntities.length });
 
     try {
-      outboxEntities.forEach((outboxEntity) => this.assertWritable(outboxEntity));
+      outboxEntities.forEach((outboxEntity) => {
+        this.assertWritable(outboxEntity);
+      });
       await this.repository.createMany(outboxEntities);
       this.logger.info('Outbox events batch created', { count: outboxEntities.length });
     } catch (error) {

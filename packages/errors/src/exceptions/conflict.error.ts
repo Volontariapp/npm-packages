@@ -1,7 +1,7 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class ConflictError extends BaseError {
+export class ConflictError extends BaseApiError {
   public readonly statusCode = 409;
   public readonly grpcCode = GrpcStatus.ALREADY_EXISTS;
 

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
-import { BaseRepository } from '@volontariapp/database';
-import { ILike } from 'typeorm';
+import { BaseRepository, ILike } from '@volontariapp/database';
 import { EventModel } from '../models/event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { IEventRepository } from './interfaces/event.repository.js';

@@ -1,11 +1,15 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class TooManyRequestsError extends BaseError {
+export class TooManyRequestsError extends BaseApiError {
   public readonly statusCode = 429;
   public readonly grpcCode = GrpcStatus.RESOURCE_EXHAUSTED;
 
-  constructor(message = 'Too Many Requests', code = 'TOO_MANY_REQUESTS', details?: Record<string, unknown>) {
+  constructor(
+    message = 'Too Many Requests',
+    code = 'TOO_MANY_REQUESTS',
+    details?: Record<string, unknown>,
+  ) {
     super(message, code, details);
   }
 }

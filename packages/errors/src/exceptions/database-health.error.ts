@@ -1,7 +1,7 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class DatabaseHealthError extends BaseError {
+export class DatabaseHealthError extends BaseApiError {
   public readonly statusCode = 503;
   public readonly grpcCode = GrpcStatus.UNAVAILABLE;
 

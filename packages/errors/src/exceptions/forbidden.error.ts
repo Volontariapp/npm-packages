@@ -1,7 +1,7 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class ForbiddenError extends BaseError {
+export class ForbiddenError extends BaseApiError {
   public readonly statusCode = 403;
   public readonly grpcCode = GrpcStatus.PERMISSION_DENIED;
 

@@ -1,40 +1,32 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { testDataSource, initializeTestDb, closeTestDb } from '../data-source.js';
+import { describe, it, expect, beforeAll } from '@jest/globals';
+import { testDataSource } from '../data-source.js';
 import { OutboxModel } from '../../outbox/models/outbox.model.js';
-import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
+import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { databaseMapper } from '../../core/mapper.service.js';
 import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
 import { makeExtendedOutboxEvent } from '../utils/helpers/extended-outbox-event.helper.js';
-import { TestOutboxWriterRepository } from '../utils/repositories/outbox-test.repository.js';
+import { TestOutboxRepository } from '../utils/repositories/outbox-test.repository.js';
 import { TestExtendedOutboxWriter } from '../utils/repositories/outbox-extended-test.repository.js';
 import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
 import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
-
-
+import { setupIntegrationTest } from '../utils/index.js';
 
 describe('Outbox Writer (Full Integration)', () => {
   let outboxWriter: OutboxWriter<OutboxModel, OutboxEntity>;
-  let repository: TestOutboxWriterRepository;
+  let repository: TestOutboxRepository;
   const logger = {
     info: () => undefined,
     warn: () => undefined,
     error: () => undefined,
   };
 
-  beforeAll(async () => {
-    await initializeTestDb();
-    repository = new TestOutboxWriterRepository(testDataSource.getRepository(OutboxModel));
+  setupIntegrationTest([OutboxModel]);
+
+  beforeAll(() => {
+    repository = new TestOutboxRepository(testDataSource.getRepository(OutboxModel));
     outboxWriter = new OutboxWriter(logger as never, repository);
-  });
-
-  afterAll(async () => {
-    await closeTestDb();
-  });
-
-  beforeEach(async () => {
-    await testDataSource.getRepository(OutboxModel).createQueryBuilder().delete().execute();
   });
 
   it('create() should persist event in database', async () => {
@@ -74,7 +66,9 @@ describe('Outbox Writer (Full Integration)', () => {
     const event = makeOutboxEvent({ attempts: 0, status: OutboxStatus.PENDING });
     await outboxWriter.create(event);
 
-    const row = await testDataSource.getRepository(OutboxModel).findOneByOrFail({ type: event.type });
+    const row = await testDataSource
+      .getRepository(OutboxModel)
+      .findOneByOrFail({ type: event.type });
     const toUpdate = Object.assign(new OutboxEntity(), row, {
       status: OutboxStatus.PROCESSING,
       attempts: 1,
@@ -91,7 +85,9 @@ describe('Outbox Writer (Full Integration)', () => {
     const event = makeOutboxEvent({ type: 'user.deleted' });
     await outboxWriter.create(event);
 
-    const row = await testDataSource.getRepository(OutboxModel).findOneByOrFail({ type: event.type });
+    const row = await testDataSource
+      .getRepository(OutboxModel)
+      .findOneByOrFail({ type: event.type });
     await outboxWriter.delete(row.id);
 
     const deleted = await testDataSource.getRepository(OutboxModel).findOneBy({ id: row.id });
@@ -107,21 +103,14 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
     error: () => undefined,
   };
 
-  beforeAll(async () => {
-    await initializeTestDb();
+  setupIntegrationTest([ExtendedOutboxModel]);
+
+  beforeAll(() => {
     databaseMapper.registerBidirectional(ExtendedOutboxModel, ExtendedOutboxEntity);
     outboxWriter = new TestExtendedOutboxWriter(
       logger as never,
       testDataSource.getRepository(ExtendedOutboxModel),
     );
-  });
-
-  afterAll(async () => {
-    await closeTestDb();
-  });
-
-  beforeEach(async () => {
-    await testDataSource.getRepository(ExtendedOutboxModel).createQueryBuilder().delete().execute();
   });
 
   it('create() should persist an extended outbox entity', async () => {
@@ -154,7 +143,9 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
 
     await outboxWriter.createMany(events);
 
-    const rows = await testDataSource.getRepository(ExtendedOutboxModel).find({ order: { type: 'ASC' } });
+    const rows = await testDataSource
+      .getRepository(ExtendedOutboxModel)
+      .find({ order: { type: 'ASC' } });
     expect(rows).toHaveLength(2);
     expect(rows[0].channel).toBe('sms');
     expect(rows[1].channel).toBe('email');
@@ -171,16 +162,19 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
     const created = await testDataSource
       .getRepository(ExtendedOutboxModel)
       .findOneByOrFail({ type: 'extended.to-update' });
-    const toUpdate = makeExtendedOutboxEvent({
-      ...created,
-      status: OutboxStatus.PROCESSING,
-      attempts: 2,
-      channel: 'sms',
-    });
+    const toUpdate = makeExtendedOutboxEvent(
+      Object.assign({}, created, {
+        status: OutboxStatus.PROCESSING,
+        attempts: 2,
+        channel: 'sms',
+      }),
+    );
 
     await outboxWriter.update(toUpdate);
 
-    const updated = await testDataSource.getRepository(ExtendedOutboxModel).findOneByOrFail({ id: created.id });
+    const updated = await testDataSource
+      .getRepository(ExtendedOutboxModel)
+      .findOneByOrFail({ id: created.id });
     expect(updated.status).toBe(OutboxStatus.PROCESSING);
     expect(updated.attempts).toBe(2);
     expect(updated.channel).toBe('sms');
@@ -199,7 +193,9 @@ describe('Outbox Writer with extended model/entity (Full Integration)', () => {
 
     await outboxWriter.delete(created.id);
 
-    const deleted = await testDataSource.getRepository(ExtendedOutboxModel).findOneBy({ id: created.id });
+    const deleted = await testDataSource
+      .getRepository(ExtendedOutboxModel)
+      .findOneBy({ id: created.id });
     expect(deleted).toBeNull();
   });
 });

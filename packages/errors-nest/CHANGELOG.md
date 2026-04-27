@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.0
+
+### Minor Changes
+
+- updated errors-nest to renamed baseError to baseApiError
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.5.0
+
 ## 0.9.0
 
 ### Minor Changes

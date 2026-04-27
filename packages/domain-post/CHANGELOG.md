@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.2
+
+### Patch Changes
+
+- Updated typeORM version to match database package version
+
 ## 2.2.1
 
 ### Patch Changes

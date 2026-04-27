@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.0
+
+### Minor Changes
+
+- Added outbox consumer first implementation
+
 ## 1.7.0
 
 ### Minor Changes
