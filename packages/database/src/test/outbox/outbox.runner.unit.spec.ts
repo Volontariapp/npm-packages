@@ -6,19 +6,21 @@ import type { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 import { Logger } from '@volontariapp/logger';
-import { setTimeout } from 'node:timers/promises';
 
-// Properly mock the module
+// Define the mock function outside to ensure it's a stable Jest mock
+const internalMockSetTimeout = jest.fn();
+
+// Mock node:timers/promises using a factory
 jest.mock('node:timers/promises', () => ({
-  setTimeout: jest.fn(),
+  __esModule: true,
+  setTimeout: (...args: unknown[]) => internalMockSetTimeout(...args),
 }));
-
-const mockedSetTimeout = jest.mocked(setTimeout);
 
 jest.mock('@volontariapp/logger');
 
 describe('OutboxRunner (Unit)', () => {
-  let runner: OutboxRunner<OutboxModel, OutboxEntity>;
+  // Define runner as optional to satisfy linter checks in afterEach
+  let runner: OutboxRunner<OutboxModel, OutboxEntity> | undefined;
   let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
   let fetchPendingItemsSpy: jest.SpiedFunction<
     OutboxConsumer<OutboxModel, OutboxEntity>['fetchPendingItems']
@@ -31,14 +33,13 @@ describe('OutboxRunner (Unit)', () => {
   config.logger.format = LoggerFormat.JSON;
   config.logger.level = 'info';
 
-  const flush = async () => {
+  const flush = async (): Promise<void> => {
     for (let i = 0; i < 20; i++) {
       await Promise.resolve();
     }
   };
 
-  // Helper to wait for a spy to be called X times without using 'any'
-  const waitForCalls = async (target: number, timeoutMs = 1000) => {
+  const waitForCalls = async (target: number, timeoutMs = 1000): Promise<void> => {
     const start = Date.now();
     while (fetchPendingItemsSpy.mock.calls.length < target && Date.now() - start < timeoutMs) {
       await flush();
@@ -58,48 +59,54 @@ describe('OutboxRunner (Unit)', () => {
       'fetchPendingItems',
     ) as jest.SpiedFunction<OutboxConsumer<OutboxModel, OutboxEntity>['fetchPendingItems']>;
 
-    mockedSetTimeout.mockImplementation((ms, value, options) => {
-      return new Promise((resolve, reject) => {
-        const delay = ms ?? 1;
-        const timeout = global.setTimeout(() => {
-          resolve(value as never);
-        }, delay);
-        if (options?.signal) {
-          const signal = options.signal;
-          if (signal.aborted) {
-            global.clearTimeout(timeout);
-            const error = new Error('The operation was aborted');
-            error.name = 'AbortError';
-            reject(error);
-            return;
-          }
-          signal.addEventListener(
-            'abort',
-            () => {
+    // Re-configure the mock implementation for each test
+    internalMockSetTimeout.mockImplementation(
+      (ms: number | undefined, value: unknown, options: { signal?: AbortSignal } | undefined) => {
+        return new Promise((resolve, reject) => {
+          const delay = ms ?? 1;
+          const timeout = global.setTimeout(() => {
+            resolve(value);
+          }, delay);
+
+          if (options?.signal) {
+            const signal = options.signal;
+            if (signal.aborted) {
               global.clearTimeout(timeout);
               const error = new Error('The operation was aborted');
               error.name = 'AbortError';
               reject(error);
-            },
-            { once: true },
-          );
-        }
-      });
-    });
+              return;
+            }
+            signal.addEventListener(
+              'abort',
+              () => {
+                global.clearTimeout(timeout);
+                const error = new Error('The operation was aborted');
+                error.name = 'AbortError';
+                reject(error);
+              },
+              { once: true },
+            );
+          }
+        });
+      },
+    );
 
     runner = new OutboxRunner(repositoryMock, config);
   });
 
   afterEach(async () => {
-    // Gracefully stop the runner
-    await runner.stop();
+    if (runner) {
+      await runner.stop();
+    }
+    internalMockSetTimeout.mockReset();
     jest.useRealTimers();
     jest.restoreAllMocks();
   });
 
   it('should call fetchPendingItems periodically after start', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-    runner.start();
+    if (runner) runner.start();
 
     await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
@@ -115,7 +122,7 @@ describe('OutboxRunner (Unit)', () => {
 
   it('runCycle() should execute a single fetch and return', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-    await runner.runCycle();
+    if (runner) await runner.runCycle();
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -124,7 +131,7 @@ describe('OutboxRunner (Unit)', () => {
     fetchPendingItemsSpy.mockRejectedValueOnce(error);
     fetchPendingItemsSpy.mockResolvedValue([]);
 
-    runner.start();
+    if (runner) runner.start();
     await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
@@ -135,15 +142,17 @@ describe('OutboxRunner (Unit)', () => {
 
   it('should stop running when stop is called', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-    runner.start();
+    if (runner) runner.start();
     await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
-    const stopPromise = runner.stop();
-    await flush();
-    jest.advanceTimersByTime(0);
-    await flush();
-    await stopPromise;
+    if (runner) {
+      const stopPromise = runner.stop();
+      await flush();
+      jest.advanceTimersByTime(0);
+      await flush();
+      await stopPromise;
+    }
 
     jest.advanceTimersByTime(400);
     await flush();
@@ -158,33 +167,37 @@ describe('OutboxRunner (Unit)', () => {
       return [];
     });
 
-    runner.start();
+    if (runner) runner.start();
     await flush();
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
-    const stopPromise = runner.stop();
-    await flush();
-    expect(cycleFinished).toBe(false);
+    if (runner) {
+      const stopPromise = runner.stop();
+      await flush();
+      expect(cycleFinished).toBe(false);
 
-    jest.advanceTimersByTime(50);
-    await flush();
-    await stopPromise;
-    expect(cycleFinished).toBe(true);
+      jest.advanceTimersByTime(50);
+      await flush();
+      await stopPromise;
+      expect(cycleFinished).toBe(true);
+    }
   });
 
   it('should not start multiple times', () => {
-    runner.start();
+    if (runner) runner.start();
     const loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn');
-    runner.start();
+    if (runner) runner.start();
     expect(loggerWarnSpy).toHaveBeenCalledWith('Outbox runner is already running');
   });
 
   it('isRunning should reflect correct state', async () => {
-    expect(runner.isRunning).toBe(false);
-    runner.start();
-    await waitForCalls(1);
-    expect(runner.isRunning).toBe(true);
-    await runner.stop();
-    expect(runner.isRunning).toBe(false);
+    if (runner) {
+      expect(runner.isRunning).toBe(false);
+      runner.start();
+      await waitForCalls(1);
+      expect(runner.isRunning).toBe(true);
+      await runner.stop();
+      expect(runner.isRunning).toBe(false);
+    }
   });
 });
