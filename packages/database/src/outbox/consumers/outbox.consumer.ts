@@ -22,30 +22,28 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
     this.logger.debug('Fetching pending outbox items', { tableName, batchSize: this.batchSize });
 
     return this.repository.executeInTransaction(async (queryRunner) => {
-      const result = (await queryRunner.query(
-        `
-          UPDATE "${tableName}"
-          SET
-            "status" = $1,
-            "updated_at" = NOW()
-          WHERE "id" IN (
+      const updateResult = await queryRunner.manager
+        .createQueryBuilder(this.repository.metadata.target, 'outbox')
+        .update()
+        .set({
+          status: OutboxStatus.PROCESSING,
+          updatedAt: () => 'NOW()',
+        })
+        .where(
+          `id IN (
             SELECT "id"
             FROM "${tableName}"
-            WHERE "status" = $2
+            WHERE "status" = :pending
             ORDER BY "created_at" ASC
-            LIMIT $3
+            LIMIT :limit
             FOR UPDATE SKIP LOCKED
-          )
-          RETURNING *, "created_at" AS "createdAt", "updated_at" AS "updatedAt";
-        `,
-        [OutboxStatus.PROCESSING, OutboxStatus.PENDING, this.batchSize],
-      )) as unknown;
+          )`,
+          { pending: OutboxStatus.PENDING, limit: this.batchSize },
+        )
+        .returning(['*', '"created_at" AS "createdAt"', '"updated_at" AS "updatedAt"'])
+        .execute();
 
-      // Handle driver result formats: [rows, count] or just rows
-      const rawRows =
-        Array.isArray(result) && Array.isArray(result[0])
-          ? (result[0] as TOutboxModel[])
-          : (result as TOutboxModel[]);
+      const rawRows = updateResult.raw as TOutboxModel[];
 
       if (rawRows.length === 0) {
         this.logger.debug('No pending outbox items found', { tableName });
