@@ -22,7 +22,8 @@ export default {
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
   coverageProvider: 'v8',
   collectCoverageFrom: [
-    '**/src/outbox/**/*.ts',
+    'src/**/*.ts',
+    '!src/test/**',
     '!**/node_modules/**',
     '!**/dist/**',
     '!**/index.ts',
