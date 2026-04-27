@@ -1,26 +1,32 @@
 import { randomUUID } from 'node:crypto';
-import type { SignUpCommand, LoginCommand } from '@volontariapp/contracts';
+import { SignUpInput, LoginInput } from '../../../value-objects/index.js';
 
 export class CommandsFactory {
-  static buildSignUpCommand(overrides: Partial<SignUpCommand> = {}): SignUpCommand {
+  static buildSignUpCommand(
+    overrides: {
+      email?: string;
+      password?: string;
+      pseudo?: string;
+      bio?: string;
+      logoPath?: string;
+      rna?: string;
+    } = {},
+  ): SignUpInput {
     const uid = randomUUID().slice(0, 8);
-    return {
-      email: `user-${uid}@example.com`,
-      password: 'SecurePassword123!',
-      phone: '+33612345678',
-      pseudo: `user-${uid}`,
-      bio: `Bio for user ${uid}`,
-      logoPath: undefined,
-      organisationInfo: undefined,
-      ...overrides,
-    };
+    return new SignUpInput(
+      overrides.email ?? `user-${uid}@example.com`,
+      overrides.password ?? 'SecurePassword123!',
+      overrides.pseudo ?? `user-${uid}`,
+      overrides.bio ?? `Bio for user ${uid}`,
+      overrides.logoPath,
+      overrides.rna,
+    );
   }
 
-  static buildLoginCommand(overrides: Partial<LoginCommand> = {}): LoginCommand {
-    return {
-      email: 'user@example.com',
-      password: 'SecurePassword123!',
-      ...overrides,
-    };
+  static buildLoginCommand(overrides: { email?: string; password?: string } = {}): LoginInput {
+    return new LoginInput(
+      overrides.email ?? 'user@example.com',
+      overrides.password ?? 'SecurePassword123!',
+    );
   }
 }

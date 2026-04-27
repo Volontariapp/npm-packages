@@ -13,12 +13,17 @@ export class UserRna {
 }
 
 export class UpdateUserInput {
-  constructor(
-    public readonly pseudo?: string,
-    public readonly bio?: string,
-    public readonly logoPath?: string,
-    public readonly rna?: string,
-  ) {}
+  readonly pseudo?: string;
+  readonly bio?: string;
+  readonly logoPath?: string;
+  readonly rna?: string;
+
+  constructor(data: { pseudo?: string; bio?: string; logoPath?: string; rna?: string }) {
+    this.pseudo = data.pseudo;
+    this.bio = data.bio;
+    this.logoPath = data.logoPath;
+    this.rna = data.rna;
+  }
 }
 
 export class PaginationInput {

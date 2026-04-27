@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { BadgeEntity } from '../../../entities/badge.entity.js';
+import { CreateBadgeInput, UpdateBadgeInput } from '../../../value-objects/index.js';
 
 export class BadgeFactory {
   static build(overrides: Partial<BadgeEntity> = {}): BadgeEntity {
@@ -18,14 +19,21 @@ export class BadgeFactory {
     return Array.from({ length: count }, () => BadgeFactory.build(overrides));
   }
 
-  static buildInput(overrides: Partial<Omit<BadgeEntity, 'id'>> = {}): Omit<BadgeEntity, 'id'> {
+  static buildInput(
+    overrides: { name?: string; slug?: string; description?: string; iconPath?: string } = {},
+  ): CreateBadgeInput {
     const uid = randomUUID().slice(0, 8);
-    return {
-      name: `Badge ${uid}`,
-      slug: `badge-${uid}`,
-      description: `Description for badge ${uid}`,
-      iconPath: undefined,
-      ...overrides,
-    };
+    return new CreateBadgeInput(
+      overrides.name ?? `Badge ${uid}`,
+      overrides.slug ?? `badge-${uid}`,
+      overrides.description ?? `Description for badge ${uid}`,
+      overrides.iconPath,
+    );
+  }
+
+  static buildUpdateInput(
+    overrides: { name?: string; slug?: string; description?: string; iconPath?: string } = {},
+  ): UpdateBadgeInput {
+    return new UpdateBadgeInput(overrides);
   }
 }

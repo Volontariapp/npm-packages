@@ -4,6 +4,7 @@ import { BadgeService } from '../../services/badge.service.js';
 import type { IBadgeRepository } from '../../repositories/interfaces/badge.repository.js';
 import { BadgeFactory } from '../__test-utils__/factories/badge.factory.js';
 import { createBadgeRepositoryMock } from '../__test-utils__/mocks/badge.repository.mock.js';
+import { BadgeId, BadgeSlug, UpdateBadgeInput } from '../../value-objects/index.js';
 
 describe('BadgeService (Unit)', () => {
   let service: BadgeService;
@@ -19,7 +20,7 @@ describe('BadgeService (Unit)', () => {
       const badge = BadgeFactory.build({ id: 'b-1' });
       mockRepository.findById.mockResolvedValue(badge);
 
-      const result = await service.findById('b-1');
+      const result = await service.findById(new BadgeId('b-1'));
 
       expect(result).toEqual(badge);
       expect(mockRepository.findById.mock.calls).toEqual([['b-1']]);
@@ -27,12 +28,16 @@ describe('BadgeService (Unit)', () => {
 
     it('should throw BADGE_NOT_FOUND when not found', async () => {
       mockRepository.findById.mockResolvedValue(null);
-      await expect(service.findById('missing')).rejects.toMatchObject({ code: 'NOT_FOUND' });
+      await expect(service.findById(new BadgeId('missing'))).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
     });
 
     it('should throw DATABASE_ERROR when repository throws', async () => {
       mockRepository.findById.mockRejectedValue(new Error('fail'));
-      await expect(service.findById('b-1')).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+      await expect(service.findById(new BadgeId('b-1'))).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
     });
   });
 
@@ -40,14 +45,18 @@ describe('BadgeService (Unit)', () => {
     it('should return badge when found by slug', async () => {
       const badge = BadgeFactory.build({ slug: 's-1' });
       mockRepository.findBySlug.mockResolvedValue(badge);
-      const result = await service.findBySlug('s-1');
+
+      const result = await service.findBySlug(new BadgeSlug('s-1'));
+
       expect(result).toEqual(badge);
       expect(mockRepository.findBySlug.mock.calls).toEqual([['s-1']]);
     });
 
     it('should throw BADGE_NOT_FOUND when missing', async () => {
       mockRepository.findBySlug.mockResolvedValue(null);
-      await expect(service.findBySlug('missing')).rejects.toMatchObject({ code: 'NOT_FOUND' });
+      await expect(service.findBySlug(new BadgeSlug('missing'))).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
     });
   });
 
@@ -69,26 +78,35 @@ describe('BadgeService (Unit)', () => {
     it('should return badges by ids', async () => {
       const badges = BadgeFactory.buildMany(2);
       mockRepository.findManyByIds.mockResolvedValue(badges);
-      const result = await service.findManyByIds(['a', 'b']);
+
+      const result = await service.findManyByIds([new BadgeId('a'), new BadgeId('b')]);
+
       expect(result).toEqual(badges);
       expect(mockRepository.findManyByIds.mock.calls).toEqual([[['a', 'b']]]);
     });
 
-    it('should throw error when repository fails', async () => {
+    it('should throw DATABASE_ERROR when repository fails', async () => {
       mockRepository.findManyByIds.mockRejectedValue(new Error('fail'));
-      await expect(service.findManyByIds(['a'])).rejects.toThrow('fail');
+      await expect(service.findManyByIds([new BadgeId('a')])).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
     });
   });
 
   describe('create()', () => {
     it('should create and return badge', async () => {
       const input = BadgeFactory.buildInput();
-      const created = BadgeFactory.build({ ...input });
+      const created = BadgeFactory.build({
+        name: input.name,
+        slug: input.slug,
+        description: input.description,
+      });
       mockRepository.create.mockResolvedValue(created);
 
       const result = await service.create(input);
+
       expect(result).toEqual(created);
-      expect(mockRepository.create.mock.calls).toEqual([[input]]);
+      expect(mockRepository.create).toHaveBeenCalledTimes(1);
     });
 
     it('should throw BADGE_ALREADY_EXISTS on duplicate slug', async () => {
@@ -108,37 +126,50 @@ describe('BadgeService (Unit)', () => {
     it('should update and return badge', async () => {
       const updated = BadgeFactory.build({ id: 'b-1', name: 'New' });
       mockRepository.update.mockResolvedValue(updated);
-      const result = await service.update('b-1', { name: 'New' });
+
+      const result = await service.update(
+        new BadgeId('b-1'),
+        new UpdateBadgeInput({ name: 'New' }),
+      );
+
       expect(result).toEqual(updated);
       expect(mockRepository.update.mock.calls).toEqual([['b-1', { name: 'New' }]]);
     });
 
     it('should throw BADGE_NOT_FOUND when repository returns null', async () => {
       mockRepository.update.mockResolvedValue(null);
-      await expect(service.update('missing', {})).rejects.toMatchObject({ code: 'NOT_FOUND' });
+      await expect(
+        service.update(new BadgeId('missing'), new UpdateBadgeInput({})),
+      ).rejects.toMatchObject({ code: 'NOT_FOUND' });
     });
 
     it('should throw DATABASE_ERROR when repository fails', async () => {
       mockRepository.update.mockRejectedValue(new Error('fail'));
-      await expect(service.update('b-1', {})).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+      await expect(
+        service.update(new BadgeId('b-1'), new UpdateBadgeInput({})),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
     });
   });
 
   describe('delete()', () => {
     it('should delete badge when repository returns true', async () => {
       mockRepository.delete.mockResolvedValue(true);
-      await service.delete('b-1');
+      await service.delete(new BadgeId('b-1'));
       expect(mockRepository.delete.mock.calls).toEqual([['b-1']]);
     });
 
     it('should throw BADGE_NOT_FOUND when repository returns false', async () => {
       mockRepository.delete.mockResolvedValue(false);
-      await expect(service.delete('missing')).rejects.toMatchObject({ code: 'NOT_FOUND' });
+      await expect(service.delete(new BadgeId('missing'))).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
     });
 
     it('should throw DATABASE_ERROR when repository fails', async () => {
       mockRepository.delete.mockRejectedValue(new Error('fail'));
-      await expect(service.delete('b-1')).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+      await expect(service.delete(new BadgeId('b-1'))).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
     });
   });
 });

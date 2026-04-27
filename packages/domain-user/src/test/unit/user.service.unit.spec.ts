@@ -8,6 +8,15 @@ import type { IUserRepository } from '../../repositories/interfaces/user.reposit
 import { UserFactory } from '../__test-utils__/factories/user.factory.js';
 import { createUserRepositoryMock } from '../__test-utils__/mocks/user.repository.mock.js';
 import { BadgeFactory } from '../__test-utils__/factories/badge.factory.js';
+import {
+  UserId,
+  UserEmail,
+  UserRna,
+  UpdateUserInput,
+  PaginationInput,
+  ImpactScore,
+} from '../../value-objects/index.js';
+import { BadgeId } from '../../value-objects/index.js';
 
 describe('UserService (Unit)', () => {
   let service: UserService;
@@ -21,7 +30,6 @@ describe('UserService (Unit)', () => {
     mockBadgeService = { findById: jest.fn() };
     service = new UserService(mockRepository, mockBadgeService as unknown as BadgeService);
 
-    // Spy on logger methods
     loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     loggerErrorSpy = jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
   });
@@ -36,7 +44,7 @@ describe('UserService (Unit)', () => {
   describe('findById()', () => {
     describe('HAPPY PATH: User exists', () => {
       it('should return the user entity with all properties', async () => {
-        // ARRANGE: Set up test data
+        // ARRANGE
         const user = UserFactory.build({
           id: 'user-123',
           email: 'john@example.com',
@@ -45,10 +53,10 @@ describe('UserService (Unit)', () => {
         });
         mockRepository.findById.mockResolvedValue(user);
 
-        // ACT: Call the method
-        const result = await service.findById('user-123');
+        // ACT
+        const result = await service.findById(new UserId('user-123'));
 
-        // ASSERT: Verify the outcome
+        // ASSERT
         expect(result).toEqual(user);
         expect(result.id).toBe('user-123');
         expect(result.totalImpactScore).toBe(42);
@@ -61,11 +69,11 @@ describe('UserService (Unit)', () => {
 
     describe('SAD PATH: User not found', () => {
       it('should throw NOT_FOUND error with correct message when user does not exist', async () => {
-        // ARRANGE: Mock repository to return null
+        // ARRANGE
         mockRepository.findById.mockResolvedValue(null);
 
-        // ACT & ASSERT: Verify exception is thrown with correct details
-        const error = await service.findById('missing-user').catch((e: unknown) => e);
+        // ACT & ASSERT
+        const error = await service.findById(new UserId('missing-user')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect((error as Record<string, unknown>).message).toContain(
           'User with id missing-user not found',
@@ -79,8 +87,7 @@ describe('UserService (Unit)', () => {
 
         // ACT
         try {
-          await service.findById('nonexistent');
-          // Expected not to throw here
+          await service.findById(new UserId('nonexistent'));
         } catch {
           // Error expected
         }
@@ -92,12 +99,12 @@ describe('UserService (Unit)', () => {
 
     describe('ERROR HANDLING: Repository failure', () => {
       it('should throw DATABASE_ERROR when repository throws', async () => {
-        // ARRANGE: Mock repository to throw
+        // ARRANGE
         const dbError = new Error('Connection timeout');
         mockRepository.findById.mockRejectedValue(dbError);
 
         // ACT & ASSERT
-        const error = await service.findById('user-1').catch((e: unknown) => e);
+        const error = await service.findById(new UserId('user-1')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect((error as Record<string, unknown>).message).toContain('finding user by id');
         expect(loggerErrorSpy).toHaveBeenCalled();
@@ -114,7 +121,7 @@ describe('UserService (Unit)', () => {
         mockRepository.findById.mockRejectedValue(customError);
 
         // ACT & ASSERT
-        await expect(service.findById('user-1')).rejects.toThrow();
+        await expect(service.findById(new UserId('user-1'))).rejects.toThrow();
       });
     });
   });
@@ -130,7 +137,7 @@ describe('UserService (Unit)', () => {
         mockRepository.findByEmail.mockResolvedValue(user);
 
         // ACT
-        const result = await service.findByEmail('alice@example.com');
+        const result = await service.findByEmail(new UserEmail('alice@example.com'));
 
         // ASSERT
         expect(result).toEqual(user);
@@ -147,7 +154,9 @@ describe('UserService (Unit)', () => {
         mockRepository.findByEmail.mockResolvedValue(null);
 
         // ACT & ASSERT
-        const error = await service.findByEmail('notfound@example.com').catch((e: unknown) => e);
+        const error = await service
+          .findByEmail(new UserEmail('notfound@example.com'))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect((error as Record<string, unknown>).message).toContain('notfound@example.com');
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -158,7 +167,7 @@ describe('UserService (Unit)', () => {
         mockRepository.findByEmail.mockResolvedValue(null);
 
         // ACT & ASSERT
-        const error = await service.findByEmail('').catch((e: unknown) => e);
+        const error = await service.findByEmail(new UserEmail('')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
       });
     });
@@ -169,7 +178,9 @@ describe('UserService (Unit)', () => {
         mockRepository.findByEmail.mockRejectedValue(new Error('DB connection lost'));
 
         // ACT & ASSERT
-        const error = await service.findByEmail('test@example.com').catch((e: unknown) => e);
+        const error = await service
+          .findByEmail(new UserEmail('test@example.com'))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect(loggerErrorSpy).toHaveBeenCalled();
       });
@@ -187,7 +198,7 @@ describe('UserService (Unit)', () => {
         mockRepository.findByRna.mockResolvedValue(user);
 
         // ACT
-        const result = await service.findByRna('W123456789');
+        const result = await service.findByRna(new UserRna('W123456789'));
 
         // ASSERT
         expect(result).toEqual(user);
@@ -202,7 +213,7 @@ describe('UserService (Unit)', () => {
         mockRepository.findByRna.mockResolvedValue(null);
 
         // ACT & ASSERT
-        const error = await service.findByRna('W000000000').catch((e: unknown) => e);
+        const error = await service.findByRna(new UserRna('W000000000')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect((error as Record<string, unknown>).message).toContain('rna');
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -215,7 +226,7 @@ describe('UserService (Unit)', () => {
         mockRepository.findByRna.mockRejectedValue(new Error('Query error'));
 
         // ACT & ASSERT
-        const error = await service.findByRna('W123456789').catch((e: unknown) => e);
+        const error = await service.findByRna(new UserRna('W123456789')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect(loggerErrorSpy).toHaveBeenCalled();
       });
@@ -233,12 +244,12 @@ describe('UserService (Unit)', () => {
         mockRepository.findAll.mockResolvedValue([users, 10]);
 
         // ACT
-        const [result, total] = await service.findAll(10, 0);
+        const result = await service.findAll(new PaginationInput(10, 0));
 
         // ASSERT
-        expect(result).toHaveLength(3);
-        expect(result).toEqual(users);
-        expect(total).toBe(10);
+        expect(result.users).toHaveLength(3);
+        expect(result.users).toEqual(users);
+        expect(result.total).toBe(10);
         expect(
           mockRepository.findAll.mock.calls[mockRepository.findAll.mock.calls.length - 1],
         ).toEqual([10, 0]);
@@ -250,11 +261,11 @@ describe('UserService (Unit)', () => {
         mockRepository.findAll.mockResolvedValue([users, 25]);
 
         // ACT
-        const [result, total] = await service.findAll(5, 20);
+        const result = await service.findAll(new PaginationInput(5, 20));
 
         // ASSERT
-        expect(result).toHaveLength(5);
-        expect(total).toBe(25);
+        expect(result.users).toHaveLength(5);
+        expect(result.total).toBe(25);
         expect(
           mockRepository.findAll.mock.calls[mockRepository.findAll.mock.calls.length - 1],
         ).toEqual([5, 20]);
@@ -266,10 +277,10 @@ describe('UserService (Unit)', () => {
         mockRepository.findAll.mockResolvedValue([users, 1]);
 
         // ACT
-        const [result] = await service.findAll();
+        const result = await service.findAll();
 
         // ASSERT
-        expect(result).toHaveLength(1);
+        expect(result.users).toHaveLength(1);
         expect(
           mockRepository.findAll.mock.calls[mockRepository.findAll.mock.calls.length - 1],
         ).toEqual([undefined, undefined]);
@@ -280,11 +291,11 @@ describe('UserService (Unit)', () => {
         mockRepository.findAll.mockResolvedValue([[], 0]);
 
         // ACT
-        const [result, total] = await service.findAll(10, 0);
+        const result = await service.findAll(new PaginationInput(10, 0));
 
         // ASSERT
-        expect(result).toEqual([]);
-        expect(total).toBe(0);
+        expect(result.users).toEqual([]);
+        expect(result.total).toBe(0);
       });
     });
 
@@ -308,26 +319,21 @@ describe('UserService (Unit)', () => {
     describe('HAPPY PATH: Update succeeds', () => {
       it('should update user pseudo and return updated entity', async () => {
         // ARRANGE
-        const updated = UserFactory.build({
-          id: 'user-123',
-          pseudo: 'new-pseudo',
-        });
+        const updated = UserFactory.build({ id: 'user-123', pseudo: 'new-pseudo' });
         mockRepository.update.mockResolvedValue(updated);
 
         // ACT
-        const result = await service.update('user-123', { pseudo: 'new-pseudo' });
+        const result = await service.update(
+          new UserId('user-123'),
+          new UpdateUserInput({ pseudo: 'new-pseudo' }),
+        );
 
         // ASSERT
         expect(result).toEqual(updated);
         expect(result.pseudo).toBe('new-pseudo');
         expect(
           mockRepository.update.mock.calls[mockRepository.update.mock.calls.length - 1],
-        ).toEqual([
-          'user-123',
-          {
-            pseudo: 'new-pseudo',
-          },
-        ]);
+        ).toEqual(['user-123', { pseudo: 'new-pseudo' }]);
       });
 
       it('should update RNA with valid format', async () => {
@@ -336,7 +342,10 @@ describe('UserService (Unit)', () => {
         mockRepository.update.mockResolvedValue(updated);
 
         // ACT
-        const result = await service.update('user-1', { rna: 'W111111111' });
+        const result = await service.update(
+          new UserId('user-1'),
+          new UpdateUserInput({ rna: 'W111111111' }),
+        );
 
         // ASSERT
         expect(result).toEqual(updated);
@@ -345,25 +354,28 @@ describe('UserService (Unit)', () => {
         ).toEqual(['user-1', { rna: 'W111111111' }]);
       });
 
-      it('should allow partial update with only email', async () => {
+      it('should allow partial update with only logoPath', async () => {
         // ARRANGE
-        const updated = UserFactory.build({ email: 'newemail@example.com' });
+        const updated = UserFactory.build({ logoPath: '/new/logo.png' });
         mockRepository.update.mockResolvedValue(updated);
 
         // ACT
-        const result = await service.update('user-1', { email: 'newemail@example.com' });
+        const result = await service.update(
+          new UserId('user-1'),
+          new UpdateUserInput({ logoPath: '/new/logo.png' }),
+        );
 
         // ASSERT
-        expect(result.email).toBe('newemail@example.com');
+        expect(result.logoPath).toBe('/new/logo.png');
       });
 
-      it('should not call repository when no RNA change provided', async () => {
+      it('should not validate when no RNA change provided', async () => {
         // ARRANGE
         const updated = UserFactory.build({ bio: 'New bio' });
         mockRepository.update.mockResolvedValue(updated);
 
         // ACT
-        await service.update('user-1', { bio: 'New bio' });
+        await service.update(new UserId('user-1'), new UpdateUserInput({ bio: 'New bio' }));
 
         // ASSERT
         expect(
@@ -378,7 +390,9 @@ describe('UserService (Unit)', () => {
         mockRepository.update.mockResolvedValue(null);
 
         // ACT & ASSERT
-        const error = await service.update('missing', { pseudo: 'test' }).catch((e: unknown) => e);
+        const error = await service
+          .update(new UserId('missing'), new UpdateUserInput({ pseudo: 'test' }))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect((error as Record<string, unknown>).message).toContain('missing');
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -391,7 +405,9 @@ describe('UserService (Unit)', () => {
         const invalidRna = 'BAD-RNA-123';
 
         // ACT & ASSERT
-        const error = await service.update('user-1', { rna: invalidRna }).catch((e: unknown) => e);
+        const error = await service
+          .update(new UserId('user-1'), new UpdateUserInput({ rna: invalidRna }))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('BAD_REQUEST');
         expect((error as Record<string, unknown>).message).toContain(invalidRna);
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -404,7 +420,7 @@ describe('UserService (Unit)', () => {
         mockRepository.update.mockResolvedValue(updated);
 
         // ACT
-        await service.update('user-1', { rna: undefined });
+        await service.update(new UserId('user-1'), new UpdateUserInput({ rna: undefined }));
 
         // ASSERT: null/undefined RNA should not trigger validation
         expect(mockRepository.update.mock.calls.length).toBeGreaterThan(0);
@@ -417,7 +433,9 @@ describe('UserService (Unit)', () => {
         mockRepository.update.mockRejectedValue(new Error('Update failed'));
 
         // ACT & ASSERT
-        const error = await service.update('user-1', { pseudo: 'new' }).catch((e: unknown) => e);
+        const error = await service
+          .update(new UserId('user-1'), new UpdateUserInput({ pseudo: 'new' }))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect(loggerErrorSpy).toHaveBeenCalled();
       });
@@ -434,7 +452,7 @@ describe('UserService (Unit)', () => {
         mockRepository.delete.mockResolvedValue(true);
 
         // ACT
-        await service.delete('user-123');
+        await service.delete(new UserId('user-123'));
 
         // ASSERT
         expect(
@@ -450,7 +468,7 @@ describe('UserService (Unit)', () => {
         mockRepository.delete.mockResolvedValue(false);
 
         // ACT & ASSERT
-        const error = await service.delete('missing').catch((e: unknown) => e);
+        const error = await service.delete(new UserId('missing')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect((error as Record<string, unknown>).message).toContain('missing');
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -463,7 +481,7 @@ describe('UserService (Unit)', () => {
         mockRepository.delete.mockRejectedValue(new Error('Delete constraint violation'));
 
         // ACT & ASSERT
-        const error = await service.delete('user-1').catch((e: unknown) => e);
+        const error = await service.delete(new UserId('user-1')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect(loggerErrorSpy).toHaveBeenCalled();
       });
@@ -484,7 +502,7 @@ describe('UserService (Unit)', () => {
         mockRepository.addBadgeToUser.mockResolvedValue();
 
         // ACT
-        await service.addBadgeToUser('user-123', 'badge-456');
+        await service.addBadgeToUser(new UserId('user-123'), new BadgeId('badge-456'));
 
         // ASSERT
         expect(
@@ -492,7 +510,7 @@ describe('UserService (Unit)', () => {
         ).toEqual(['user-123']);
         expect(
           mockBadgeService.findById.mock.calls[mockBadgeService.findById.mock.calls.length - 1],
-        ).toEqual(['badge-456']);
+        ).toEqual([new BadgeId('badge-456')]);
         expect(
           mockRepository.addBadgeToUser.mock.calls[
             mockRepository.addBadgeToUser.mock.calls.length - 1
@@ -510,7 +528,7 @@ describe('UserService (Unit)', () => {
         mockRepository.addBadgeToUser.mockResolvedValue();
 
         // ACT
-        await service.addBadgeToUser('user-1', 'badge-222');
+        await service.addBadgeToUser(new UserId('user-1'), new BadgeId('badge-222'));
 
         // ASSERT
         expect(
@@ -530,7 +548,9 @@ describe('UserService (Unit)', () => {
         mockBadgeService.findById.mockResolvedValue(badge);
 
         // ACT & ASSERT
-        const error = await service.addBadgeToUser('user-123', 'badge-1').catch((e: unknown) => e);
+        const error = await service
+          .addBadgeToUser(new UserId('user-123'), new BadgeId('badge-1'))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('CONFLICT');
         expect((error as Record<string, unknown>).message).toContain('user-123');
         expect((error as Record<string, unknown>).message).toContain('badge-1');
@@ -546,7 +566,7 @@ describe('UserService (Unit)', () => {
 
         // ACT & ASSERT
         const error = await service
-          .addBadgeToUser('missing-user', 'badge-1')
+          .addBadgeToUser(new UserId('missing-user'), new BadgeId('badge-1'))
           .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect(mockRepository.addBadgeToUser.mock.calls).toHaveLength(0);
@@ -561,7 +581,7 @@ describe('UserService (Unit)', () => {
 
         // ACT & ASSERT
         const error = await service
-          .addBadgeToUser('user-1', 'missing-badge')
+          .addBadgeToUser(new UserId('user-1'), new BadgeId('missing-badge'))
           .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
       });
@@ -575,7 +595,9 @@ describe('UserService (Unit)', () => {
         mockRepository.addBadgeToUser.mockRejectedValue(new Error('DB error'));
 
         // ACT & ASSERT
-        const error = await service.addBadgeToUser('user-1', 'badge-1').catch((e: unknown) => e);
+        const error = await service
+          .addBadgeToUser(new UserId('user-1'), new BadgeId('badge-1'))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect(loggerErrorSpy).toHaveBeenCalled();
       });
@@ -595,7 +617,7 @@ describe('UserService (Unit)', () => {
         mockRepository.removeBadgeFromUser.mockResolvedValue();
 
         // ACT
-        await service.removeBadgeFromUser('user-1', 'badge-1');
+        await service.removeBadgeFromUser(new UserId('user-1'), new BadgeId('badge-1'));
 
         // ASSERT
         expect(
@@ -618,7 +640,7 @@ describe('UserService (Unit)', () => {
         mockRepository.removeBadgeFromUser.mockResolvedValue();
 
         // ACT
-        await service.removeBadgeFromUser('user-1', 'badge-2');
+        await service.removeBadgeFromUser(new UserId('user-1'), new BadgeId('badge-2'));
 
         // ASSERT
         expect(
@@ -637,7 +659,7 @@ describe('UserService (Unit)', () => {
 
         // ACT & ASSERT
         const error = await service
-          .removeBadgeFromUser('user-1', 'badge-1')
+          .removeBadgeFromUser(new UserId('user-1'), new BadgeId('badge-1'))
           .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect((error as Record<string, unknown>).message).toContain('user-1');
@@ -654,7 +676,7 @@ describe('UserService (Unit)', () => {
 
         // ACT & ASSERT
         const error = await service
-          .removeBadgeFromUser('user-1', 'badge-to-remove')
+          .removeBadgeFromUser(new UserId('user-1'), new BadgeId('badge-to-remove'))
           .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
       });
@@ -667,7 +689,7 @@ describe('UserService (Unit)', () => {
 
         // ACT & ASSERT
         const error = await service
-          .removeBadgeFromUser('missing-user', 'badge-1')
+          .removeBadgeFromUser(new UserId('missing-user'), new BadgeId('badge-1'))
           .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect(mockRepository.removeBadgeFromUser.mock.calls).toHaveLength(0);
@@ -682,7 +704,7 @@ describe('UserService (Unit)', () => {
 
         // ACT & ASSERT
         const error = await service
-          .removeBadgeFromUser('user-1', 'badge-1')
+          .removeBadgeFromUser(new UserId('user-1'), new BadgeId('badge-1'))
           .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect(loggerErrorSpy).toHaveBeenCalled();
@@ -700,7 +722,7 @@ describe('UserService (Unit)', () => {
         mockRepository.incrementImpactScore.mockResolvedValue();
 
         // ACT
-        await service.incrementImpactScore('user-1', 10);
+        await service.incrementImpactScore(new UserId('user-1'), new ImpactScore(10));
 
         // ASSERT
         expect(
@@ -716,7 +738,7 @@ describe('UserService (Unit)', () => {
         mockRepository.incrementImpactScore.mockResolvedValue();
 
         // ACT
-        await service.incrementImpactScore('user-1', 1);
+        await service.incrementImpactScore(new UserId('user-1'), new ImpactScore(1));
 
         // ASSERT
         expect(
@@ -731,7 +753,7 @@ describe('UserService (Unit)', () => {
         mockRepository.incrementImpactScore.mockResolvedValue();
 
         // ACT
-        await service.incrementImpactScore('user-1', 9999);
+        await service.incrementImpactScore(new UserId('user-1'), new ImpactScore(9999));
 
         // ASSERT
         expect(
@@ -744,10 +766,10 @@ describe('UserService (Unit)', () => {
 
     describe('SAD PATH: Invalid score increment', () => {
       it('should throw BAD_REQUEST when score is zero', async () => {
-        // ARRANGE: No arrangement needed, validation happens in service
-
         // ACT & ASSERT
-        const error = await service.incrementImpactScore('user-1', 0).catch((e: unknown) => e);
+        const error = await service
+          .incrementImpactScore(new UserId('user-1'), new ImpactScore(0))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('BAD_REQUEST');
         expect((error as Record<string, unknown>).message).toContain('0');
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -755,10 +777,10 @@ describe('UserService (Unit)', () => {
       });
 
       it('should throw BAD_REQUEST when score is negative', async () => {
-        // ARRANGE: No arrangement needed
-
         // ACT & ASSERT
-        const error = await service.incrementImpactScore('user-1', -5).catch((e: unknown) => e);
+        const error = await service
+          .incrementImpactScore(new UserId('user-1'), new ImpactScore(-5))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('BAD_REQUEST');
         expect((error as Record<string, unknown>).message).toContain('-5');
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -766,10 +788,10 @@ describe('UserService (Unit)', () => {
       });
 
       it('should throw BAD_REQUEST for very large negative', async () => {
-        // ARRANGE
-
         // ACT & ASSERT
-        const error = await service.incrementImpactScore('user-1', -9999).catch((e: unknown) => e);
+        const error = await service
+          .incrementImpactScore(new UserId('user-1'), new ImpactScore(-9999))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('BAD_REQUEST');
         expect(mockRepository.incrementImpactScore.mock.calls).toHaveLength(0);
       });
@@ -781,7 +803,9 @@ describe('UserService (Unit)', () => {
         mockRepository.incrementImpactScore.mockRejectedValue(new Error('Update failed'));
 
         // ACT & ASSERT
-        const error = await service.incrementImpactScore('user-1', 5).catch((e: unknown) => e);
+        const error = await service
+          .incrementImpactScore(new UserId('user-1'), new ImpactScore(5))
+          .catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect((error as Record<string, unknown>).message).toContain('incrementing impact score');
         expect(loggerErrorSpy).toHaveBeenCalled();
@@ -794,8 +818,7 @@ describe('UserService (Unit)', () => {
 
         // ACT
         try {
-          await service.incrementImpactScore('user-1', 3);
-          // Expected not to throw here
+          await service.incrementImpactScore(new UserId('user-1'), new ImpactScore(3));
         } catch {
           // Expected
         }

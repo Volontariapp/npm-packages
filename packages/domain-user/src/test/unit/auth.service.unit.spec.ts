@@ -63,7 +63,9 @@ describe('AuthService (Unit)', () => {
         const result = await service.signUp(command);
 
         // ASSERT
-        expect(result).toEqual({ accessToken: 'access-token', refreshToken: 'refresh-token' });
+        expect(result.auth.accessToken).toBe('access-token');
+        expect(result.auth.refreshToken).toBe('refresh-token');
+        expect(result.user).toEqual(createdUser);
         expect(mockRepository.findByEmail).toHaveBeenCalledWith('neworg@example.com');
         expect(mockRepository.createWithHashedPassword).toHaveBeenCalledTimes(1);
         expect(jwtServiceMock.signAccessToken).toHaveBeenCalled();
@@ -71,9 +73,7 @@ describe('AuthService (Unit)', () => {
 
       it('should create organization user when RNA is provided', async () => {
         // ARRANGE
-        const command = CommandsFactory.buildSignUpCommand({
-          organisationInfo: { rna: 'W123456789' },
-        });
+        const command = CommandsFactory.buildSignUpCommand({ rna: 'W123456789' });
         const createdUser = UserFactory.build({ rna: 'W123456789' });
         mockRepository.findByEmail.mockResolvedValue(null);
         mockRepository.createWithHashedPassword.mockResolvedValue(createdUser);
@@ -82,16 +82,15 @@ describe('AuthService (Unit)', () => {
         const result = await service.signUp(command);
 
         // ASSERT
-        expect(result).toEqual({ accessToken: 'access-token', refreshToken: 'refresh-token' });
+        expect(result.auth.accessToken).toBe('access-token');
+        expect(result.auth.refreshToken).toBe('refresh-token');
         expect(createdUser.rna).toBe('W123456789');
         expect(mockRepository.createWithHashedPassword).toHaveBeenCalled();
       });
 
       it('should create volunteer user when no RNA is provided', async () => {
         // ARRANGE
-        const command = CommandsFactory.buildSignUpCommand({
-          organisationInfo: undefined,
-        });
+        const command = CommandsFactory.buildSignUpCommand({});
         const createdUser = UserFactory.build({ rna: undefined });
         mockRepository.findByEmail.mockResolvedValue(null);
         mockRepository.createWithHashedPassword.mockResolvedValue(createdUser);
@@ -100,7 +99,8 @@ describe('AuthService (Unit)', () => {
         const result = await service.signUp(command);
 
         // ASSERT
-        expect(result).toEqual({ accessToken: 'access-token', refreshToken: 'refresh-token' });
+        expect(result.auth.accessToken).toBe('access-token');
+        expect(result.auth.refreshToken).toBe('refresh-token');
         expect(createdUser.rna).toBeUndefined();
         expect(jwtServiceMock.signAccessToken).toHaveBeenCalled();
       });
@@ -125,9 +125,7 @@ describe('AuthService (Unit)', () => {
     describe('SAD PATH: Validation fails', () => {
       it('should throw BAD_REQUEST when RNA format is invalid', async () => {
         // ARRANGE
-        const command = CommandsFactory.buildSignUpCommand({
-          organisationInfo: { rna: 'INVALID-RNA' },
-        });
+        const command = CommandsFactory.buildSignUpCommand({ rna: 'INVALID-RNA' });
         mockRepository.findByEmail.mockResolvedValue(null);
 
         // ACT & ASSERT
@@ -139,9 +137,7 @@ describe('AuthService (Unit)', () => {
 
       it('should throw BAD_REQUEST when RNA lacks W prefix', async () => {
         // ARRANGE
-        const command = CommandsFactory.buildSignUpCommand({
-          organisationInfo: { rna: '123456789' },
-        });
+        const command = CommandsFactory.buildSignUpCommand({ rna: '123456789' });
         mockRepository.findByEmail.mockResolvedValue(null);
 
         // ACT & ASSERT
@@ -220,7 +216,8 @@ describe('AuthService (Unit)', () => {
         const result = await service.logIn(command);
 
         // ASSERT
-        expect(result).toEqual({ accessToken: 'access-token', refreshToken: 'refresh-token' });
+        expect(result.accessToken).toBe('access-token');
+        expect(result.refreshToken).toBe('refresh-token');
         expect(mockRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
         expect(mockRepository.findPasswordHashByEmail).toHaveBeenCalledWith('user@example.com');
         expect(jwtServiceMock.signAccessToken).toHaveBeenCalled();
