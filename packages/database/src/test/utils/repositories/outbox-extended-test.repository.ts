@@ -1,4 +1,5 @@
 import type { Repository } from 'typeorm';
+import type { Logger } from '@volontariapp/logger';
 import { BaseRepository } from '../../../core/base.repository.js';
 import { OutboxWriter } from '../../../outbox/writers/outbox.writer.js';
 import { ExtendedOutboxEntity } from '../../example/entities/extended-outbox.entity.js';
@@ -18,7 +19,7 @@ export class TestExtendedOutboxWriter extends OutboxWriter<
   ExtendedOutboxModel,
   ExtendedOutboxEntity
 > {
-  constructor(logger: unknown, repository: Repository<ExtendedOutboxModel>) {
-    super(logger as never, new ExtendedOutboxTestRepository(repository));
+  constructor(logger: Logger, repository: Repository<ExtendedOutboxModel>) {
+    super(logger, new ExtendedOutboxTestRepository(repository));
   }
 }

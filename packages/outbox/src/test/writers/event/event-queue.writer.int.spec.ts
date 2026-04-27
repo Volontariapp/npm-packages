@@ -4,30 +4,23 @@ import {
   EventQueueModel,
   EventQueueEntity,
   OutboxStatus,
-  type Repository,
 } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
-import { EventQueueWriter } from '../../../outbox/writer/event-queue.writer.js';
+import { EventQueueWriter } from '../../../writers/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
-import { TestEventQueueWriterRepository } from '../../utils/repositories/event-queue-test.repository.js';
+import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
 
 describe('EventQueueWriter (Full Integration)', () => {
   let writer: EventQueueWriter;
-
-  const logger = {
-    info: () => undefined,
-    warn: () => undefined,
-    error: () => undefined,
-  };
+  const logger = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
     writer = new EventQueueWriter(
-      logger as never,
-      new TestEventQueueWriterRepository(
-        testDataSource.getRepository(EventQueueModel) as unknown as Repository<EventQueueModel>,
-      ),
+      logger,
+      new TestEventQueueRepository(testDataSource.getRepository(EventQueueModel)),
     );
   });
 
