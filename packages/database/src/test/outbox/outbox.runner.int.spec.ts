@@ -2,7 +2,6 @@ import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { testDataSource, setupIntegrationTest } from '../utils/index.js';
 import { EventQueueModel } from '../../outbox/models/event-queue.model.js';
 import { EventQueueEntity } from '../../outbox/entities/event-queue.entity.js';
-import { OutboxConsumer } from '../../outbox/consumers/outbox.consumer.js';
 import { OutboxRunner } from '../../outbox/runners/outbox.runner.js';
 import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
@@ -10,11 +9,12 @@ import { EventQueueTestRepository } from '../utils/repositories/event-queue-test
 import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
 import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
 
+import { OutboxRunnerConfig, LoggerConfig, LoggerFormat } from '@volontariapp/config';
+
 describe('Outbox Flow (Integration)', () => {
   let repository: EventQueueTestRepository;
   let loggerMock: TestLoggerMock;
   let writer: OutboxWriter<EventQueueModel, EventQueueEntity>;
-  let consumer: OutboxConsumer<EventQueueModel, EventQueueEntity>;
   let runner: OutboxRunner<EventQueueModel, EventQueueEntity>;
 
   setupIntegrationTest([EventQueueModel]);
@@ -23,8 +23,14 @@ describe('Outbox Flow (Integration)', () => {
     loggerMock = makeLoggerMock();
     repository = new EventQueueTestRepository(testDataSource.getRepository(EventQueueModel));
     writer = new OutboxWriter(loggerMock as never, repository);
-    consumer = new OutboxConsumer(loggerMock as never, repository, 10);
-    runner = new OutboxRunner(loggerMock as never, consumer, 50);
+    const config = new OutboxRunnerConfig();
+    config.batchIntervalMs = 50;
+    config.batchSize = 10;
+    config.logger = new LoggerConfig();
+    config.logger.format = LoggerFormat.JSON;
+    config.logger.level = 'debug';
+
+    runner = new OutboxRunner(repository, config);
   });
 
   afterAll(() => {

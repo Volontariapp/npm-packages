@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.10.0
+
+### Minor Changes
+
+- Added outbox-runner first implementation
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.10
+
 ## 1.9.0
 
 ### Minor Changes

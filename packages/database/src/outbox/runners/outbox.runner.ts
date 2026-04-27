@@ -1,15 +1,26 @@
-import type { OutboxConsumer } from '../consumers/outbox.consumer.js';
+import { OutboxConsumer } from '../consumers/outbox.consumer.js';
 import type { OutboxEntity, OutboxModel } from '../index.js';
-import type { Logger } from '@volontariapp/logger';
+import { Logger } from '@volontariapp/logger';
+import type { OutboxRunnerConfig } from '@volontariapp/config';
+import type { BaseRepository } from '../../core/base.repository.js';
 
 export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   private running = false;
 
+  private readonly logger: Logger;
+  private readonly consumer: OutboxConsumer<TOutboxModel, TOutboxEntity>;
+
   constructor(
-    private readonly logger: Logger,
-    private readonly consumer: OutboxConsumer<TOutboxModel, TOutboxEntity>,
-    private readonly interval = 200,
-  ) {}
+    private readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
+    private readonly config: OutboxRunnerConfig,
+  ) {
+    this.logger = new Logger(config.logger);
+    this.consumer = new OutboxConsumer<TOutboxModel, TOutboxEntity>(
+      this.logger,
+      this.repository,
+      config.batchSize,
+    );
+  }
 
   async runCycle(): Promise<void> {
     try {
@@ -31,7 +42,7 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (this.running) {
       await this.runCycle();
-      await new Promise((resolve) => setTimeout(resolve, this.interval));
+      await new Promise((resolve) => setTimeout(resolve, this.config.batchIntervalMs));
     }
   }
 
