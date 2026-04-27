@@ -16,7 +16,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
     repository = makeJobsOutboxConsumerRepositoryMock();
     consumer = new JobsOutboxConsumer(
       logger,
-      repository as unknown as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
+      repository as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
       10,
     );
   });
@@ -27,7 +27,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
   it('fetchPendingItems() should delegate to repository and return results', async () => {
     const mockEntities = [{ id: '1' }, { id: '2' }];
-    repository.toEntities.mockReturnValue(mockEntities as unknown as JobsOutboxEntity[]);
+    repository.toEntities.mockReturnValue(mockEntities as JobsOutboxEntity[]);
 
     const result = await consumer.fetchPendingItems();
 

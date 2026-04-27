@@ -4218,7 +4218,6 @@ __metadata:
     jest: "npm:^30.3.0"
     ts-jest: "npm:^29.4.6"
     ts-node: "npm:^10.9.2"
-    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft

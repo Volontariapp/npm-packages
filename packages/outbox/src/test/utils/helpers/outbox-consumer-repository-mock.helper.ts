@@ -1,12 +1,19 @@
 import { jest } from '@jest/globals';
-import type { OutboxEntity, OutboxModel } from '@volontariapp/database';
-import { type BaseRepository } from '@volontariapp/database';
-import type { QueryRunner, SelectQueryBuilder, UpdateResult, EntityMetadata } from 'typeorm';
+import type { OutboxEntity, OutboxModel, Constructor, MapperService } from '@volontariapp/database';
+import type { BaseRepository } from '@volontariapp/database';
+import type { Logger } from '@volontariapp/logger';
+import type {
+  QueryRunner,
+  SelectQueryBuilder,
+  UpdateResult,
+  EntityMetadata,
+  Repository,
+} from 'typeorm';
 
 export type OutboxConsumerRepositoryMock<
   TModel extends OutboxModel,
   TEntity extends OutboxEntity,
-> = jest.Mocked<Omit<BaseRepository<TModel, TEntity, string>, 'mapper' | 'logger'>>;
+> = jest.Mocked<BaseRepository<TModel, TEntity, string>>;
 
 export function makeOutboxConsumerRepositoryMock<
   TModel extends OutboxModel,
@@ -53,6 +60,12 @@ export function makeOutboxConsumerRepositoryMock<
     createMany: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    // satisfy BaseRepository structure
+    repository: {} as Repository<TModel>,
+    entityClass: {} as Constructor<TEntity>,
+    modelClass: {} as Constructor<TModel>,
+    mapper: {} as unknown as MapperService,
+    logger: {} as unknown as Logger,
   };
 
   return mockRepository as unknown as OutboxConsumerRepositoryMock<TModel, TEntity>;
