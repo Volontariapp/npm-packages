@@ -1,8 +1,13 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import { OutboxStatus } from '@volontariapp/database';
-import { EventQueueWriter } from '../../../outbox/writers/event-queue.writer.js';
+import {
+  OutboxStatus,
+  type BaseRepository,
+  type EventQueueEntity,
+  type EventQueueModel,
+} from '@volontariapp/database';
+import { EventQueueWriter } from '../../../writers/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
-import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import {
   makeEventQueueRepositoryMock,
   type EventQueueRepositoryMock,
@@ -11,12 +16,14 @@ import {
 describe('EventQueueWriter (Unit)', () => {
   let writer: EventQueueWriter;
   let repository: EventQueueRepositoryMock;
-  let logger: TestLoggerMock;
 
   beforeEach(() => {
     repository = makeEventQueueRepositoryMock();
-    logger = makeLoggerMock();
-    writer = new EventQueueWriter(logger as never, repository as any);
+    const logger = makeLoggerMock();
+    writer = new EventQueueWriter(
+      logger,
+      repository as unknown as BaseRepository<EventQueueModel, EventQueueEntity, string>,
+    );
   });
 
   it('create() should pass default values when not overridden', async () => {

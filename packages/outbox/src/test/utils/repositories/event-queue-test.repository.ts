@@ -1,11 +1,16 @@
-import { BaseRepository, EventQueueEntity, EventQueueModel, type Repository } from '@volontariapp/database';
+import {
+  BaseRepository,
+  EventQueueEntity,
+  EventQueueModel,
+  type Repository,
+} from '@volontariapp/database';
 
-export class TestEventQueueWriterRepository extends BaseRepository<
+export class TestEventQueueRepository extends BaseRepository<
   EventQueueModel,
   EventQueueEntity,
   string
 > {
   constructor(repository: Repository<EventQueueModel>) {
-    super(repository as never, EventQueueEntity, EventQueueModel);
+    super(repository, EventQueueEntity, EventQueueModel);
   }
 }

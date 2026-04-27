@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/outbox",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -37,7 +37,7 @@
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },
   "dependencies": {
-    "@volontariapp/database": "1.8.1-snap-53c712c",
+    "@volontariapp/database": "1.8.0-snap-8a230de",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*"
   },

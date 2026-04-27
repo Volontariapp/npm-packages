@@ -7,9 +7,9 @@ import {
   type Repository,
 } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
-import { EventQueueWriter } from '../../../outbox/writers/event-queue.writer.js';
+import { EventQueueWriter } from '../../../writers/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
-import { TestEventQueueWriterRepository } from '../../utils/repositories/event-queue-test.repository.js';
+import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
 
 describe('EventQueueWriter (Full Integration)', () => {
   let writer: EventQueueWriter;
@@ -25,7 +25,7 @@ describe('EventQueueWriter (Full Integration)', () => {
     databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
     writer = new EventQueueWriter(
       logger as never,
-      new TestEventQueueWriterRepository(
+      new TestEventQueueRepository(
         testDataSource.getRepository(EventQueueModel) as unknown as Repository<EventQueueModel>,
       ),
     );

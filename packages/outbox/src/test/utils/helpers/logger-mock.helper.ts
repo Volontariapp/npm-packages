@@ -1,17 +1,14 @@
 import { jest } from '@jest/globals';
+import { Logger } from '@volontariapp/logger';
 
-type LoggerLike = {
-  info: (...args: unknown[]) => void;
-  warn: (...args: unknown[]) => void;
-  error: (...args: unknown[]) => void;
-};
-
-export type TestLoggerMock = LoggerLike & jest.Mocked<Pick<LoggerLike, 'info' | 'warn' | 'error'>>;
-
-export const makeLoggerMock = (): TestLoggerMock => {
-  return {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  } as unknown as TestLoggerMock;
+export const makeLoggerMock = (): Logger => {
+  const logger = new Logger({ minLevel: 'fatal' });
+  jest.spyOn(logger, 'info').mockImplementation(() => {});
+  jest.spyOn(logger, 'warn').mockImplementation(() => {});
+  jest.spyOn(logger, 'error').mockImplementation(() => {});
+  jest.spyOn(logger, 'debug').mockImplementation(() => {});
+  jest.spyOn(logger, 'fatal').mockImplementation(() => {});
+  jest.spyOn(logger, 'verbose').mockImplementation(() => {});
+  jest.spyOn(logger, 'log').mockImplementation(() => {});
+  return logger;
 };

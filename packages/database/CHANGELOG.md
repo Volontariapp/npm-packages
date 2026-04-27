@@ -27,6 +27,18 @@
 - Updated dependencies []:
   - @volontariapp/logger@0.2.3
 
+## 1.5.0
+
+### Minor Changes
+
+- patch database update
+
+## 1.4.0
+
+### Minor Changes
+
+- fix: update
+
 ## 1.3.0
 
 ### Minor Changes

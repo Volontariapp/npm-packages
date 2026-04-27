@@ -3852,20 +3852,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/bridge@npm:0.2.9-snap-53c712c":
-  version: 0.2.9-snap-53c712c
-  resolution: "@volontariapp/bridge@npm:0.2.9-snap-53c712c"
+"@volontariapp/bridge@npm:0.2.9-snap-8a230de":
+  version: 0.2.9-snap-8a230de
+  resolution: "@volontariapp/bridge@npm:0.2.9-snap-8a230de"
   dependencies:
     "@types/geojson": "npm:^7946.0.16"
     "@volontariapp/config": "npm:2.0.0"
-    "@volontariapp/errors": "npm:0.5.0-snap-53c712c"
+    "@volontariapp/errors": "npm:0.5.0-snap-8a230de"
     "@volontariapp/logger": "npm:0.2.3"
     ioredis: "npm:^5.10.1"
     neo4j-driver: "npm:^6.0.1"
     pg: "npm:^8.20.0"
     reflect-metadata: "npm:^0.2.2"
     typeorm: "npm:^0.3.28"
-  checksum: 10c0/aa37a90b2681e35e76be7e6c8f168958ccfe42cb75c1d7432a222c03700ebb73b05d1e062ccb09bfa3adf52713078215690a88542966c47e741e21c8f80ea866
+  checksum: 10c0/958051cf6f41ed99400798361bedd06cdcea95f590f4306d1b4a66b3aec8d34b2a2a9d8a4437aa6737bf5e6f27291ffd4df46c777a32abda138f5f0801123f1d
   languageName: node
   linkType: hard
 
@@ -3956,12 +3956,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/database@npm:1.8.1-snap-53c712c":
-  version: 1.8.1-snap-53c712c
-  resolution: "@volontariapp/database@npm:1.8.1-snap-53c712c"
+"@volontariapp/database@npm:1.8.0-snap-8a230de":
+  version: 1.8.0-snap-8a230de
+  resolution: "@volontariapp/database@npm:1.8.0-snap-8a230de"
   dependencies:
-    "@volontariapp/bridge": "npm:0.2.9-snap-53c712c"
-    "@volontariapp/errors": "npm:0.5.0-snap-53c712c"
+    "@volontariapp/bridge": "npm:0.2.9-snap-8a230de"
+    "@volontariapp/errors": "npm:0.5.0-snap-8a230de"
     "@volontariapp/logger": "npm:0.2.3"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
@@ -3969,7 +3969,7 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
   peerDependencies:
     typeorm: ^0.3.28
-  checksum: 10c0/1f4c024f026bab94076ac4cf948beefca3a82f5fa884d858b6672079b2edb6be688852bb394aa8bb9f6ebd201be0172783cc6e9ebb9d8206dc65426df971b5dc
+  checksum: 10c0/4b31e1884784f962f3695467466ef359714e0a3c7b43a094f8522055897bd05576370533baf7020aad1efe4f2827927d56cc5603cdaf30c913b6af876e66f049
   languageName: node
   linkType: hard
 
@@ -4105,12 +4105,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/errors@npm:0.5.0-snap-53c712c":
-  version: 0.5.0-snap-53c712c
-  resolution: "@volontariapp/errors@npm:0.5.0-snap-53c712c"
+"@volontariapp/errors@npm:0.5.0-snap-8a230de":
+  version: 0.5.0-snap-8a230de
+  resolution: "@volontariapp/errors@npm:0.5.0-snap-8a230de"
   dependencies:
     "@volontariapp/logger": "npm:0.2.3"
-  checksum: 10c0/4cc1b877c945b44082e387a67d9712f463e3d6216e8bc19b7c54d79f0f034fff06a0b6837cc5365d5c877167f994a7dbc9ebe31a9206fadfe0bd28c669b97e5a
+  checksum: 10c0/8aafe6f119adbee13ffe8ed35d6edfed08936df16ddfec4198f54e2af06fc67c983abde21d7de3d84326ae4f95264d60930af70b06b6075ab526c8dcc5a02c23
   languageName: node
   linkType: hard
 
@@ -4255,7 +4255,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^22.10.7"
     "@types/pg": "npm:^8"
-    "@volontariapp/database": "npm:1.8.1-snap-53c712c"
+    "@volontariapp/database": "npm:1.8.0-snap-8a230de"
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     jest: "npm:^30.3.0"

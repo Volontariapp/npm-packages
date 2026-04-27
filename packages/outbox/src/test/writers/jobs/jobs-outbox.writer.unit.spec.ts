@@ -1,8 +1,13 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import { OutboxStatus } from '@volontariapp/database';
-import { JobsOutboxWriter } from '../../../outbox/writers/jobs-outbox.writer.js';
+import {
+  OutboxStatus,
+  type BaseRepository,
+  type JobsOutboxEntity,
+  type JobsOutboxModel,
+} from '@volontariapp/database';
+import { JobsOutboxWriter } from '../../../writers/jobs-outbox.writer.js';
 import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
-import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import {
   makeJobsOutboxRepositoryMock,
   type JobsOutboxRepositoryMock,
@@ -11,12 +16,14 @@ import {
 describe('JobsOutboxWriter (Unit)', () => {
   let writer: JobsOutboxWriter;
   let repository: JobsOutboxRepositoryMock;
-  let logger: TestLoggerMock;
 
   beforeEach(() => {
     repository = makeJobsOutboxRepositoryMock();
-    logger = makeLoggerMock();
-    writer = new JobsOutboxWriter(logger as never, repository as any);
+    const logger = makeLoggerMock();
+    writer = new JobsOutboxWriter(
+      logger,
+      repository as unknown as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
+    );
   });
 
   it('create() should pass default values when not overridden', async () => {
@@ -28,25 +35,31 @@ describe('JobsOutboxWriter (Unit)', () => {
     const created = repository.create.mock.calls[0][0];
     expect(created.status).toBe(OutboxStatus.PENDING);
     expect(created.attempts).toBe(0);
-    expect(created.target).toBe('queue:default');
-    expect(created.payload).toEqual({ action: 'process-user', data: { userId: 'u-1' } });
+    expect(created.version).toBe(1);
+    expect(created.payload).toEqual({ jobName: 'test-job', data: { id: 'entity-1' } });
   });
 
   it('create() should keep overridden values when provided', async () => {
     const event = makeJobsOutboxEvent({
-      status: OutboxStatus.PROCESSING,
-      attempts: 3,
-      target: 'queue:high-priority',
-      payload: { action: 'retry-job', data: { userId: 'u-42' } },
+      status: OutboxStatus.FAILED,
+      attempts: 2,
+      version: 7,
+      payload: {
+        jobName: 'overridden-job',
+        data: { id: 'entity-2' },
+      },
     });
 
     await writer.create(event);
 
     expect(repository.create).toHaveBeenCalledTimes(1);
     const created = repository.create.mock.calls[0][0];
-    expect(created.status).toBe(OutboxStatus.PROCESSING);
-    expect(created.attempts).toBe(3);
-    expect(created.target).toBe('queue:high-priority');
-    expect(created.payload).toEqual({ action: 'retry-job', data: { userId: 'u-42' } });
+    expect(created.status).toBe(OutboxStatus.FAILED);
+    expect(created.attempts).toBe(2);
+    expect(created.version).toBe(7);
+    expect(created.payload).toEqual({
+      jobName: 'overridden-job',
+      data: { id: 'entity-2' },
+    });
   });
 });
