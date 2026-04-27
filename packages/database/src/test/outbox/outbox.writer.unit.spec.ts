@@ -1,15 +1,15 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import { OutboxWriter } from '../../outbox/writer/outbox.writer.js';
-import { OutboxModel } from '../../outbox/models/outbox.model.js';
+import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
+import type { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { BaseRepository } from '../../core/base.repository.js';
-import { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
+import type { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
 import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
 import { makeExtendedOutboxEvent } from '../utils/helpers/extended-outbox-event.helper.js';
-import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
-import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
-import { makeOutboxWriterRepositoryMock, OutboxWriterRepositoryMock, } from '../utils/helpers/outbox-writer-mock.helper.js';
-
+import type { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
+import type { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
+import type { OutboxWriterRepositoryMock } from '../utils/helpers/outbox-writer-mock.helper.js';
+import { makeOutboxWriterRepositoryMock } from '../utils/helpers/outbox-writer-mock.helper.js';
 
 describe('OutboxWriter (Unit)', () => {
   let writer: OutboxWriter<OutboxModel, OutboxEntity>;
@@ -55,7 +55,9 @@ describe('OutboxWriter (Unit)', () => {
       makeOutboxEvent({ type: 'user.updated', createdAt: new Date(Date.now() + 60_000) }),
     ];
 
-    await expect(writer.createMany(events)).rejects.toThrow('Outbox createdAt cannot be in the future');
+    await expect(writer.createMany(events)).rejects.toThrow(
+      'Outbox createdAt cannot be in the future',
+    );
     expect(repository.createMany).not.toHaveBeenCalled();
     expect(logger.warn).toHaveBeenCalled();
   });
@@ -100,7 +102,10 @@ describe('OutboxWriter (Unit)', () => {
     repository.createMany.mockRejectedValueOnce(repositoryError);
 
     await expect(writer.createMany(events)).rejects.toThrow('repository createMany failure');
-    expect(logger.error).toHaveBeenCalledWith('Failed to create outbox events batch', repositoryError);
+    expect(logger.error).toHaveBeenCalledWith(
+      'Failed to create outbox events batch',
+      repositoryError,
+    );
   });
 
   it('update() should log and rethrow repository errors', async () => {
@@ -146,7 +151,7 @@ describe('OutboxWriter with extended types (Unit)', () => {
 
     await writer.create(event);
     await writer.createMany([event, secondEvent]);
-    await writer.update(makeExtendedOutboxEvent({ ...event, channel: 'push' }));
+    await writer.update(makeExtendedOutboxEvent(Object.assign({}, event, { channel: 'push' })));
     await writer.delete(event.id);
 
     expect(repository.create).toHaveBeenCalledWith(event);

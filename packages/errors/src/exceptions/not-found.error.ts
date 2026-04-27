@@ -1,7 +1,7 @@
-import { BaseError } from '../core/base.error.js';
+import { BaseApiError } from '../core/base.error.js';
 import { GrpcStatus } from '../core/grpc-status.enum.js';
 
-export class NotFoundError extends BaseError {
+export class NotFoundError extends BaseApiError {
   public readonly statusCode = 404;
   public readonly grpcCode = GrpcStatus.NOT_FOUND;
 

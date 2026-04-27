@@ -1,27 +1,20 @@
 import type { QueryRunner } from 'typeorm';
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { testDataSource, initializeTestDb, closeTestDb } from '../data-source.js';
+import { describe, it, expect, beforeAll } from '@jest/globals';
+import { testDataSource } from '../data-source.js';
 import { UserRepository } from '../example/repositories/user.repository.js';
 import { UserModel } from '../example/models/user.model.js';
 import { ProfileModel } from '../example/models/profile.model.js';
 import { UserEntity } from '../example/entities/user.entity.js';
 import { ProfileEntity } from '../example/entities/profile.entity.js';
+import { setupIntegrationTest } from '../utils/index.js';
 
 describe('User Repository (Full Integration)', () => {
   let userRepository: UserRepository;
 
-  beforeAll(async () => {
-    await initializeTestDb();
+  setupIntegrationTest([UserModel, ProfileModel]);
+
+  beforeAll(() => {
     userRepository = new UserRepository(testDataSource.getRepository(UserModel));
-  });
-
-  afterAll(async () => {
-    await closeTestDb();
-  });
-
-  beforeEach(async () => {
-    await testDataSource.getRepository(UserModel).createQueryBuilder().delete().execute();
-    await testDataSource.getRepository(ProfileModel).createQueryBuilder().delete().execute();
   });
 
   it('create() should save and map to domain entity', async () => {
