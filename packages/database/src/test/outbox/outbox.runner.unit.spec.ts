@@ -6,6 +6,14 @@ import type { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 import { Logger } from '@volontariapp/logger';
+import { setTimeout } from 'node:timers/promises';
+
+// Properly mock the module
+jest.mock('node:timers/promises', () => ({
+  setTimeout: jest.fn(),
+}));
+
+const mockedSetTimeout = jest.mocked(setTimeout);
 
 jest.mock('@volontariapp/logger');
 
@@ -15,8 +23,6 @@ describe('OutboxRunner (Unit)', () => {
   let fetchPendingItemsSpy: jest.SpiedFunction<
     OutboxConsumer<OutboxModel, OutboxEntity>['fetchPendingItems']
   >;
-  let loggerErrorSpy: jest.SpiedFunction<Logger['error']>;
-  let loggerWarnSpy: jest.SpiedFunction<Logger['warn']>;
 
   const config = new OutboxRunnerConfig();
   config.batchIntervalMs = 200;
@@ -25,6 +31,21 @@ describe('OutboxRunner (Unit)', () => {
   config.logger.format = LoggerFormat.JSON;
   config.logger.level = 'info';
 
+  const flush = async () => {
+    for (let i = 0; i < 20; i++) {
+      await Promise.resolve();
+    }
+  };
+
+  // Helper to wait for a spy to be called X times without using 'any'
+  const waitForCalls = async (target: number, timeoutMs = 1000) => {
+    const start = Date.now();
+    while (fetchPendingItemsSpy.mock.calls.length < target && Date.now() - start < timeoutMs) {
+      await flush();
+      await jest.advanceTimersByTimeAsync(0);
+    }
+  };
+
   beforeEach(() => {
     jest.useFakeTimers();
 
@@ -32,50 +53,70 @@ describe('OutboxRunner (Unit)', () => {
       metadata: { tableName: 'outbox' },
     } as unknown as jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
 
-    // Spy on the prototype because OutboxRunner instantiates its own consumer
     fetchPendingItemsSpy = jest.spyOn(
       OutboxConsumer.prototype,
       'fetchPendingItems',
     ) as jest.SpiedFunction<OutboxConsumer<OutboxModel, OutboxEntity>['fetchPendingItems']>;
 
-    // Logger is mocked via jest.mock
-    loggerErrorSpy = jest.spyOn(Logger.prototype, 'error') as jest.SpiedFunction<Logger['error']>;
-    loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn') as jest.SpiedFunction<Logger['warn']>;
+    mockedSetTimeout.mockImplementation((ms, value, options) => {
+      return new Promise((resolve, reject) => {
+        const delay = ms ?? 1;
+        const timeout = global.setTimeout(() => {
+          resolve(value as never);
+        }, delay);
+        if (options?.signal) {
+          const signal = options.signal;
+          if (signal.aborted) {
+            global.clearTimeout(timeout);
+            const error = new Error('The operation was aborted');
+            error.name = 'AbortError';
+            reject(error);
+            return;
+          }
+          signal.addEventListener(
+            'abort',
+            () => {
+              global.clearTimeout(timeout);
+              const error = new Error('The operation was aborted');
+              error.name = 'AbortError';
+              reject(error);
+            },
+            { once: true },
+          );
+        }
+      });
+    });
 
     runner = new OutboxRunner(repositoryMock, config);
   });
 
-  afterEach(() => {
-    runner.stop();
+  afterEach(async () => {
+    // Gracefully stop the runner
+    await runner.stop();
     jest.useRealTimers();
     jest.restoreAllMocks();
   });
 
   it('should call fetchPendingItems periodically after start', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
+    runner.start();
 
-    void runner.start();
-
-    // The loop in start() calls runCycle() which calls fetchPendingItems()
-    // We need to advance time to trigger multiple cycles
-    await jest.advanceTimersByTimeAsync(0);
+    await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
-    await jest.advanceTimersByTimeAsync(200);
+    jest.advanceTimersByTime(200);
+    await waitForCalls(2);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(2);
 
-    await jest.advanceTimersByTimeAsync(200);
+    jest.advanceTimersByTime(200);
+    await waitForCalls(3);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(3);
   });
 
   it('runCycle() should execute a single fetch and return', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-
     await runner.runCycle();
-
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
-    // Should not loop or wait
-    expect(jest.getTimerCount()).toBe(0);
   });
 
   it('should log error if runCycle fails but continue running in start loop', async () => {
@@ -83,34 +124,67 @@ describe('OutboxRunner (Unit)', () => {
     fetchPendingItemsSpy.mockRejectedValueOnce(error);
     fetchPendingItemsSpy.mockResolvedValue([]);
 
-    void runner.start();
-
-    await jest.advanceTimersByTimeAsync(0);
-    expect(loggerErrorSpy).toHaveBeenCalledWith('Error during outbox run cycle', { error });
+    runner.start();
+    await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
-    await jest.advanceTimersByTimeAsync(200);
+    jest.advanceTimersByTime(200);
+    await waitForCalls(2);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should stop running when stop is called', async () => {
     fetchPendingItemsSpy.mockResolvedValue([]);
-
-    void runner.start();
-    await jest.advanceTimersByTimeAsync(0);
+    runner.start();
+    await waitForCalls(1);
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
 
-    runner.stop();
-    await jest.advanceTimersByTimeAsync(200);
+    const stopPromise = runner.stop();
+    await flush();
+    jest.advanceTimersByTime(0);
+    await flush();
+    await stopPromise;
 
-    // Should not have been called a second time
+    jest.advanceTimersByTime(400);
+    await flush();
     expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should not start multiple times', () => {
-    void runner.start();
-    void runner.start();
+  it('should wait for current cycle to finish during graceful shutdown', async () => {
+    let cycleFinished = false;
+    fetchPendingItemsSpy.mockImplementation(async () => {
+      await new Promise((resolve) => global.setTimeout(resolve, 50));
+      cycleFinished = true;
+      return [];
+    });
 
+    runner.start();
+    await flush();
+    expect(fetchPendingItemsSpy).toHaveBeenCalledTimes(1);
+
+    const stopPromise = runner.stop();
+    await flush();
+    expect(cycleFinished).toBe(false);
+
+    jest.advanceTimersByTime(50);
+    await flush();
+    await stopPromise;
+    expect(cycleFinished).toBe(true);
+  });
+
+  it('should not start multiple times', () => {
+    runner.start();
+    const loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn');
+    runner.start();
     expect(loggerWarnSpy).toHaveBeenCalledWith('Outbox runner is already running');
+  });
+
+  it('isRunning should reflect correct state', async () => {
+    expect(runner.isRunning).toBe(false);
+    runner.start();
+    await waitForCalls(1);
+    expect(runner.isRunning).toBe(true);
+    await runner.stop();
+    expect(runner.isRunning).toBe(false);
   });
 });

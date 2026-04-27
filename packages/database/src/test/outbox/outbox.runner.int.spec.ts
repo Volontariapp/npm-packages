@@ -33,8 +33,8 @@ describe('Outbox Flow (Integration)', () => {
     runner = new OutboxRunner(repository, config);
   });
 
-  afterAll(() => {
-    runner.stop();
+  afterAll(async () => {
+    await runner.stop();
   });
 
   it('should complete the whole flow for EventQueue: write -> run cycle -> mark as processing', async () => {
@@ -62,7 +62,7 @@ describe('Outbox Flow (Integration)', () => {
     expect(dbItem?.status).toBe(OutboxStatus.PENDING);
     expect(dbItem?.payload).toEqual({ after: { foo: 'bar' } });
 
-    void runner.start();
+    runner.start();
 
     const maxAttempts = 10;
     let attempts = 0;
@@ -79,7 +79,7 @@ describe('Outbox Flow (Integration)', () => {
 
     expect(dbItem?.status).toBe(OutboxStatus.PROCESSING);
 
-    runner.stop();
+    await runner.stop();
   });
 
   it('should process multiple EventQueue items in the flow', async () => {
@@ -104,7 +104,7 @@ describe('Outbox Flow (Integration)', () => {
 
     await writer.createMany(events);
 
-    void runner.start();
+    runner.start();
 
     const maxAttempts = 10;
     let attempts = 0;
@@ -126,6 +126,6 @@ describe('Outbox Flow (Integration)', () => {
     expect(processedIds).toContain(events[1].id);
     expect(processedIds).toContain(events[2].id);
 
-    runner.stop();
+    await runner.stop();
   });
 });

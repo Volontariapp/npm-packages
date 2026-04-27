@@ -1,11 +1,13 @@
-import { OutboxConsumer } from '../consumers/outbox.consumer.js';
-import type { OutboxEntity, OutboxModel } from '../index.js';
+import { setTimeout } from 'node:timers/promises';
 import { Logger } from '@volontariapp/logger';
 import type { OutboxRunnerConfig } from '@volontariapp/config';
+import { OutboxConsumer } from '../consumers/outbox.consumer.js';
+import type { OutboxEntity, OutboxModel } from '../index.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 
 export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
-  private running = false;
+  private abortController?: AbortController;
+  private loopPromise?: Promise<void>;
 
   private readonly logger: Logger;
   private readonly consumer: OutboxConsumer<TOutboxModel, TOutboxEntity>;
@@ -15,11 +17,47 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     private readonly config: OutboxRunnerConfig,
   ) {
     this.logger = new Logger(config.logger);
-    this.consumer = new OutboxConsumer<TOutboxModel, TOutboxEntity>(
-      this.logger,
-      this.repository,
-      config.batchSize,
-    );
+    this.consumer = new OutboxConsumer(this.logger, this.repository, config.batchSize);
+  }
+
+  /**
+   * Check if the runner is currently active
+   */
+  public get isRunning(): boolean {
+    return !!this.abortController && !this.abortController.signal.aborted;
+  }
+
+  start(): void {
+    if (this.isRunning) {
+      this.logger.warn('Outbox runner is already running');
+      return;
+    }
+
+    this.logger.info('Starting outbox runner');
+    this.abortController = new AbortController();
+
+    // Execute the loop in the background without blocking the caller
+    this.loopPromise = this.runLoop(this.abortController.signal);
+  }
+
+  private async runLoop(signal: AbortSignal): Promise<void> {
+    try {
+      while (!signal.aborted) {
+        await this.runCycle();
+
+        // Wait for the next interval or until aborted
+        // setTimeout will throw AbortError if signal is aborted during or before the wait
+        await setTimeout(this.config.batchIntervalMs, undefined, { signal });
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        this.logger.debug('Outbox runner wait interrupted by stop');
+      } else {
+        this.logger.error('Critical error in outbox runner loop', { error });
+      }
+    } finally {
+      this.logger.info('Outbox runner loop terminated');
+    }
   }
 
   async runCycle(): Promise<void> {
@@ -30,24 +68,20 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     }
   }
 
-  async start(): Promise<void> {
-    if (this.running) {
-      this.logger.warn('Outbox runner is already running');
+  async stop(): Promise<void> {
+    if (!this.abortController) {
       return;
     }
 
-    this.logger.info('Starting outbox runner');
-    this.running = true;
+    this.logger.info('Stopping outbox runner gracefully');
+    this.abortController.abort();
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    while (this.running) {
-      await this.runCycle();
-      await new Promise((resolve) => setTimeout(resolve, this.config.batchIntervalMs));
+    try {
+      // Wait for the current cycle/wait to actually finish
+      await this.loopPromise;
+    } finally {
+      this.loopPromise = undefined;
+      this.abortController = undefined;
     }
-  }
-
-  stop(): void {
-    this.logger.info('Stopping outbox runner');
-    this.running = false;
   }
 }
