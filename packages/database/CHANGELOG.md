@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.0
+
+### Minor Changes
+
+- added outbox extended repository and fixed changelog history
+
 ## 1.8.0
 
 ### Minor Changes
