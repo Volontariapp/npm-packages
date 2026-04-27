@@ -1,12 +1,5 @@
 # Changelog
 
-## 2.4.11
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @volontariapp/errors-nest@0.10.0
-
 ## 2.4.10
 
 ### Patch Changes
@@ -14,6 +7,7 @@
 - Updated typeORM version to match database package version
 
 - Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.0
   - @volontariapp/errors@0.5.0`
   - @volontariapp/database@1.8.1
   - @volontariapp/errors-nest@0.9.1

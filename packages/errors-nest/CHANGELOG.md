@@ -6,10 +6,6 @@
 
 - updated errors-nest to renamed baseError to baseApiError
 
-## 0.9.1
-
-### Patch Changes
-
 - Updated dependencies []:
   - @volontariapp/errors@0.5.0
 

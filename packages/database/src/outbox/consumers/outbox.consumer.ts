@@ -9,7 +9,7 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
   constructor(
     private readonly logger: Logger,
     protected readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
-    private readonly batchSize: number,
+    protected readonly batchSize: number,
   ) {
     if (this.batchSize <= 0) {
       throw new InvalidOutboxSizeError();
@@ -43,8 +43,8 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
 
       // Handle driver result formats: [rows, count] or just rows
       const rawRows =
-        Array.isArray(result) && Array.isArray((result as unknown[])[0])
-          ? ((result as unknown[])[0] as TOutboxModel[])
+        Array.isArray(result) && Array.isArray(result[0])
+          ? (result[0] as TOutboxModel[])
           : (result as TOutboxModel[]);
 
       if (rawRows.length === 0) {
