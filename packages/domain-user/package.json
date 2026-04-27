@@ -36,7 +36,9 @@
     "test:coverage": "node --experimental-vm-modules ../../node_modules/.bin/jest --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\"",
     "test:coverage:integration": "node --experimental-vm-modules ../../node_modules/.bin/jest --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\" --runInBand",
     "typeorm": "typeorm-ts-node-esm",
-    "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
+    "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts",
+    "migration:run:local": "TYPEORM_MIGRATION_RUN=true DB_PORT=5433 DB_USER=testuser DB_PASSWORD=testpassword DB_NAME=volontariapp_test yarn typeorm migration:run -d src/test/data-source.ts",
+    "test:integration:local": "DB_PORT=5433 DB_USER=testuser DB_PASSWORD=testpassword DB_NAME=volontariapp_test node --experimental-vm-modules ../../node_modules/.bin/jest --config jest.integration.config.js --runInBand"
   },
   "dependencies": {
     "@volontariapp/auth": "workspace:*",

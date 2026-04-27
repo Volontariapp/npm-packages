@@ -15,7 +15,7 @@ export class BadgeService {
     private readonly badgeRepository: IBadgeRepository,
   ) {}
 
-  async findById(id: string) {
+  async findById(id: string): Promise<BadgeEntity> {
     try {
       const badge = await this.badgeRepository.findById(id);
       if (!badge) {
@@ -31,7 +31,7 @@ export class BadgeService {
     }
   }
 
-  async findBySlug(slug: string) {
+  async findBySlug(slug: string): Promise<BadgeEntity> {
     try {
       const badge = await this.badgeRepository.findBySlug(slug);
       if (!badge) {
@@ -47,7 +47,7 @@ export class BadgeService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<BadgeEntity[]> {
     try {
       return await this.badgeRepository.findAll();
     } catch (error) {
@@ -58,7 +58,7 @@ export class BadgeService {
     }
   }
 
-  findManyByIds(ids: string[]) {
+  findManyByIds(ids: string[]): Promise<BadgeEntity[]> {
     try {
       return this.badgeRepository.findManyByIds(ids);
     } catch (error) {
@@ -69,7 +69,7 @@ export class BadgeService {
     }
   }
 
-  async create(badgeData: Partial<BadgeEntity>) {
+  async create(badgeData: Partial<BadgeEntity>): Promise<BadgeEntity> {
     try {
       return await this.badgeRepository.create(badgeData);
     } catch (error) {
@@ -84,7 +84,7 @@ export class BadgeService {
     }
   }
 
-  async update(id: string, badgeData: Partial<BadgeEntity>) {
+  async update(id: string, badgeData: Partial<BadgeEntity>): Promise<BadgeEntity> {
     try {
       const updatedBadge = await this.badgeRepository.update(id, badgeData);
       if (!updatedBadge) {
@@ -100,7 +100,7 @@ export class BadgeService {
     }
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<void> {
     try {
       const deleted = await this.badgeRepository.delete(id);
       if (!deleted) {

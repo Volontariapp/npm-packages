@@ -22,7 +22,10 @@ describe('PostgresUserRepository (Integration)', () => {
 
   beforeAll(async () => {
     await initializeTestDb();
-    userRepository = new PostgresUserRepository(getTestRepository(UserModel));
+    userRepository = new PostgresUserRepository(
+      getTestRepository(UserModel),
+      'test-email-encryption-secret-32ch',
+    );
     badgeRepository = new PostgresBadgeRepository(getTestRepository(BadgeModel));
   });
 

@@ -4,6 +4,7 @@ import { PostgresUserRepository } from '../repositories/postgres-user.repository
 import type { IUserRepository } from '../repositories/index.js';
 import { UserEntity } from '../entities/user.entity.js';
 import { isBaseError } from '@volontariapp/errors';
+import { calculateHash } from '@volontariapp/crypto';
 import {
   USER_NOT_FOUND,
   USER_ALREADY_HAS_BADGE,
@@ -44,14 +45,16 @@ export class UserService {
     try {
       const user = await this.userRepository.findByEmail(email);
       if (!user) {
-        this.logger.warn(`User with email ${email} not found`);
+        this.logger.warn(`User with email hash ${calculateHash(email).slice(0, 8)} not found`);
         throw USER_NOT_FOUND(email, 'email');
       }
       return user;
     } catch (error) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
-      this.logger.error(`Error while finding user by email ${email}: ${err.message}`);
+      this.logger.error(
+        `Error while finding user by email hash ${calculateHash(email).slice(0, 8)}: ${err.message}`,
+      );
       throw DATABASE_ERROR(`finding user by email ${email}`, err.message);
     }
   }

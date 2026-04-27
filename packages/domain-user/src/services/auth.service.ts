@@ -2,16 +2,36 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import * as repositories from '../repositories/index.js';
 import { UserEntity } from '../entities/user.entity.js';
-import { LoginCommand, SignUpCommand } from '@volontariapp/contracts';
 import {
   DATABASE_ERROR,
   INVALID_RNA,
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
 } from '@volontariapp/errors-nest';
-import { hashPassword, verifyPassword } from '@volontariapp/crypto';
+import { hashPassword, verifyPassword, calculateHash } from '@volontariapp/crypto';
 import { isBaseError, isDatabaseDriverError } from '@volontariapp/errors';
 import { JwtService } from '@volontariapp/auth';
+
+export interface SignUpData {
+  email: string;
+  pseudo: string;
+  password: string;
+  organisationInfo?: {
+    rna: string;
+  };
+  bio?: string;
+  logoPath?: string;
+}
+
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export type AuthResult = {
+  accessToken: string;
+  refreshToken: string;
+};
 
 @Injectable()
 export class AuthService {
@@ -23,10 +43,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(command: SignUpCommand): Promise<{ accessToken: string; refreshToken: string }> {
+  async signUp(command: SignUpData): Promise<AuthResult> {
     const existingUser = await this.userRepository.findByEmail(command.email);
     if (existingUser) {
-      this.logger.warn(`Attempt to sign up with already registered email: ${command.email}`);
+      this.logger.warn(
+        `Attempt to sign up with already registered email hash: ${calculateHash(command.email).slice(0, 8)}`,
+      );
       throw USER_ALREADY_EXISTS(command.email);
     }
     const user = UserEntity.create({
@@ -62,15 +84,19 @@ export class AuthService {
     }
   }
 
-  async logIn(command: LoginCommand): Promise<{ accessToken: string; refreshToken: string }> {
+  async logIn(command: LoginData): Promise<AuthResult> {
     const user = await this.userRepository.findByEmail(command.email);
     if (!user) {
-      this.logger.warn(`Login attempt with non-existent email: ${command.email}`);
+      this.logger.warn(
+        `Login attempt with non-existent email hash: ${calculateHash(command.email).slice(0, 8)}`,
+      );
       throw USER_NOT_FOUND(command.email, 'email');
     }
     const passwordHash = await this.userRepository.findPasswordHashByEmail(command.email);
     if (passwordHash == null || !verifyPassword(command.password, passwordHash)) {
-      this.logger.warn(`Invalid password attempt for email: ${command.email}`);
+      this.logger.warn(
+        `Invalid password attempt for email hash: ${calculateHash(command.email).slice(0, 8)}`,
+      );
       throw USER_NOT_FOUND(command.email, 'email');
     }
     const authUser = { id: user.id, email: user.email, role: user.role };
