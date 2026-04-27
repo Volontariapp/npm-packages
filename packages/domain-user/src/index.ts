@@ -1,6 +1,4 @@
-export * from "./entities/user.entity.js";
-export * from "./entities/badge.entity.js";
-
-export * from "./models/user.model.js";
-export * from "./models/badge.model.js";
-export * from "./models/user-badge.model.js";
+export * from './entities/index.js';
+export * from './repositories/index.js';
+export * from './services/index.js';
+export * from './value-objects/index.js';
