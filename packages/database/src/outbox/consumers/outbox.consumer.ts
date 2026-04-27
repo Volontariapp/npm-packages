@@ -40,10 +40,10 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
           )`,
           { pending: OutboxStatus.PENDING, limit: this.batchSize },
         )
-        .returning(['*', '"created_at" AS "createdAt"', '"updated_at" AS "updatedAt"'])
+        .returning('*')
         .execute();
 
-      const rawRows = updateResult.raw as TOutboxModel[];
+      const rawRows = this.normalizeRows(updateResult.raw);
 
       if (rawRows.length === 0) {
         this.logger.debug('No pending outbox items found', { tableName });
@@ -56,6 +56,33 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
       });
 
       return this.repository.toEntities(rawRows);
+    });
+  }
+
+  private normalizeRows(result: unknown): TOutboxModel[] {
+    this.logger.debug('Normalizing query result', { isArray: Array.isArray(result) });
+
+    const data =
+      result !== null && typeof result === 'object' && 'rows' in result
+        ? (result as { rows: unknown }).rows
+        : result;
+
+    if (!Array.isArray(data)) {
+      this.logger.warn('Query result data is not an array after normalization', {
+        type: typeof data,
+      });
+      return [];
+    }
+
+    this.logger.debug(`Mapping ${data.length.toString()} raw rows to models`);
+
+    return data.map((item: unknown) => {
+      const row = item as Record<string, unknown>;
+      return {
+        ...row,
+        createdAt: (row.createdAt ?? row.created_at) as Date,
+        updatedAt: (row.updatedAt ?? row.updated_at) as Date,
+      } as TOutboxModel;
     });
   }
 
