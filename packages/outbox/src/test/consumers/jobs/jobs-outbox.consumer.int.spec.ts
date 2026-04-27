@@ -60,4 +60,46 @@ describe('JobsOutboxConsumer (Integration)', () => {
     const dbItem = await repository.findOneByOrFail({ id: jobId });
     expect(dbItem.status).toBe(OutboxStatus.PROCESSING);
   });
+
+  it('should handle parallel consumption correctly', async () => {
+    const testRepository = new TestJobsOutboxRepository(repository);
+    const consumer1 = new JobsOutboxConsumer(logger, testRepository, 2);
+    const consumer2 = new JobsOutboxConsumer(logger, testRepository, 2);
+    const consumer3 = new JobsOutboxConsumer(logger, testRepository, 2);
+
+    // Seed 4 items
+    const items = [1, 2, 3, 4].map((i) =>
+      repository.create({
+        id: `00000000-0000-0000-0000-00000000000${i.toString()}`,
+        type: 'test.job',
+        emitter: 'test.service',
+        status: OutboxStatus.PENDING,
+        payload: { data: `test-${i.toString()}` },
+        createdAt: new Date(Date.now() + i),
+        updatedAt: new Date(),
+        scheduledAt: new Date(),
+        version: 1,
+        attempts: 0,
+        target: 'test.target',
+      } as Partial<JobsOutboxModel>),
+    );
+    await repository.save(items);
+
+    // Run in parallel
+    const [res1, res2, res3] = await Promise.all([
+      consumer1.fetchPendingItems(),
+      consumer2.fetchPendingItems(),
+      consumer3.fetchPendingItems(),
+    ]);
+
+    // Total should be 4 across all consumers
+    const allFetched = [...res1, ...res2, ...res3];
+    expect(allFetched).toHaveLength(4);
+
+    // Specifically:
+    // Two consumers should get 2 items each
+    // One consumer should get 0 items
+    const lengths = [res1.length, res2.length, res3.length].sort();
+    expect(lengths).toEqual([0, 2, 2]);
+  });
 });
