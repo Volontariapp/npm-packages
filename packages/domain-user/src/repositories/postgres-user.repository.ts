@@ -77,7 +77,7 @@ export class PostgresUserRepository
     await this.increment(where, 'totalImpactScore', score);
   }
 
-  async createWithHashedPassword(user: UserEntity, password: string): Promise<UserEntity> {
+  async createWithHashedPassword(user: Partial<UserEntity>, password: string): Promise<UserEntity> {
     const modelData = this.toModel(user);
     modelData.passwordHash = password;
     const model = this.repository.create(modelData);
