@@ -14,7 +14,7 @@ import { JwtService } from '@volontariapp/auth';
 
 export interface SignUpData {
   email: string;
-  pseudo: string;
+  pseudo?: string;
   password: string;
   organisationInfo?: {
     rna: string;

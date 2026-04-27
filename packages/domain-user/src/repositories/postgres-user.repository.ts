@@ -22,7 +22,7 @@ export class PostgresUserRepository
     super(repository, UserEntity, UserModel);
   }
 
-  protected override toEntity(model: UserModel): UserEntity {
+  public override toEntity(model: UserModel): UserEntity {
     const entity = super.toEntity(model);
     entity.email = decrypt(model.email, this.emailSecret);
     return entity;
