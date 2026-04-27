@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.1
+  - @volontariapp/auth@2.1.16
+
 ## 2.3.5
 
 ### Patch Changes

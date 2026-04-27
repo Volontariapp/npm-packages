@@ -6,6 +6,7 @@
 
 - Updated dependencies []:
   - @volontariapp/contracts@4.0.3
+  - @volontariapp/errors-nest@0.10.1
 
 ## 0.3.2
 

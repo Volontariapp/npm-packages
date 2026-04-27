@@ -8,6 +8,7 @@
   - @volontariapp/config@2.1.0
   - @volontariapp/bridge@0.2.10
   - @volontariapp/health-check@0.1.12
+  - @volontariapp/errors-nest@0.10.1
 
 ## 0.1.26
 
