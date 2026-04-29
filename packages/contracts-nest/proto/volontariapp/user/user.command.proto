@@ -38,3 +38,37 @@ message LoginCommand {
 message RefreshTokenCommand {
   string refresh_token = 1;
 }
+
+message IncrementImpactScoreCommand {
+  string user_id = 1;
+  int32 score_increment = 2;
+}
+
+message CreateBadgeCommand {
+  string name = 1;
+  string slug = 2;
+  optional string icon_path = 3;
+  string description = 4;
+}
+
+message DeleteBadgeCommand {
+  string badge_id = 1;
+}
+
+message UpdateBadgeCommand {
+  string badge_id = 1;
+  optional string name = 2;
+  optional string slug = 3;
+  optional string icon_path = 4;
+  optional string description = 5;
+}
+
+message AddBadgeToUserCommand {
+  string user_id = 1;
+  string badge_id = 2;
+}
+
+message RemoveBadgeFromUserCommand {
+  string user_id = 1;
+  string badge_id = 2;
+}

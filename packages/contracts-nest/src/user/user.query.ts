@@ -14,3 +14,11 @@ export interface GetUserQuery {
 export interface ListUsersQuery {
   pagination: PaginationRequest | undefined;
 }
+
+export interface GetBadgeQuery {
+  badgeId: string;
+}
+
+export interface ListBadgesQuery {
+  pagination: PaginationRequest | undefined;
+}
