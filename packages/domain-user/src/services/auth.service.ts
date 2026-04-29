@@ -3,6 +3,7 @@ import { Logger } from '@volontariapp/logger';
 import { UserEntity } from '../entities/user.entity.js';
 import {
   DATABASE_ERROR,
+  INVALID_REFRESH_TOKEN,
   INVALID_RNA,
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
@@ -12,7 +13,13 @@ import { isBaseError, isDatabaseDriverError } from '@volontariapp/errors';
 import { JwtService } from '@volontariapp/auth';
 import { PostgresUserRepository } from '../repositories/postgres-user.repository.js';
 import type { IUserRepository } from '../repositories/interfaces/user.repository.js';
-import { SignUpInput, LoginInput, AuthTokens, SignUpOutput } from '../value-objects/index.js';
+import {
+  SignUpInput,
+  LoginInput,
+  AuthTokens,
+  SignUpOutput,
+  RefreshTokensInput,
+} from '../value-objects/index.js';
 
 export { SignUpInput, LoginInput, AuthTokens };
 
@@ -88,5 +95,22 @@ export class AuthService {
       this.jwtService.signRefreshToken(authUser),
     ]);
     return new AuthTokens(accessToken, refreshToken);
+  }
+
+  async refreshTokens(command: RefreshTokensInput): Promise<AuthTokens> {
+    try {
+      const payload = await this.jwtService.verifyRefreshToken(command.refreshToken);
+      const authUser = { id: payload.id, role: payload.role };
+      const [accessToken, refreshToken] = await Promise.all([
+        this.jwtService.signAccessToken(authUser),
+        this.jwtService.signRefreshToken(authUser),
+      ]);
+      return new AuthTokens(accessToken, refreshToken);
+    } catch (error) {
+      this.logger.warn(
+        `Invalid refresh token attempt: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      throw INVALID_REFRESH_TOKEN();
+    }
   }
 }

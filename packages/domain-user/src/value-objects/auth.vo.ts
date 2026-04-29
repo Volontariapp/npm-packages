@@ -31,3 +31,7 @@ export class SignUpOutput {
     public readonly auth: AuthTokens,
   ) {}
 }
+
+export class RefreshTokensInput {
+  constructor(public readonly refreshToken: string) {}
+}
