@@ -37,3 +37,22 @@ message LoginResponse {
 message RefreshTokenResponse {
   AuthResponse auth = 1;
 }
+
+message IncrementImpactScoreResponse {
+}
+
+message CreateBadgeResponse {
+  Badge badge = 1;
+}
+
+message UpdateBadgeResponse {
+}
+
+message DeleteBadgeResponse {
+}
+
+message AddBadgeToUserResponse {
+}
+
+message RemoveBadgeFromUserResponse {
+}

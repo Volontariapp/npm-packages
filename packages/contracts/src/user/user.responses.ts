@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { PaginationResponse } from "../common/pagination.js";
-import { User } from "./user.js";
+import { Badge, User } from "./user.js";
 
 export interface UserResponse {
   user: User | undefined;
@@ -39,4 +39,23 @@ export interface LoginResponse {
 
 export interface RefreshTokenResponse {
   auth: AuthResponse | undefined;
+}
+
+export interface IncrementImpactScoreResponse {
+}
+
+export interface CreateBadgeResponse {
+  badge: Badge | undefined;
+}
+
+export interface UpdateBadgeResponse {
+}
+
+export interface DeleteBadgeResponse {
+}
+
+export interface AddBadgeToUserResponse {
+}
+
+export interface RemoveBadgeFromUserResponse {
 }
