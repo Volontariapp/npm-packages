@@ -4,12 +4,14 @@ import type { OutboxEntity } from '../entities/outbox.entity.js';
 import { OutboxStatus } from '../types/outbox.status.js';
 import type { OutboxModel } from '../models/outbox.model.js';
 import type { Logger } from '@volontariapp/logger';
+import type { OutboxDispatcher } from '../dispatchers/outbox.dispatcher.js';
 
 export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   constructor(
-    private readonly logger: Logger,
+    protected readonly logger: Logger,
     protected readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
     protected readonly batchSize: number,
+    protected readonly outboxDispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>,
   ) {
     if (this.batchSize <= 0) {
       throw new InvalidOutboxSizeError();
@@ -31,13 +33,13 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
         })
         .where(
           `id IN (
-            SELECT "id"
-            FROM "${tableName}"
-            WHERE "status" = :pending
-            ORDER BY "created_at" ASC
-            LIMIT :limit
-            FOR UPDATE SKIP LOCKED
-          )`,
+              SELECT "id"
+              FROM "${tableName}"
+              WHERE "status" = :pending
+              ORDER BY "created_at" ASC
+              LIMIT :limit
+              FOR UPDATE SKIP LOCKED
+            )`,
           { pending: OutboxStatus.PENDING, limit: this.batchSize },
         )
         .returning('*')
@@ -86,11 +88,32 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
     });
   }
 
-  processItems(): void {
-    this.logger.debug('Processing outbox items');
+  async processItems(entities: TOutboxEntity[]): Promise<void> {
+    for (const item of entities) {
+      try {
+        this.logger.info(`Pushing outbox item ${item.id.toString()}`);
+        await Promise.resolve(); // Simulate async processing
+        await this.outboxDispatcher.markAsCompleted(item);
+        // Here you would add the actual pushing logic for the outbox item
+        // For example, you might publish an event to a message broker
+      } catch (error) {
+        this.logger.error(`Error pushing outbox item ${item.id.toString()}`, { error });
+        await this.outboxDispatcher.markAsFailed(
+          item,
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+    }
   }
 
-  markItemsAsDispatched(): void {
-    this.logger.debug('Marking outbox items as dispatched');
+  async markItemsAsCompleted(entities: TOutboxEntity[]): Promise<void> {
+    this.logger.debug('Marking outbox items as completed', { ids: entities.map((e) => e.id) });
+    for (const item of entities) {
+      if (item.status !== OutboxStatus.PROCESSING) {
+        this.logger.warn(`Skipping outbox item ${item.id.toString()}`, { status: item.status });
+        continue;
+      }
+      await this.outboxDispatcher.markAsCompleted(item);
+    }
   }
 }

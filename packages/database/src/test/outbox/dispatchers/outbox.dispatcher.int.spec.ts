@@ -19,7 +19,7 @@ describe('OutboxDispatcher (Integration)', () => {
     dispatcher = new OutboxDispatcher(loggerMock as never, repository);
   });
 
-  it('markAsProcessed() should update status in database', async () => {
+  it('markAsProcessing() should update status in database', async () => {
     const repo = testDataSource.getRepository(OutboxModel);
     const model = new OutboxModel();
     model.id = '00000000-0000-0000-0000-000000000001';
@@ -29,13 +29,8 @@ describe('OutboxDispatcher (Integration)', () => {
     model.updatedAt = new Date();
     await repo.save(model);
 
-    const entity = await repository.findById(model.id);
-    expect(entity).toBeDefined();
-    if (!entity) {
-      throw new Error('Entity not found');
-    }
-
-    await dispatcher.markAsProcessed(entity);
+    const entity = await repository.findOneOrFail({ id: model.id });
+    await dispatcher.markAsProcessing(entity);
 
     const updated = await repo.findOneBy({ id: model.id });
     expect(updated?.status).toBe(OutboxStatus.PROCESSING);
@@ -60,7 +55,7 @@ describe('OutboxDispatcher (Integration)', () => {
     expect(updated?.lastError).toBe(error);
   });
 
-  it('markAsDone() should update status to COMPLETED in database', async () => {
+  it('markAsCompleted() should update status to COMPLETED in database', async () => {
     const repo = testDataSource.getRepository(OutboxModel);
     const model = new OutboxModel();
     model.id = '00000000-0000-0000-0000-000000000003';
@@ -71,7 +66,7 @@ describe('OutboxDispatcher (Integration)', () => {
     await repo.save(model);
 
     const entity = await repository.findOneOrFail({ id: model.id });
-    await dispatcher.markAsDone(entity);
+    await dispatcher.markAsCompleted(entity);
 
     const updated = await repo.findOneBy({ id: model.id });
     expect(updated?.status).toBe(OutboxStatus.COMPLETED);

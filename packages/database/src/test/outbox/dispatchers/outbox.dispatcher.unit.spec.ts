@@ -33,10 +33,10 @@ describe('OutboxDispatcher (Unit)', () => {
     return entity;
   };
 
-  describe('markAsProcessed', () => {
+  describe('markAsProcessing', () => {
     it('should mark entity as processing and update repository', async () => {
       const entity = makeEntity(OutboxStatus.PENDING);
-      await dispatcher.markAsProcessed(entity);
+      await dispatcher.markAsProcessing(entity);
 
       expect(entity.status).toBe(OutboxStatus.PROCESSING);
       expect(repositoryMock.update).toHaveBeenCalledWith(entity.id, entity);
@@ -45,10 +45,11 @@ describe('OutboxDispatcher (Unit)', () => {
 
     it('should warn if entity is not in PENDING status', async () => {
       const entity = makeEntity(OutboxStatus.PROCESSING);
-      await dispatcher.markAsProcessed(entity);
+      await dispatcher.markAsProcessing(entity);
 
       expect(loggerMock.warn).toHaveBeenCalledWith(
         'Attempted to mark entity as processed, but it is not in PENDING status.',
+        { status: entity.status, id: entity.id },
       );
     });
   });
@@ -73,14 +74,15 @@ describe('OutboxDispatcher (Unit)', () => {
 
       expect(loggerMock.warn).toHaveBeenCalledWith(
         'Attempted to mark entity as failed, but it is not in PROCESSING status.',
+        { status: OutboxStatus.PENDING, id: entity.id },
       );
     });
   });
 
-  describe('markAsDone', () => {
+  describe('markAsCompleted', () => {
     it('should mark entity as completed and update repository', async () => {
       const entity = makeEntity(OutboxStatus.PROCESSING);
-      await dispatcher.markAsDone(entity);
+      await dispatcher.markAsCompleted(entity);
 
       expect(entity.status).toBe(OutboxStatus.COMPLETED);
       expect(repositoryMock.update).toHaveBeenCalledWith(entity.id, entity);
@@ -89,10 +91,11 @@ describe('OutboxDispatcher (Unit)', () => {
 
     it('should warn if entity is not in PROCESSING status', async () => {
       const entity = makeEntity(OutboxStatus.PENDING);
-      await dispatcher.markAsDone(entity);
+      await dispatcher.markAsCompleted(entity);
 
       expect(loggerMock.warn).toHaveBeenCalledWith(
         'Attempted to mark entity as done, but it is not in PROCESSING status.',
+        { status: OutboxStatus.PENDING, id: entity.id },
       );
     });
   });

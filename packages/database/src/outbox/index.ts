@@ -11,3 +11,4 @@ export * from './writers/outbox.writer.js';
 export * from './types/outbox.status.js';
 
 export * from './consumers/outbox.consumer.js';
+export * from './dispatchers/outbox.dispatcher.js';

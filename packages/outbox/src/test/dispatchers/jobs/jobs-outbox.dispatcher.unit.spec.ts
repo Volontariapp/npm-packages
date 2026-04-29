@@ -1,0 +1,56 @@
+import { describe, expect, it, beforeEach } from '@jest/globals';
+import { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
+import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
+import { OutboxStatus, type BaseRepository } from '@volontariapp/database';
+import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import {
+  makeJobsOutboxRepositoryMock,
+  type JobsOutboxRepositoryMock,
+} from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
+import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
+
+describe('JobsOutboxDispatcher (Unit)', () => {
+  let dispatcher: JobsOutboxDispatcher;
+  let repositoryMock: JobsOutboxRepositoryMock;
+
+  beforeEach(() => {
+    repositoryMock = makeJobsOutboxRepositoryMock();
+    const loggerMock = makeLoggerMock();
+    dispatcher = new JobsOutboxDispatcher(
+      loggerMock,
+      repositoryMock as unknown as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
+    );
+  });
+
+  describe('markAsProcessing', () => {
+    it('should mark job as processing and update repository', async () => {
+      const job = makeJobsOutboxEvent({ status: OutboxStatus.PENDING });
+      await dispatcher.markAsProcessing(job);
+
+      expect(job.status).toBe(OutboxStatus.PROCESSING);
+      expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
+    });
+  });
+
+  describe('markAsFailed', () => {
+    it('should mark job as failed with error and update repository', async () => {
+      const job = makeJobsOutboxEvent({ status: OutboxStatus.PROCESSING });
+      const error = 'Job execution failed';
+      await dispatcher.markAsFailed(job, error);
+
+      expect(job.status).toBe(OutboxStatus.FAILED);
+      expect(job.lastError).toBe(error);
+      expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
+    });
+  });
+
+  describe('markAsCompleted', () => {
+    it('should mark job as completed and update repository', async () => {
+      const job = makeJobsOutboxEvent({ status: OutboxStatus.PROCESSING });
+      await dispatcher.markAsCompleted(job);
+
+      expect(job.status).toBe(OutboxStatus.COMPLETED);
+      expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
+    });
+  });
+});

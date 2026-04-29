@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
 import type { QueryRunner, UpdateQueryBuilder } from 'typeorm';
 import { OutboxConsumer } from '../../../outbox/consumers/outbox.consumer.js';
+import type { OutboxDispatcher } from '../../../outbox/dispatchers/outbox.dispatcher.js';
 import { OutboxModel } from '../../../outbox/models/outbox.model.js';
 import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
@@ -8,48 +9,63 @@ import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import type { BaseRepository } from '../../../core/base.repository.js';
 import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeQueryRunnerMock } from '../../utils/helpers/query-runner-mock.helper.js';
+import type { Logger } from '@volontariapp/logger';
 
 describe('OutboxConsumer (Unit)', () => {
   let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;
+  let dispatcherMock: jest.Mocked<OutboxDispatcher<OutboxModel, OutboxEntity>>;
   let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
-  let queryRunnerMock: jest.Mocked<QueryRunner>;
+  let queryRunnerMock: QueryRunner;
   let loggerMock: TestLoggerMock;
 
   beforeEach(() => {
     loggerMock = makeLoggerMock();
-    const mocks = makeQueryRunnerMock();
-    queryRunnerMock = mocks.queryRunnerMock;
+    const { queryRunnerMock: qrMock } = makeQueryRunnerMock();
+    queryRunnerMock = qrMock as unknown as QueryRunner;
 
     repositoryMock = {
       metadata: {
         target: OutboxModel,
         tableName: 'outbox',
-      },
-      executeInTransaction(work: (qr: QueryRunner) => Promise<unknown>) {
-        return work(queryRunnerMock);
-      },
-      toEntities(models: OutboxModel[]) {
-        return models as unknown as OutboxEntity[];
-      },
+      } as unknown as BaseRepository<OutboxModel, OutboxEntity, string>['metadata'],
+      executeInTransaction: jest.fn(<TResult>(work: (qr: QueryRunner) => Promise<TResult>) =>
+        work(queryRunnerMock),
+      ),
+      toEntities: jest.fn((models: OutboxModel[]) => models as unknown as OutboxEntity[]),
+      update: jest.fn(),
     } as unknown as jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
 
-    consumer = new OutboxConsumer(loggerMock as never, repositoryMock, 10);
+    dispatcherMock = {
+      markAsCompleted: jest.fn(),
+      markAsFailed: jest.fn(),
+      markAsProcessing: jest.fn(),
+    } as unknown as jest.Mocked<OutboxDispatcher<OutboxModel, OutboxEntity>>;
+
+    consumer = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repositoryMock,
+      10,
+      dispatcherMock,
+    );
   });
 
   describe('constructor', () => {
     it('should throw InvalidOutboxSizeError if batchSize <= 0', () => {
-      expect(() => new OutboxConsumer(loggerMock as never, repositoryMock, 0)).toThrow(
-        InvalidOutboxSizeError,
-      );
-      expect(() => new OutboxConsumer(loggerMock as never, repositoryMock, -1)).toThrow(
-        InvalidOutboxSizeError,
-      );
+      expect(
+        () =>
+          new OutboxConsumer(loggerMock as unknown as Logger, repositoryMock, 0, dispatcherMock),
+      ).toThrow(InvalidOutboxSizeError);
+      expect(
+        () =>
+          new OutboxConsumer(loggerMock as unknown as Logger, repositoryMock, -1, dispatcherMock),
+      ).toThrow(InvalidOutboxSizeError);
     });
   });
 
   describe('fetchPendingItems', () => {
     it('should return empty array if no items found', async () => {
-      const qb = queryRunnerMock.manager.createQueryBuilder();
+      const qb =
+        queryRunnerMock.manager.createQueryBuilder() as unknown as UpdateQueryBuilder<OutboxModel>;
       const executeSpy = jest
         .spyOn(qb, 'execute')
         .mockResolvedValueOnce({ raw: [], generatedMaps: [], affected: 0 });
@@ -102,6 +118,48 @@ describe('OutboxConsumer (Unit)', () => {
       );
       expect(executeSpy).toHaveBeenCalled();
       expect(result).toHaveLength(2);
+    });
+  });
+
+  describe('processItems', () => {
+    it('should process items and mark them as completed', async () => {
+      const entities = [{ id: '1' } as OutboxEntity, { id: '2' } as OutboxEntity];
+
+      await consumer.processItems(entities);
+
+      expect(dispatcherMock.markAsCompleted).toHaveBeenCalledTimes(2);
+      expect(dispatcherMock.markAsCompleted).toHaveBeenCalledWith(entities[0]);
+      expect(dispatcherMock.markAsCompleted).toHaveBeenCalledWith(entities[1]);
+    });
+
+    it('should mark items as failed if processing throws error', async () => {
+      const entities = [{ id: '1' } as OutboxEntity];
+      const error = new Error('Test error');
+      dispatcherMock.markAsCompleted.mockImplementationOnce(() => {
+        throw error;
+      });
+
+      await consumer.processItems(entities);
+
+      expect(dispatcherMock.markAsFailed).toHaveBeenCalledWith(entities[0], 'Test error');
+    });
+  });
+
+  describe('markItemsAsCompleted', () => {
+    it('should mark processing items as completed', async () => {
+      const entities = [
+        { id: '1', status: OutboxStatus.PROCESSING } as OutboxEntity,
+        { id: '2', status: OutboxStatus.PENDING } as OutboxEntity,
+      ];
+      const dispatcherSpy = dispatcherMock.markAsCompleted;
+
+      await consumer.markItemsAsCompleted(entities);
+
+      expect(dispatcherSpy).toHaveBeenCalledTimes(1);
+      expect(dispatcherSpy).toHaveBeenCalledWith(entities[0]);
+      expect(loggerMock.warn).toHaveBeenCalledWith('Skipping outbox item 2', {
+        status: OutboxStatus.PENDING,
+      });
     });
   });
 });
