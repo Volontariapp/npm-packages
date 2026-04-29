@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.0
+
+### Minor Changes
+
+- Added outboxDispatcher and updated outboxConsumer
+
 ## 1.10.0
 
 ### Minor Changes

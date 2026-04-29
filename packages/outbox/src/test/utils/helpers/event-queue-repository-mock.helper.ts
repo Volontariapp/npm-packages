@@ -1,21 +1,18 @@
 import type { EventQueueEntity } from '@volontariapp/database';
 import { EventQueueModel } from '@volontariapp/database';
 import {
-  makeOutboxWriterRepositoryMock,
-  type OutboxWriterRepositoryMock,
-} from './outbox-writer-mock.helper.js';
+  makeOutboxRepositoryMock,
+  type OutboxRepositoryMock,
+} from './outbox-repository-mock.helper.js';
 import {
   makeOutboxConsumerRepositoryMock,
   type OutboxConsumerRepositoryMock,
 } from './outbox-consumer-repository-mock.helper.js';
 
-export type EventQueueRepositoryMock = OutboxWriterRepositoryMock<
-  EventQueueModel,
-  EventQueueEntity
->;
+export type EventQueueRepositoryMock = OutboxRepositoryMock<EventQueueEntity>;
 
 export function makeEventQueueRepositoryMock(): EventQueueRepositoryMock {
-  return makeOutboxWriterRepositoryMock<EventQueueModel, EventQueueEntity>();
+  return makeOutboxRepositoryMock<EventQueueEntity>();
 }
 
 export type EventQueueConsumerRepositoryMock = OutboxConsumerRepositoryMock<
