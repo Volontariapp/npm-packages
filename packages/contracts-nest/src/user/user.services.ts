@@ -5,25 +5,46 @@
 // source: volontariapp/user/user.services.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 import {
+  AddBadgeToUserCommand,
+  CreateBadgeCommand,
+  DeleteBadgeCommand,
   DeleteUserCommand,
+  IncrementImpactScoreCommand,
   LoginCommand,
   RefreshTokenCommand,
+  RemoveBadgeFromUserCommand,
   SignUpCommand,
+  UpdateBadgeCommand,
   UpdateUserCommand,
-} from "./user.command.js";
-import { GetUserQuery, ListUsersQuery } from "./user.query.js";
+} from './user.command.js';
 import {
+  GetBadgeBySlugQuery,
+  GetBadgeQuery,
+  GetUserQuery,
+  ListBadgesQuery,
+  ListUsersQuery,
+} from './user.query.js';
+import {
+  AddBadgeToUserResponse,
+  BadgeResponse,
+  CreateBadgeResponse,
+  DeleteBadgeResponse,
   DeleteUserResponse,
+  GetBadgeBySlugResponse,
+  IncrementImpactScoreResponse,
+  ListBadgesResponse,
   ListUsersResponse,
   LoginResponse,
   RefreshTokenResponse,
+  RemoveBadgeFromUserResponse,
   SignUpResponse,
+  UpdateBadgeResponse,
   UpdateUserResponse,
   UserResponse,
-} from "./user.responses.js";
+} from './user.responses.js';
 
 export interface UserServiceClient {
   getUser(request: GetUserQuery): Observable<UserResponse>;
@@ -39,14 +60,26 @@ export interface UserServiceClient {
   login(request: LoginCommand): Observable<LoginResponse>;
 
   refreshToken(request: RefreshTokenCommand): Observable<RefreshTokenResponse>;
+
+  incrementImpactScore(
+    request: IncrementImpactScoreCommand,
+  ): Observable<IncrementImpactScoreResponse>;
+
+  addBadgeToUser(request: AddBadgeToUserCommand): Observable<AddBadgeToUserResponse>;
+
+  removeBadgeFromUser(request: RemoveBadgeFromUserCommand): Observable<RemoveBadgeFromUserResponse>;
 }
 
 export interface UserServiceController {
   getUser(request: GetUserQuery): Promise<UserResponse> | Observable<UserResponse> | UserResponse;
 
-  listUsers(request: ListUsersQuery): Promise<ListUsersResponse> | Observable<ListUsersResponse> | ListUsersResponse;
+  listUsers(
+    request: ListUsersQuery,
+  ): Promise<ListUsersResponse> | Observable<ListUsersResponse> | ListUsersResponse;
 
-  signUp(request: SignUpCommand): Promise<SignUpResponse> | Observable<SignUpResponse> | SignUpResponse;
+  signUp(
+    request: SignUpCommand,
+  ): Promise<SignUpResponse> | Observable<SignUpResponse> | SignUpResponse;
 
   updateUser(
     request: UpdateUserCommand,
@@ -61,29 +94,114 @@ export interface UserServiceController {
   refreshToken(
     request: RefreshTokenCommand,
   ): Promise<RefreshTokenResponse> | Observable<RefreshTokenResponse> | RefreshTokenResponse;
+
+  incrementImpactScore(
+    request: IncrementImpactScoreCommand,
+  ):
+    | Promise<IncrementImpactScoreResponse>
+    | Observable<IncrementImpactScoreResponse>
+    | IncrementImpactScoreResponse;
+
+  addBadgeToUser(
+    request: AddBadgeToUserCommand,
+  ): Promise<AddBadgeToUserResponse> | Observable<AddBadgeToUserResponse> | AddBadgeToUserResponse;
+
+  removeBadgeFromUser(
+    request: RemoveBadgeFromUserCommand,
+  ):
+    | Promise<RemoveBadgeFromUserResponse>
+    | Observable<RemoveBadgeFromUserResponse>
+    | RemoveBadgeFromUserResponse;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
-      "getUser",
-      "listUsers",
-      "signUp",
-      "updateUser",
-      "deleteUser",
-      "login",
-      "refreshToken",
+      'getUser',
+      'listUsers',
+      'signUp',
+      'updateUser',
+      'deleteUser',
+      'login',
+      'refreshToken',
+      'incrementImpactScore',
+      'addBadgeToUser',
+      'removeBadgeFromUser',
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod('UserService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("UserService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod('UserService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const USER_SERVICE_NAME = "UserService";
+export const USER_SERVICE_NAME = 'UserService';
+
+export interface BadgeServiceClient {
+  createBadge(request: CreateBadgeCommand): Observable<CreateBadgeResponse>;
+
+  updateBadge(request: UpdateBadgeCommand): Observable<UpdateBadgeResponse>;
+
+  deleteBadge(request: DeleteBadgeCommand): Observable<DeleteBadgeResponse>;
+
+  getBadge(request: GetBadgeQuery): Observable<BadgeResponse>;
+
+  listBadges(request: ListBadgesQuery): Observable<ListBadgesResponse>;
+
+  getBadgeBySlug(request: GetBadgeBySlugQuery): Observable<GetBadgeBySlugResponse>;
+}
+
+export interface BadgeServiceController {
+  createBadge(
+    request: CreateBadgeCommand,
+  ): Promise<CreateBadgeResponse> | Observable<CreateBadgeResponse> | CreateBadgeResponse;
+
+  updateBadge(
+    request: UpdateBadgeCommand,
+  ): Promise<UpdateBadgeResponse> | Observable<UpdateBadgeResponse> | UpdateBadgeResponse;
+
+  deleteBadge(
+    request: DeleteBadgeCommand,
+  ): Promise<DeleteBadgeResponse> | Observable<DeleteBadgeResponse> | DeleteBadgeResponse;
+
+  getBadge(
+    request: GetBadgeQuery,
+  ): Promise<BadgeResponse> | Observable<BadgeResponse> | BadgeResponse;
+
+  listBadges(
+    request: ListBadgesQuery,
+  ): Promise<ListBadgesResponse> | Observable<ListBadgesResponse> | ListBadgesResponse;
+
+  getBadgeBySlug(
+    request: GetBadgeBySlugQuery,
+  ): Promise<GetBadgeBySlugResponse> | Observable<GetBadgeBySlugResponse> | GetBadgeBySlugResponse;
+}
+
+export function BadgeServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = [
+      'createBadge',
+      'updateBadge',
+      'deleteBadge',
+      'getBadge',
+      'listBadges',
+      'getBadgeBySlug',
+    ];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod('BadgeService', method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod('BadgeService', method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const BADGE_SERVICE_NAME = 'BadgeService';

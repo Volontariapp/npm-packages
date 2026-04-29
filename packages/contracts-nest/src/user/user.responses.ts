@@ -5,8 +5,8 @@
 // source: volontariapp/user/user.responses.proto
 
 /* eslint-disable */
-import { PaginationResponse } from "../common/pagination.js";
-import { User } from "./user.js";
+import { PaginationResponse } from '../common/pagination.js';
+import { Badge, User } from './user.js';
 
 export interface UserResponse {
   user: User | undefined;
@@ -22,11 +22,9 @@ export interface ListUsersResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface UpdateUserResponse {
-}
+export interface UpdateUserResponse {}
 
-export interface DeleteUserResponse {
-}
+export interface DeleteUserResponse {}
 
 export interface AuthResponse {
   accessToken: string;
@@ -39,4 +37,31 @@ export interface LoginResponse {
 
 export interface RefreshTokenResponse {
   auth: AuthResponse | undefined;
+}
+
+export interface IncrementImpactScoreResponse {}
+
+export interface CreateBadgeResponse {
+  badge: Badge | undefined;
+}
+
+export interface UpdateBadgeResponse {}
+
+export interface DeleteBadgeResponse {}
+
+export interface AddBadgeToUserResponse {}
+
+export interface RemoveBadgeFromUserResponse {}
+
+export interface BadgeResponse {
+  badge: Badge | undefined;
+}
+
+export interface GetBadgeBySlugResponse {
+  badge: Badge | undefined;
+}
+
+export interface ListBadgesResponse {
+  badges: Badge[];
+  pagination: PaginationResponse | undefined;
 }

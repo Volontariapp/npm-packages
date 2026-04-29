@@ -1,11 +1,25 @@
 # Changelog
 
-## 2.4.14
+## 2.4.16
 
 ### Patch Changes
 
 - Updated dependencies []:
   - @volontariapp/database@1.11.0
+
+## 2.4.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.5
+
+## 2.4.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.4
 
 ## 2.4.13
 
