@@ -3948,6 +3948,7 @@ __metadata:
     "@types/node": "npm:^22.10.7"
     "@types/pg": "npm:^8"
     "@volontariapp/bridge": "workspace:*"
+    "@volontariapp/config": "workspace:*"
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     class-transformer: "npm:^0.5.1"

@@ -4,7 +4,12 @@
 
 ### Minor Changes
 
-- Added outboxdispatcher, eventqueuedispatcher and jobsoutboxdispatcher
+- Added outbox-runner first implementation
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.10
 
 ## 1.9.0
 

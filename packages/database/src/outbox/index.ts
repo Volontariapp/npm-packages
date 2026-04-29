@@ -1,3 +1,5 @@
+export * from './types/outbox.status.js';
+
 export * from './entities/event-queue.entity.js';
 export * from './entities/jobs-outbox.entity.js';
 export * from './entities/outbox.entity.js';
@@ -8,7 +10,6 @@ export * from './models/outbox.model.js';
 
 export * from './writers/outbox.writer.js';
 
-export * from './types/outbox.status.js';
-
 export * from './consumers/outbox.consumer.js';
 export * from './dispatchers/outbox.dispatcher.js';
+export * from './runners/outbox.runner.js';

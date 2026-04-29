@@ -6,6 +6,8 @@
 
 - Added outboxdispatcher, eventqueuedispatcher and jobsoutboxdispatcher
 
+## 0.2.1
+
 ### Patch Changes
 
 - Updated dependencies []:
