@@ -59,3 +59,16 @@ export interface AddBadgeToUserResponse {
 
 export interface RemoveBadgeFromUserResponse {
 }
+
+export interface BadgeResponse {
+  badge: Badge | undefined;
+}
+
+export interface GetBadgeBySlugResponse {
+  badge: Badge | undefined;
+}
+
+export interface ListBadgesResponse {
+  badges: Badge[];
+  pagination: PaginationResponse | undefined;
+}

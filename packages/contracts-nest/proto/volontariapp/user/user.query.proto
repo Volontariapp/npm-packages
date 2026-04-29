@@ -19,3 +19,7 @@ message GetBadgeQuery {
 message ListBadgesQuery {
   volontariapp.common.PaginationRequest pagination = 1;
 }
+
+message GetBadgeBySlugQuery {
+  string slug = 1;
+}

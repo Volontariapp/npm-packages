@@ -23,4 +23,7 @@ service BadgeService {
   rpc CreateBadge (CreateBadgeCommand) returns (CreateBadgeResponse) {}
   rpc UpdateBadge (UpdateBadgeCommand) returns (UpdateBadgeResponse) {}
   rpc DeleteBadge (DeleteBadgeCommand) returns (DeleteBadgeResponse) {}
+  rpc GetBadge (GetBadgeQuery) returns (BadgeResponse) {}
+  rpc ListBadges (ListBadgesQuery) returns (ListBadgesResponse) {}
+  rpc GetBadgeBySlug (GetBadgeBySlugQuery) returns (GetBadgeBySlugResponse) {}
 }
