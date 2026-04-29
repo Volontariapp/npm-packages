@@ -1,13 +1,13 @@
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
 import type { QueryRunner, UpdateQueryBuilder } from 'typeorm';
-import { OutboxConsumer } from '../../outbox/consumers/outbox.consumer.js';
-import { OutboxModel } from '../../outbox/models/outbox.model.js';
-import type { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
+import { OutboxConsumer } from '../../../outbox/consumers/outbox.consumer.js';
+import { OutboxModel } from '../../../outbox/models/outbox.model.js';
+import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
-import { OutboxStatus } from '../../outbox/types/outbox.status.js';
-import type { BaseRepository } from '../../core/base.repository.js';
-import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
-import { makeQueryRunnerMock } from '../utils/helpers/query-runner-mock.helper.js';
+import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
+import type { BaseRepository } from '../../../core/base.repository.js';
+import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeQueryRunnerMock } from '../../utils/helpers/query-runner-mock.helper.js';
 
 describe('OutboxConsumer (Unit)', () => {
   let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;

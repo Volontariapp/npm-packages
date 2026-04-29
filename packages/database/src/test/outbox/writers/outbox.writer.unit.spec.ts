@@ -1,23 +1,25 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
-import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
-import type { OutboxModel } from '../../outbox/models/outbox.model.js';
-import type { BaseRepository } from '../../core/base.repository.js';
-import type { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
-import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
-import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
-import { makeExtendedOutboxEvent } from '../utils/helpers/extended-outbox-event.helper.js';
-import type { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
-import type { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
-import type { OutboxWriterRepositoryMock } from '../utils/helpers/outbox-writer-mock.helper.js';
-import { makeOutboxWriterRepositoryMock } from '../utils/helpers/outbox-writer-mock.helper.js';
+import { OutboxWriter } from '../../../outbox/writers/outbox.writer.js';
+import type { OutboxModel } from '../../../outbox/models/outbox.model.js';
+import type { BaseRepository } from '../../../core/base.repository.js';
+import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
+import { makeOutboxEvent } from '../../utils/helpers/outbox-event.helper.js';
+import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeExtendedOutboxEvent } from '../../utils/helpers/extended-outbox-event.helper.js';
+import type { ExtendedOutboxModel } from '../../example/models/extended-outbox.model.js';
+import type { ExtendedOutboxEntity } from '../../example/entities/extended-outbox.entity.js';
+import {
+  makeOutboxRepositoryMock,
+  type OutboxRepositoryMock,
+} from '../../utils/helpers/outbox-repository-mock.helper.js';
 
 describe('OutboxWriter (Unit)', () => {
   let writer: OutboxWriter<OutboxModel, OutboxEntity>;
-  let repository: OutboxWriterRepositoryMock<OutboxModel, OutboxEntity>;
+  let repository: OutboxRepositoryMock<OutboxModel, OutboxEntity>;
   let logger: TestLoggerMock;
 
   beforeEach(() => {
-    repository = makeOutboxWriterRepositoryMock<OutboxModel, OutboxEntity>();
+    repository = makeOutboxRepositoryMock<OutboxModel, OutboxEntity>();
 
     logger = makeLoggerMock();
 
@@ -128,7 +130,7 @@ describe('OutboxWriter (Unit)', () => {
 
 describe('OutboxWriter with extended types (Unit)', () => {
   it('should support an extended outbox model/entity pair across all writer methods', async () => {
-    const repository = makeOutboxWriterRepositoryMock<ExtendedOutboxModel, ExtendedOutboxEntity>();
+    const repository = makeOutboxRepositoryMock<ExtendedOutboxModel, ExtendedOutboxEntity>();
     const logger = makeLoggerMock();
     const writer = new OutboxWriter<ExtendedOutboxModel, ExtendedOutboxEntity>(
       logger as never,

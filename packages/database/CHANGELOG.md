@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.10.0
+
+### Minor Changes
+
+- Added outboxdispatcher, eventqueuedispatcher and jobsoutboxdispatcher
+
 ## 1.9.0
 
 ### Minor Changes

@@ -1,21 +1,18 @@
 import type { JobsOutboxEntity } from '@volontariapp/database';
 import { JobsOutboxModel } from '@volontariapp/database';
 import {
-  makeOutboxWriterRepositoryMock,
-  type OutboxWriterRepositoryMock,
-} from './outbox-writer-mock.helper.js';
+  makeOutboxRepositoryMock,
+  type OutboxRepositoryMock,
+} from './outbox-repository-mock.helper.js';
 import {
   makeOutboxConsumerRepositoryMock,
   type OutboxConsumerRepositoryMock,
 } from './outbox-consumer-repository-mock.helper.js';
 
-export type JobsOutboxRepositoryMock = OutboxWriterRepositoryMock<
-  JobsOutboxModel,
-  JobsOutboxEntity
->;
+export type JobsOutboxRepositoryMock = OutboxRepositoryMock<JobsOutboxEntity>;
 
 export function makeJobsOutboxRepositoryMock(): JobsOutboxRepositoryMock {
-  return makeOutboxWriterRepositoryMock<JobsOutboxModel, JobsOutboxEntity>();
+  return makeOutboxRepositoryMock<JobsOutboxEntity>();
 }
 
 export type JobsOutboxConsumerRepositoryMock = OutboxConsumerRepositoryMock<

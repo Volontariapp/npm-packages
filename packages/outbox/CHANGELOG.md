@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- Added outboxdispatcher, eventqueuedispatcher and jobsoutboxdispatcher
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.10.0
+
 ## 0.2.0
 
 ### Minor Changes
