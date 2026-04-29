@@ -22,3 +22,7 @@ export interface GetBadgeQuery {
 export interface ListBadgesQuery {
   pagination: PaginationRequest | undefined;
 }
+
+export interface GetBadgeBySlugQuery {
+  slug: string;
+}
