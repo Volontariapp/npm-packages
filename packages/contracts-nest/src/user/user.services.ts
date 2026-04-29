@@ -20,13 +20,16 @@ import {
   UpdateBadgeCommand,
   UpdateUserCommand,
 } from "./user.command.js";
-import { GetUserQuery, ListUsersQuery } from "./user.query.js";
+import { GetBadgeBySlugQuery, GetBadgeQuery, GetUserQuery, ListBadgesQuery, ListUsersQuery } from "./user.query.js";
 import {
   AddBadgeToUserResponse,
+  BadgeResponse,
   CreateBadgeResponse,
   DeleteBadgeResponse,
   DeleteUserResponse,
+  GetBadgeBySlugResponse,
   IncrementImpactScoreResponse,
+  ListBadgesResponse,
   ListUsersResponse,
   LoginResponse,
   RefreshTokenResponse,
@@ -127,6 +130,12 @@ export interface BadgeServiceClient {
   updateBadge(request: UpdateBadgeCommand): Observable<UpdateBadgeResponse>;
 
   deleteBadge(request: DeleteBadgeCommand): Observable<DeleteBadgeResponse>;
+
+  getBadge(request: GetBadgeQuery): Observable<BadgeResponse>;
+
+  listBadges(request: ListBadgesQuery): Observable<ListBadgesResponse>;
+
+  getBadgeBySlug(request: GetBadgeBySlugQuery): Observable<GetBadgeBySlugResponse>;
 }
 
 export interface BadgeServiceController {
@@ -141,11 +150,28 @@ export interface BadgeServiceController {
   deleteBadge(
     request: DeleteBadgeCommand,
   ): Promise<DeleteBadgeResponse> | Observable<DeleteBadgeResponse> | DeleteBadgeResponse;
+
+  getBadge(request: GetBadgeQuery): Promise<BadgeResponse> | Observable<BadgeResponse> | BadgeResponse;
+
+  listBadges(
+    request: ListBadgesQuery,
+  ): Promise<ListBadgesResponse> | Observable<ListBadgesResponse> | ListBadgesResponse;
+
+  getBadgeBySlug(
+    request: GetBadgeBySlugQuery,
+  ): Promise<GetBadgeBySlugResponse> | Observable<GetBadgeBySlugResponse> | GetBadgeBySlugResponse;
 }
 
 export function BadgeServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createBadge", "updateBadge", "deleteBadge"];
+    const grpcMethods: string[] = [
+      "createBadge",
+      "updateBadge",
+      "deleteBadge",
+      "getBadge",
+      "listBadges",
+      "getBadgeBySlug",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("BadgeService", method)(constructor.prototype[method], method, descriptor);
