@@ -8,19 +8,31 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import {
+  AddBadgeToUserCommand,
+  CreateBadgeCommand,
+  DeleteBadgeCommand,
   DeleteUserCommand,
+  IncrementImpactScoreCommand,
   LoginCommand,
   RefreshTokenCommand,
+  RemoveBadgeFromUserCommand,
   SignUpCommand,
+  UpdateBadgeCommand,
   UpdateUserCommand,
 } from "./user.command.js";
 import { GetUserQuery, ListUsersQuery } from "./user.query.js";
 import {
+  AddBadgeToUserResponse,
+  CreateBadgeResponse,
+  DeleteBadgeResponse,
   DeleteUserResponse,
+  IncrementImpactScoreResponse,
   ListUsersResponse,
   LoginResponse,
   RefreshTokenResponse,
+  RemoveBadgeFromUserResponse,
   SignUpResponse,
+  UpdateBadgeResponse,
   UpdateUserResponse,
   UserResponse,
 } from "./user.responses.js";
@@ -39,6 +51,12 @@ export interface UserServiceClient {
   login(request: LoginCommand): Observable<LoginResponse>;
 
   refreshToken(request: RefreshTokenCommand): Observable<RefreshTokenResponse>;
+
+  incrementImpactScore(request: IncrementImpactScoreCommand): Observable<IncrementImpactScoreResponse>;
+
+  addBadgeToUser(request: AddBadgeToUserCommand): Observable<AddBadgeToUserResponse>;
+
+  removeBadgeFromUser(request: RemoveBadgeFromUserCommand): Observable<RemoveBadgeFromUserResponse>;
 }
 
 export interface UserServiceController {
@@ -61,6 +79,18 @@ export interface UserServiceController {
   refreshToken(
     request: RefreshTokenCommand,
   ): Promise<RefreshTokenResponse> | Observable<RefreshTokenResponse> | RefreshTokenResponse;
+
+  incrementImpactScore(
+    request: IncrementImpactScoreCommand,
+  ): Promise<IncrementImpactScoreResponse> | Observable<IncrementImpactScoreResponse> | IncrementImpactScoreResponse;
+
+  addBadgeToUser(
+    request: AddBadgeToUserCommand,
+  ): Promise<AddBadgeToUserResponse> | Observable<AddBadgeToUserResponse> | AddBadgeToUserResponse;
+
+  removeBadgeFromUser(
+    request: RemoveBadgeFromUserCommand,
+  ): Promise<RemoveBadgeFromUserResponse> | Observable<RemoveBadgeFromUserResponse> | RemoveBadgeFromUserResponse;
 }
 
 export function UserServiceControllerMethods() {
@@ -73,6 +103,9 @@ export function UserServiceControllerMethods() {
       "deleteUser",
       "login",
       "refreshToken",
+      "incrementImpactScore",
+      "addBadgeToUser",
+      "removeBadgeFromUser",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
@@ -87,3 +120,42 @@ export function UserServiceControllerMethods() {
 }
 
 export const USER_SERVICE_NAME = "UserService";
+
+export interface BadgeServiceClient {
+  createBadge(request: CreateBadgeCommand): Observable<CreateBadgeResponse>;
+
+  updateBadge(request: UpdateBadgeCommand): Observable<UpdateBadgeResponse>;
+
+  deleteBadge(request: DeleteBadgeCommand): Observable<DeleteBadgeResponse>;
+}
+
+export interface BadgeServiceController {
+  createBadge(
+    request: CreateBadgeCommand,
+  ): Promise<CreateBadgeResponse> | Observable<CreateBadgeResponse> | CreateBadgeResponse;
+
+  updateBadge(
+    request: UpdateBadgeCommand,
+  ): Promise<UpdateBadgeResponse> | Observable<UpdateBadgeResponse> | UpdateBadgeResponse;
+
+  deleteBadge(
+    request: DeleteBadgeCommand,
+  ): Promise<DeleteBadgeResponse> | Observable<DeleteBadgeResponse> | DeleteBadgeResponse;
+}
+
+export function BadgeServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["createBadge", "updateBadge", "deleteBadge"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("BadgeService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("BadgeService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const BADGE_SERVICE_NAME = "BadgeService";
