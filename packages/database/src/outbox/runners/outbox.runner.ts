@@ -2,6 +2,7 @@ import { setTimeout } from 'node:timers/promises';
 import { Logger } from '@volontariapp/logger';
 import type { OutboxRunnerConfig } from '@volontariapp/config';
 import { OutboxConsumer } from '../consumers/outbox.consumer.js';
+import type { OutboxDispatcher } from '../dispatchers/outbox.dispatcher.js';
 import type { OutboxEntity, OutboxModel } from '../index.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 
@@ -11,13 +12,21 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
 
   private readonly logger: Logger;
   private readonly consumer: OutboxConsumer<TOutboxModel, TOutboxEntity>;
+  private readonly dispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>;
 
   constructor(
     private readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
     private readonly config: OutboxRunnerConfig,
+    dispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>,
   ) {
     this.logger = new Logger(config.logger);
-    this.consumer = new OutboxConsumer(this.logger, this.repository, config.batchSize);
+    this.dispatcher = dispatcher;
+    this.consumer = new OutboxConsumer(
+      this.logger,
+      this.repository,
+      config.batchSize,
+      this.dispatcher,
+    );
   }
 
   /**
