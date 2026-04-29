@@ -11,6 +11,7 @@ export const getUserGrpcOptions = (url: string): GrpcOptions => {
 export enum USER_COMMAND_METHODS {
   SIGN_UP = 'SignUp',
   LOGIN = 'Login',
+  REFRESH_TOKENS = 'RefreshTokens',
   UPDATE_USER = 'UpdateUser',
   DELETE_USER = 'DeleteUser',
   ADD_BADGE = 'AddBadge',
