@@ -40,7 +40,10 @@ describe('EventQueueConsumer (Unit)', () => {
 
   describe('processItems', () => {
     it('should process items and mark them as completed', async () => {
-      const entities = [{ id: '1' } as EventQueueEntity, { id: '2' } as EventQueueEntity];
+      const entities = [
+        { id: '1', status: OutboxStatus.PROCESSING } as EventQueueEntity,
+        { id: '2', status: OutboxStatus.PROCESSING } as EventQueueEntity,
+      ];
       const dispatcherSpy = jest.spyOn(
         (consumer as unknown as { outboxDispatcher: EventQueueDispatcher }).outboxDispatcher,
         'markAsCompleted',

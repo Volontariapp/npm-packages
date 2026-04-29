@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
+import { UnprocessableEntityError } from '@volontariapp/errors';
 import { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
 import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
 import { OutboxStatus, type BaseRepository } from '@volontariapp/database';
@@ -30,6 +31,11 @@ describe('JobsOutboxDispatcher (Unit)', () => {
       expect(job.status).toBe(OutboxStatus.PROCESSING);
       expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
     });
+
+    it('should throw UnprocessableEntityError if job is not in PENDING status', () => {
+      const job = makeJobsOutboxEvent({ status: OutboxStatus.PROCESSING });
+      expect(() => dispatcher.markAsProcessing(job)).toThrow(UnprocessableEntityError);
+    });
   });
 
   describe('markAsFailed', () => {
@@ -42,6 +48,11 @@ describe('JobsOutboxDispatcher (Unit)', () => {
       expect(job.lastError).toBe(error);
       expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
     });
+
+    it('should throw UnprocessableEntityError if job is not in PROCESSING status', () => {
+      const job = makeJobsOutboxEvent({ status: OutboxStatus.PENDING });
+      expect(() => dispatcher.markAsFailed(job)).toThrow(UnprocessableEntityError);
+    });
   });
 
   describe('markAsCompleted', () => {
@@ -51,6 +62,11 @@ describe('JobsOutboxDispatcher (Unit)', () => {
 
       expect(job.status).toBe(OutboxStatus.COMPLETED);
       expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
+    });
+
+    it('should throw UnprocessableEntityError if job is not in PROCESSING status', () => {
+      const job = makeJobsOutboxEvent({ status: OutboxStatus.PENDING });
+      expect(() => dispatcher.markAsCompleted(job)).toThrow(UnprocessableEntityError);
     });
   });
 });

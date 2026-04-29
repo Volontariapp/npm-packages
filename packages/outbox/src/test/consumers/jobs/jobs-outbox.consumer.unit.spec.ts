@@ -40,7 +40,10 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
   describe('processItems', () => {
     it('should process items and mark them as completed', async () => {
-      const entities = [{ id: '1' } as JobsOutboxEntity, { id: '2' } as JobsOutboxEntity];
+      const entities = [
+        { id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
+        { id: '2', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
+      ];
       const dispatcherSpy = jest.spyOn(
         (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher }).outboxDispatcher,
         'markAsCompleted',

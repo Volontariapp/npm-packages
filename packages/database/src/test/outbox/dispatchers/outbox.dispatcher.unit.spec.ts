@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
+import { UnprocessableEntityError } from '@volontariapp/errors';
 import { OutboxDispatcher } from '../../../outbox/dispatchers/outbox.dispatcher.js';
 import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
@@ -43,9 +44,9 @@ describe('OutboxDispatcher (Unit)', () => {
       expect(loggerMock.info).toHaveBeenCalledWith('Marking outbox entity test-id as processing');
     });
 
-    it('should warn if entity is not in PENDING status', async () => {
+    it('should throw UnprocessableEntityError and warn if entity is not in PENDING status', () => {
       const entity = makeEntity(OutboxStatus.PROCESSING);
-      await dispatcher.markAsProcessing(entity);
+      expect(() => dispatcher.markAsProcessing(entity)).toThrow(UnprocessableEntityError);
 
       expect(loggerMock.warn).toHaveBeenCalledWith(
         'Attempted to mark entity as processed, but it is not in PENDING status.',
@@ -68,9 +69,9 @@ describe('OutboxDispatcher (Unit)', () => {
       });
     });
 
-    it('should warn if entity is not in PROCESSING status', async () => {
+    it('should throw UnprocessableEntityError and warn if entity is not in PROCESSING status', () => {
       const entity = makeEntity(OutboxStatus.PENDING);
-      await dispatcher.markAsFailed(entity);
+      expect(() => dispatcher.markAsFailed(entity)).toThrow(UnprocessableEntityError);
 
       expect(loggerMock.warn).toHaveBeenCalledWith(
         'Attempted to mark entity as failed, but it is not in PROCESSING status.',
@@ -89,9 +90,9 @@ describe('OutboxDispatcher (Unit)', () => {
       expect(loggerMock.info).toHaveBeenCalledWith('Marking outbox entity test-id as done');
     });
 
-    it('should warn if entity is not in PROCESSING status', async () => {
+    it('should throw UnprocessableEntityError and warn if entity is not in PROCESSING status', () => {
       const entity = makeEntity(OutboxStatus.PENDING);
-      await dispatcher.markAsCompleted(entity);
+      expect(() => dispatcher.markAsCompleted(entity)).toThrow(UnprocessableEntityError);
 
       expect(loggerMock.warn).toHaveBeenCalledWith(
         'Attempted to mark entity as done, but it is not in PROCESSING status.',
