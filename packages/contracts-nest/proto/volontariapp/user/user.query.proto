@@ -11,3 +11,11 @@ message GetUserQuery {
 message ListUsersQuery {
   volontariapp.common.PaginationRequest pagination = 1;
 }
+
+message GetBadgeQuery {
+  string badge_id = 1;
+}
+
+message ListBadgesQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}

@@ -41,3 +41,37 @@ export interface LoginCommand {
 export interface RefreshTokenCommand {
   refreshToken: string;
 }
+
+export interface IncrementImpactScoreCommand {
+  userId: string;
+  scoreIncrement: number;
+}
+
+export interface CreateBadgeCommand {
+  name: string;
+  slug: string;
+  iconPath?: string | undefined;
+  description: string;
+}
+
+export interface DeleteBadgeCommand {
+  badgeId: string;
+}
+
+export interface UpdateBadgeCommand {
+  badgeId: string;
+  name?: string | undefined;
+  slug?: string | undefined;
+  iconPath?: string | undefined;
+  description?: string | undefined;
+}
+
+export interface AddBadgeToUserCommand {
+  userId: string;
+  badgeId: string;
+}
+
+export interface RemoveBadgeFromUserCommand {
+  userId: string;
+  badgeId: string;
+}
