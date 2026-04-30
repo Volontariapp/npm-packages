@@ -28,7 +28,7 @@ describe('EventQueueDispatcher (Unit)', () => {
       await dispatcher.markAsProcessing(event);
 
       expect(event.status).toBe(OutboxStatus.PROCESSING);
-      expect(updateSpy).toHaveBeenCalledWith(event.id, event);
+      expect(updateSpy as jest.Mock).toHaveBeenCalledWith(event.id, event);
     });
 
     it('should throw UnprocessableEntityError if event is not in PENDING status', () => {
@@ -47,7 +47,7 @@ describe('EventQueueDispatcher (Unit)', () => {
 
       expect(event.status).toBe(OutboxStatus.FAILED);
       expect(event.lastError).toBe(error);
-      expect(updateSpy).toHaveBeenCalledWith(event.id, event);
+      expect(updateSpy as jest.Mock).toHaveBeenCalledWith(event.id, event);
     });
 
     it('should throw UnprocessableEntityError if event is not in PROCESSING status', () => {
@@ -64,7 +64,7 @@ describe('EventQueueDispatcher (Unit)', () => {
       await dispatcher.markAsCompleted(event);
 
       expect(event.status).toBe(OutboxStatus.COMPLETED);
-      expect(updateSpy).toHaveBeenCalledWith(event.id, event);
+      expect(updateSpy as jest.Mock).toHaveBeenCalledWith(event.id, event);
     });
 
     it('should throw UnprocessableEntityError if event is not in PROCESSING status', () => {

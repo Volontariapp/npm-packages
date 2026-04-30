@@ -1,9 +1,10 @@
 # Changelog
 
-## 2.4.17
+## 2.5.0
 
-### Patch Changes
+### Minor Changes
 
+- adding traceId in event model + tests
 - Updated dependencies []:
   - @volontariapp/database@1.12.0
 

@@ -1,12 +1,13 @@
 import type { JsonObject } from './json.type.js';
 
-export interface EventPayloadRegistry {
-  [key: string]: JsonObject;
-}
+export interface EventPayloadRegistry {}
 
-export interface JobPayloadRegistry {
-  [key: string]: JsonObject;
-}
+export interface JobPayloadRegistry {}
 
-export type EventPayload<K extends string> = EventPayloadRegistry[K];
-export type JobPayload<K extends string> = JobPayloadRegistry[K];
+export type EventPayload<K extends string> = K extends keyof EventPayloadRegistry
+  ? EventPayloadRegistry[K]
+  : JsonObject;
+
+export type JobPayload<K extends string> = K extends keyof JobPayloadRegistry
+  ? JobPayloadRegistry[K]
+  : JsonObject;

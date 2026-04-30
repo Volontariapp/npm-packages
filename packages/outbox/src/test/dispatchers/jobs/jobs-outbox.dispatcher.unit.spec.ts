@@ -31,7 +31,7 @@ describe('JobsOutboxDispatcher (Unit)', () => {
       await dispatcher.markAsProcessing(job);
 
       expect(job.status).toBe(OutboxStatus.PROCESSING);
-      expect(updateSpy).toHaveBeenCalledWith(job.id, job);
+      expect(updateSpy as jest.Mock).toHaveBeenCalledWith(job.id, job);
     });
 
     it('should throw UnprocessableEntityError if job is not in PENDING status', () => {
@@ -50,7 +50,7 @@ describe('JobsOutboxDispatcher (Unit)', () => {
 
       expect(job.status).toBe(OutboxStatus.FAILED);
       expect(job.lastError).toBe(error);
-      expect(updateSpy).toHaveBeenCalledWith(job.id, job);
+      expect(updateSpy as jest.Mock).toHaveBeenCalledWith(job.id, job);
     });
 
     it('should throw UnprocessableEntityError if job is not in PROCESSING status', () => {
@@ -67,7 +67,7 @@ describe('JobsOutboxDispatcher (Unit)', () => {
       await dispatcher.markAsCompleted(job);
 
       expect(job.status).toBe(OutboxStatus.COMPLETED);
-      expect(updateSpy).toHaveBeenCalledWith(job.id, job);
+      expect(updateSpy as jest.Mock).toHaveBeenCalledWith(job.id, job);
     });
 
     it('should throw UnprocessableEntityError if job is not in PROCESSING status', () => {
