@@ -1,5 +1,9 @@
-import { BaseRepository, JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
-import type { Repository } from 'typeorm';
+import {
+  BaseRepository,
+  JobsOutboxEntity,
+  JobsOutboxModel,
+  type Repository,
+} from '@volontariapp/database';
 
 export class TestJobsOutboxRepository extends BaseRepository<
   JobsOutboxModel,

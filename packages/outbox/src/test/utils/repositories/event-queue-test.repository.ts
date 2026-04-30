@@ -1,5 +1,9 @@
-import { BaseRepository, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
-import type { Repository } from 'typeorm';
+import {
+  BaseRepository,
+  EventQueueEntity,
+  EventQueueModel,
+  type Repository,
+} from '@volontariapp/database';
 
 export class TestEventQueueRepository extends BaseRepository<
   EventQueueModel,

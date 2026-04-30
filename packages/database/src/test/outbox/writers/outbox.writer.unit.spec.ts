@@ -12,6 +12,7 @@ import {
   makeOutboxRepositoryMock,
   type OutboxRepositoryMock,
 } from '../../utils/helpers/outbox-repository-mock.helper.js';
+import type { Logger } from '@volontariapp/logger';
 
 describe('OutboxWriter (Unit)', () => {
   let writer: OutboxWriter<OutboxModel, OutboxEntity>;
@@ -24,7 +25,7 @@ describe('OutboxWriter (Unit)', () => {
     logger = makeLoggerMock();
 
     writer = new OutboxWriter(
-      logger as never,
+      logger as unknown as Logger,
       repository as unknown as BaseRepository<OutboxModel, OutboxEntity, string>,
     );
   });
@@ -133,7 +134,7 @@ describe('OutboxWriter with extended types (Unit)', () => {
     const repository = makeOutboxRepositoryMock<ExtendedOutboxModel, ExtendedOutboxEntity>();
     const logger = makeLoggerMock();
     const writer = new OutboxWriter<ExtendedOutboxModel, ExtendedOutboxEntity>(
-      logger as never,
+      logger as unknown as Logger,
       repository as unknown as BaseRepository<ExtendedOutboxModel, ExtendedOutboxEntity, string>,
     );
     const event = makeExtendedOutboxEvent({
