@@ -9,10 +9,10 @@ import {
   type OutboxConsumerRepositoryMock,
 } from './outbox-consumer-repository-mock.helper.js';
 
-export type EventQueueRepositoryMock = OutboxRepositoryMock<EventQueueEntity>;
+export type EventQueueRepositoryMock = OutboxRepositoryMock<EventQueueEntity, EventQueueModel>;
 
 export function makeEventQueueRepositoryMock(): EventQueueRepositoryMock {
-  return makeOutboxRepositoryMock<EventQueueEntity>();
+  return makeOutboxRepositoryMock<EventQueueEntity, EventQueueModel>();
 }
 
 export type EventQueueConsumerRepositoryMock = OutboxConsumerRepositoryMock<

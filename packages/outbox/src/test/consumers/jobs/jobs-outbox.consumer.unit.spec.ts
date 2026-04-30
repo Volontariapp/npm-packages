@@ -8,7 +8,7 @@ import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
 import { type BaseRepository, OutboxStatus } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
-import type { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
+import type { JobsOutboxDispatcher } from '../../../index.js';
 
 describe('JobsOutboxConsumer (Unit)', () => {
   let consumer: JobsOutboxConsumer;
@@ -30,11 +30,15 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
   it('fetchPendingItems() should delegate to repository and return results', async () => {
     const mockEntities = [{ id: '1' }, { id: '2' }];
-    repository.toEntities.mockReturnValue(mockEntities as JobsOutboxEntity[]);
+    const toEntitiesSpy = jest
+      .spyOn(repository, 'toEntities')
+      .mockReturnValue(mockEntities as JobsOutboxEntity[]);
+    const executeInTransactionSpy = jest.spyOn(repository, 'executeInTransaction');
 
     const result = await consumer.fetchPendingItems();
 
-    expect(repository.executeInTransaction).toHaveBeenCalled();
+    expect(executeInTransactionSpy).toHaveBeenCalled();
+    expect(toEntitiesSpy).toHaveBeenCalled();
     expect(result).toEqual(mockEntities);
   });
 

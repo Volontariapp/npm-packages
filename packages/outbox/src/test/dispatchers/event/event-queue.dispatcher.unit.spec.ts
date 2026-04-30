@@ -1,35 +1,34 @@
-import { describe, expect, it, beforeEach } from '@jest/globals';
+import { describe, expect, it, beforeEach, jest } from '@jest/globals';
 import { UnprocessableEntityError } from '@volontariapp/errors';
 import { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
-import type { EventQueueEntity, EventQueueModel } from '@volontariapp/database';
-import { OutboxStatus, type BaseRepository } from '@volontariapp/database';
+import { OutboxStatus } from '@volontariapp/database';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import {
-  makeEventQueueRepositoryMock,
-  type EventQueueRepositoryMock,
-} from '../../utils/helpers/event-queue-repository-mock.helper.js';
+import { makeEventQueueRepositoryMock } from '../../utils/helpers/event-queue-repository-mock.helper.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
 
 describe('EventQueueDispatcher (Unit)', () => {
   let dispatcher: EventQueueDispatcher;
-  let repositoryMock: EventQueueRepositoryMock;
+  let repositoryMock: ReturnType<typeof makeEventQueueRepositoryMock>;
 
   beforeEach(() => {
     repositoryMock = makeEventQueueRepositoryMock();
     const loggerMock = makeLoggerMock();
-    dispatcher = new EventQueueDispatcher(
-      loggerMock,
-      repositoryMock as unknown as BaseRepository<EventQueueModel, EventQueueEntity, string>,
-    );
+    dispatcher = new EventQueueDispatcher(loggerMock, repositoryMock);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('markAsProcessing', () => {
     it('should mark event as processing and update repository', async () => {
       const event = makeEventQueueEvent({ status: OutboxStatus.PENDING });
+      const updateSpy = jest.spyOn(repositoryMock, 'update');
+
       await dispatcher.markAsProcessing(event);
 
       expect(event.status).toBe(OutboxStatus.PROCESSING);
-      expect(repositoryMock.update).toHaveBeenCalledWith(event.id, event);
+      expect(updateSpy).toHaveBeenCalledWith(event.id, event);
     });
 
     it('should throw UnprocessableEntityError if event is not in PENDING status', () => {
@@ -42,11 +41,13 @@ describe('EventQueueDispatcher (Unit)', () => {
     it('should mark event as failed with error and update repository', async () => {
       const event = makeEventQueueEvent({ status: OutboxStatus.PROCESSING });
       const error = 'Execution failed';
+      const updateSpy = jest.spyOn(repositoryMock, 'update');
+
       await dispatcher.markAsFailed(event, error);
 
       expect(event.status).toBe(OutboxStatus.FAILED);
       expect(event.lastError).toBe(error);
-      expect(repositoryMock.update).toHaveBeenCalledWith(event.id, event);
+      expect(updateSpy).toHaveBeenCalledWith(event.id, event);
     });
 
     it('should throw UnprocessableEntityError if event is not in PROCESSING status', () => {
@@ -58,10 +59,12 @@ describe('EventQueueDispatcher (Unit)', () => {
   describe('markAsCompleted', () => {
     it('should mark event as completed and update repository', async () => {
       const event = makeEventQueueEvent({ status: OutboxStatus.PROCESSING });
+      const updateSpy = jest.spyOn(repositoryMock, 'update');
+
       await dispatcher.markAsCompleted(event);
 
       expect(event.status).toBe(OutboxStatus.COMPLETED);
-      expect(repositoryMock.update).toHaveBeenCalledWith(event.id, event);
+      expect(updateSpy).toHaveBeenCalledWith(event.id, event);
     });
 
     it('should throw UnprocessableEntityError if event is not in PROCESSING status', () => {

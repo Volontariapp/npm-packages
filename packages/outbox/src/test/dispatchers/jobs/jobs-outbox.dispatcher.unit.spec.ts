@@ -1,8 +1,7 @@
-import { describe, expect, it, beforeEach } from '@jest/globals';
+import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals';
 import { UnprocessableEntityError } from '@volontariapp/errors';
 import { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
-import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
-import { OutboxStatus, type BaseRepository } from '@volontariapp/database';
+import { OutboxStatus } from '@volontariapp/database';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import {
   makeJobsOutboxRepositoryMock,
@@ -17,19 +16,22 @@ describe('JobsOutboxDispatcher (Unit)', () => {
   beforeEach(() => {
     repositoryMock = makeJobsOutboxRepositoryMock();
     const loggerMock = makeLoggerMock();
-    dispatcher = new JobsOutboxDispatcher(
-      loggerMock,
-      repositoryMock as unknown as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
-    );
+    dispatcher = new JobsOutboxDispatcher(loggerMock, repositoryMock);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('markAsProcessing', () => {
     it('should mark job as processing and update repository', async () => {
       const job = makeJobsOutboxEvent({ status: OutboxStatus.PENDING });
+      const updateSpy = jest.spyOn(repositoryMock, 'update');
+
       await dispatcher.markAsProcessing(job);
 
       expect(job.status).toBe(OutboxStatus.PROCESSING);
-      expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
+      expect(updateSpy).toHaveBeenCalledWith(job.id, job);
     });
 
     it('should throw UnprocessableEntityError if job is not in PENDING status', () => {
@@ -42,11 +44,13 @@ describe('JobsOutboxDispatcher (Unit)', () => {
     it('should mark job as failed with error and update repository', async () => {
       const job = makeJobsOutboxEvent({ status: OutboxStatus.PROCESSING });
       const error = 'Job execution failed';
+      const updateSpy = jest.spyOn(repositoryMock, 'update');
+
       await dispatcher.markAsFailed(job, error);
 
       expect(job.status).toBe(OutboxStatus.FAILED);
       expect(job.lastError).toBe(error);
-      expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
+      expect(updateSpy).toHaveBeenCalledWith(job.id, job);
     });
 
     it('should throw UnprocessableEntityError if job is not in PROCESSING status', () => {
@@ -58,10 +62,12 @@ describe('JobsOutboxDispatcher (Unit)', () => {
   describe('markAsCompleted', () => {
     it('should mark job as completed and update repository', async () => {
       const job = makeJobsOutboxEvent({ status: OutboxStatus.PROCESSING });
+      const updateSpy = jest.spyOn(repositoryMock, 'update');
+
       await dispatcher.markAsCompleted(job);
 
       expect(job.status).toBe(OutboxStatus.COMPLETED);
-      expect(repositoryMock.update).toHaveBeenCalledWith(job.id, job);
+      expect(updateSpy).toHaveBeenCalledWith(job.id, job);
     });
 
     it('should throw UnprocessableEntityError if job is not in PROCESSING status', () => {
