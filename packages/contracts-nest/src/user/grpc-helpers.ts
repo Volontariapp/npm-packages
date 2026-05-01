@@ -14,8 +14,8 @@ export enum USER_COMMAND_METHODS {
   REFRESH_TOKENS = 'RefreshTokens',
   UPDATE_USER = 'UpdateUser',
   DELETE_USER = 'DeleteUser',
-  ADD_BADGE = 'AddBadge',
-  REMOVE_BADGE = 'RemoveBadge',
+  ADD_BADGE_TO_USER = 'AddBadgeToUser',
+  REMOVE_BADGE_FROM_USER = 'RemoveBadgeFromUser',
   INCREMENT_IMPACT_SCORE = 'IncrementImpactScore',
 }
 

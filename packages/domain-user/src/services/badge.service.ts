@@ -74,6 +74,11 @@ export class BadgeService {
   }
 
   async create(input: CreateBadgeInput): Promise<BadgeEntity> {
+    const existingBadge = await this.badgeRepository.findBySlug(input.slug);
+    if (existingBadge) {
+      this.logger.warn(`Attempt to create badge with already existing slug: ${input.slug}`);
+      throw BADGE_ALREADY_EXISTS(input.slug);
+    }
     try {
       return await this.badgeRepository.create({
         name: input.name,
