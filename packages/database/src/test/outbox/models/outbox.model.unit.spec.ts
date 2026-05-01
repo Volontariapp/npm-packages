@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import { OutboxModel } from '../../outbox/models/outbox.model.js';
-import { OutboxStatus } from '../../outbox/types/outbox.status.js';
+import { OutboxModel } from '../../../outbox/models/outbox.model.js';
+import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 
 describe('OutboxModel (Unit)', () => {
   it('should initialize default attributes when instantiated', () => {

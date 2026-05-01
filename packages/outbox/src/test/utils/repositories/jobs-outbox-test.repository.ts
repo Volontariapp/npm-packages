@@ -1,11 +1,16 @@
-import { BaseRepository, JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
-import type { Repository } from 'typeorm';
-
-export class TestJobsOutboxRepository extends BaseRepository<
-  JobsOutboxModel,
+import {
+  BaseRepository,
   JobsOutboxEntity,
-  string
-> {
+  JobsOutboxModel,
+  type JobType,
+  type JobPayload,
+  type Repository,
+} from '@volontariapp/database';
+
+export class TestJobsOutboxRepository<
+  K extends JobType = JobType,
+  P = JobPayload<K>,
+> extends BaseRepository<JobsOutboxModel, JobsOutboxEntity<K, P>, string> {
   constructor(repository: Repository<JobsOutboxModel>) {
     super(repository, JobsOutboxEntity, JobsOutboxModel);
   }

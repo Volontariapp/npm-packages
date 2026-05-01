@@ -1,15 +1,10 @@
 # Changelog
 
-## 2.3.7
+## 2.4.0
 
 ### Patch Changes
 
 - Add repositories and services
-
-## 2.3.6
-
-### Patch Changes
-
 - Updated dependencies []:
   - @volontariapp/errors-nest@0.10.1
   - @volontariapp/auth@2.1.16

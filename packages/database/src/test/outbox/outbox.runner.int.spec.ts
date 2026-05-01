@@ -3,17 +3,18 @@ import { testDataSource, setupIntegrationTest } from '../utils/index.js';
 import { EventQueueModel } from '../../outbox/models/event-queue.model.js';
 import { EventQueueEntity } from '../../outbox/entities/event-queue.entity.js';
 import { OutboxRunner } from '../../outbox/runners/outbox.runner.js';
+import { OutboxDispatcher } from '../../outbox/dispatchers/outbox.dispatcher.js';
 import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { EventQueueTestRepository } from '../utils/repositories/event-queue-test.repository.js';
-import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock, type LoggerMock } from '../utils/helpers/logger-mock.helper.js';
 import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
 
 import { OutboxRunnerConfig, LoggerConfig, LoggerFormat } from '@volontariapp/config';
 
 describe('Outbox Flow (Integration)', () => {
   let repository: EventQueueTestRepository;
-  let loggerMock: TestLoggerMock;
+  let loggerMock: LoggerMock;
   let writer: OutboxWriter<EventQueueModel, EventQueueEntity>;
   let runner: OutboxRunner<EventQueueModel, EventQueueEntity>;
 
@@ -30,7 +31,8 @@ describe('Outbox Flow (Integration)', () => {
     config.logger.format = LoggerFormat.JSON;
     config.logger.level = 'debug';
 
-    runner = new OutboxRunner(repository, config);
+    const dispatcher = new OutboxDispatcher(loggerMock as never, repository);
+    runner = new OutboxRunner(repository, config, dispatcher);
   });
 
   afterAll(async () => {

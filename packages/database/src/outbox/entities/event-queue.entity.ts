@@ -1,15 +1,17 @@
+import type { EventPayload } from '../types/payload.registry.js';
 import { OutboxEntity } from './outbox.entity.js';
+import type { EventType } from '../types/event.type.js';
 
-export class EventQueueEntity extends OutboxEntity {
-  // Event metaadata
+export class EventQueueEntity<
+  K extends EventType = EventType,
+  P = EventPayload<K>,
+> extends OutboxEntity<K> {
   version!: number;
 
-  // Data
   payload!: {
-    before?: any;
-    after: any;
+    before?: P;
+    after: P;
   };
 
-  // Timestamps
   processedAt?: Date;
 }

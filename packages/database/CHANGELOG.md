@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.12.0
+
+### Minor Changes
+
+- generic type outbox
+
+## 1.11.0
+
+### Minor Changes
+
+- Added outboxDispatcher and updated outboxConsumer
+
 ## 1.10.0
 
 ### Minor Changes

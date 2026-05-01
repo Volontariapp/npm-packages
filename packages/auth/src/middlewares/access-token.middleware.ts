@@ -26,6 +26,8 @@ export class AccessTokenMiddleware implements NestMiddleware {
     if (typeof token === 'string' && token !== '') {
       request['accessToken'] = token;
       this.logger.debug('Extracted access token from request');
+    } else {
+      this.logger.debug('No access token found in headers or cookies');
     }
     nextFn();
   };

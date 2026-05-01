@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/auth@3.0.1
+
 ## 3.0.5
 
 ### Patch Changes
@@ -17,7 +24,6 @@
 ### Patch Changes
 
 - Auto-generated proto typings update for both pure contracts and NestJS integration.
-- Add gRPC helpers for ms user
 
 ## 3.0.2
 

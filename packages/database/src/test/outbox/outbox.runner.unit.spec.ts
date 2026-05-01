@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals';
 import { OutboxRunner } from '../../outbox/runners/outbox.runner.js';
 import { OutboxConsumer } from '../../outbox/consumers/outbox.consumer.js';
+import { OutboxDispatcher } from '../../outbox/dispatchers/outbox.dispatcher.js';
 import { OutboxRunnerConfig, LoggerConfig, LoggerFormat } from '@volontariapp/config';
 import type { OutboxModel } from '../../outbox/models/outbox.model.js';
 import type { OutboxEntity } from '../../outbox/entities/outbox.entity.js';
@@ -93,7 +94,8 @@ describe('OutboxRunner (Unit)', () => {
       },
     );
 
-    runner = new OutboxRunner(repositoryMock, config);
+    const dispatcher = new OutboxDispatcher(new Logger(config.logger), repositoryMock);
+    runner = new OutboxRunner(repositoryMock, config, dispatcher);
   });
 
   afterEach(async () => {

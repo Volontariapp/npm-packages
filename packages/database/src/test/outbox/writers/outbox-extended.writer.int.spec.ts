@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from '@jest/globals';
-import { testDataSource, initializeTestDb, closeTestDb } from '../data-source.js';
-import { databaseMapper } from '../../core/mapper.service.js';
-import { OutboxStatus } from '../../outbox/types/outbox.status.js';
-import { makeExtendedOutboxEvent } from '../utils/helpers/extended-outbox-event.helper.js';
-import { TestExtendedOutboxWriter } from '../utils/repositories/outbox-extended-test.repository.js';
-import { ExtendedOutboxEntity } from '../example/entities/extended-outbox.entity.js';
-import { ExtendedOutboxModel } from '../example/models/extended-outbox.model.js';
+import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
+import { databaseMapper } from '../../../core/mapper.service.js';
+import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
+import { makeExtendedOutboxEvent } from '../../utils/helpers/extended-outbox-event.helper.js';
+import { TestExtendedOutboxWriter } from '../../utils/repositories/outbox-extended-test.repository.js';
+import { ExtendedOutboxEntity } from '../../example/entities/extended-outbox.entity.js';
+import { ExtendedOutboxModel } from '../../example/models/extended-outbox.model.js';
 import { Logger } from '@volontariapp/logger';
 
 describe('Outbox Writer with extended model/entity (Full Integration)', () => {
