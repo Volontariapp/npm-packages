@@ -9,7 +9,7 @@ export class InitialUserSchema1776334421317 implements MigrationInterface {
                 "name" varchar NOT NULL,
                 "slug" varchar NOT NULL,
                 "description" text NOT NULL,
-                "icon_path" varchar NOT NULL,
+                "icon_path" varchar,
                 CONSTRAINT "UQ_badges_slug" UNIQUE ("slug"),
                 CONSTRAINT "PK_badges_id" PRIMARY KEY ("id")
             )

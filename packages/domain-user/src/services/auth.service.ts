@@ -33,6 +33,17 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  private async db<T>(context: string, fn: () => Promise<T>): Promise<T> {
+    try {
+      return await fn();
+    } catch (error) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Error while ${context}: ${err.message}`);
+      throw DATABASE_ERROR(context, err.message);
+    }
+  }
+
   async signUp(command: SignUpInput): Promise<SignUpOutput> {
     const existingUser = await this.userRepository.findByEmail(command.email);
     if (existingUser) {
@@ -41,6 +52,12 @@ export class AuthService {
       );
       throw USER_ALREADY_EXISTS(command.email);
     }
+
+    if (command.rna != null && !UserEntity.isValidRna(command.rna)) {
+      this.logger.warn(`Invalid RNA ${command.rna} for new user`);
+      throw INVALID_RNA(command.rna);
+    }
+
     const user = UserEntity.create({
       email: command.email,
       pseudo: command.pseudo,
@@ -49,29 +66,24 @@ export class AuthService {
       logoPath: command.logoPath,
     });
     const hashedPassword = hashPassword(command.password);
-    try {
-      if (user.rna != null && !UserEntity.isValidRna(user.rna)) {
-        this.logger.warn(`Invalid RNA ${user.rna} for new user`);
-        throw INVALID_RNA(user.rna);
-      }
-      const userEntity = await this.userRepository.createWithHashedPassword(user, hashedPassword);
-      const authUser = { id: userEntity.id, email: userEntity.email, role: userEntity.role };
-      const [accessToken, refreshToken] = await Promise.all([
-        this.jwtService.signAccessToken(authUser),
-        this.jwtService.signRefreshToken(authUser),
-      ]);
-      return new SignUpOutput(userEntity, new AuthTokens(accessToken, refreshToken));
-    } catch (error) {
-      if (isBaseError(error)) throw error;
 
-      if (isDatabaseDriverError(error) && error.code === '23505') {
-        throw USER_ALREADY_EXISTS(user.email);
+    const userEntity = await this.db('creating user', async () => {
+      try {
+        return await this.userRepository.createWithHashedPassword(user, hashedPassword);
+      } catch (error) {
+        if (isDatabaseDriverError(error) && error.code === '23505') {
+          throw USER_ALREADY_EXISTS(user.email);
+        }
+        throw error;
       }
+    });
 
-      const err = error as Error;
-      this.logger.error(`Error while creating user: ${err.message}`);
-      throw DATABASE_ERROR('creating user', err.message);
-    }
+    const authUser = { id: userEntity.id, email: userEntity.email, role: userEntity.role };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAccessToken(authUser),
+      this.jwtService.signRefreshToken(authUser),
+    ]);
+    return new SignUpOutput(userEntity, new AuthTokens(accessToken, refreshToken));
   }
 
   async logIn(command: LoginInput): Promise<AuthTokens> {
@@ -98,19 +110,18 @@ export class AuthService {
   }
 
   async refreshTokens(command: RefreshTokensInput): Promise<AuthTokens> {
+    let payload: Awaited<ReturnType<typeof this.jwtService.verifyRefreshToken>>;
     try {
-      const payload = await this.jwtService.verifyRefreshToken(command.refreshToken);
-      const authUser = { id: payload.id, role: payload.role };
-      const [accessToken, refreshToken] = await Promise.all([
-        this.jwtService.signAccessToken(authUser),
-        this.jwtService.signRefreshToken(authUser),
-      ]);
-      return new AuthTokens(accessToken, refreshToken);
-    } catch (error) {
-      this.logger.warn(
-        `Invalid refresh token attempt: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      payload = await this.jwtService.verifyRefreshToken(command.refreshToken);
+    } catch {
+      this.logger.warn(`Invalid refresh token attempt`);
       throw INVALID_REFRESH_TOKEN();
     }
+    const authUser = { id: payload.id, role: payload.role };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAccessToken(authUser),
+      this.jwtService.signRefreshToken(authUser),
+    ]);
+    return new AuthTokens(accessToken, refreshToken);
   }
 }
