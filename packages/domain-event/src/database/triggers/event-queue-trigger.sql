@@ -5,11 +5,11 @@ DECLARE
     payload_data JSONB;
 BEGIN
     IF (TG_OP = 'DELETE') THEN
-        payload_data := jsonb_build_object('before', row_to_json(OLD), 'after', NULL);
+        payload_data := jsonb_build_object('before', to_jsonb(OLD), 'after', NULL);
     ELSIF (TG_OP = 'INSERT') THEN
-        payload_data := jsonb_build_object('before', NULL, 'after', row_to_json(NEW));
+        payload_data := jsonb_build_object('before', NULL, 'after', to_jsonb(NEW));
     ELSIF (TG_OP = 'UPDATE') THEN
-        payload_data := jsonb_build_object('before', row_to_json(OLD), 'after', row_to_json(NEW));
+        payload_data := jsonb_build_object('before', to_jsonb(OLD), 'after', to_jsonb(NEW));
     END IF;
 
     INSERT INTO event_queue (

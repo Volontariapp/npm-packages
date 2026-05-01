@@ -15,8 +15,6 @@ import { JobsOutboxAndEventQueueWithTraceId1776974876099 } from './migrations/17
 import { UpdateOutboxModels1777630647718 } from './migrations/1777630647718-UpdateOutboxModels.js';
 import { SetupEventTriggers1776786226146 } from './migrations/1776786226146-SetupEventTriggers.js';
 
-const isMigrationRun = process.env.TYPEORM_MIGRATION_RUN === 'true';
-
 export const testDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
@@ -26,18 +24,16 @@ export const testDataSource = new DataSource({
   database: 'ms_event',
   entities: [EventModel, TagModel, RequirementModel, EventQueueModel, JobsOutboxModel],
 
-  migrations: isMigrationRun
-    ? [
-        InitialSchema1776008237420,
-        AddDetailsToRequirement1776104175000,
-        AddEventOrganizerAndMakeRequirementCreatorNullable1776104180000,
-        UpdateTagSchemaAndAddEventLocalisation1776110000000,
-        JobsOutboxAndEventQueue1776786226145,
-        JobsOutboxAndEventQueueWithTraceId1776974876099,
-        UpdateOutboxModels1777630647718,
-        SetupEventTriggers1776786226146,
-      ]
-    : [],
+  migrations: [
+    InitialSchema1776008237420,
+    AddDetailsToRequirement1776104175000,
+    AddEventOrganizerAndMakeRequirementCreatorNullable1776104180000,
+    UpdateTagSchemaAndAddEventLocalisation1776110000000,
+    JobsOutboxAndEventQueue1776786226145,
+    JobsOutboxAndEventQueueWithTraceId1776974876099,
+    UpdateOutboxModels1777630647718,
+    SetupEventTriggers1776786226146,
+  ],
   synchronize: false,
   logging: false,
 });

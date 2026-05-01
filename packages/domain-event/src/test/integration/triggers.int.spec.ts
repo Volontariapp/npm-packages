@@ -16,11 +16,7 @@ import { EventFactory } from '../__test-utils__/factories/event.factory.js';
 import { TagFactory } from '../__test-utils__/factories/tag.factory.js';
 import { RequirementFactory } from '../__test-utils__/factories/requirement.factory.js';
 import { EventQueueModel } from '@volontariapp/database';
-import { EventMessagingType, type EventRegistry } from '@volontariapp/messaging';
-
-type TypedEventQueueModel<K extends keyof EventRegistry> = Omit<EventQueueModel, 'payload'> & {
-  payload: EventRegistry[K];
-};
+import { EventMessagingType } from '@volontariapp/messaging';
 
 describe('SQL Triggers (Integration)', () => {
   let eventRepository: PostgresEventRepository;
@@ -47,13 +43,11 @@ describe('SQL Triggers (Integration)', () => {
     const input = EventFactory.buildInput({ name: 'Trigger Test Event' });
     await eventRepository.create(input);
     const records = await testDataSource
-      .getRepository(EventQueueModel)
+      .getRepository(EventQueueModel<EventMessagingType>)
       .find({ where: { type: EventMessagingType.EVENT_CHANGED } });
     expect(records).toHaveLength(1);
-    const record = records[0] as unknown as TypedEventQueueModel<
-      typeof EventMessagingType.EVENT_CHANGED
-    >;
-    expect(record.payload.after?.name).toBe('Trigger Test Event');
+    const record = records[0];
+    expect(record.payload.after.name).toBe('Trigger Test Event');
     expect(record.payload.before).toBeFalsy();
     expect(record.emitter).toBe('ms-event-db');
   });
@@ -63,29 +57,26 @@ describe('SQL Triggers (Integration)', () => {
       RequirementFactory.buildInput({ currentQuantity: 0 }),
     );
     await requirementRepository.update(req.id, { currentQuantity: 5 });
-    const records = await testDataSource.getRepository(EventQueueModel).find({
-      where: { type: EventMessagingType.REQUIREMENT_CHANGED },
-      order: { createdAt: 'DESC' },
-    });
+    const records = await testDataSource
+      .getRepository(EventQueueModel<EventMessagingType>)
+      .find({ where: { type: EventMessagingType.REQUIREMENT_CHANGED } });
     expect(records.length).toBeGreaterThanOrEqual(2);
-    const updateRecord = records[0] as unknown as TypedEventQueueModel<
-      typeof EventMessagingType.REQUIREMENT_CHANGED
-    >;
-    expect(updateRecord.payload.before?.currentQuantity).toBe(0);
-    expect(updateRecord.payload.after?.currentQuantity).toBe(5);
-    expect(updateRecord.emitter).toBe('ms-event-db');
+    const updateRecord = records.find((r) => !!r.payload.before);
+    expect(updateRecord).toBeDefined();
+    if (updateRecord) {
+      expect(updateRecord.payload.before?.currentQuantity).toBe(0);
+      expect(updateRecord.payload.after.currentQuantity).toBe(5);
+      expect(updateRecord.emitter).toBe('ms-event-db');
+    }
   });
 
   it('should create an event_queue record when a tag is deleted', async () => {
     const tag = await tagRepository.create(TagFactory.buildInput({ name: 'To Delete' }));
     await tagRepository.delete(tag.id);
     const records = await testDataSource
-      .getRepository(EventQueueModel)
+      .getRepository(EventQueueModel<EventMessagingType>)
       .find({ where: { type: EventMessagingType.TAG_CHANGED } });
-    const typedRecords = records as unknown as TypedEventQueueModel<
-      typeof EventMessagingType.TAG_CHANGED
-    >[];
-    const deleteRecord = typedRecords.find((r) => r.payload.before?.name === 'To Delete');
+    const deleteRecord = records.find((r) => r.payload.before?.name === 'To Delete');
     expect(deleteRecord).toBeDefined();
     if (deleteRecord) {
       expect(deleteRecord.payload.after).toBeFalsy();
@@ -101,14 +92,12 @@ describe('SQL Triggers (Integration)', () => {
       tag.id,
     ]);
     const records = await testDataSource
-      .getRepository(EventQueueModel)
+      .getRepository(EventQueueModel<EventMessagingType>)
       .find({ where: { type: EventMessagingType.EVENT_TAG_LINKED } });
     expect(records).toHaveLength(1);
-    const record = records[0] as unknown as TypedEventQueueModel<
-      typeof EventMessagingType.EVENT_TAG_LINKED
-    >;
-    expect(record.payload.after?.eventsId).toBe(event.id);
-    expect(record.payload.after?.tagsId).toBe(tag.id);
+    const record = records[0];
+    expect(record.payload.after.eventsId).toBe(event.id);
+    expect(record.payload.after.tagsId).toBe(tag.id);
     expect(record.emitter).toBe('ms-event-db');
   });
 });

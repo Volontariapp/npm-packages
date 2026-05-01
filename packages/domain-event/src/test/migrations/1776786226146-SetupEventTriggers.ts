@@ -25,6 +25,7 @@ export class SetupEventTriggers1776786226146 implements MigrationInterface {
       `DROP TRIGGER IF EXISTS requirements_event_queue_trigger ON requirements;`,
     );
     await queryRunner.query(`DROP TRIGGER IF EXISTS events_event_queue_trigger ON events;`);
-    await queryRunner.query(`DROP FUNCTION IF EXISTS create_event_queue_record();`);
+    await queryRunner.query(`DROP TRIGGER IF EXISTS event_tags_event_queue_trigger ON event_tags;`);
+    await queryRunner.query(`DROP FUNCTION IF EXISTS create_event_queue_record() CASCADE;`);
   }
 }

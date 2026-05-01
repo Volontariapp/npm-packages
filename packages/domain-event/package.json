@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-event",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -21,7 +21,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "src/database/triggers/**/*.sql"
   ],
   "engines": {
     "node": ">=24.14.0"
