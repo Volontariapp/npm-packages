@@ -7,14 +7,14 @@ import { OutboxDispatcher } from '../../outbox/dispatchers/outbox.dispatcher.js'
 import { OutboxWriter } from '../../outbox/writers/outbox.writer.js';
 import { OutboxStatus } from '../../outbox/types/outbox.status.js';
 import { EventQueueTestRepository } from '../utils/repositories/event-queue-test.repository.js';
-import { makeLoggerMock, type TestLoggerMock } from '../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock, type LoggerMock } from '../utils/helpers/logger-mock.helper.js';
 import { makeOutboxEvent } from '../utils/helpers/outbox-event.helper.js';
 
 import { OutboxRunnerConfig, LoggerConfig, LoggerFormat } from '@volontariapp/config';
 
 describe('Outbox Flow (Integration)', () => {
   let repository: EventQueueTestRepository;
-  let loggerMock: TestLoggerMock;
+  let loggerMock: LoggerMock;
   let writer: OutboxWriter<EventQueueModel, EventQueueEntity>;
   let runner: OutboxRunner<EventQueueModel, EventQueueEntity>;
 

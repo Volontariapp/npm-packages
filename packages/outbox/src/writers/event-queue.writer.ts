@@ -1,4 +1,7 @@
-import type { EventQueueEntity, EventQueueModel } from '@volontariapp/database';
+import type { EventQueueEntity, EventQueueModel, EventType } from '@volontariapp/database';
 import { OutboxWriter } from '@volontariapp/database';
 
-export class EventQueueWriter extends OutboxWriter<EventQueueModel, EventQueueEntity> {}
+export class EventQueueWriter<K extends EventType = EventType> extends OutboxWriter<
+  EventQueueModel,
+  EventQueueEntity<K>
+> {}

@@ -8,6 +8,9 @@ import { InitialSchema1776008237420 } from './migrations/1776008237420-InitialSc
 import { AddDetailsToRequirement1776104175000 } from './migrations/1776104175000-AddDetailsToRequirement.js';
 import { AddEventOrganizerAndMakeRequirementCreatorNullable1776104180000 } from './migrations/1776104180000-AddEventOrganizerAndMakeRequirementCreatorNullable.js';
 import { UpdateTagSchemaAndAddEventLocalisation1776110000000 } from './migrations/1776110000000-UpdateTagSchemaAndAddEventLocalisation.js';
+import { JobsOutboxAndEventQueue1776786226145 } from './migrations/1776786226145-JobsOutboxAndEventQueue.js';
+import { JobsOutboxAndEventQueueWithTraceId1776974876099 } from './migrations/1776974876099-JobsOutboxAndEventQueueWithTraceId.js';
+import { UpdateOutboxModels1777630647718 } from './migrations/1777630647718-UpdateOutboxModels.js';
 
 const isMigrationRun = process.env.TYPEORM_MIGRATION_RUN === 'true';
 
@@ -25,6 +28,9 @@ export const testDataSource = new DataSource({
         AddDetailsToRequirement1776104175000,
         AddEventOrganizerAndMakeRequirementCreatorNullable1776104180000,
         UpdateTagSchemaAndAddEventLocalisation1776110000000,
+        JobsOutboxAndEventQueue1776786226145,
+        JobsOutboxAndEventQueueWithTraceId1776974876099,
+        UpdateOutboxModels1777630647718,
       ]
     : [],
   synchronize: false,

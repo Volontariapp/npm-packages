@@ -1,14 +1,9 @@
-import { jest } from '@jest/globals';
-import { Logger } from '@volontariapp/logger';
+import type { jest } from '@jest/globals';
+import type { Logger } from '@volontariapp/logger';
+import { createMock } from '@volontariapp/database/testing';
 
-export const makeLoggerMock = (): Logger => {
-  const logger = new Logger({ minLevel: 'fatal' });
-  jest.spyOn(logger, 'info').mockImplementation(() => {});
-  jest.spyOn(logger, 'warn').mockImplementation(() => {});
-  jest.spyOn(logger, 'error').mockImplementation(() => {});
-  jest.spyOn(logger, 'debug').mockImplementation(() => {});
-  jest.spyOn(logger, 'fatal').mockImplementation(() => {});
-  jest.spyOn(logger, 'verbose').mockImplementation(() => {});
-  jest.spyOn(logger, 'log').mockImplementation(() => {});
-  return logger;
+export type LoggerMock = jest.Mocked<Logger>;
+
+export const makeLoggerMock = (): LoggerMock => {
+  return createMock<Logger>();
 };
