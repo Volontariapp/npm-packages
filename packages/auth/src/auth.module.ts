@@ -4,6 +4,7 @@ import { JwtService } from './services/jwt.service.js';
 import { AUTH_OPTIONS } from './constants/index.js';
 import type { AuthConfig } from './interfaces/index.js';
 import { GrpcMetadataHelper } from './services/grpc-metadata.helper.js';
+import { GrpcInternalInterceptor } from './interceptors/grpc-internal.interceptor.js';
 
 @Global()
 @Module({})
@@ -22,8 +23,9 @@ export class AuthModule {
           inject: [AUTH_OPTIONS],
         },
         GrpcMetadataHelper,
+        GrpcInternalInterceptor,
       ],
-      exports: [JwtService, GrpcMetadataHelper],
+      exports: [JwtService, GrpcMetadataHelper, GrpcInternalInterceptor],
     };
   }
 }

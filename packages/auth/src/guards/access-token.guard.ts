@@ -14,7 +14,7 @@ export class AccessTokenGuard implements CanActivate {
     const token = request['accessToken'];
 
     if (typeof token !== 'string') {
-      this.logger.warn('Access token is missing from request');
+      this.logger.warn('Authentication failed: Access token is missing from request');
       throw MISSING_ACCESS_TOKEN();
     }
 
@@ -24,8 +24,9 @@ export class AccessTokenGuard implements CanActivate {
       this.logger.debug(`User ${user.id} authenticated with access token`);
       return true;
     } catch (error) {
-      this.logger.error('Access token verification failed', error);
-      throw INVALID_ACCESS_TOKEN(error instanceof Error ? error.message : undefined);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Authentication failed: Access token verification failed - ${message}`);
+      throw INVALID_ACCESS_TOKEN(message);
     }
   }
 }
