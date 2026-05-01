@@ -40,6 +40,10 @@ export class PostgresUserRepository
     return encryptDeterministic(email, this.emailSecret);
   }
 
+  override async findById(id: string | number): Promise<UserEntity | null> {
+    return this.findWithRelations(this.buildIdWhere(id), ['userBadges', 'userBadges.badge']);
+  }
+
   async findByEmail(email: string): Promise<UserEntity | null> {
     return this.findOne({ email: this.encryptEmail(email) });
   }
