@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.16
+
+### Patch Changes
+
+- patch grpc metadata helpers
+
 ## 2.1.15
 
 ### Patch Changes
