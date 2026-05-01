@@ -31,7 +31,7 @@ export enum BADGE_COMMAND_METHODS {
 }
 
 export enum BADGE_QUERY_METHODS {
-  GET_BADGES = 'GetBadges',
+  GET_BADGE = 'GetBadge',
   GET_BADGE_BY_SLUG = 'GetBadgeBySlug',
   LIST_BADGES = 'ListBadges',
 }
