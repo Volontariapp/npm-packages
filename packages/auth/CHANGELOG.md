@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- Added support for user roles
+- Added support for grpc internal requests
+- Added support for grpc internal responses
+
 ## 2.1.15
 
 ### Patch Changes
