@@ -5,7 +5,7 @@
 // source: volontariapp/user/user.command.proto
 
 /* eslint-disable */
-import { OrganisationInfo } from './user.js';
+import { OrganisationInfo } from "./user.js";
 
 export interface SignUpCommand {
   email: string;
