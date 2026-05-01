@@ -58,6 +58,7 @@
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
+    "@volontariapp/messaging": "workspace:*",
     "class-transformer": "^0.5.1"
   }
 }

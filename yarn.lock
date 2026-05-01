@@ -3978,6 +3978,7 @@ __metadata:
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
+    "@volontariapp/messaging": "workspace:*"
     class-transformer: "npm:^0.5.1"
     jest: "npm:^30.3.0"
     pg: "npm:^8.20.0"
@@ -4167,6 +4168,14 @@ __metadata:
     "@types/node": "npm:^25.5.2"
     jest: "npm:^30.3.0"
     ts-jest: "npm:^29.4.9"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/messaging@workspace:*, @volontariapp/messaging@workspace:packages/messaging":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/messaging@workspace:packages/messaging"
+  dependencies:
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
