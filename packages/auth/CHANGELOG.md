@@ -1,10 +1,12 @@
 # Changelog
 
-## 2.1.16
+## 3.0.0
 
-### Patch Changes
+### Major Changes
 
-- patch grpc metadata helpers
+- Added support for user roles
+- Added support for grpc internal requests
+- Added support for grpc internal responses
 
 ## 2.1.15
 

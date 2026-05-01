@@ -1,15 +1,39 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '../services/jwt.service.js';
 import { MISSING_ACCESS_TOKEN, INVALID_ACCESS_TOKEN } from '@volontariapp/errors-nest';
 import { Logger } from '@volontariapp/logger';
+import { IS_PUBLIC_KEY, IS_REFRESH_TOKEN_KEY } from '../constants/index.js';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   private readonly logger = new Logger({ context: 'AccessTokenGuard', format: 'json' });
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly reflector: Reflector,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    const isRefreshToken = this.reflector.getAllAndOverride<boolean>(IS_REFRESH_TOKEN_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic || isRefreshToken) {
+      this.logger.debug(
+        isPublic
+          ? 'Route is public, bypassing authentication'
+          : 'Route is refresh token route, bypassing access token verification',
+      );
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest<Record<string, unknown>>();
     const token = request['accessToken'];
 

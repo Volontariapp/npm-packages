@@ -13,4 +13,6 @@ export * from './middlewares/access-token.middleware.js';
 export * from './middlewares/refresh-token.middleware.js';
 export * from './decorators/current-user.decorator.js';
 export * from './decorators/roles.decorator.js';
+export * from './decorators/public.decorator.js';
+export * from './decorators/refresh-token.decorator.js';
 export * from './interceptors/grpc-internal.interceptor.js';

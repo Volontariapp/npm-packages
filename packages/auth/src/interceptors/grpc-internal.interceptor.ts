@@ -1,4 +1,5 @@
 import type { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import { Metadata } from '@grpc/grpc-js';
 import { Injectable } from '@nestjs/common';
 import type { Observable } from 'rxjs';
 import { from } from 'rxjs';
@@ -18,6 +19,8 @@ export class GrpcInternalInterceptor implements NestInterceptor {
     const user = httpRequest.user;
 
     if (!user) {
+      const req = httpRequest as unknown as Record<string, unknown>;
+      req['internalMetadata'] = new Metadata();
       return next.handle();
     }
 

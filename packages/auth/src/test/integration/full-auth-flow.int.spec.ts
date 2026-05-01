@@ -6,6 +6,7 @@ import * as jose from 'jose';
 import { Test } from '@nestjs/testing';
 import type { INestApplication, ExecutionContext } from '@nestjs/common';
 import request from 'supertest';
+import type { AuthUser } from '../../index.js';
 import {
   JwtService,
   AccessTokenMiddleware,
@@ -13,6 +14,7 @@ import {
   RolesGuard,
   GrpcInternalInterceptor,
   GrpcInternalGuard,
+  GrpcMetadataHelper,
   INTERNAL_TOKEN_METADATA_KEY,
 } from '../../index.js';
 import { createAuthUser } from '../factories/auth-user.factory.js';
@@ -84,6 +86,7 @@ describe('Full Auth Flow (Integration)', () => {
         AccessTokenGuard,
         RolesGuard,
         GrpcInternalGuard,
+        GrpcMetadataHelper,
         GrpcInternalInterceptor,
       ],
     }).compile();
@@ -96,38 +99,65 @@ describe('Full Auth Flow (Integration)', () => {
   });
 
   afterEach(async () => {
-    await app.close();
+    try {
+      await app.close();
+    } catch {
+      // Ignore error if app failed to initialize
+    }
   });
 
   it('should complete the full auth lifecycle (HTTP AT -> Internal Token -> gRPC Verification)', async () => {
-    const user = createAuthUser();
+    const user = createAuthUser({ id: 'gateway-to-ms-user' });
     const accessToken = await jwtService.signAccessToken(user);
+
+    const atGuard = app.get(AccessTokenGuard);
+    const atGuardSpy = jest.spyOn(atGuard, 'canActivate');
+
+    const interceptor = app.get(GrpcInternalInterceptor);
+    const interceptorSpy = jest.spyOn(interceptor, 'intercept');
+
+    const metadataHelper = app.get(GrpcMetadataHelper);
+    const metadataHelperSpy = jest.spyOn(metadataHelper, 'createInternalMetadata');
+
+    const msGuard = app.get(GrpcInternalGuard);
+    const msGuardSpy = jest.spyOn(msGuard, 'canActivate');
 
     const httpResponse = await request(app.getHttpServer())
       .get('/test/external')
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(httpResponse.status).toBe(200);
-    const body = httpResponse.body as { user: { id: string }; internalToken: string };
-    expect(body.user.id).toBe(user.id);
-    const internalToken = body.internalToken;
-    expect(typeof internalToken).toBe('string');
+    expect(atGuardSpy).toHaveBeenCalled();
+    expect(interceptorSpy).toHaveBeenCalled();
+    expect(metadataHelperSpy).toHaveBeenCalled();
 
-    const metadataMock = createMock<Metadata>({
+    const body = httpResponse.body as { user: { id: string }; internalToken: string };
+    const internalToken = body.internalToken;
+    expect(internalToken).toBeDefined();
+
+    const incomingMetadata = createMock<Metadata>({
       get: jest.fn((key: string) => (key === INTERNAL_TOKEN_METADATA_KEY ? [internalToken] : [])),
     });
 
-    const executionContext = createMock<ExecutionContext>({
+    const rpcContext = createMock<ExecutionContext>({
       getType: () => 'rpc',
       switchToRpc: () => ({
-        getContext: () => metadataMock,
+        getContext: () => incomingMetadata,
         getData: () => ({}),
+      }),
+      switchToHttp: () => ({
+        getRequest: () => ({}),
       }),
     });
 
-    const guard = app.get(GrpcInternalGuard);
-    const canActivate = await guard.canActivate(executionContext as unknown as ExecutionContext);
+    const canActivate = await msGuard.canActivate(rpcContext);
+
     expect(canActivate).toBe(true);
+    expect(msGuardSpy).toHaveBeenCalledWith(rpcContext);
+
+    const injectedUser = (incomingMetadata as unknown as Record<string, unknown>).user as AuthUser;
+    expect(injectedUser).toBeDefined();
+    expect(injectedUser.id).toBe(user.id);
   });
 
   it('should deny access if AT is missing', async () => {
