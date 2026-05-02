@@ -29,7 +29,7 @@ export class JwtService {
 
   private async getInternalPrivateKey(): Promise<CryptoKey> {
     if (this.internalPrivateKey) return this.internalPrivateKey;
-    if (this.options.internalPrivateKeyPath === undefined) {
+    if (!this.options.internalPrivateKeyPath) {
       throw CONFIG_ERROR('Internal private key path not configured');
     }
     try {
@@ -43,7 +43,7 @@ export class JwtService {
 
   private async getInternalPublicKey(): Promise<CryptoKey> {
     if (this.internalPublicKey) return this.internalPublicKey;
-    if (this.options.internalPublicKeyPath === undefined) {
+    if (!this.options.internalPublicKeyPath) {
       throw CONFIG_ERROR('Internal public key path not configured');
     }
     try {
@@ -57,7 +57,7 @@ export class JwtService {
 
   private async getAccessTokenPrivateKey(): Promise<CryptoKey> {
     if (this.accessTokenPrivateKey) return this.accessTokenPrivateKey;
-    if (this.options.accessTokenPrivateKeyPath === undefined) {
+    if (!this.options.accessTokenPrivateKeyPath) {
       throw CONFIG_ERROR('Access private key path not configured');
     }
     try {
@@ -71,7 +71,7 @@ export class JwtService {
 
   private async getAccessTokenPublicKey(): Promise<CryptoKey> {
     if (this.accessTokenPublicKey) return this.accessTokenPublicKey;
-    if (this.options.accessTokenPublicKeyPath === undefined) {
+    if (!this.options.accessTokenPublicKeyPath) {
       throw CONFIG_ERROR('Access public key path not configured');
     }
     try {
@@ -85,7 +85,7 @@ export class JwtService {
 
   private async getRefreshTokenPrivateKey(): Promise<CryptoKey> {
     if (this.refreshTokenPrivateKey) return this.refreshTokenPrivateKey;
-    if (this.options.refreshTokenPrivateKeyPath === undefined) {
+    if (!this.options.refreshTokenPrivateKeyPath) {
       throw CONFIG_ERROR('Refresh private key path not configured');
     }
     try {
@@ -99,7 +99,7 @@ export class JwtService {
 
   private async getRefreshTokenPublicKey(): Promise<CryptoKey> {
     if (this.refreshTokenPublicKey) return this.refreshTokenPublicKey;
-    if (this.options.refreshTokenPublicKeyPath === undefined) {
+    if (!this.options.refreshTokenPublicKeyPath) {
       throw CONFIG_ERROR('Refresh public key path not configured');
     }
     try {
