@@ -8,6 +8,9 @@ import { makeOutboxEvent } from '../../utils/helpers/outbox-event.helper.js';
 import { TestOutboxRepository } from '../../utils/repositories/outbox-test.repository.js';
 import type { LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeOutboxPusherMock } from '../../utils/helpers/outbox-pusher-mock.helper.js';
+import type { Logger } from '@volontariapp/logger';
+import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
 
 describe('OutboxConsumer (Integration)', () => {
   let repository: TestOutboxRepository;
@@ -32,8 +35,15 @@ describe('OutboxConsumer (Integration)', () => {
     });
     await repo.save([event1, event2]);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as never, repository);
-    const singleConsumer = new OutboxConsumer(loggerMock as never, repository, 1, dispatcher);
+    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
+    const pusher = makeOutboxPusherMock();
+    const singleConsumer = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      1,
+      dispatcher,
+      pusher,
+    );
     const items = await singleConsumer.fetchPendingItems();
     expect(items).toHaveLength(1);
     expect(items[0].status).toBe(OutboxStatus.PROCESSING);
@@ -55,9 +65,23 @@ describe('OutboxConsumer (Integration)', () => {
     );
     await repo.save(events);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as never, repository);
-    const consumer1 = new OutboxConsumer(loggerMock as never, repository, 5, dispatcher);
-    const consumer2 = new OutboxConsumer(loggerMock as never, repository, 5, dispatcher);
+    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
+    const pusher1 = makeOutboxPusherMock();
+    const pusher2 = makeOutboxPusherMock();
+    const consumer1 = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      5,
+      dispatcher,
+      pusher1,
+    );
+    const consumer2 = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      5,
+      dispatcher,
+      pusher2,
+    );
     const [results1, results2] = await Promise.all([
       consumer1.fetchPendingItems(),
       consumer2.fetchPendingItems(),
@@ -86,10 +110,31 @@ describe('OutboxConsumer (Integration)', () => {
     );
     await repo.save(events);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as never, repository);
-    const consumer1 = new OutboxConsumer(loggerMock as never, repository, 5, dispatcher);
-    const consumer2 = new OutboxConsumer(loggerMock as never, repository, 5, dispatcher);
-    const consumer3 = new OutboxConsumer(loggerMock as never, repository, 5, dispatcher);
+    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
+    const pusher1 = makeOutboxPusherMock();
+    const pusher2 = makeOutboxPusherMock();
+    const pusher3 = makeOutboxPusherMock();
+    const consumer1 = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      5,
+      dispatcher,
+      pusher1,
+    );
+    const consumer2 = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      5,
+      dispatcher,
+      pusher2,
+    );
+    const consumer3 = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      5,
+      dispatcher,
+      pusher3,
+    );
 
     const [results1, results2, results3] = await Promise.all([
       consumer1.fetchPendingItems(),
@@ -98,8 +143,8 @@ describe('OutboxConsumer (Integration)', () => {
     ]);
 
     const allResults = [results1, results2, results3];
-    const fiveItemsResults = allResults.filter((r: OutboxModel[]) => r.length === 5);
-    const zeroItemsResults = allResults.filter((r: OutboxModel[]) => r.length === 0);
+    const fiveItemsResults = allResults.filter((r: OutboxEntity[]) => r.length === 5);
+    const zeroItemsResults = allResults.filter((r: OutboxEntity[]) => r.length === 0);
 
     expect(fiveItemsResults).toHaveLength(2);
     expect(zeroItemsResults).toHaveLength(1);
@@ -116,8 +161,15 @@ describe('OutboxConsumer (Integration)', () => {
     });
     await repo.save(event);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as never, repository);
-    const consumer = new OutboxConsumer(loggerMock as never, repository, 10, dispatcher);
+    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
+    const pusher = makeOutboxPusherMock();
+    const consumer = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      10,
+      dispatcher,
+      pusher,
+    );
 
     const entity = await repository.findOneOrFail({ id: event.id });
     await consumer.markItemsAsCompleted([entity]);
@@ -126,7 +178,7 @@ describe('OutboxConsumer (Integration)', () => {
     expect(dbItem?.status).toBe(OutboxStatus.COMPLETED);
   });
 
-  it('processItems() should process items and mark them as COMPLETED in database', async () => {
+  it('processItems() should process items, push them and mark them as COMPLETED in database', async () => {
     const repo = testDataSource.getRepository(OutboxModel);
     const event = makeOutboxEvent({
       id: '00000000-0000-0000-0000-000000000101',
@@ -134,11 +186,20 @@ describe('OutboxConsumer (Integration)', () => {
     });
     await repo.save(event);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as never, repository);
-    const consumer = new OutboxConsumer(loggerMock as never, repository, 10, dispatcher);
+    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
+    const pusher = makeOutboxPusherMock();
+    const consumer = new OutboxConsumer(
+      loggerMock as unknown as Logger,
+      repository,
+      10,
+      dispatcher,
+      pusher,
+    );
 
     const entity = await repository.findOneOrFail({ id: event.id });
     await consumer.processItems([entity]);
+
+    expect(pusher.pushElement).toHaveBeenCalledWith(entity);
 
     const dbItem = await repo.findOneBy({ id: event.id });
     expect(dbItem?.status).toBe(OutboxStatus.COMPLETED);
