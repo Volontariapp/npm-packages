@@ -9,18 +9,26 @@ import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
 import { type BaseRepository, OutboxStatus } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
 import type { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
+import type { JobsOutboxPusher } from '../../../pushers/jobs-outbox.pusher.js';
 
 describe('JobsOutboxConsumer (Unit)', () => {
   let consumer: JobsOutboxConsumer;
   let repository: JobsOutboxConsumerRepositoryMock;
+  let pusher: jest.Mocked<JobsOutboxPusher>;
   const logger = makeLoggerMock();
 
   beforeEach(() => {
     repository = makeJobsOutboxConsumerRepositoryMock();
+    pusher = {
+      pushElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      pushBulkElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    } as unknown as jest.Mocked<JobsOutboxPusher>;
     consumer = new JobsOutboxConsumer(
       logger as unknown as Logger,
       repository as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
       10,
+      pusher,
     );
   });
 
@@ -33,10 +41,8 @@ describe('JobsOutboxConsumer (Unit)', () => {
   });
 
   it('fetchPendingItems() should delegate to repository and return results', async () => {
-    const mockEntities = [{ id: '1' }, { id: '2' }];
-    const toEntitiesSpy = jest
-      .spyOn(repository, 'toEntities')
-      .mockReturnValue(mockEntities as JobsOutboxEntity[]);
+    const mockEntities = [{ id: '1' } as JobsOutboxEntity, { id: '2' } as JobsOutboxEntity];
+    const toEntitiesSpy = jest.spyOn(repository, 'toEntities').mockReturnValue(mockEntities);
     const executeInTransactionSpy = jest.spyOn(repository, 'executeInTransaction');
 
     const result = await consumer.fetchPendingItems();
@@ -47,7 +53,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
   });
 
   describe('processItems', () => {
-    it('should process items and mark them as completed', async () => {
+    it('should process items, push them and mark them as completed', async () => {
       const entities = [
         { id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
         { id: '2', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
@@ -58,6 +64,9 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
       await consumer.processItems(entities);
 
+      expect(pusher.pushElement).toHaveBeenCalledTimes(2);
+      expect(pusher.pushElement).toHaveBeenCalledWith(entities[0]);
+      expect(pusher.pushElement).toHaveBeenCalledWith(entities[1]);
       const spyMock = completedSpy as jest.Mock;
       expect(spyMock).toHaveBeenCalledTimes(2);
       expect(spyMock).toHaveBeenCalledWith(entities[0]);

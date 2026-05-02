@@ -3,6 +3,7 @@ import type {
   EventQueueEntity,
   EventQueueModel,
   EventType,
+  OutboxPusher,
 } from '@volontariapp/database';
 import { OutboxConsumer } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
@@ -16,7 +17,8 @@ export class EventQueueConsumer<K extends EventType = EventType> extends OutboxC
     logger: Logger,
     repository: BaseRepository<EventQueueModel, EventQueueEntity<K>, string>,
     batchSize: number,
+    pusher: OutboxPusher<EventQueueEntity<K>>,
   ) {
-    super(logger, repository, batchSize, new EventQueueDispatcher<K>(logger, repository));
+    super(logger, repository, batchSize, new EventQueueDispatcher<K>(logger, repository), pusher);
   }
 }

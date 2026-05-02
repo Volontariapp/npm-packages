@@ -9,15 +9,22 @@ import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import type { EventQueueEntity } from '@volontariapp/database';
 import { OutboxStatus } from '@volontariapp/database';
 import type { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
+import type { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
+import type { Logger } from '@volontariapp/logger';
 
 describe('EventQueueConsumer (Unit)', () => {
   let consumer: EventQueueConsumer;
   let repository: EventQueueConsumerRepositoryMock;
+  let pusher: jest.Mocked<EventQueuePusher>;
   const logger: LoggerMock = makeLoggerMock();
 
   beforeEach(() => {
     repository = makeEventQueueConsumerRepositoryMock();
-    consumer = new EventQueueConsumer(logger, repository, 10);
+    pusher = {
+      pushElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      pushBulkElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    } as unknown as jest.Mocked<EventQueuePusher>;
+    consumer = new EventQueueConsumer(logger as unknown as Logger, repository, 10, pusher);
   });
 
   afterEach(() => {
@@ -29,10 +36,8 @@ describe('EventQueueConsumer (Unit)', () => {
   });
 
   it('fetchPendingItems() should delegate to repository and return results', async () => {
-    const mockEntities = [{ id: '1' }, { id: '2' }];
-    const toEntitiesSpy = jest
-      .spyOn(repository, 'toEntities')
-      .mockReturnValue(mockEntities as EventQueueEntity[]);
+    const mockEntities = [{ id: '1' } as EventQueueEntity, { id: '2' } as EventQueueEntity];
+    const toEntitiesSpy = jest.spyOn(repository, 'toEntities').mockReturnValue(mockEntities);
     const executeInTransactionSpy = jest.spyOn(repository, 'executeInTransaction');
 
     const result = await consumer.fetchPendingItems();
@@ -43,7 +48,7 @@ describe('EventQueueConsumer (Unit)', () => {
   });
 
   describe('processItems', () => {
-    it('should process items and mark them as completed', async () => {
+    it('should process items, push them and mark them as completed', async () => {
       const entities = [
         { id: '1', status: OutboxStatus.PROCESSING } as EventQueueEntity,
         { id: '2', status: OutboxStatus.PROCESSING } as EventQueueEntity,
@@ -54,6 +59,9 @@ describe('EventQueueConsumer (Unit)', () => {
 
       await consumer.processItems(entities);
 
+      expect(pusher.pushElement).toHaveBeenCalledTimes(2);
+      expect(pusher.pushElement).toHaveBeenCalledWith(entities[0]);
+      expect(pusher.pushElement).toHaveBeenCalledWith(entities[1]);
       expect(completedSpy).toHaveBeenCalledTimes(2);
       expect(completedSpy).toHaveBeenCalledWith(entities[0]);
       expect(completedSpy).toHaveBeenCalledWith(entities[1]);
