@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.6.0
+
+### Minor Changes
+
+- trigger SQL
+
 ## 2.5.3
 
 ### Patch Changes

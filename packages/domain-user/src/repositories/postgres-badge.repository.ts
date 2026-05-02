@@ -9,7 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class PostgresBadgeRepository
   extends BaseRepository<BadgeModel, BadgeEntity>
-  implements IBadgeRepository {
+  implements IBadgeRepository
+{
   constructor(@InjectRepository(BadgeModel) repository: Repository<BadgeModel>) {
     super(repository, BadgeEntity, BadgeModel);
   }
@@ -22,5 +23,4 @@ export class PostgresBadgeRepository
   async findAll(): Promise<BadgeEntity[]> {
     return this.find();
   }
-
-  }
+}

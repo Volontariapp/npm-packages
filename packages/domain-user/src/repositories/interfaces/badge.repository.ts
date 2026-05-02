@@ -1,4 +1,4 @@
-import type { BadgeEntity } from "../../entities/badge.entity.js";
+import type { BadgeEntity } from '../../entities/badge.entity.js';
 
 export interface IBadgeRepository {
   findById(id: string): Promise<BadgeEntity | null>;
