@@ -1,6 +1,7 @@
 import * as jose from 'jose';
 import type { CryptoKey } from 'jose';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import { InternalServerError } from '@volontariapp/errors';
 import { Logger } from '@volontariapp/logger';
 import {
@@ -148,6 +149,7 @@ export class JwtService {
     const sessionPayload: jose.JWTPayload = { ...user };
     return new jose.SignJWT(sessionPayload)
       .setProtectedHeader({ alg: 'RS256' })
+      .setJti(crypto.randomUUID())
       .setIssuedAt()
       .setExpirationTime(expiresIn)
       .sign(key);
