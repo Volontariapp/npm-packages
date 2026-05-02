@@ -13,4 +13,5 @@ export interface IUserRepository {
   incrementImpactScore(userId: string, score: number): Promise<void>;
   createWithHashedPassword(user: Partial<UserEntity>, password: string): Promise<UserEntity>;
   findPasswordHashByEmail(email: string): Promise<string | null>;
+  findPasswordHashById(id: string): Promise<string | null>;
 }

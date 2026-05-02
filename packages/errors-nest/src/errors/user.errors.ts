@@ -15,6 +15,8 @@ export const INVALID_RNA = (rna: string) =>
 export const INVALID_SCORE_INCREMENT = (score: number) =>
   new BadRequestError(`Score increment of ${score.toString()} is invalid`);
 
+export const WRONG_PASSWORD = () =>
+  new BadRequestError('The previous password provided is incorrect');
 
 export const USER_ALREADY_HAS_BADGE = (userId: string, badgeId: string) =>
   new ConflictError(`User with id ${userId} already has badge with id ${badgeId}`);

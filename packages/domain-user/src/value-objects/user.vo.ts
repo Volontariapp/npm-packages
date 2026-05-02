@@ -17,12 +17,23 @@ export class UpdateUserInput {
   readonly bio?: string;
   readonly logoPath?: string;
   readonly rna?: string;
+  readonly previousPassword?: string;
+  readonly newPassword?: string;
 
-  constructor(data: { pseudo?: string; bio?: string; logoPath?: string; rna?: string }) {
+  constructor(data: {
+    pseudo?: string;
+    bio?: string;
+    logoPath?: string;
+    rna?: string;
+    previousPassword?: string;
+    newPassword?: string;
+  }) {
     this.pseudo = data.pseudo;
     this.bio = data.bio;
     this.logoPath = data.logoPath;
     this.rna = data.rna;
+    this.previousPassword = data.previousPassword;
+    this.newPassword = data.newPassword;
   }
 }
 

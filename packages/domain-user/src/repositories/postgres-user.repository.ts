@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
 import { BaseRepository } from '@volontariapp/database';
 import type { DeepPartial } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { UserModel } from '../models/user.model.js';
 import { UserEntity } from '../entities/user.entity.js';
 import { IUserRepository } from './interfaces/user.repository.js';
@@ -95,5 +96,27 @@ export class PostgresUserRepository
       select: ['passwordHash'],
     });
     return user ? user.passwordHash : null;
+  }
+
+  async findPasswordHashById(id: string): Promise<string | null> {
+    const user = await this.repository.findOne({
+      where: this.buildIdWhere(id),
+      select: ['passwordHash'],
+    });
+    return user ? user.passwordHash : null;
+  }
+
+  public override async update(id: string, data: Partial<UserEntity>): Promise<UserEntity | null> {
+    const { passwordHash, ...otherData } = data;
+
+    const entity = await super.update(id, otherData);
+
+    if (passwordHash != null && entity) {
+      await this.repository.update(this.buildIdWhere(id), {
+        passwordHash,
+      } as QueryDeepPartialEntity<UserModel>);
+    }
+
+    return entity;
   }
 }
