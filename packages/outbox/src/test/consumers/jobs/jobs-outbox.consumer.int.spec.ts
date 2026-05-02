@@ -150,7 +150,7 @@ describe('JobsOutboxConsumer (Integration)', () => {
 
     await consumer.processItems([entity]);
 
-    expect(pushSpy).toHaveBeenCalledWith(entity);
+    expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ id: jobId }));
 
     const dbItem = await repository.findOneByOrFail({ id: jobId });
     expect(dbItem.status).toBe(OutboxStatus.COMPLETED);

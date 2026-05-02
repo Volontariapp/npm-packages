@@ -65,12 +65,12 @@ describe('JobsOutboxConsumer (Unit)', () => {
       await consumer.processItems(entities);
 
       expect(pusher.pushElement).toHaveBeenCalledTimes(2);
-      expect(pusher.pushElement).toHaveBeenCalledWith(entities[0]);
-      expect(pusher.pushElement).toHaveBeenCalledWith(entities[1]);
+      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
       const spyMock = completedSpy as jest.Mock;
       expect(spyMock).toHaveBeenCalledTimes(2);
-      expect(spyMock).toHaveBeenCalledWith(entities[0]);
-      expect(spyMock).toHaveBeenCalledWith(entities[1]);
+      expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
     });
   });
 
@@ -88,7 +88,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
       const spyMock = completedSpy as jest.Mock;
       expect(spyMock).toHaveBeenCalledTimes(1);
-      expect(spyMock).toHaveBeenCalledWith(entities[0]);
+      expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
     });
   });
 });

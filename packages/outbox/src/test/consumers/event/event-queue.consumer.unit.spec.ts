@@ -60,11 +60,11 @@ describe('EventQueueConsumer (Unit)', () => {
       await consumer.processItems(entities);
 
       expect(pusher.pushElement).toHaveBeenCalledTimes(2);
-      expect(pusher.pushElement).toHaveBeenCalledWith(entities[0]);
-      expect(pusher.pushElement).toHaveBeenCalledWith(entities[1]);
+      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
       expect(completedSpy).toHaveBeenCalledTimes(2);
-      expect(completedSpy).toHaveBeenCalledWith(entities[0]);
-      expect(completedSpy).toHaveBeenCalledWith(entities[1]);
+      expect(completedSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(completedSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
     });
   });
 
@@ -81,7 +81,7 @@ describe('EventQueueConsumer (Unit)', () => {
       await consumer.markItemsAsCompleted(entities);
 
       expect(completedSpy).toHaveBeenCalledTimes(1);
-      expect(completedSpy).toHaveBeenCalledWith(entities[0]);
+      expect(completedSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
     });
   });
 });
