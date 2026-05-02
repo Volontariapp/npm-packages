@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- Added outboxPusher, jobsOutboxPusher and updated outboxConsumer implementation & behavior
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.13.0
+
 ## 0.3.1
 
 ### Patch Changes

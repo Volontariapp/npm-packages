@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/outbox",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -37,9 +37,12 @@
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },
   "dependencies": {
+    "@volontariapp/config": "workspace:*",
     "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
-    "@volontariapp/logger": "workspace:*"
+    "@volontariapp/logger": "workspace:*",
+    "bullmq": "^5.76.5",
+    "ioredis": "^5.10.1"
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
