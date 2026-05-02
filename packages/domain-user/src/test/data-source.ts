@@ -4,9 +4,11 @@ import { UserModel } from '../models/user.model.js';
 import { BadgeModel } from '../models/badge.model.js';
 import { UserBadgeModel } from '../models/user-badge.model.js';
 import { InitialUserSchema1776334421317 } from './migrations/1776334421317-InitialUserSchema.js';
+import { JobsOutboxAndEventQueue1776783577424 } from './migrations/1776783577424-JobsOutboxAndEventQueue.js';
+import { JobsOutboxAndEventQueueWithTraceId1776974541295 } from './migrations/1776974541295-JobsOutboxAndEventQueueWithTraceId.js';
+import { UpdateOutboxModels1777630654143 } from './migrations/1777630654143-UpdateOutboxModels.js';
+import { AddLogoPathToUser1777715959557 } from './migrations/1777715959557-AddLogoPathToUser.js';
 import { registerUserMappings } from '../models/mapper.js';
-
-const isMigrationRun = process.env.TYPEORM_MIGRATION_RUN === 'true';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -17,7 +19,13 @@ export const testDataSource = new DataSource({
   database: 'ms_user',
   entities: [UserModel, BadgeModel, UserBadgeModel],
   migrationsRun: true,
-  migrations: isMigrationRun ? [InitialUserSchema1776334421317] : [],
+  migrations: [
+    InitialUserSchema1776334421317,
+    JobsOutboxAndEventQueue1776783577424,
+    JobsOutboxAndEventQueueWithTraceId1776974541295,
+    UpdateOutboxModels1777630654143,
+    AddLogoPathToUser1777715959557,
+  ],
   synchronize: false,
   logging: false,
 });
