@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
 import { INSUFFICIENT_PERMISSIONS, MISSING_AUTHENTICATED_USER } from '@volontariapp/errors-nest';
-import type { AuthUser } from '../interfaces/auth-user.interface.js';
 import { Logger } from '@volontariapp/logger';
+import type { JwtPayload } from '@volontariapp/shared';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -21,10 +21,22 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const { user } = context.switchToHttp().getRequest<{ user?: AuthUser }>();
+    let user: JwtPayload | undefined;
+
+    if (context.getType() === 'rpc') {
+      const rpcContext = context
+        .switchToRpc()
+        .getContext<Record<string, string | number | boolean | object | null | undefined>>();
+      user = rpcContext['user'] as JwtPayload | undefined;
+    } else {
+      const request = context
+        .switchToHttp()
+        .getRequest<Record<string, string | number | boolean | object | null | undefined>>();
+      user = request['user'] as JwtPayload | undefined;
+    }
 
     if (!user) {
-      this.logger.warn('User object missing from request in RolesGuard');
+      this.logger.warn('User object missing from request/context in RolesGuard');
       throw MISSING_AUTHENTICATED_USER();
     }
 

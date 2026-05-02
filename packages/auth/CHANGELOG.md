@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- JWT Payload
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.3.0
+
 ## 3.0.2
 
 ### Patch Changes

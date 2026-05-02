@@ -117,9 +117,9 @@ export class JwtService {
     return this.sign(user, key, this.options.internalExpiresIn as string | number);
   }
 
-  async verifyInternal(token: string): Promise<AuthUser> {
+  async verifyInternal<T extends AuthUser = AuthUser>(token: string): Promise<T> {
     const key = await this.getInternalPublicKey();
-    return this.verify(token, key, 'internal');
+    return this.verify<T>(token, key, 'internal');
   }
 
   async signAccessToken(user: AuthUser): Promise<string> {
@@ -128,9 +128,9 @@ export class JwtService {
     return this.sign(user, key, this.options.accessTokenExpiresIn as string | number);
   }
 
-  async verifyAccessToken(token: string): Promise<AuthUser> {
+  async verifyAccessToken<T extends AuthUser = AuthUser>(token: string): Promise<T> {
     const key = await this.getAccessTokenPublicKey();
-    return this.verify(token, key, 'access');
+    return this.verify<T>(token, key, 'access');
   }
 
   async signRefreshToken(user: AuthUser): Promise<string> {
@@ -139,13 +139,13 @@ export class JwtService {
     return this.sign(user, key, this.options.refreshTokenExpiresIn as string | number);
   }
 
-  async verifyRefreshToken(token: string): Promise<AuthUser> {
+  async verifyRefreshToken<T extends AuthUser = AuthUser>(token: string): Promise<T> {
     const key = await this.getRefreshTokenPublicKey();
-    return this.verify(token, key, 'refresh');
+    return this.verify<T>(token, key, 'refresh');
   }
 
   private async sign(user: AuthUser, key: CryptoKey, expiresIn: string | number): Promise<string> {
-    const sessionPayload: jose.JWTPayload = { ...user } as jose.JWTPayload;
+    const sessionPayload: jose.JWTPayload = { ...user };
     return new jose.SignJWT(sessionPayload)
       .setProtectedHeader({ alg: 'RS256' })
       .setIssuedAt()
@@ -153,11 +153,15 @@ export class JwtService {
       .sign(key);
   }
 
-  private async verify(token: string, key: CryptoKey, type: string): Promise<AuthUser> {
+  private async verify<T extends AuthUser = AuthUser>(
+    token: string,
+    key: CryptoKey,
+    type: string,
+  ): Promise<T> {
     try {
       const { payload } = await jose.jwtVerify(token, key, { algorithms: ['RS256'] });
       if (this.isAuthUser(payload)) {
-        return payload;
+        return payload as T;
       }
       throw INVALID_TOKEN_PAYLOAD(type);
     } catch (error) {
@@ -168,7 +172,6 @@ export class JwtService {
   }
 
   private isAuthUser(payload: jose.JWTPayload): payload is AuthUser {
-    const p = payload as Record<string, unknown>;
-    return typeof p['id'] === 'string' && typeof p['role'] === 'string';
+    return typeof payload['id'] === 'string' && typeof payload['role'] === 'string';
   }
 }

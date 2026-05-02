@@ -6,7 +6,6 @@ import * as jose from 'jose';
 import { Test } from '@nestjs/testing';
 import type { INestApplication, ExecutionContext } from '@nestjs/common';
 import request from 'supertest';
-import type { AuthUser } from '../../index.js';
 import {
   JwtService,
   AccessTokenMiddleware,
@@ -17,10 +16,14 @@ import {
   GrpcMetadataHelper,
   INTERNAL_TOKEN_METADATA_KEY,
 } from '../../index.js';
-import { createAuthUser } from '../factories/auth-user.factory.js';
 import { createMock } from '@golevelup/ts-jest';
 import type { Metadata } from '@grpc/grpc-js';
 import { AuthTestController } from '../example/auth-test.controller.js';
+import { UserRoles, type JwtPayload } from '@volontariapp/shared';
+
+interface MetadataWithUser {
+  user: JwtPayload;
+}
 
 describe('Full Auth Flow (Integration)', () => {
   let app: INestApplication;
@@ -67,12 +70,13 @@ describe('Full Auth Flow (Integration)', () => {
     };
 
     jest.spyOn(fs, 'readFileSync').mockImplementation((path) => {
-      if (path === 'access-public.pem') return accessTokenPublic;
-      if (path === 'access-private.pem') return accessTokenPrivate;
-      if (path === 'internal-public.pem') return internalPublic;
-      if (path === 'internal-private.pem') return internalPrivate;
-      if (path === 'refresh-public.pem') return refreshTokenPublic;
-      if (path === 'refresh-private.pem') return refreshTokenPrivate;
+      const p = path as string;
+      if (p === 'access-public.pem') return accessTokenPublic;
+      if (p === 'access-private.pem') return accessTokenPrivate;
+      if (p === 'internal-public.pem') return internalPublic;
+      if (p === 'internal-private.pem') return internalPrivate;
+      if (p === 'refresh-public.pem') return refreshTokenPublic;
+      if (p === 'refresh-private.pem') return refreshTokenPrivate;
       return '';
     });
 
@@ -107,7 +111,7 @@ describe('Full Auth Flow (Integration)', () => {
   });
 
   it('should complete the full auth lifecycle (HTTP AT -> Internal Token -> gRPC Verification)', async () => {
-    const user = createAuthUser({ id: 'gateway-to-ms-user' });
+    const user: JwtPayload = { id: 'gateway-to-ms-user', role: UserRoles.VOLUNTEER };
     const accessToken = await jwtService.signAccessToken(user);
 
     const atGuard = app.get(AccessTokenGuard);
@@ -155,7 +159,7 @@ describe('Full Auth Flow (Integration)', () => {
     expect(canActivate).toBe(true);
     expect(msGuardSpy).toHaveBeenCalledWith(rpcContext);
 
-    const injectedUser = (incomingMetadata as unknown as Record<string, unknown>).user as AuthUser;
+    const injectedUser = (incomingMetadata as object as MetadataWithUser & Metadata).user;
     expect(injectedUser).toBeDefined();
     expect(injectedUser.id).toBe(user.id);
   });
@@ -166,7 +170,7 @@ describe('Full Auth Flow (Integration)', () => {
   });
 
   it('should allow access if role is correct', async () => {
-    const user = createAuthUser({ role: 'admin' });
+    const user: JwtPayload = { id: 'admin-user', role: UserRoles.ADMIN };
     const accessToken = await jwtService.signAccessToken(user);
 
     const response = await request(app.getHttpServer())
@@ -177,7 +181,7 @@ describe('Full Auth Flow (Integration)', () => {
   });
 
   it('should throw 403 if role is insufficient', async () => {
-    const user = createAuthUser({ role: 'user' });
+    const user: JwtPayload = { id: 'normal-user', role: UserRoles.VOLUNTEER };
     const accessToken = await jwtService.signAccessToken(user);
 
     const response = await request(app.getHttpServer())
