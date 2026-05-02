@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.7
+
+### Patch Changes
+
+- patch new contract user
+
 ## 4.0.6
 
 ### Patch Changes
