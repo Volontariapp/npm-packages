@@ -1,32 +1,35 @@
 import type { NestMiddleware } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
+import type { Request, Response, NextFunction } from 'express';
 
 @Injectable()
 export class AccessTokenMiddleware implements NestMiddleware {
   private readonly logger = new Logger({ context: 'AccessTokenMiddleware', format: 'json' });
-  use = (req: unknown, _res: unknown, next: unknown): void => {
-    const request = req as Record<string, unknown>;
-    const nextFn = next as () => void;
-    const headers = (request['headers'] ?? {}) as Record<string, unknown>;
+  use = (req: Request, _res: Response, next: NextFunction): void => {
+    // Explicitly cast to Record for property access if needed, but Request is already a record
+    const request = req as Request & Record<string, unknown>;
+    const headers = request.headers as Record<string, string | string[] | undefined>;
     const authHeader = headers['authorization'];
     let token: string | undefined;
 
     if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1];
     } else if (
-      request['cookies'] !== undefined &&
-      typeof request['cookies'] === 'object' &&
-      request['cookies'] !== null
+      request.cookies !== undefined &&
+      typeof request.cookies === 'object' &&
+      request.cookies !== null
     ) {
-      const cookies = request['cookies'] as Record<string, string | undefined>;
+      const cookies = request.cookies as Record<string, string | undefined>;
       token = cookies['accessToken'] ?? cookies['access_token'];
     }
 
     if (typeof token === 'string' && token !== '') {
       request['accessToken'] = token;
       this.logger.debug('Extracted access token from request');
+    } else {
+      this.logger.debug('No access token found in headers or cookies');
     }
-    nextFn();
+    next();
   };
 }

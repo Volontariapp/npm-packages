@@ -1,20 +1,15 @@
-import { jest } from '@jest/globals';
-import type { OutboxEntity } from '@volontariapp/database';
+import type { jest } from '@jest/globals';
+import type { OutboxEntity, BaseRepository, OutboxModel } from '@volontariapp/database';
+import { createMock } from '@volontariapp/database/testing';
 
-export type OutboxRepositoryMock<TEntity extends OutboxEntity> = {
-  create: jest.MockedFunction<(data: Partial<TEntity>) => Promise<TEntity>>;
-  createMany: jest.MockedFunction<(dataArray: Partial<TEntity>[]) => Promise<TEntity[]>>;
-  update: jest.MockedFunction<(id: string, data: Partial<TEntity>) => Promise<TEntity | null>>;
-  delete: jest.MockedFunction<(id: string) => Promise<boolean>>;
-};
+export type OutboxRepositoryMock<
+  TEntity extends OutboxEntity,
+  TModel extends OutboxModel = OutboxModel,
+> = jest.Mocked<BaseRepository<TModel, TEntity, string>>;
 
 export const makeOutboxRepositoryMock = <
   TEntity extends OutboxEntity,
->(): OutboxRepositoryMock<TEntity> => {
-  return {
-    create: jest.fn(() => Promise.resolve({} as TEntity)),
-    createMany: jest.fn(() => Promise.resolve([] as TEntity[])),
-    update: jest.fn(() => Promise.resolve({} as TEntity)),
-    delete: jest.fn(() => Promise.resolve(true)),
-  };
+  TModel extends OutboxModel = OutboxModel,
+>(): OutboxRepositoryMock<TEntity, TModel> => {
+  return createMock<BaseRepository<TModel, TEntity, string>>();
 };

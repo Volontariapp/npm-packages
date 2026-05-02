@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals';
 import { JobsOutboxConsumer } from '../../../consumers/jobs-outbox.consumer.js';
 import {
   makeJobsOutboxConsumerRepositoryMock,
@@ -24,17 +24,25 @@ describe('JobsOutboxConsumer (Unit)', () => {
     );
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('should be defined', () => {
     expect(consumer).toBeDefined();
   });
 
   it('fetchPendingItems() should delegate to repository and return results', async () => {
     const mockEntities = [{ id: '1' }, { id: '2' }];
-    repository.toEntities.mockReturnValue(mockEntities as JobsOutboxEntity[]);
+    const toEntitiesSpy = jest
+      .spyOn(repository, 'toEntities')
+      .mockReturnValue(mockEntities as JobsOutboxEntity[]);
+    const executeInTransactionSpy = jest.spyOn(repository, 'executeInTransaction');
 
     const result = await consumer.fetchPendingItems();
 
-    expect(repository.executeInTransaction).toHaveBeenCalled();
+    expect(executeInTransactionSpy).toHaveBeenCalled();
+    expect(toEntitiesSpy).toHaveBeenCalled();
     expect(result).toEqual(mockEntities);
   });
 
@@ -44,16 +52,16 @@ describe('JobsOutboxConsumer (Unit)', () => {
         { id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
         { id: '2', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
       ];
-      const dispatcherSpy = jest.spyOn(
-        (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher }).outboxDispatcher,
-        'markAsCompleted',
-      );
+      const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
+        .outboxDispatcher;
+      const completedSpy = jest.spyOn(dispatcher, 'markAsCompleted');
 
       await consumer.processItems(entities);
 
-      expect(dispatcherSpy).toHaveBeenCalledTimes(2);
-      expect(dispatcherSpy).toHaveBeenCalledWith(entities[0]);
-      expect(dispatcherSpy).toHaveBeenCalledWith(entities[1]);
+      const spyMock = completedSpy as jest.Mock;
+      expect(spyMock).toHaveBeenCalledTimes(2);
+      expect(spyMock).toHaveBeenCalledWith(entities[0]);
+      expect(spyMock).toHaveBeenCalledWith(entities[1]);
     });
   });
 
@@ -63,15 +71,15 @@ describe('JobsOutboxConsumer (Unit)', () => {
         { id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
         { id: '2', status: OutboxStatus.PENDING } as JobsOutboxEntity,
       ];
-      const dispatcherSpy = jest.spyOn(
-        (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher }).outboxDispatcher,
-        'markAsCompleted',
-      );
+      const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
+        .outboxDispatcher;
+      const completedSpy = jest.spyOn(dispatcher, 'markAsCompleted');
 
       await consumer.markItemsAsCompleted(entities);
 
-      expect(dispatcherSpy).toHaveBeenCalledTimes(1);
-      expect(dispatcherSpy).toHaveBeenCalledWith(entities[0]);
+      const spyMock = completedSpy as jest.Mock;
+      expect(spyMock).toHaveBeenCalledTimes(1);
+      expect(spyMock).toHaveBeenCalledWith(entities[0]);
     });
   });
 });

@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.6.0
+
+### Minor Changes
+
+- trigger SQL
+
+## 2.5.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.2
+
+## 2.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.7
+
+## 2.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.6
+
+## 2.5.0
+
+### Minor Changes
+
+- adding traceId in event model + tests
+- Updated dependencies []:
+  - @volontariapp/database@1.12.0
+
 ## 2.4.16
 
 ### Patch Changes

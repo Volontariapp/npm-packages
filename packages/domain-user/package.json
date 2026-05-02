@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-user",
-  "version": "2.3.5",
+  "version": "2.4.5",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -29,12 +29,22 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\"",
-    "test:coverage": "echo \"No tests yet\"",
+    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest",
+    "test:integration": "node --experimental-vm-modules ../../node_modules/.bin/jest --config jest.integration.config.js --runInBand",
+    "test:all": "yarn test && yarn test:integration",
+    "test:watch": "node --experimental-vm-modules ../../node_modules/.bin/jest --watch",
+    "test:coverage": "node --experimental-vm-modules ../../node_modules/.bin/jest --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\"",
+    "test:coverage:integration": "node --experimental-vm-modules ../../node_modules/.bin/jest --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\" --runInBand",
     "typeorm": "typeorm-ts-node-esm",
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "dependencies": {
+    "@volontariapp/auth": "workspace:*",
+    "@volontariapp/contracts": "workspace:*",
+    "@volontariapp/crypto": "workspace:*",
+    "@volontariapp/database": "workspace:*",
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/shared": "workspace:*"
   },

@@ -1,13 +1,38 @@
-import type { DeleteUserResponse, ListUsersResponse, UserResponse,
-  AuthResponse, LoginResponse, RefreshTokenResponse, SignUpResponse,
-  UpdateUserResponse
- } from '../../../user/user.responses.js';
+import type {
+  DeleteUserResponse,
+  ListUsersResponse,
+  AuthResponse,
+  LoginResponse,
+  RefreshTokenResponse,
+  SignUpResponse,
+  UpdateUserResponse,
+  IncrementImpactScoreResponse,
+  CreateBadgeResponse,
+  UpdateBadgeResponse,
+  DeleteBadgeResponse,
+  AddBadgeToUserResponse,
+  RemoveBadgeFromUserResponse,
+  ListBadgesResponse,
+} from '../../../user/user.responses.js';
+import type { User, Badge } from '../../../user/user.js';
 
-export interface UserWebResponse extends UserResponse {}
+export interface BadgeWeb extends Omit<Badge, 'awardedAt'> {
+  awardedAt?: Date;
+}
 
-export interface ListUsersWebResponse extends ListUsersResponse {}
+export interface UserWeb extends Omit<User, 'badges'> {
+  badges: BadgeWeb[];
+}
 
-export interface GetUserWebResponse extends UserResponse {}
+export interface UserWebResponse {
+  user: UserWeb | undefined;
+}
+
+export interface ListUsersWebResponse extends Omit<ListUsersResponse, 'users'> {
+  users: UserWeb[];
+}
+
+export interface GetUserWebResponse extends UserWebResponse {}
 
 export interface DeleteUserWebResponse extends DeleteUserResponse {}
 
@@ -19,4 +44,28 @@ export interface LoginWebResponse extends LoginResponse {}
 
 export interface RefreshTokenWebResponse extends RefreshTokenResponse {}
 
-export interface SignUpWebResponse extends SignUpResponse {}
+export interface SignUpWebResponse extends Omit<SignUpResponse, 'user'> {
+  user: UserWeb | undefined;
+}
+
+export interface IncrementImpactScoreWebResponse extends IncrementImpactScoreResponse {}
+
+export interface CreateBadgeWebResponse extends Omit<CreateBadgeResponse, 'badge'> {
+  badge: BadgeWeb | undefined;
+}
+
+export interface UpdateBadgeWebResponse extends UpdateBadgeResponse {}
+
+export interface DeleteBadgeWebResponse extends DeleteBadgeResponse {}
+
+export interface AddBadgeToUserWebResponse extends AddBadgeToUserResponse {}
+
+export interface RemoveBadgeFromUserWebResponse extends RemoveBadgeFromUserResponse {}
+
+export interface BadgeWebResponse {
+  badge: BadgeWeb | undefined;
+}
+
+export interface ListBadgesWebResponse extends Omit<ListBadgesResponse, 'badges'> {
+  badges: BadgeWeb[];
+}

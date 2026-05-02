@@ -6,11 +6,12 @@ import { OutboxDispatcher } from '../../../outbox/dispatchers/outbox.dispatcher.
 import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import { makeOutboxEvent } from '../../utils/helpers/outbox-event.helper.js';
 import { TestOutboxRepository } from '../../utils/repositories/outbox-test.repository.js';
-import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import type { LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 
 describe('OutboxConsumer (Integration)', () => {
   let repository: TestOutboxRepository;
-  let loggerMock: TestLoggerMock;
+  let loggerMock: LoggerMock;
 
   setupIntegrationTest([OutboxModel]);
 
@@ -54,7 +55,6 @@ describe('OutboxConsumer (Integration)', () => {
     );
     await repo.save(events);
 
-    // Simulate parallel consumers
     const dispatcher = new OutboxDispatcher(loggerMock as never, repository);
     const consumer1 = new OutboxConsumer(loggerMock as never, repository, 5, dispatcher);
     const consumer2 = new OutboxConsumer(loggerMock as never, repository, 5, dispatcher);
@@ -66,7 +66,6 @@ describe('OutboxConsumer (Integration)', () => {
     expect(results1).toHaveLength(5);
     expect(results2).toHaveLength(5);
 
-    // Ensure no overlap in IDs
     const ids1 = new Set(results1.map((i: OutboxModel) => i.id));
     const ids2 = new Set(results2.map((i: OutboxModel) => i.id));
 

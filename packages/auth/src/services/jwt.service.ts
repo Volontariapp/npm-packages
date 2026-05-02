@@ -1,6 +1,7 @@
 import * as jose from 'jose';
 import type { CryptoKey } from 'jose';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import { InternalServerError } from '@volontariapp/errors';
 import { Logger } from '@volontariapp/logger';
 import {
@@ -29,7 +30,7 @@ export class JwtService {
 
   private async getInternalPrivateKey(): Promise<CryptoKey> {
     if (this.internalPrivateKey) return this.internalPrivateKey;
-    if (this.options.internalPrivateKeyPath === undefined) {
+    if (!this.options.internalPrivateKeyPath) {
       throw CONFIG_ERROR('Internal private key path not configured');
     }
     try {
@@ -43,7 +44,7 @@ export class JwtService {
 
   private async getInternalPublicKey(): Promise<CryptoKey> {
     if (this.internalPublicKey) return this.internalPublicKey;
-    if (this.options.internalPublicKeyPath === undefined) {
+    if (!this.options.internalPublicKeyPath) {
       throw CONFIG_ERROR('Internal public key path not configured');
     }
     try {
@@ -57,7 +58,7 @@ export class JwtService {
 
   private async getAccessTokenPrivateKey(): Promise<CryptoKey> {
     if (this.accessTokenPrivateKey) return this.accessTokenPrivateKey;
-    if (this.options.accessTokenPrivateKeyPath === undefined) {
+    if (!this.options.accessTokenPrivateKeyPath) {
       throw CONFIG_ERROR('Access private key path not configured');
     }
     try {
@@ -71,7 +72,7 @@ export class JwtService {
 
   private async getAccessTokenPublicKey(): Promise<CryptoKey> {
     if (this.accessTokenPublicKey) return this.accessTokenPublicKey;
-    if (this.options.accessTokenPublicKeyPath === undefined) {
+    if (!this.options.accessTokenPublicKeyPath) {
       throw CONFIG_ERROR('Access public key path not configured');
     }
     try {
@@ -85,7 +86,7 @@ export class JwtService {
 
   private async getRefreshTokenPrivateKey(): Promise<CryptoKey> {
     if (this.refreshTokenPrivateKey) return this.refreshTokenPrivateKey;
-    if (this.options.refreshTokenPrivateKeyPath === undefined) {
+    if (!this.options.refreshTokenPrivateKeyPath) {
       throw CONFIG_ERROR('Refresh private key path not configured');
     }
     try {
@@ -99,7 +100,7 @@ export class JwtService {
 
   private async getRefreshTokenPublicKey(): Promise<CryptoKey> {
     if (this.refreshTokenPublicKey) return this.refreshTokenPublicKey;
-    if (this.options.refreshTokenPublicKeyPath === undefined) {
+    if (!this.options.refreshTokenPublicKeyPath) {
       throw CONFIG_ERROR('Refresh public key path not configured');
     }
     try {
@@ -117,9 +118,9 @@ export class JwtService {
     return this.sign(user, key, this.options.internalExpiresIn as string | number);
   }
 
-  async verifyInternal(token: string): Promise<AuthUser> {
+  async verifyInternal<T extends AuthUser = AuthUser>(token: string): Promise<T> {
     const key = await this.getInternalPublicKey();
-    return this.verify(token, key, 'internal');
+    return this.verify<T>(token, key, 'internal');
   }
 
   async signAccessToken(user: AuthUser): Promise<string> {
@@ -128,9 +129,9 @@ export class JwtService {
     return this.sign(user, key, this.options.accessTokenExpiresIn as string | number);
   }
 
-  async verifyAccessToken(token: string): Promise<AuthUser> {
+  async verifyAccessToken<T extends AuthUser = AuthUser>(token: string): Promise<T> {
     const key = await this.getAccessTokenPublicKey();
-    return this.verify(token, key, 'access');
+    return this.verify<T>(token, key, 'access');
   }
 
   async signRefreshToken(user: AuthUser): Promise<string> {
@@ -139,25 +140,30 @@ export class JwtService {
     return this.sign(user, key, this.options.refreshTokenExpiresIn as string | number);
   }
 
-  async verifyRefreshToken(token: string): Promise<AuthUser> {
+  async verifyRefreshToken<T extends AuthUser = AuthUser>(token: string): Promise<T> {
     const key = await this.getRefreshTokenPublicKey();
-    return this.verify(token, key, 'refresh');
+    return this.verify<T>(token, key, 'refresh');
   }
 
   private async sign(user: AuthUser, key: CryptoKey, expiresIn: string | number): Promise<string> {
-    const sessionPayload: jose.JWTPayload = { ...user } as jose.JWTPayload;
+    const sessionPayload: jose.JWTPayload = { ...user };
     return new jose.SignJWT(sessionPayload)
       .setProtectedHeader({ alg: 'RS256' })
+      .setJti(crypto.randomUUID())
       .setIssuedAt()
       .setExpirationTime(expiresIn)
       .sign(key);
   }
 
-  private async verify(token: string, key: CryptoKey, type: string): Promise<AuthUser> {
+  private async verify<T extends AuthUser = AuthUser>(
+    token: string,
+    key: CryptoKey,
+    type: string,
+  ): Promise<T> {
     try {
       const { payload } = await jose.jwtVerify(token, key, { algorithms: ['RS256'] });
       if (this.isAuthUser(payload)) {
-        return payload;
+        return payload as T;
       }
       throw INVALID_TOKEN_PAYLOAD(type);
     } catch (error) {
@@ -168,7 +174,6 @@ export class JwtService {
   }
 
   private isAuthUser(payload: jose.JWTPayload): payload is AuthUser {
-    const p = payload as Record<string, unknown>;
-    return typeof p['id'] === 'string' && typeof p['role'] === 'string';
+    return typeof payload['id'] === 'string' && typeof payload['role'] === 'string';
   }
 }

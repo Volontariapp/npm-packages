@@ -7,7 +7,7 @@ import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
 import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import type { BaseRepository } from '../../../core/base.repository.js';
-import { makeLoggerMock, type TestLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock, type LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeQueryRunnerMock } from '../../utils/helpers/query-runner-mock.helper.js';
 import type { Logger } from '@volontariapp/logger';
 
@@ -16,7 +16,7 @@ describe('OutboxConsumer (Unit)', () => {
   let dispatcherMock: jest.Mocked<OutboxDispatcher<OutboxModel, OutboxEntity>>;
   let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
   let queryRunnerMock: QueryRunner;
-  let loggerMock: TestLoggerMock;
+  let loggerMock: LoggerMock;
 
   beforeEach(() => {
     loggerMock = makeLoggerMock();
@@ -47,6 +47,10 @@ describe('OutboxConsumer (Unit)', () => {
       10,
       dispatcherMock,
     );
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('constructor', () => {
@@ -124,24 +128,29 @@ describe('OutboxConsumer (Unit)', () => {
   describe('processItems', () => {
     it('should process items and mark them as completed', async () => {
       const entities = [{ id: '1' } as OutboxEntity, { id: '2' } as OutboxEntity];
+      const completedSpy = jest.spyOn(dispatcherMock, 'markAsCompleted');
 
       await consumer.processItems(entities);
 
-      expect(dispatcherMock.markAsCompleted).toHaveBeenCalledTimes(2);
-      expect(dispatcherMock.markAsCompleted).toHaveBeenCalledWith(entities[0]);
-      expect(dispatcherMock.markAsCompleted).toHaveBeenCalledWith(entities[1]);
+      expect(completedSpy).toHaveBeenCalledTimes(2);
+      expect(completedSpy).toHaveBeenCalledWith(entities[0]);
+      expect(completedSpy).toHaveBeenCalledWith(entities[1]);
     });
 
     it('should mark items as failed if processing throws error', async () => {
       const entities = [{ id: '1' } as OutboxEntity];
       const error = new Error('Test error');
-      dispatcherMock.markAsCompleted.mockImplementationOnce(() => {
-        throw error;
-      });
+      const completedSpy = jest
+        .spyOn(dispatcherMock, 'markAsCompleted')
+        .mockImplementationOnce(() => {
+          throw error;
+        });
+      const failedSpy = jest.spyOn(dispatcherMock, 'markAsFailed');
 
       await consumer.processItems(entities);
 
-      expect(dispatcherMock.markAsFailed).toHaveBeenCalledWith(entities[0], 'Test error');
+      expect(completedSpy).toHaveBeenCalledWith(entities[0]);
+      expect(failedSpy).toHaveBeenCalledWith(entities[0], 'Test error');
     });
   });
 
@@ -151,13 +160,14 @@ describe('OutboxConsumer (Unit)', () => {
         { id: '1', status: OutboxStatus.PROCESSING } as OutboxEntity,
         { id: '2', status: OutboxStatus.PENDING } as OutboxEntity,
       ];
-      const dispatcherSpy = dispatcherMock.markAsCompleted;
+      const completedSpy = jest.spyOn(dispatcherMock, 'markAsCompleted');
+      const warnSpy = jest.spyOn(loggerMock, 'warn');
 
       await consumer.markItemsAsCompleted(entities);
 
-      expect(dispatcherSpy).toHaveBeenCalledTimes(1);
-      expect(dispatcherSpy).toHaveBeenCalledWith(entities[0]);
-      expect(loggerMock.warn).toHaveBeenCalledWith('Skipping outbox item 2', {
+      expect(completedSpy).toHaveBeenCalledTimes(1);
+      expect(completedSpy).toHaveBeenCalledWith(entities[0]);
+      expect(warnSpy).toHaveBeenCalledWith('Skipping outbox item 2', {
         status: OutboxStatus.PENDING,
       });
     });

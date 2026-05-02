@@ -5,6 +5,7 @@ import { INTERNAL_TOKEN_METADATA_KEY } from '../constants/index.js';
 import { MISSING_INTERNAL_TOKEN, INVALID_INTERNAL_TOKEN } from '@volontariapp/errors-nest';
 import type { Metadata } from '@grpc/grpc-js';
 import { Logger } from '@volontariapp/logger';
+import type { JwtPayload } from '@volontariapp/shared';
 
 @Injectable()
 export class GrpcInternalGuard implements CanActivate {
@@ -12,6 +13,10 @@ export class GrpcInternalGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (context.getType() !== 'rpc') {
+      return true;
+    }
+
     const rpcContext = context.switchToRpc().getContext<Metadata>();
     const tokens = rpcContext.get(INTERNAL_TOKEN_METADATA_KEY);
     const token = tokens[0];
@@ -22,8 +27,10 @@ export class GrpcInternalGuard implements CanActivate {
     }
 
     try {
-      const user = await this.jwtService.verifyInternal(token);
-      (rpcContext as unknown as Record<string, unknown>)['user'] = user;
+      const user = await this.jwtService.verifyInternal<JwtPayload>(token);
+      const ctx = rpcContext as object as Record<string, unknown>;
+      ctx['user'] = user;
+
       this.logger.debug(`Internal gRPC request authorized for user ${user.id}`);
       return true;
     } catch (error) {

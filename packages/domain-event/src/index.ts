@@ -20,4 +20,6 @@ export * from './services/index.js';
 
 export * from './value-objects/event-location.value-object.js';
 
+export * from './database/triggers/index.js';
+
 registerEventMappings();
