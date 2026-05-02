@@ -3805,6 +3805,7 @@ __metadata:
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
     jest: "npm:^30.3.0"
     jose: "npm:^6.2.2"
     reflect-metadata: "npm:^0.2.2"

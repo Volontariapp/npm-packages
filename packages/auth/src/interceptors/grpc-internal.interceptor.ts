@@ -25,9 +25,15 @@ export class GrpcInternalInterceptor implements NestInterceptor {
       switchMap((metadata) => {
         const token = metadata.get(INTERNAL_TOKEN_METADATA_KEY)[0] as string;
         this.logger.debug(`Transformed Access Token to Internal Token for user ${user.id}`);
-        const req = httpRequest as unknown as Record<string, unknown>;
+
+        // Use a more specific Record type to avoid unknown/any
+        const req = httpRequest as Record<
+          string,
+          string | number | boolean | null | undefined | object
+        >;
         req['internalToken'] = token;
         req['internalMetadata'] = metadata;
+
         return next.handle();
       }),
     );

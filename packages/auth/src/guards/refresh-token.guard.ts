@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '../services/jwt.service.js';
 import { MISSING_REFRESH_TOKEN, INVALID_REFRESH_TOKEN } from '@volontariapp/errors-nest';
 import { Logger } from '@volontariapp/logger';
+import type { JwtPayload } from '@volontariapp/shared';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
@@ -19,7 +20,7 @@ export class RefreshTokenGuard implements CanActivate {
     }
 
     try {
-      const user = await this.jwtService.verifyRefreshToken(token);
+      const user = await this.jwtService.verifyRefreshToken<JwtPayload>(token);
       request['user'] = user;
       this.logger.debug(`User ${user.id} authenticated with refresh token`);
       return true;

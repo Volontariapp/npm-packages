@@ -5,6 +5,7 @@ import { JwtService } from '../services/jwt.service.js';
 import { MISSING_ACCESS_TOKEN, INVALID_ACCESS_TOKEN } from '@volontariapp/errors-nest';
 import { Logger } from '@volontariapp/logger';
 import { IS_PUBLIC_KEY, IS_REFRESH_TOKEN_KEY } from '../constants/index.js';
+import type { JwtPayload } from '@volontariapp/shared';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -43,7 +44,7 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     try {
-      const user = await this.jwtService.verifyAccessToken(token);
+      const user = await this.jwtService.verifyAccessToken<JwtPayload>(token);
       request['user'] = user;
       this.logger.debug(`User ${user.id} authenticated with access token`);
       return true;

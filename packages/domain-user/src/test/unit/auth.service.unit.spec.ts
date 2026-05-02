@@ -8,6 +8,7 @@ import { CommandsFactory } from '../__test-utils__/factories/commands.factory.js
 import { hashPassword } from '@volontariapp/crypto';
 import type { IUserRepository } from '../../repositories/interfaces/user.repository.js';
 import type { JwtService } from '@volontariapp/auth';
+import { UserRoles } from '@volontariapp/shared';
 
 describe('AuthService (Unit)', () => {
   let service: AuthService;
@@ -24,6 +25,7 @@ describe('AuthService (Unit)', () => {
       signRefreshToken: jest
         .fn<JwtService['signRefreshToken']>()
         .mockResolvedValue('refresh-token'),
+      verifyRefreshToken: jest.fn<JwtService['verifyRefreshToken']>(),
     } as unknown as jest.Mocked<JwtService>;
 
     service = new AuthService(mockRepository, jwtServiceMock);
@@ -321,6 +323,134 @@ describe('AuthService (Unit)', () => {
 
         // ACT & ASSERT
         await expect(service.logIn(command)).rejects.toThrow('DB lost');
+      });
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // refreshTokens()
+  // ───────────────────────────────────────────────────────────────────────────
+  describe('refreshTokens()', () => {
+    describe('HAPPY PATH: Tokens refreshed successfully', () => {
+      it('should return new tokens when refresh token is valid', async () => {
+        // ARRANGE
+        const command = CommandsFactory.buildRefreshTokensCommand({ refreshToken: 'valid-token' });
+        const payload = { id: 'user-id', role: UserRoles.VOLUNTEER };
+        jwtServiceMock.verifyRefreshToken.mockResolvedValue(payload);
+
+        // ACT
+        const result = await service.refreshTokens(command);
+
+        // ASSERT
+        expect(result.accessToken).toBe('access-token');
+        expect(result.refreshToken).toBe('refresh-token');
+        expect(jwtServiceMock.verifyRefreshToken).toHaveBeenCalledWith('valid-token');
+        expect(jwtServiceMock.signAccessToken).toHaveBeenCalledWith(
+          expect.objectContaining({ id: 'user-id', role: UserRoles.VOLUNTEER }),
+        );
+      });
+    });
+
+    describe('SAD PATH: Invalid refresh token', () => {
+      it('should throw UNAUTHORIZED when refresh token is invalid', async () => {
+        // ARRANGE
+        const command = CommandsFactory.buildRefreshTokensCommand({
+          refreshToken: 'invalid-token',
+        });
+        jwtServiceMock.verifyRefreshToken.mockRejectedValue(new Error('Invalid token'));
+
+        // ACT & ASSERT
+        await expect(service.refreshTokens(command)).rejects.toMatchObject({
+          code: 'UNAUTHORIZED',
+        });
+        expect(loggerWarnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Invalid refresh token'),
+        );
+      });
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // createAdmin()
+  // ───────────────────────────────────────────────────────────────────────────
+  describe('createAdmin()', () => {
+    describe('HAPPY PATH: Admin created successfully', () => {
+      it('should create an admin user and return tokens', async () => {
+        // ARRANGE
+        const command = CommandsFactory.buildSignUpCommand({
+          email: 'admin@example.com',
+          pseudo: 'admin',
+        });
+        const createdUser = UserFactory.build({
+          email: 'admin@example.com',
+          pseudo: 'admin',
+          role: UserRoles.ADMIN,
+        });
+        mockRepository.findByEmail.mockResolvedValue(null);
+        mockRepository.createWithHashedPassword.mockResolvedValue(createdUser);
+
+        // ACT
+        const result = await service.createAdmin(command);
+
+        // ASSERT
+        expect(result.auth.accessToken).toBe('access-token');
+        expect(result.user.role).toBe(UserRoles.ADMIN);
+        expect(mockRepository.createWithHashedPassword).toHaveBeenCalledWith(
+          expect.objectContaining({ role: UserRoles.ADMIN }),
+          expect.any(String),
+        );
+      });
+    });
+
+    describe('SAD PATH: Admin already exists', () => {
+      it('should throw CONFLICT when email is already taken', async () => {
+        // ARRANGE
+        const command = CommandsFactory.buildSignUpCommand({ email: 'admin@example.com' });
+        mockRepository.findByEmail.mockResolvedValue(UserFactory.build());
+
+        // ACT & ASSERT
+        await expect(service.createAdmin(command)).rejects.toMatchObject({
+          code: 'CONFLICT',
+        });
+      });
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // grantAdmin()
+  // ───────────────────────────────────────────────────────────────────────────
+  describe('grantAdmin()', () => {
+    describe('HAPPY PATH: Admin role granted successfully', () => {
+      it('should grant admin role and return tokens', async () => {
+        // ARRANGE
+        const userId = 'user-id';
+        const user = UserFactory.build({ id: userId, role: UserRoles.VOLUNTEER });
+        const updatedUser = UserFactory.build({ id: userId, role: UserRoles.ADMIN });
+        mockRepository.findById.mockResolvedValue(user);
+        mockRepository.update.mockResolvedValue(updatedUser);
+
+        // ACT
+        const result = await service.grantAdmin(userId);
+
+        // ASSERT
+        expect(result.accessToken).toBe('access-token');
+        expect(mockRepository.update).toHaveBeenCalledWith(userId, { role: UserRoles.ADMIN });
+        expect(jwtServiceMock.signAccessToken).toHaveBeenCalledWith(
+          expect.objectContaining({ role: UserRoles.ADMIN }),
+        );
+      });
+    });
+
+    describe('SAD PATH: User not found', () => {
+      it('should throw NOT_FOUND when user does not exist', async () => {
+        // ARRANGE
+        const userId = 'non-existent';
+        mockRepository.findById.mockResolvedValue(null);
+
+        // ACT & ASSERT
+        await expect(service.grantAdmin(userId)).rejects.toMatchObject({
+          code: 'NOT_FOUND',
+        });
       });
     });
   });

@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { SignUpInput, LoginInput } from '../../../value-objects/index.js';
+import { SignUpInput, LoginInput, RefreshTokensInput } from '../../../value-objects/index.js';
 
 export class CommandsFactory {
   static buildSignUpCommand(
@@ -28,5 +28,9 @@ export class CommandsFactory {
       overrides.email ?? 'user@example.com',
       overrides.password ?? 'SecurePassword123!',
     );
+  }
+
+  static buildRefreshTokensCommand(overrides: { refreshToken?: string } = {}): RefreshTokensInput {
+    return new RefreshTokensInput(overrides.refreshToken ?? 'refresh-token');
   }
 }
