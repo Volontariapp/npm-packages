@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.4.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/auth@3.2.0
+
 ## 2.4.4
 
 ### Patch Changes

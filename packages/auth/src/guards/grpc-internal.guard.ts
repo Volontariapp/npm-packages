@@ -13,6 +13,10 @@ export class GrpcInternalGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (context.getType() !== 'rpc') {
+      return true;
+    }
+
     const rpcContext = context.switchToRpc().getContext<Metadata>();
     const tokens = rpcContext.get(INTERNAL_TOKEN_METADATA_KEY);
     const token = tokens[0];
