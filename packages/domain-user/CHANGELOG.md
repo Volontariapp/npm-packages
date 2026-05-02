@@ -1,10 +1,21 @@
 # Changelog
 
+## 2.4.0
+
+### Patch Changes
+
+- Add repositories and services
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.1
+  - @volontariapp/auth@2.1.16
+
 ## 2.3.5
 
 ### Patch Changes
 
 - Updated typeORM version to match database package version
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.8.1
 
 ## 2.3.4
 
