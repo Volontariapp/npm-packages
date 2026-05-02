@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.4.3
+
+### Patch Changes
+
+- update password fix
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.2
+  - @volontariapp/auth@3.0.2
+
 ## 2.4.2
 
 ### Patch Changes

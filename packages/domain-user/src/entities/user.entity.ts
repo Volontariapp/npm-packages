@@ -22,6 +22,7 @@ export class UserEntity {
   role!: UserRoles;
   totalImpactScore!: number;
   badges!: BadgeEntity[];
+  passwordHash?: string;
 
   static isValidRna(rna?: string): boolean {
     if (rna == null) return true;

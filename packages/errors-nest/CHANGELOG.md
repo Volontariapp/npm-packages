@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.2
+
+### Patch Changes
+
+- update password fix
+
 ## 0.10.1
 
 ### Patch Changes

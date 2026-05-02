@@ -96,4 +96,12 @@ export class PostgresUserRepository
     });
     return user ? user.passwordHash : null;
   }
+
+  async findPasswordHashById(id: string): Promise<string | null> {
+    const user = await this.repository.findOne({
+      where: this.buildIdWhere(id),
+      select: ['passwordHash'],
+    });
+    return user ? user.passwordHash : null;
+  }
 }

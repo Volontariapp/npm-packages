@@ -4,7 +4,7 @@ import { PostgresUserRepository } from '../repositories/postgres-user.repository
 import type { IUserRepository } from '../repositories/index.js';
 import { UserEntity } from '../entities/user.entity.js';
 import { isBaseError } from '@volontariapp/errors';
-import { calculateHash } from '@volontariapp/crypto';
+import { calculateHash, verifyPassword, hashPassword } from '@volontariapp/crypto';
 import {
   USER_NOT_FOUND,
   USER_ALREADY_HAS_BADGE,
@@ -12,6 +12,7 @@ import {
   INVALID_RNA,
   INVALID_SCORE_INCREMENT,
   DATABASE_ERROR,
+  WRONG_PASSWORD,
 } from '@volontariapp/errors-nest';
 import { BadgeService } from './badge.service.js';
 import {
@@ -102,12 +103,26 @@ export class UserService {
       this.logger.warn(`Invalid RNA ${input.rna} for user update with id ${id.value}`);
       throw INVALID_RNA(input.rna);
     }
+    let passwordHash: string | undefined;
+
+    if (input.newPassword != null) {
+      if (input.previousPassword == null) {
+        throw WRONG_PASSWORD();
+      }
+      const currentHash = await this.userRepository.findPasswordHashById(id.value);
+      if (currentHash == null || !verifyPassword(input.previousPassword, currentHash)) {
+        throw WRONG_PASSWORD();
+      }
+      passwordHash = hashPassword(input.newPassword);
+    }
+
     const updatedUser = await this.db(`updating user with id ${id.value}`, () =>
       this.userRepository.update(id.value, {
         pseudo: input.pseudo,
         bio: input.bio,
         logoPath: input.logoPath,
         rna: input.rna,
+        passwordHash,
       }),
     );
     if (!updatedUser) {
