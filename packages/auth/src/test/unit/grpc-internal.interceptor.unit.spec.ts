@@ -2,18 +2,20 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { GrpcInternalInterceptor } from '../../interceptors/grpc-internal.interceptor.js';
 import { createAuthUser } from '../factories/auth-user.factory.js';
 import { createMock } from '@golevelup/ts-jest';
-import type { JwtService } from '../../services/jwt.service.js';
 import type { CallHandler, ExecutionContext } from '@nestjs/common';
 import { firstValueFrom, of } from 'rxjs';
+import type { GrpcMetadataHelper } from '../../services/grpc-metadata.helper.js';
+import { Metadata } from '@grpc/grpc-js';
+import { INTERNAL_TOKEN_METADATA_KEY } from '../../constants/index.js';
 
 describe('GrpcInternalInterceptor (Unit)', () => {
   let interceptor: GrpcInternalInterceptor;
-  let jwtService: JwtService;
+  let metadataHelper: GrpcMetadataHelper;
 
   beforeEach(() => {
     jest.restoreAllMocks();
-    jwtService = createMock<JwtService>();
-    interceptor = new GrpcInternalInterceptor(jwtService);
+    metadataHelper = createMock<GrpcMetadataHelper>();
+    interceptor = new GrpcInternalInterceptor(metadataHelper);
     jest.spyOn(interceptor['logger'], 'debug').mockImplementation(() => undefined);
   });
 
@@ -25,12 +27,12 @@ describe('GrpcInternalInterceptor (Unit)', () => {
     const next = createMock<CallHandler>();
     next.handle.mockReturnValue(of({ success: true }));
 
-    const signSpy = jest.spyOn(jwtService, 'signInternal');
+    const createSpy = jest.spyOn(metadataHelper, 'createInternalMetadata');
 
     const result = await firstValueFrom(interceptor.intercept(context, next));
 
     expect(result).toEqual({ success: true });
-    expect(signSpy).not.toHaveBeenCalled();
+    expect(createSpy).not.toHaveBeenCalled();
   });
 
   it('should sign internal token if user is present', async () => {
@@ -43,12 +45,18 @@ describe('GrpcInternalInterceptor (Unit)', () => {
     const next = createMock<CallHandler>();
     next.handle.mockReturnValue(of({ success: true }));
 
-    const signSpy = jest.spyOn(jwtService, 'signInternal').mockResolvedValue('signed-token');
+    const mockMetadata = new Metadata();
+    mockMetadata.set(INTERNAL_TOKEN_METADATA_KEY, 'signed-token');
+
+    const createSpy = jest
+      .spyOn(metadataHelper, 'createInternalMetadata')
+      .mockResolvedValue(mockMetadata);
 
     const result = await firstValueFrom(interceptor.intercept(context, next));
 
     expect(result).toEqual({ success: true });
-    expect(signSpy).toHaveBeenCalledWith(user);
+    expect(createSpy).toHaveBeenCalledWith(user);
     expect(httpRequest).toHaveProperty('internalToken', 'signed-token');
+    expect(httpRequest).toHaveProperty('internalMetadata', mockMetadata);
   });
 });

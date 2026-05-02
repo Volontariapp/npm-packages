@@ -9,6 +9,7 @@ import {
   CurrentUser,
 } from '../../index.js';
 import type { AuthUser } from '../../interfaces/index.js';
+import { UserRoles } from '@volontariapp/shared';
 
 @Controller('test')
 export class AuthTestController {
@@ -30,7 +31,7 @@ export class AuthTestController {
 
   @Get('admin')
   @UseGuards(AccessTokenGuard, RolesGuard)
-  @Roles('admin')
+  @Roles(UserRoles.ADMIN)
   getAdmin() {
     return { status: 'ok' };
   }

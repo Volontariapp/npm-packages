@@ -1,10 +1,53 @@
 # Changelog
 
+## 2.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.3.0
+  - @volontariapp/auth@3.1.0
+
+## 2.4.3
+
+### Patch Changes
+
+- update password fix
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.2
+  - @volontariapp/auth@3.0.2
+
+## 2.4.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.7
+
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.6
+
+## 2.4.0
+
+### Patch Changes
+
+- Add repositories and services
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.1
+  - @volontariapp/auth@2.1.16
+
 ## 2.3.5
 
 ### Patch Changes
 
 - Updated typeORM version to match database package version
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.8.1
 
 ## 2.3.4
 

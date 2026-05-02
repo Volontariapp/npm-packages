@@ -4,6 +4,7 @@ import * as jose from 'jose';
 import { JwtService } from '../../services/jwt.service.js';
 import { createAuthUser } from '../factories/auth-user.factory.js';
 import type { AuthConfig } from '../../interfaces/index.js';
+import type { JwtPayload } from '@volontariapp/shared';
 
 describe('JwtService (Unit)', () => {
   let jwtService: JwtService;
@@ -49,13 +50,14 @@ describe('JwtService (Unit)', () => {
 
     const readSpy = jest.spyOn(fs, 'readFileSync');
     readSpy.mockImplementation((path) => {
-      if (path === 'internal-private-path') return internalPrivate;
-      if (path === 'internal-public-path') return internalPublic;
-      if (path === 'access-private-path') return accessTokenPrivate;
-      if (path === 'access-public-path') return accessTokenPublic;
-      if (path === 'refresh-private-path') return refreshTokenPrivate;
-      if (path === 'refresh-public-path') return refreshTokenPublic;
-      throw new Error(`Unexpected path: ${path as string}`);
+      const p = path as string;
+      if (p === 'internal-private-path') return internalPrivate;
+      if (p === 'internal-public-path') return internalPublic;
+      if (p === 'access-private-path') return accessTokenPrivate;
+      if (p === 'access-public-path') return accessTokenPublic;
+      if (p === 'refresh-private-path') return refreshTokenPrivate;
+      if (p === 'refresh-public-path') return refreshTokenPublic;
+      throw new Error(`Unexpected path: ${p}`);
     });
   });
 
@@ -70,11 +72,11 @@ describe('JwtService (Unit)', () => {
   });
 
   describe('verifyInternal', () => {
-    it('should verify a valid internal token', async () => {
+    it('should verify a valid internal token as JwtPayload', async () => {
       const user = createAuthUser();
       const token = await jwtService.signInternal(user);
 
-      const payload = await jwtService.verifyInternal(token);
+      const payload = await jwtService.verifyInternal<JwtPayload>(token);
 
       expect(payload.id).toBe(user.id);
       expect(payload.role).toBe(user.role);
@@ -87,13 +89,11 @@ describe('JwtService (Unit)', () => {
 
   describe('Delayed Configuration Errors', () => {
     it('should not throw on construction if expiration is missing', () => {
-      expect(
-        () => new JwtService({ ...config, internalExpiresIn: undefined as unknown as string }),
-      ).not.toThrow();
+      expect(() => new JwtService({ ...config, internalExpiresIn: '' })).not.toThrow();
     });
 
     it('should throw when signing if internal expiration is missing', async () => {
-      const svc = new JwtService({ ...config, internalExpiresIn: undefined as unknown as string });
+      const svc = new JwtService({ ...config, internalExpiresIn: '' });
       await expect(svc.signInternal(createAuthUser())).rejects.toThrow(
         'Internal expiration time not configured',
       );
@@ -102,7 +102,7 @@ describe('JwtService (Unit)', () => {
     it('should throw when signing if access token expiration is missing', async () => {
       const svc = new JwtService({
         ...config,
-        accessTokenExpiresIn: undefined as unknown as string,
+        accessTokenExpiresIn: '',
       });
       await expect(svc.signAccessToken(createAuthUser())).rejects.toThrow(
         'Access expiration time not configured',
@@ -112,7 +112,7 @@ describe('JwtService (Unit)', () => {
     it('should throw when signing if refresh token expiration is missing', async () => {
       const svc = new JwtService({
         ...config,
-        refreshTokenExpiresIn: undefined as unknown as string,
+        refreshTokenExpiresIn: '',
       });
       await expect(svc.signRefreshToken(createAuthUser())).rejects.toThrow(
         'Refresh expiration time not configured',
@@ -124,7 +124,7 @@ describe('JwtService (Unit)', () => {
     it('should throw if internal private key path is missing when signing', async () => {
       const svc = new JwtService({
         ...config,
-        internalPrivateKeyPath: undefined as unknown as string,
+        internalPrivateKeyPath: '',
       });
       await expect(svc.signInternal(createAuthUser())).rejects.toThrow(
         'Internal private key path not configured',
@@ -134,7 +134,7 @@ describe('JwtService (Unit)', () => {
     it('should throw if internal public key path is missing when verifying', async () => {
       const svc = new JwtService({
         ...config,
-        internalPublicKeyPath: undefined as unknown as string,
+        internalPublicKeyPath: '',
       });
       await expect(svc.verifyInternal('token')).rejects.toThrow(
         'Internal public key path not configured',
@@ -144,7 +144,7 @@ describe('JwtService (Unit)', () => {
     it('should throw if access public key path is missing when verifying', async () => {
       const svc = new JwtService({
         ...config,
-        accessTokenPublicKeyPath: undefined as unknown as string,
+        accessTokenPublicKeyPath: '',
       });
       await expect(svc.verifyAccessToken('token')).rejects.toThrow(
         'Access public key path not configured',
@@ -154,7 +154,7 @@ describe('JwtService (Unit)', () => {
     it('should throw if refresh public key path is missing when verifying', async () => {
       const svc = new JwtService({
         ...config,
-        refreshTokenPublicKeyPath: undefined as unknown as string,
+        refreshTokenPublicKeyPath: '',
       });
       await expect(svc.verifyRefreshToken('token')).rejects.toThrow(
         'Refresh public key path not configured',
@@ -181,18 +181,20 @@ describe('JwtService (Unit)', () => {
   });
 
   describe('AccessToken / RefreshToken', () => {
-    it('should verify a valid access token', async () => {
+    it('should verify a valid access token as JwtPayload', async () => {
       const user = createAuthUser();
       const token = await jwtService.signAccessToken(user);
-      const payload = await jwtService.verifyAccessToken(token);
+      const payload = await jwtService.verifyAccessToken<JwtPayload>(token);
       expect(payload.id).toBe(user.id);
+      expect(payload.role).toBe(user.role);
     });
 
-    it('should verify a valid refresh token', async () => {
+    it('should verify a valid refresh token as JwtPayload', async () => {
       const user = createAuthUser();
       const token = await jwtService.signRefreshToken(user);
-      const payload = await jwtService.verifyRefreshToken(token);
+      const payload = await jwtService.verifyRefreshToken<JwtPayload>(token);
       expect(payload.id).toBe(user.id);
+      expect(payload.role).toBe(user.role);
     });
 
     it('should throw on invalid token payload', async () => {

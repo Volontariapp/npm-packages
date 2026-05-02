@@ -5,13 +5,13 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const sqlDir = existsSync(join(__dirname, 'event-queue-trigger.sql'))
+const sqlDir = existsSync(join(__dirname, 'event-queue.trigger.sql'))
   ? __dirname
   : join(__dirname, '../../../src/database/triggers');
 
 const readSqlFile = (filename: string) => readFileSync(join(sqlDir, filename), 'utf8');
 
-export const EVENT_QUEUE_TRIGGER_FUNCTION = readSqlFile('event-queue-trigger.sql');
+export const EVENT_QUEUE_TRIGGER_FUNCTION = readSqlFile('event-queue.trigger.sql');
 export const EVENTS_TRIGGER = readSqlFile('events.trigger.sql');
 export const REQUIREMENTS_TRIGGER = readSqlFile('requirements.trigger.sql');
 export const TAGS_TRIGGER = readSqlFile('tags.trigger.sql');

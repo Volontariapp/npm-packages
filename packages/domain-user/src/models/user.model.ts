@@ -18,19 +18,19 @@ export class UserModel {
   @Column()
   role!: string;
 
-  @Column({ name: "password_hash"})
+  @Column({ name: 'password_hash' })
   passwordHash!: string;
 
   @Column({ type: 'text', nullable: true })
   bio?: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', nullable: true, name: 'logo_path' })
   logoPath?: string;
 
   @Column({ type: 'varchar', nullable: true })
   rna?: string;
 
-  @Column({ type: 'int', default: 0, name: "total_impact_score" })
+  @Column({ type: 'int', default: 0, name: 'total_impact_score' })
   totalImpactScore!: number;
 
   @OneToMany('UserBadgeModel', 'user')

@@ -6,6 +6,27 @@
 
 - trigger SQL
 
+## 2.5.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.2
+
+## 2.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.7
+
+## 2.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.6
+
 ## 2.5.0
 
 ### Minor Changes

@@ -1,5 +1,38 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- JWT Payload
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.3.0
+
+## 3.0.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.2
+
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.10.1
+
+## 3.0.0
+
+### Major Changes
+
+- Added support for user roles
+- Added support for grpc internal requests
+- Added support for grpc internal responses
+
 ## 2.1.15
 
 ### Patch Changes

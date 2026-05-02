@@ -11,16 +11,16 @@ export interface IEventPayload {
   id: string;
   name: string;
   description: string;
-  startAt: string | Date;
-  endAt: string | Date;
+  startAt: Date;
+  endAt: Date;
   type: ContractEventType;
   state: EventState;
   awardedImpactScore: number;
   maxParticipants: number;
   organizerId?: string;
   localisationName: string;
-  createdAt: string | Date;
-  updatedAt: string | Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IRequirementPayload {

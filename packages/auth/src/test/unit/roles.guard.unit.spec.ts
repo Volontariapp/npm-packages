@@ -5,6 +5,7 @@ import { RolesGuard } from '../../guards/roles.guard.js';
 import { createAuthUser } from '../factories/auth-user.factory.js';
 import { createMock } from '@golevelup/ts-jest';
 import type { ExecutionContext } from '@nestjs/common';
+import { UserRoles } from '@volontariapp/shared';
 
 describe('RolesGuard (Unit)', () => {
   let guard: RolesGuard;
@@ -26,8 +27,8 @@ describe('RolesGuard (Unit)', () => {
   });
 
   it('should allow access if user has the required role', () => {
-    const user = createAuthUser({ role: 'admin' });
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    const user = createAuthUser({ role: UserRoles.ADMIN });
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRoles.ADMIN]);
 
     const context = createMock<ExecutionContext>({
       switchToHttp: () => ({
@@ -35,12 +36,12 @@ describe('RolesGuard (Unit)', () => {
       }),
     });
 
-    expect(guard.canActivate(context as unknown as ExecutionContext)).toBe(true);
+    expect(guard.canActivate(context as object as ExecutionContext)).toBe(true);
   });
 
   it('should throw 403 if user has insufficient role', () => {
-    const user = createAuthUser({ role: 'user' });
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    const user = createAuthUser({ role: UserRoles.VOLUNTEER });
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRoles.ADMIN]);
 
     const context = createMock<ExecutionContext>({
       switchToHttp: () => ({
@@ -48,11 +49,11 @@ describe('RolesGuard (Unit)', () => {
       }),
     });
 
-    expect(() => guard.canActivate(context as unknown as ExecutionContext)).toThrow(ForbiddenError);
+    expect(() => guard.canActivate(context as object as ExecutionContext)).toThrow(ForbiddenError);
   });
 
   it('should throw 403 if user is missing', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRoles.ADMIN]);
 
     const context = createMock<ExecutionContext>({
       switchToHttp: () => ({
@@ -60,6 +61,6 @@ describe('RolesGuard (Unit)', () => {
       }),
     });
 
-    expect(() => guard.canActivate(context as unknown as ExecutionContext)).toThrow(ForbiddenError);
+    expect(() => guard.canActivate(context as object as ExecutionContext)).toThrow(ForbiddenError);
   });
 });
