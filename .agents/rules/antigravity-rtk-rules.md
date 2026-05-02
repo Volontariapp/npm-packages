@@ -1,32 +1,20 @@
-# RTK - Rust Token Killer (Google Antigravity)
+# RTK - Rust Token Killer
 
-**Usage**: Token-optimized CLI proxy for shell commands.
+**Usage**: Token-optimized CLI proxy (60-90% savings on dev operations).
 
-## Rule
+## Commands Reference
 
-Always prefix shell commands with `rtk` to minimize token consumption.
+| Operation | Command |
+|-----------|---------|
+| **Files** | `rtk ls`, `rtk read`, `rtk find`, `rtk grep`, `rtk diff` |
+| **Git** | `rtk git status`, `rtk git log`, `rtk git diff`, `rtk git add`, `rtk git commit`, `rtk git push`, `rtk git pull` |
+| **Tests** | `rtk npm test`, `rtk jest`, `rtk test <cmd>` |
+| **Lint** | `rtk lint`, `rtk tsc` |
+| **Misc** | `rtk gain` (analytics), `rtk discover` (opportunities), `rtk proxy <cmd>` (raw) |
 
-Examples:
+## Hook-Based Usage
 
-```bash
-rtk git status
-rtk cargo test
-rtk ls src/
-rtk grep "pattern" src/
-rtk find "*.rs" .
-rtk docker ps
-rtk gh pr list
-```
+All other commands are automatically rewritten by the Claude Code hook.
+Example: `git status` → `rtk git status` (transparent, 0 tokens overhead).
 
-## Meta Commands
-
-```bash
-rtk gain              # Show token savings
-rtk gain --history    # Command history with savings
-rtk discover          # Find missed RTK opportunities
-rtk proxy <cmd>       # Run raw (no filtering, for debugging)
-```
-
-## Why
-
-RTK filters and compresses command output before it reaches the LLM context, saving 60-90% tokens on common operations. Always use `rtk <cmd>` instead of raw commands.
+**Important:** the hook only runs on Bash tool calls. For `Read`, `Grep`, and `Glob` built-in tools, use shell commands (`cat`, `rg`, `find`) or call `rtk read`, `rtk grep`, or `rtk find` directly to get compressed output.
