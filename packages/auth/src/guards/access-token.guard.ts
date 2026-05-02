@@ -35,9 +35,7 @@ export class AccessTokenGuard implements CanActivate {
       return true;
     }
 
-    const request = context
-      .switchToHttp()
-      .getRequest<Record<string, string | number | boolean | object | null | undefined>>();
+    const request = context.switchToHttp().getRequest<Record<string, unknown>>();
     const token = request['accessToken'];
 
     if (typeof token !== 'string') {

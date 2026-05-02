@@ -24,14 +24,10 @@ export class RolesGuard implements CanActivate {
     let user: JwtPayload | undefined;
 
     if (context.getType() === 'rpc') {
-      const rpcContext = context
-        .switchToRpc()
-        .getContext<Record<string, string | number | boolean | object | null | undefined>>();
+      const rpcContext = context.switchToRpc().getContext<Record<string, unknown>>();
       user = rpcContext['user'] as JwtPayload | undefined;
     } else {
-      const request = context
-        .switchToHttp()
-        .getRequest<Record<string, string | number | boolean | object | null | undefined>>();
+      const request = context.switchToHttp().getRequest<Record<string, unknown>>();
       user = request['user'] as JwtPayload | undefined;
     }
 

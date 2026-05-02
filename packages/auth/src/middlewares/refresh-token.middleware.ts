@@ -7,8 +7,7 @@ import type { Request, Response, NextFunction } from 'express';
 export class RefreshTokenMiddleware implements NestMiddleware {
   private readonly logger = new Logger({ context: 'RefreshTokenMiddleware', format: 'json' });
   use = (req: Request, _res: Response, next: NextFunction): void => {
-    const request = req as Request &
-      Record<string, string | number | boolean | object | null | undefined>;
+    const request = req as Request & Record<string, unknown>;
     const headers = request.headers as Record<string, string | string[] | undefined>;
     const authHeader = headers['authorization'];
     let token: string | undefined;

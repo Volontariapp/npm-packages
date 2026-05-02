@@ -11,9 +11,7 @@ export class RefreshTokenGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context
-      .switchToHttp()
-      .getRequest<Record<string, string | number | boolean | object | null | undefined>>();
+    const request = context.switchToHttp().getRequest<Record<string, unknown>>();
     const token = request['refreshToken'];
 
     if (typeof token !== 'string') {

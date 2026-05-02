@@ -8,8 +8,7 @@ export class AccessTokenMiddleware implements NestMiddleware {
   private readonly logger = new Logger({ context: 'AccessTokenMiddleware', format: 'json' });
   use = (req: Request, _res: Response, next: NextFunction): void => {
     // Explicitly cast to Record for property access if needed, but Request is already a record
-    const request = req as Request &
-      Record<string, string | number | boolean | object | null | undefined>;
+    const request = req as Request & Record<string, unknown>;
     const headers = request.headers as Record<string, string | string[] | undefined>;
     const authHeader = headers['authorization'];
     let token: string | undefined;

@@ -24,10 +24,7 @@ export class GrpcInternalGuard implements CanActivate {
 
     try {
       const user = await this.jwtService.verifyInternal<JwtPayload>(token);
-      const ctx = rpcContext as object as Record<
-        string,
-        string | number | boolean | object | null | undefined
-      >;
+      const ctx = rpcContext as object as Record<string, unknown>;
       ctx['user'] = user;
 
       this.logger.debug(`Internal gRPC request authorized for user ${user.id}`);
