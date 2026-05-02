@@ -5,6 +5,7 @@ import { OutboxStatus } from '../types/outbox.status.js';
 import type { OutboxModel } from '../models/outbox.model.js';
 import type { Logger } from '@volontariapp/logger';
 import type { OutboxDispatcher } from '../dispatchers/outbox.dispatcher.js';
+// import { OutboxPusher } from '../pushers/outbox.pusher.js';
 
 export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   constructor(
@@ -12,6 +13,7 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
     protected readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
     protected readonly batchSize: number,
     protected readonly outboxDispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>,
+    // protected readonly outboxPusher: OutboxPusher<TOutboxEntity>,
   ) {
     if (this.batchSize <= 0) {
       throw new InvalidOutboxSizeError();
