@@ -1,1 +1,1 @@
-export * from './pushers/outbox.pusher.js';
+export * from './outbox.pusher.js';
