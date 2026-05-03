@@ -3,7 +3,7 @@ import { EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
+  host: '127.0.0.1',
   port: 5433,
   username: 'testuser',
   password: 'testpassword',
