@@ -31,7 +31,7 @@ describe('JobsOutboxPusher (Unit)', () => {
   const redisConfig = new RedisConfig();
 
   redisConfig.host = 'localhost';
-  redisConfig.port = 6378;
+  redisConfig.port = 6379;
 
   beforeEach(() => {
     jest.clearAllMocks();

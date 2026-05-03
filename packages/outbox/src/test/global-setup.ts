@@ -14,7 +14,7 @@ export default async () => {
 
   const redis = new Redis({
     host: 'localhost',
-    port: 6378,
+    port: 6379,
     lazyConnect: true,
   });
 
