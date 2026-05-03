@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from '@jest/globals';
+import type { Redis } from 'ioredis';
 import { testDataSource, setupIntegrationTest } from '../../utils/index.js';
 import { OutboxModel } from '../../../outbox/models/outbox.model.js';
 import { OutboxConsumer } from '../../../outbox/consumers/outbox.consumer.js';
@@ -8,19 +9,51 @@ import { makeOutboxEvent } from '../../utils/helpers/outbox-event.helper.js';
 import { TestOutboxRepository } from '../../utils/repositories/outbox-test.repository.js';
 import type { LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import { makeOutboxPusherMock } from '../../utils/helpers/outbox-pusher-mock.helper.js';
 import type { Logger } from '@volontariapp/logger';
 import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
+import { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
+import { clearTestRedis, createTestRedisConnection } from '../../redis-config.js';
+
+class RealRedisPusher extends OutboxPusher<OutboxEntity> {
+  constructor(private readonly redis: Redis) {
+    super();
+  }
+
+  async pushElement(entity: OutboxEntity): Promise<void> {
+    await this.redis.set(`outbox:${entity.id}`, JSON.stringify(entity));
+  }
+
+  async pushBulkElement(entities: OutboxEntity[]): Promise<void> {
+    const pipeline = this.redis.pipeline();
+    for (const entity of entities) {
+      pipeline.set(`outbox:${entity.id}`, JSON.stringify(entity));
+    }
+    await pipeline.exec();
+  }
+}
 
 describe('OutboxConsumer (Integration)', () => {
   let repository: TestOutboxRepository;
   let loggerMock: LoggerMock;
+  let redis: Redis;
+  let pusher: RealRedisPusher;
 
   setupIntegrationTest([OutboxModel]);
 
   beforeAll(() => {
     loggerMock = makeLoggerMock();
     repository = new TestOutboxRepository(testDataSource.getRepository(OutboxModel));
+    redis = createTestRedisConnection();
+    pusher = new RealRedisPusher(redis);
+  });
+
+  afterAll(async () => {
+    await redis.quit();
+  });
+
+  beforeEach(async () => {
+    await clearTestRedis();
+    jest.clearAllMocks();
   });
 
   it('should fetch waiting items and mark them as processing', async () => {
@@ -36,7 +69,6 @@ describe('OutboxConsumer (Integration)', () => {
     await repo.save([event1, event2]);
 
     const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const pusher = makeOutboxPusherMock();
     const singleConsumer = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
@@ -66,21 +98,19 @@ describe('OutboxConsumer (Integration)', () => {
     await repo.save(events);
 
     const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const pusher1 = makeOutboxPusherMock();
-    const pusher2 = makeOutboxPusherMock();
     const consumer1 = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
       5,
       dispatcher,
-      pusher1,
+      pusher,
     );
     const consumer2 = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
       5,
       dispatcher,
-      pusher2,
+      pusher,
     );
     const [results1, results2] = await Promise.all([
       consumer1.fetchPendingItems(),
@@ -111,29 +141,26 @@ describe('OutboxConsumer (Integration)', () => {
     await repo.save(events);
 
     const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const pusher1 = makeOutboxPusherMock();
-    const pusher2 = makeOutboxPusherMock();
-    const pusher3 = makeOutboxPusherMock();
     const consumer1 = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
       5,
       dispatcher,
-      pusher1,
+      pusher,
     );
     const consumer2 = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
       5,
       dispatcher,
-      pusher2,
+      pusher,
     );
     const consumer3 = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
       5,
       dispatcher,
-      pusher3,
+      pusher,
     );
 
     const [results1, results2, results3] = await Promise.all([
@@ -162,7 +189,6 @@ describe('OutboxConsumer (Integration)', () => {
     await repo.save(event);
 
     const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const pusher = makeOutboxPusherMock();
     const consumer = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
@@ -187,7 +213,6 @@ describe('OutboxConsumer (Integration)', () => {
     await repo.save(event);
 
     const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const pusher = makeOutboxPusherMock();
     const consumer = new OutboxConsumer(
       loggerMock as unknown as Logger,
       repository,
@@ -196,12 +221,18 @@ describe('OutboxConsumer (Integration)', () => {
       pusher,
     );
 
+    const pushSpy = jest.spyOn(pusher, 'pushElement');
     const entity = await repository.findOneOrFail({ id: event.id });
     await consumer.processItems([entity]);
 
-    expect(pusher.pushElement).toHaveBeenCalledWith(entity);
+    expect(pushSpy).toHaveBeenCalledWith(entity);
 
     const dbItem = await repo.findOneBy({ id: event.id });
     expect(dbItem?.status).toBe(OutboxStatus.COMPLETED);
+
+    // Verify it's actually in Redis
+    const redisItem = await redis.get(`outbox:${entity.id}`);
+    expect(redisItem).not.toBeNull();
+    expect(JSON.parse(redisItem as string).id).toBe(entity.id);
   });
 });

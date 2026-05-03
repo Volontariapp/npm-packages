@@ -1,7 +1,17 @@
-import { describe, it, expect, beforeAll, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  jest,
+} from '@jest/globals';
+import type { Redis } from 'ioredis';
 import { testDataSource, setupIntegrationTest } from '../../utils/index.js';
-import { EventQueueModel } from '../../../outbox/models/event-queue.model.js';
-import { EventQueueEntity } from '../../../outbox/entities/event-queue.entity.js';
+import { EventQueueModel } from '../../../outbox/models/index.js';
+import { EventQueueEntity } from '../../../outbox/entities/index.js';
 import { OutboxRunner } from '../../../outbox/runners/outbox.runner.js';
 import { OutboxDispatcher } from '../../../outbox/dispatchers/outbox.dispatcher.js';
 import { OutboxWriter } from '../../../outbox/writers/outbox.writer.js';
@@ -12,19 +22,30 @@ import { makeOutboxEvent } from '../../utils/helpers/outbox-event.helper.js';
 import { OutboxRunnerConfig, LoggerConfig, LoggerFormat } from '@volontariapp/config';
 import { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
 import type { Logger } from '@volontariapp/logger';
+import { clearTestRedis, createTestRedisConnection } from '../../redis-config.js';
 
 // Increase Jest timeout for integration tests
 jest.setTimeout(60000);
 
-class FakePusher<T extends EventQueueEntity> extends OutboxPusher<T> {
+class RealRedisPusher<T extends EventQueueEntity> extends OutboxPusher<T> {
   public pushedItems: T[] = [];
-  pushElement(entity: T): Promise<void> {
-    this.pushedItems.push(entity);
-    return Promise.resolve();
+
+  constructor(private readonly redis: Redis) {
+    super();
   }
-  pushBulkElement(entities: T[]): Promise<void> {
+
+  async pushElement(entity: T): Promise<void> {
+    this.pushedItems.push(entity);
+    await this.redis.set(`outbox:${entity.id}`, JSON.stringify(entity));
+  }
+
+  async pushBulkElement(entities: T[]): Promise<void> {
     this.pushedItems.push(...entities);
-    return Promise.resolve();
+    const pipeline = this.redis.pipeline();
+    for (const entity of entities) {
+      pipeline.set(`outbox:${entity.id}`, JSON.stringify(entity));
+    }
+    await pipeline.exec();
   }
 }
 
@@ -33,7 +54,8 @@ describe('Outbox Flow (Integration)', () => {
   let loggerMock: LoggerMock;
   let writer: OutboxWriter<EventQueueModel, EventQueueEntity>;
   let runner: OutboxRunner<EventQueueModel, EventQueueEntity>;
-  let pusher: FakePusher<EventQueueEntity>;
+  let pusher: RealRedisPusher<EventQueueEntity>;
+  let redis: Redis;
 
   setupIntegrationTest([EventQueueModel]);
 
@@ -41,9 +63,15 @@ describe('Outbox Flow (Integration)', () => {
     loggerMock = makeLoggerMock();
     repository = new EventQueueTestRepository(testDataSource.getRepository(EventQueueModel));
     writer = new OutboxWriter(loggerMock as unknown as Logger, repository);
+    redis = createTestRedisConnection();
   });
 
-  beforeEach(() => {
+  afterAll(async () => {
+    await redis.quit();
+  });
+
+  beforeEach(async () => {
+    await clearTestRedis();
     const config = new OutboxRunnerConfig();
     config.batchIntervalMs = 50;
     config.batchSize = 10;
@@ -52,7 +80,7 @@ describe('Outbox Flow (Integration)', () => {
     config.logger.level = 'debug';
 
     const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    pusher = new FakePusher<EventQueueEntity>();
+    pusher = new RealRedisPusher<EventQueueEntity>(redis);
     runner = new OutboxRunner(repository, config, dispatcher, pusher);
     jest.clearAllMocks();
   });
@@ -94,6 +122,10 @@ describe('Outbox Flow (Integration)', () => {
     expect(dbItem?.status).toBe(OutboxStatus.COMPLETED);
     expect(pusher.pushedItems).toHaveLength(1);
     expect(pusher.pushedItems[0].id).toBe(event.id);
+
+    // Verify it's in Redis
+    const redisItem = await redis.get(`outbox:${event.id}`);
+    expect(redisItem).not.toBeNull();
   });
 
   it('should process multiple EventQueue items in the flow', async () => {
@@ -126,6 +158,11 @@ describe('Outbox Flow (Integration)', () => {
     expect(processedIds).toContain(events[1].id);
     expect(processedIds).toContain(events[2].id);
     expect(pusher.pushedItems).toHaveLength(3);
+
+    for (const event of events) {
+      const redisItem = await redis.get(`outbox:${event.id}`);
+      expect(redisItem).not.toBeNull();
+    }
   });
 
   it('should run and stop correctly', async () => {
@@ -163,6 +200,10 @@ describe('Outbox Flow (Integration)', () => {
     expect(dbItem?.status).toBe(OutboxStatus.COMPLETED);
     await runner.stop();
     expect(runner.isRunning).toBe(false);
+
+    // Verify it's in Redis
+    const redisItem = await redis.get(`outbox:${eventId}`);
+    expect(redisItem).not.toBeNull();
   });
 
   it('should not start if already running', async () => {
