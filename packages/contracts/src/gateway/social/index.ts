@@ -1,2 +1,2 @@
-export * from './request/social.request.js';
-export * from './response/social.response.js';
+export * from './request/index.js';
+export * from './response/index.js';

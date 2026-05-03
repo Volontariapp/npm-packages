@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.6.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.8
+  - @volontariapp/messaging@1.0.1
+
 ## 2.6.0
 
 ### Minor Changes

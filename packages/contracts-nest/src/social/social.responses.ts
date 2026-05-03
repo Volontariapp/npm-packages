@@ -20,16 +20,33 @@ export interface GetUserNodeResponse {
 export interface PostFollowUserResponse {
 }
 
+export interface AdminPostFollowUserResponse {
+}
+
 export interface DeleteFollowUserResponse {
+}
+
+export interface AdminDeleteFollowUserResponse {
 }
 
 export interface PostBlockUserResponse {
 }
 
+export interface AdminPostBlockUserResponse {
+}
+
 export interface DeleteBlockUserResponse {
 }
 
+export interface AdminDeleteBlockUserResponse {
+}
+
 export interface GetMyFollowsResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetMyFollowsResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -39,12 +56,27 @@ export interface GetMyFollowersResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface AdminGetMyFollowersResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetMyBlocksResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
 
+export interface AdminGetMyBlocksResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetWhoBlockedMeResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetWhoBlockedMeResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -58,7 +90,13 @@ export interface DeletePostNodeResponse {
 export interface PostUserOwnResponse {
 }
 
+export interface AdminPostUserOwnResponse {
+}
+
 export interface DeleteUserOwnResponse {
+}
+
+export interface AdminDeleteUserOwnResponse {
 }
 
 export interface GetPostNodeResponse {
@@ -70,7 +108,17 @@ export interface GetUserPostsResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface AdminGetUserPostsResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetFeedResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetFeedResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -78,10 +126,21 @@ export interface GetFeedResponse {
 export interface PostLikePostResponse {
 }
 
+export interface AdminPostLikePostResponse {
+}
+
 export interface DeleteLikePostResponse {
 }
 
+export interface AdminDeleteLikePostResponse {
+}
+
 export interface GetUserLikesResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetUserLikesResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -106,16 +165,33 @@ export interface DeleteUserEventResponse {
 export interface PostUserParticipateEventResponse {
 }
 
+export interface AdminPostUserParticipateEventResponse {
+}
+
 export interface DeleteUserParticipateEventResponse {
+}
+
+export interface AdminDeleteUserParticipateEventResponse {
 }
 
 export interface PostUserWishEventResponse {
 }
 
+export interface AdminPostUserWishEventResponse {
+}
+
 export interface DeleteUserWishEventResponse {
 }
 
+export interface AdminDeleteUserWishEventResponse {
+}
+
 export interface GetUserEventResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetUserEventResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -125,7 +201,17 @@ export interface GetUserParticipateEventResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface AdminGetUserParticipateEventResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetUserWishEventResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetUserWishEventResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }

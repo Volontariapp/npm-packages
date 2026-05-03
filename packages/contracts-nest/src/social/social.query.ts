@@ -12,21 +12,37 @@ export interface GetSocialUserQuery {
 }
 
 export interface GetMyFollowsQuery {
-  userId: string;
   pagination: PaginationRequest | undefined;
 }
 
 export interface GetMyFollowersQuery {
-  userId: string;
   pagination: PaginationRequest | undefined;
 }
 
 export interface GetMyBlocksQuery {
-  userId: string;
   pagination: PaginationRequest | undefined;
 }
 
 export interface GetWhoBlockedMeQuery {
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetMyFollowsQuery {
+  userId: string;
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetMyFollowersQuery {
+  userId: string;
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetMyBlocksQuery {
+  userId: string;
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetWhoBlockedMeQuery {
   userId: string;
   pagination: PaginationRequest | undefined;
 }
@@ -36,16 +52,28 @@ export interface GetSocialPostQuery {
 }
 
 export interface GetUserPostsQuery {
-  userId: string;
   pagination: PaginationRequest | undefined;
 }
 
 export interface GetFeedQuery {
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetUserPostsQuery {
+  userId: string;
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetFeedQuery {
   userId: string;
   pagination: PaginationRequest | undefined;
 }
 
 export interface GetUserLikesQuery {
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetUserLikesQuery {
   userId: string;
   pagination: PaginationRequest | undefined;
 }
@@ -56,16 +84,28 @@ export interface GetPostLikersQuery {
 }
 
 export interface GetUserEventQuery {
-  userId: string;
   pagination: PaginationRequest | undefined;
 }
 
 export interface GetUserParticipateEventQuery {
-  userId: string;
   pagination: PaginationRequest | undefined;
 }
 
 export interface GetUserWishEventQuery {
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetUserEventQuery {
+  userId: string;
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetUserParticipateEventQuery {
+  userId: string;
+  pagination: PaginationRequest | undefined;
+}
+
+export interface AdminGetUserWishEventQuery {
   userId: string;
   pagination: PaginationRequest | undefined;
 }

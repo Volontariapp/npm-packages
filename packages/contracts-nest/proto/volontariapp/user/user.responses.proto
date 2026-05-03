@@ -9,6 +9,10 @@ message UserResponse {
   User user = 1;
 }
 
+message AdminUserResponse {
+  User user = 1;
+}
+
 message SignUpResponse {
   User user = 1;
   AuthResponse auth = 2;
@@ -22,7 +26,13 @@ message ListUsersResponse {
 message UpdateUserResponse {
 }
 
+message AdminUpdateUserResponse {
+}
+
 message DeleteUserResponse {
+}
+
+message AdminDeleteUserResponse {
 }
 
 message AuthResponse {

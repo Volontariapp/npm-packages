@@ -8,6 +8,18 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import {
+  AdminDeleteBlockUserCommand,
+  AdminDeleteFollowUserCommand,
+  AdminDeleteLikePostCommand,
+  AdminDeleteUserOwnCommand,
+  AdminDeleteUserParticipateEventCommand,
+  AdminDeleteUserWishEventCommand,
+  AdminPostBlockUserCommand,
+  AdminPostFollowUserCommand,
+  AdminPostLikePostCommand,
+  AdminPostUserOwnCommand,
+  AdminPostUserParticipateEventCommand,
+  AdminPostUserWishEventCommand,
   CreateSocialEventCommand,
   CreateSocialPostCommand,
   CreateSocialUserCommand,
@@ -32,6 +44,16 @@ import {
   UnlinkPostFromEventCommand,
 } from "./social.command.js";
 import {
+  AdminGetFeedQuery,
+  AdminGetMyBlocksQuery,
+  AdminGetMyFollowersQuery,
+  AdminGetMyFollowsQuery,
+  AdminGetUserEventQuery,
+  AdminGetUserLikesQuery,
+  AdminGetUserParticipateEventQuery,
+  AdminGetUserPostsQuery,
+  AdminGetUserWishEventQuery,
+  AdminGetWhoBlockedMeQuery,
   GetEventParticipantsQuery,
   GetEventPostsQuery,
   GetEventRelatedToPostQuery,
@@ -51,6 +73,28 @@ import {
   GetWhoBlockedMeQuery,
 } from "./social.query.js";
 import {
+  AdminDeleteBlockUserResponse,
+  AdminDeleteFollowUserResponse,
+  AdminDeleteLikePostResponse,
+  AdminDeleteUserOwnResponse,
+  AdminDeleteUserParticipateEventResponse,
+  AdminDeleteUserWishEventResponse,
+  AdminGetFeedResponse,
+  AdminGetMyBlocksResponse,
+  AdminGetMyFollowersResponse,
+  AdminGetMyFollowsResponse,
+  AdminGetUserEventResponse,
+  AdminGetUserLikesResponse,
+  AdminGetUserParticipateEventResponse,
+  AdminGetUserPostsResponse,
+  AdminGetUserWishEventResponse,
+  AdminGetWhoBlockedMeResponse,
+  AdminPostBlockUserResponse,
+  AdminPostFollowUserResponse,
+  AdminPostLikePostResponse,
+  AdminPostUserOwnResponse,
+  AdminPostUserParticipateEventResponse,
+  AdminPostUserWishEventResponse,
   CreateEventNodeResponse,
   CreatePostNodeResponse,
   CreateUserNodeResponse,
@@ -160,6 +204,14 @@ export interface RelationshipCommandServiceClient {
   postBlockUser(request: PostBlockUserCommand): Observable<PostBlockUserResponse>;
 
   deleteBlockUser(request: DeleteBlockUserCommand): Observable<DeleteBlockUserResponse>;
+
+  adminPostFollowUser(request: AdminPostFollowUserCommand): Observable<AdminPostFollowUserResponse>;
+
+  adminDeleteFollowUser(request: AdminDeleteFollowUserCommand): Observable<AdminDeleteFollowUserResponse>;
+
+  adminPostBlockUser(request: AdminPostBlockUserCommand): Observable<AdminPostBlockUserResponse>;
+
+  adminDeleteBlockUser(request: AdminDeleteBlockUserCommand): Observable<AdminDeleteBlockUserResponse>;
 }
 
 export interface RelationshipCommandServiceController {
@@ -178,11 +230,36 @@ export interface RelationshipCommandServiceController {
   deleteBlockUser(
     request: DeleteBlockUserCommand,
   ): Promise<DeleteBlockUserResponse> | Observable<DeleteBlockUserResponse> | DeleteBlockUserResponse;
+
+  adminPostFollowUser(
+    request: AdminPostFollowUserCommand,
+  ): Promise<AdminPostFollowUserResponse> | Observable<AdminPostFollowUserResponse> | AdminPostFollowUserResponse;
+
+  adminDeleteFollowUser(
+    request: AdminDeleteFollowUserCommand,
+  ): Promise<AdminDeleteFollowUserResponse> | Observable<AdminDeleteFollowUserResponse> | AdminDeleteFollowUserResponse;
+
+  adminPostBlockUser(
+    request: AdminPostBlockUserCommand,
+  ): Promise<AdminPostBlockUserResponse> | Observable<AdminPostBlockUserResponse> | AdminPostBlockUserResponse;
+
+  adminDeleteBlockUser(
+    request: AdminDeleteBlockUserCommand,
+  ): Promise<AdminDeleteBlockUserResponse> | Observable<AdminDeleteBlockUserResponse> | AdminDeleteBlockUserResponse;
 }
 
 export function RelationshipCommandServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["postFollowUser", "deleteFollowUser", "postBlockUser", "deleteBlockUser"];
+    const grpcMethods: string[] = [
+      "postFollowUser",
+      "deleteFollowUser",
+      "postBlockUser",
+      "deleteBlockUser",
+      "adminPostFollowUser",
+      "adminDeleteFollowUser",
+      "adminPostBlockUser",
+      "adminDeleteBlockUser",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("RelationshipCommandService", method)(constructor.prototype[method], method, descriptor);
@@ -205,6 +282,14 @@ export interface RelationshipQueryServiceClient {
   getMyBlocks(request: GetMyBlocksQuery): Observable<GetMyBlocksResponse>;
 
   getWhoBlockedMe(request: GetWhoBlockedMeQuery): Observable<GetWhoBlockedMeResponse>;
+
+  adminGetMyFollows(request: AdminGetMyFollowsQuery): Observable<AdminGetMyFollowsResponse>;
+
+  adminGetMyFollowers(request: AdminGetMyFollowersQuery): Observable<AdminGetMyFollowersResponse>;
+
+  adminGetMyBlocks(request: AdminGetMyBlocksQuery): Observable<AdminGetMyBlocksResponse>;
+
+  adminGetWhoBlockedMe(request: AdminGetWhoBlockedMeQuery): Observable<AdminGetWhoBlockedMeResponse>;
 }
 
 export interface RelationshipQueryServiceController {
@@ -223,11 +308,36 @@ export interface RelationshipQueryServiceController {
   getWhoBlockedMe(
     request: GetWhoBlockedMeQuery,
   ): Promise<GetWhoBlockedMeResponse> | Observable<GetWhoBlockedMeResponse> | GetWhoBlockedMeResponse;
+
+  adminGetMyFollows(
+    request: AdminGetMyFollowsQuery,
+  ): Promise<AdminGetMyFollowsResponse> | Observable<AdminGetMyFollowsResponse> | AdminGetMyFollowsResponse;
+
+  adminGetMyFollowers(
+    request: AdminGetMyFollowersQuery,
+  ): Promise<AdminGetMyFollowersResponse> | Observable<AdminGetMyFollowersResponse> | AdminGetMyFollowersResponse;
+
+  adminGetMyBlocks(
+    request: AdminGetMyBlocksQuery,
+  ): Promise<AdminGetMyBlocksResponse> | Observable<AdminGetMyBlocksResponse> | AdminGetMyBlocksResponse;
+
+  adminGetWhoBlockedMe(
+    request: AdminGetWhoBlockedMeQuery,
+  ): Promise<AdminGetWhoBlockedMeResponse> | Observable<AdminGetWhoBlockedMeResponse> | AdminGetWhoBlockedMeResponse;
 }
 
 export function RelationshipQueryServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getMyFollows", "getMyFollowers", "getMyBlocks", "getWhoBlockedMe"];
+    const grpcMethods: string[] = [
+      "getMyFollows",
+      "getMyFollowers",
+      "getMyBlocks",
+      "getWhoBlockedMe",
+      "adminGetMyFollows",
+      "adminGetMyFollowers",
+      "adminGetMyBlocks",
+      "adminGetWhoBlockedMe",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("RelationshipQueryService", method)(constructor.prototype[method], method, descriptor);
@@ -250,6 +360,10 @@ export interface PublicationCommandServiceClient {
   postUserOwn(request: PostUserOwnCommand): Observable<PostUserOwnResponse>;
 
   deleteUserOwn(request: DeleteUserOwnCommand): Observable<DeleteUserOwnResponse>;
+
+  adminPostUserOwn(request: AdminPostUserOwnCommand): Observable<AdminPostUserOwnResponse>;
+
+  adminDeleteUserOwn(request: AdminDeleteUserOwnCommand): Observable<AdminDeleteUserOwnResponse>;
 }
 
 export interface PublicationCommandServiceController {
@@ -268,11 +382,26 @@ export interface PublicationCommandServiceController {
   deleteUserOwn(
     request: DeleteUserOwnCommand,
   ): Promise<DeleteUserOwnResponse> | Observable<DeleteUserOwnResponse> | DeleteUserOwnResponse;
+
+  adminPostUserOwn(
+    request: AdminPostUserOwnCommand,
+  ): Promise<AdminPostUserOwnResponse> | Observable<AdminPostUserOwnResponse> | AdminPostUserOwnResponse;
+
+  adminDeleteUserOwn(
+    request: AdminDeleteUserOwnCommand,
+  ): Promise<AdminDeleteUserOwnResponse> | Observable<AdminDeleteUserOwnResponse> | AdminDeleteUserOwnResponse;
 }
 
 export function PublicationCommandServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createPostNode", "deletePostNode", "postUserOwn", "deleteUserOwn"];
+    const grpcMethods: string[] = [
+      "createPostNode",
+      "deletePostNode",
+      "postUserOwn",
+      "deleteUserOwn",
+      "adminPostUserOwn",
+      "adminDeleteUserOwn",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("PublicationCommandService", method)(constructor.prototype[method], method, descriptor);
@@ -293,6 +422,10 @@ export interface PublicationQueryServiceClient {
   getUserPosts(request: GetUserPostsQuery): Observable<GetUserPostsResponse>;
 
   getFeed(request: GetFeedQuery): Observable<GetFeedResponse>;
+
+  adminGetUserPosts(request: AdminGetUserPostsQuery): Observable<AdminGetUserPostsResponse>;
+
+  adminGetFeed(request: AdminGetFeedQuery): Observable<AdminGetFeedResponse>;
 }
 
 export interface PublicationQueryServiceController {
@@ -305,11 +438,19 @@ export interface PublicationQueryServiceController {
   ): Promise<GetUserPostsResponse> | Observable<GetUserPostsResponse> | GetUserPostsResponse;
 
   getFeed(request: GetFeedQuery): Promise<GetFeedResponse> | Observable<GetFeedResponse> | GetFeedResponse;
+
+  adminGetUserPosts(
+    request: AdminGetUserPostsQuery,
+  ): Promise<AdminGetUserPostsResponse> | Observable<AdminGetUserPostsResponse> | AdminGetUserPostsResponse;
+
+  adminGetFeed(
+    request: AdminGetFeedQuery,
+  ): Promise<AdminGetFeedResponse> | Observable<AdminGetFeedResponse> | AdminGetFeedResponse;
 }
 
 export function PublicationQueryServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getPostNode", "getUserPosts", "getFeed"];
+    const grpcMethods: string[] = ["getPostNode", "getUserPosts", "getFeed", "adminGetUserPosts", "adminGetFeed"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("PublicationQueryService", method)(constructor.prototype[method], method, descriptor);
@@ -328,6 +469,10 @@ export interface InteractionCommandServiceClient {
   postLikePost(request: PostLikePostCommand): Observable<PostLikePostResponse>;
 
   deleteLikePost(request: DeleteLikePostCommand): Observable<DeleteLikePostResponse>;
+
+  adminPostLikePost(request: AdminPostLikePostCommand): Observable<AdminPostLikePostResponse>;
+
+  adminDeleteLikePost(request: AdminDeleteLikePostCommand): Observable<AdminDeleteLikePostResponse>;
 }
 
 export interface InteractionCommandServiceController {
@@ -338,11 +483,19 @@ export interface InteractionCommandServiceController {
   deleteLikePost(
     request: DeleteLikePostCommand,
   ): Promise<DeleteLikePostResponse> | Observable<DeleteLikePostResponse> | DeleteLikePostResponse;
+
+  adminPostLikePost(
+    request: AdminPostLikePostCommand,
+  ): Promise<AdminPostLikePostResponse> | Observable<AdminPostLikePostResponse> | AdminPostLikePostResponse;
+
+  adminDeleteLikePost(
+    request: AdminDeleteLikePostCommand,
+  ): Promise<AdminDeleteLikePostResponse> | Observable<AdminDeleteLikePostResponse> | AdminDeleteLikePostResponse;
 }
 
 export function InteractionCommandServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["postLikePost", "deleteLikePost"];
+    const grpcMethods: string[] = ["postLikePost", "deleteLikePost", "adminPostLikePost", "adminDeleteLikePost"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("InteractionCommandService", method)(constructor.prototype[method], method, descriptor);
@@ -361,6 +514,8 @@ export interface InteractionQueryServiceClient {
   getUserLikes(request: GetUserLikesQuery): Observable<GetUserLikesResponse>;
 
   getPostLikers(request: GetPostLikersQuery): Observable<GetPostLikersResponse>;
+
+  adminGetUserLikes(request: AdminGetUserLikesQuery): Observable<AdminGetUserLikesResponse>;
 }
 
 export interface InteractionQueryServiceController {
@@ -371,11 +526,15 @@ export interface InteractionQueryServiceController {
   getPostLikers(
     request: GetPostLikersQuery,
   ): Promise<GetPostLikersResponse> | Observable<GetPostLikersResponse> | GetPostLikersResponse;
+
+  adminGetUserLikes(
+    request: AdminGetUserLikesQuery,
+  ): Promise<AdminGetUserLikesResponse> | Observable<AdminGetUserLikesResponse> | AdminGetUserLikesResponse;
 }
 
 export function InteractionQueryServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getUserLikes", "getPostLikers"];
+    const grpcMethods: string[] = ["getUserLikes", "getPostLikers", "adminGetUserLikes"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("InteractionQueryService", method)(constructor.prototype[method], method, descriptor);
@@ -408,6 +567,18 @@ export interface ParticipationCommandServiceClient {
   postUserWishEvent(request: PostUserWishEventCommand): Observable<PostUserWishEventResponse>;
 
   deleteUserWishEvent(request: DeleteUserWishEventCommand): Observable<DeleteUserWishEventResponse>;
+
+  adminPostUserParticipateEvent(
+    request: AdminPostUserParticipateEventCommand,
+  ): Observable<AdminPostUserParticipateEventResponse>;
+
+  adminDeleteUserParticipateEvent(
+    request: AdminDeleteUserParticipateEventCommand,
+  ): Observable<AdminDeleteUserParticipateEventResponse>;
+
+  adminPostUserWishEvent(request: AdminPostUserWishEventCommand): Observable<AdminPostUserWishEventResponse>;
+
+  adminDeleteUserWishEvent(request: AdminDeleteUserWishEventCommand): Observable<AdminDeleteUserWishEventResponse>;
 }
 
 export interface ParticipationCommandServiceController {
@@ -448,6 +619,34 @@ export interface ParticipationCommandServiceController {
   deleteUserWishEvent(
     request: DeleteUserWishEventCommand,
   ): Promise<DeleteUserWishEventResponse> | Observable<DeleteUserWishEventResponse> | DeleteUserWishEventResponse;
+
+  adminPostUserParticipateEvent(
+    request: AdminPostUserParticipateEventCommand,
+  ):
+    | Promise<AdminPostUserParticipateEventResponse>
+    | Observable<AdminPostUserParticipateEventResponse>
+    | AdminPostUserParticipateEventResponse;
+
+  adminDeleteUserParticipateEvent(
+    request: AdminDeleteUserParticipateEventCommand,
+  ):
+    | Promise<AdminDeleteUserParticipateEventResponse>
+    | Observable<AdminDeleteUserParticipateEventResponse>
+    | AdminDeleteUserParticipateEventResponse;
+
+  adminPostUserWishEvent(
+    request: AdminPostUserWishEventCommand,
+  ):
+    | Promise<AdminPostUserWishEventResponse>
+    | Observable<AdminPostUserWishEventResponse>
+    | AdminPostUserWishEventResponse;
+
+  adminDeleteUserWishEvent(
+    request: AdminDeleteUserWishEventCommand,
+  ):
+    | Promise<AdminDeleteUserWishEventResponse>
+    | Observable<AdminDeleteUserWishEventResponse>
+    | AdminDeleteUserWishEventResponse;
 }
 
 export function ParticipationCommandServiceControllerMethods() {
@@ -461,6 +660,10 @@ export function ParticipationCommandServiceControllerMethods() {
       "deleteUserParticipateEvent",
       "postUserWishEvent",
       "deleteUserWishEvent",
+      "adminPostUserParticipateEvent",
+      "adminDeleteUserParticipateEvent",
+      "adminPostUserWishEvent",
+      "adminDeleteUserWishEvent",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
@@ -486,6 +689,14 @@ export interface ParticipationQueryServiceClient {
   getUserWishEvent(request: GetUserWishEventQuery): Observable<GetUserWishEventResponse>;
 
   getEventParticipants(request: GetEventParticipantsQuery): Observable<GetEventParticipantsResponse>;
+
+  adminGetUserEvent(request: AdminGetUserEventQuery): Observable<AdminGetUserEventResponse>;
+
+  adminGetUserParticipateEvent(
+    request: AdminGetUserParticipateEventQuery,
+  ): Observable<AdminGetUserParticipateEventResponse>;
+
+  adminGetUserWishEvent(request: AdminGetUserWishEventQuery): Observable<AdminGetUserWishEventResponse>;
 }
 
 export interface ParticipationQueryServiceController {
@@ -511,6 +722,21 @@ export interface ParticipationQueryServiceController {
   getEventParticipants(
     request: GetEventParticipantsQuery,
   ): Promise<GetEventParticipantsResponse> | Observable<GetEventParticipantsResponse> | GetEventParticipantsResponse;
+
+  adminGetUserEvent(
+    request: AdminGetUserEventQuery,
+  ): Promise<AdminGetUserEventResponse> | Observable<AdminGetUserEventResponse> | AdminGetUserEventResponse;
+
+  adminGetUserParticipateEvent(
+    request: AdminGetUserParticipateEventQuery,
+  ):
+    | Promise<AdminGetUserParticipateEventResponse>
+    | Observable<AdminGetUserParticipateEventResponse>
+    | AdminGetUserParticipateEventResponse;
+
+  adminGetUserWishEvent(
+    request: AdminGetUserWishEventQuery,
+  ): Promise<AdminGetUserWishEventResponse> | Observable<AdminGetUserWishEventResponse> | AdminGetUserWishEventResponse;
 }
 
 export function ParticipationQueryServiceControllerMethods() {
@@ -521,6 +747,9 @@ export function ParticipationQueryServiceControllerMethods() {
       "getUserParticipateEvent",
       "getUserWishEvent",
       "getEventParticipants",
+      "adminGetUserEvent",
+      "adminGetUserParticipateEvent",
+      "adminGetUserWishEvent",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
