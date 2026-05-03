@@ -5,9 +5,12 @@
 // source: volontariapp/user/user.query.proto
 
 /* eslint-disable */
-import { PaginationRequest } from '../common/pagination.js';
+import { PaginationRequest } from "../common/pagination.js";
 
 export interface GetUserQuery {
+}
+
+export interface AdminGetUserQuery {
   userId: string;
 }
 

@@ -15,6 +15,20 @@ message SignUpCommand {
 }
 
 message UpdateUserCommand {
+  optional string email = 1;
+  optional string previous_password = 2;
+  optional string new_password = 3;
+  optional string phone = 4;
+  optional string pseudo = 5;
+  optional string bio = 6;
+  optional string logo_path = 7;
+  optional OrganisationInfo organisation_info = 8;
+}
+
+message DeleteUserCommand {
+}
+
+message AdminUpdateUserCommand {
   string user_id = 1;
   optional string email = 2;
   optional string previous_password = 3;
@@ -26,7 +40,7 @@ message UpdateUserCommand {
   optional OrganisationInfo organisation_info = 9;
 }
 
-message DeleteUserCommand {
+message AdminDeleteUserCommand {
   string user_id = 1;
 }
 

@@ -5,7 +5,7 @@
 // source: volontariapp/user/user.command.proto
 
 /* eslint-disable */
-import { OrganisationInfo } from './user.js';
+import { OrganisationInfo } from "./user.js";
 
 export interface SignUpCommand {
   email: string;
@@ -18,7 +18,6 @@ export interface SignUpCommand {
 }
 
 export interface UpdateUserCommand {
-  userId: string;
   email?: string | undefined;
   previousPassword?: string | undefined;
   newPassword?: string | undefined;
@@ -30,6 +29,21 @@ export interface UpdateUserCommand {
 }
 
 export interface DeleteUserCommand {
+}
+
+export interface AdminUpdateUserCommand {
+  userId: string;
+  email?: string | undefined;
+  previousPassword?: string | undefined;
+  newPassword?: string | undefined;
+  phone?: string | undefined;
+  pseudo?: string | undefined;
+  bio?: string | undefined;
+  logoPath?: string | undefined;
+  organisationInfo?: OrganisationInfo | undefined;
+}
+
+export interface AdminDeleteUserCommand {
   userId: string;
 }
 

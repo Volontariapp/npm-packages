@@ -16,6 +16,10 @@ export interface CreatePostResponse {
   post: Post | undefined;
 }
 
+export interface AdminCreatePostResponse {
+  post: Post | undefined;
+}
+
 export interface UpdatePostResponse {
   post: Post | undefined;
 }

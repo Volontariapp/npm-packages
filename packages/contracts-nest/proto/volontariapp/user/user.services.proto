@@ -12,6 +12,9 @@ service UserService {
   rpc SignUp (SignUpCommand) returns (SignUpResponse) {}
   rpc UpdateUser (UpdateUserCommand) returns (UpdateUserResponse) {}
   rpc DeleteUser (DeleteUserCommand) returns (DeleteUserResponse) {}
+  rpc AdminGetUser (AdminGetUserQuery) returns (AdminUserResponse) {}
+  rpc AdminUpdateUser (AdminUpdateUserCommand) returns (AdminUpdateUserResponse) {}
+  rpc AdminDeleteUser (AdminDeleteUserCommand) returns (AdminDeleteUserResponse) {}
   rpc Login (LoginCommand) returns (LoginResponse) {}
   rpc RefreshToken (RefreshTokenCommand) returns (RefreshTokenResponse) {}
   rpc IncrementImpactScore (IncrementImpactScoreCommand) returns (IncrementImpactScoreResponse) {}

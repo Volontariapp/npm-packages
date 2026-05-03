@@ -7,6 +7,11 @@
 /* eslint-disable */
 
 export interface CreatePostCommand {
+  title: string;
+  content: string;
+}
+
+export interface AdminCreatePostCommand {
   authorId: string;
   title: string;
   content: string;

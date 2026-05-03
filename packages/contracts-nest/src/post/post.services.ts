@@ -7,9 +7,10 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
-import { CreatePostCommand, DeletePostCommand, UpdatePostCommand } from "./post.command.js";
+import { AdminCreatePostCommand, CreatePostCommand, DeletePostCommand, UpdatePostCommand } from "./post.command.js";
 import { ListPostsQuery, PostQuery } from "./post.query.js";
 import {
+  AdminCreatePostResponse,
   CreatePostResponse,
   DeletePostResponse,
   GetPostResponse,
@@ -23,6 +24,8 @@ export interface PostServiceClient {
   listPosts(request: ListPostsQuery): Observable<ListPostsResponse>;
 
   createPost(request: CreatePostCommand): Observable<CreatePostResponse>;
+
+  adminCreatePost(request: AdminCreatePostCommand): Observable<AdminCreatePostResponse>;
 
   updatePost(request: UpdatePostCommand): Observable<UpdatePostResponse>;
 
@@ -38,6 +41,10 @@ export interface PostServiceController {
     request: CreatePostCommand,
   ): Promise<CreatePostResponse> | Observable<CreatePostResponse> | CreatePostResponse;
 
+  adminCreatePost(
+    request: AdminCreatePostCommand,
+  ): Promise<AdminCreatePostResponse> | Observable<AdminCreatePostResponse> | AdminCreatePostResponse;
+
   updatePost(
     request: UpdatePostCommand,
   ): Promise<UpdatePostResponse> | Observable<UpdatePostResponse> | UpdatePostResponse;
@@ -49,7 +56,7 @@ export interface PostServiceController {
 
 export function PostServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getPost", "listPosts", "createPost", "updatePost", "deletePost"];
+    const grpcMethods: string[] = ["getPost", "listPosts", "createPost", "adminCreatePost", "updatePost", "deletePost"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("PostService", method)(constructor.prototype[method], method, descriptor);

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.8
+
 All notable changes to this project will be documented in this file.
 
 ## 1.0.0

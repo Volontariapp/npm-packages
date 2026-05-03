@@ -5,6 +5,9 @@ package volontariapp.user;
 import "volontariapp/common/pagination.proto";
 
 message GetUserQuery {
+}
+
+message AdminGetUserQuery {
   string user_id = 1;
 }
 

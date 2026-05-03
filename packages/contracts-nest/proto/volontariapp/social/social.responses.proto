@@ -11,11 +11,19 @@ message GetUserNodeResponse {
 }
 
 message PostFollowUserResponse {}
+message AdminPostFollowUserResponse {}
 message DeleteFollowUserResponse {}
+message AdminDeleteFollowUserResponse {}
 message PostBlockUserResponse {}
+message AdminPostBlockUserResponse {}
 message DeleteBlockUserResponse {}
+message AdminDeleteBlockUserResponse {}
 
 message GetMyFollowsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message AdminGetMyFollowsResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
@@ -23,7 +31,15 @@ message GetMyFollowersResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
+message AdminGetMyFollowersResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
 message GetMyBlocksResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message AdminGetMyBlocksResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
@@ -31,11 +47,17 @@ message GetWhoBlockedMeResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
+message AdminGetWhoBlockedMeResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
 
 message CreatePostNodeResponse {}
 message DeletePostNodeResponse {}
 message PostUserOwnResponse {}
+message AdminPostUserOwnResponse {}
 message DeleteUserOwnResponse {}
+message AdminDeleteUserOwnResponse {}
 
 message GetPostNodeResponse {
   bool exists = 1;
@@ -44,15 +66,29 @@ message GetUserPostsResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
+message AdminGetUserPostsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
 message GetFeedResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message AdminGetFeedResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
 
 message PostLikePostResponse {}
+message AdminPostLikePostResponse {}
 message DeleteLikePostResponse {}
+message AdminDeleteLikePostResponse {}
 
 message GetUserLikesResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message AdminGetUserLikesResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
@@ -66,11 +102,19 @@ message DeleteEventNodeResponse {}
 message PostUserEventResponse {}
 message DeleteUserEventResponse {}
 message PostUserParticipateEventResponse {}
+message AdminPostUserParticipateEventResponse {}
 message DeleteUserParticipateEventResponse {}
+message AdminDeleteUserParticipateEventResponse {}
 message PostUserWishEventResponse {}
+message AdminPostUserWishEventResponse {}
 message DeleteUserWishEventResponse {}
+message AdminDeleteUserWishEventResponse {}
 
 message GetUserEventResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message AdminGetUserEventResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
@@ -78,7 +122,15 @@ message GetUserParticipateEventResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
+message AdminGetUserParticipateEventResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
 message GetUserWishEventResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+message AdminGetUserWishEventResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
