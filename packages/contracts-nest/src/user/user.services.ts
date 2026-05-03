@@ -9,6 +9,8 @@ import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
   AddBadgeToUserCommand,
+  AdminDeleteUserCommand,
+  AdminUpdateUserCommand,
   CreateBadgeCommand,
   DeleteBadgeCommand,
   DeleteUserCommand,
@@ -21,6 +23,7 @@ import {
   UpdateUserCommand,
 } from './user.command.js';
 import {
+  AdminGetUserQuery,
   GetBadgeBySlugQuery,
   GetBadgeQuery,
   GetUserQuery,
@@ -29,6 +32,9 @@ import {
 } from './user.query.js';
 import {
   AddBadgeToUserResponse,
+  AdminDeleteUserResponse,
+  AdminUpdateUserResponse,
+  AdminUserResponse,
   BadgeResponse,
   CreateBadgeResponse,
   DeleteBadgeResponse,
@@ -56,6 +62,12 @@ export interface UserServiceClient {
   updateUser(request: UpdateUserCommand): Observable<UpdateUserResponse>;
 
   deleteUser(request: DeleteUserCommand): Observable<DeleteUserResponse>;
+
+  adminGetUser(request: AdminGetUserQuery): Observable<AdminUserResponse>;
+
+  adminUpdateUser(request: AdminUpdateUserCommand): Observable<AdminUpdateUserResponse>;
+
+  adminDeleteUser(request: AdminDeleteUserCommand): Observable<AdminDeleteUserResponse>;
 
   login(request: LoginCommand): Observable<LoginResponse>;
 
@@ -88,6 +100,24 @@ export interface UserServiceController {
   deleteUser(
     request: DeleteUserCommand,
   ): Promise<DeleteUserResponse> | Observable<DeleteUserResponse> | DeleteUserResponse;
+
+  adminGetUser(
+    request: AdminGetUserQuery,
+  ): Promise<AdminUserResponse> | Observable<AdminUserResponse> | AdminUserResponse;
+
+  adminUpdateUser(
+    request: AdminUpdateUserCommand,
+  ):
+    | Promise<AdminUpdateUserResponse>
+    | Observable<AdminUpdateUserResponse>
+    | AdminUpdateUserResponse;
+
+  adminDeleteUser(
+    request: AdminDeleteUserCommand,
+  ):
+    | Promise<AdminDeleteUserResponse>
+    | Observable<AdminDeleteUserResponse>
+    | AdminDeleteUserResponse;
 
   login(request: LoginCommand): Promise<LoginResponse> | Observable<LoginResponse> | LoginResponse;
 
@@ -122,6 +152,9 @@ export function UserServiceControllerMethods() {
       'signUp',
       'updateUser',
       'deleteUser',
+      'adminGetUser',
+      'adminUpdateUser',
+      'adminDeleteUser',
       'login',
       'refreshToken',
       'incrementImpactScore',

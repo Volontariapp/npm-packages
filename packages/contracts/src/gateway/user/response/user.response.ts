@@ -6,6 +6,8 @@ import type {
   RefreshTokenResponse,
   SignUpResponse,
   UpdateUserResponse,
+  AdminUpdateUserResponse,
+  AdminDeleteUserResponse,
   IncrementImpactScoreResponse,
   CreateBadgeResponse,
   UpdateBadgeResponse,
@@ -32,12 +34,21 @@ export interface ListUsersWebResponse extends Omit<ListUsersResponse, 'users'> {
   users: UserWeb[];
 }
 
+// Self-service
 export interface GetUserWebResponse extends UserWebResponse {}
 
 export interface DeleteUserWebResponse extends DeleteUserResponse {}
 
 export interface UpdateUserWebResponse extends UpdateUserResponse {}
 
+// Admin variants
+export interface AdminGetUserWebResponse extends UserWebResponse {}
+
+export interface AdminDeleteUserWebResponse extends AdminDeleteUserResponse {}
+
+export interface AdminUpdateUserWebResponse extends AdminUpdateUserResponse {}
+
+// Authentication
 export interface AuthWebResponse extends AuthResponse {}
 
 export interface LoginWebResponse extends LoginResponse {}
@@ -48,8 +59,10 @@ export interface SignUpWebResponse extends Omit<SignUpResponse, 'user'> {
   user: UserWeb | undefined;
 }
 
+// Impact score
 export interface IncrementImpactScoreWebResponse extends IncrementImpactScoreResponse {}
 
+// Badge management
 export interface CreateBadgeWebResponse extends Omit<CreateBadgeResponse, 'badge'> {
   badge: BadgeWeb | undefined;
 }

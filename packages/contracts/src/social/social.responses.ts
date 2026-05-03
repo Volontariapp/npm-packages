@@ -5,31 +5,38 @@
 // source: volontariapp/social/social.responses.proto
 
 /* eslint-disable */
-import { PaginationResponse } from "../common/pagination.js";
+import { PaginationResponse } from '../common/pagination.js';
 
-export interface CreateUserNodeResponse {
-}
+export interface CreateUserNodeResponse {}
 
-export interface DeleteUserNodeResponse {
-}
+export interface DeleteUserNodeResponse {}
 
 export interface GetUserNodeResponse {
   exists: boolean;
 }
 
-export interface PostFollowUserResponse {
-}
+export interface PostFollowUserResponse {}
 
-export interface DeleteFollowUserResponse {
-}
+export interface AdminPostFollowUserResponse {}
 
-export interface PostBlockUserResponse {
-}
+export interface DeleteFollowUserResponse {}
 
-export interface DeleteBlockUserResponse {
-}
+export interface AdminDeleteFollowUserResponse {}
+
+export interface PostBlockUserResponse {}
+
+export interface AdminPostBlockUserResponse {}
+
+export interface DeleteBlockUserResponse {}
+
+export interface AdminDeleteBlockUserResponse {}
 
 export interface GetMyFollowsResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetMyFollowsResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -39,7 +46,17 @@ export interface GetMyFollowersResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface AdminGetMyFollowersResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetMyBlocksResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetMyBlocksResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -49,17 +66,22 @@ export interface GetWhoBlockedMeResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface CreatePostNodeResponse {
+export interface AdminGetWhoBlockedMeResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
 }
 
-export interface DeletePostNodeResponse {
-}
+export interface CreatePostNodeResponse {}
 
-export interface PostUserOwnResponse {
-}
+export interface DeletePostNodeResponse {}
 
-export interface DeleteUserOwnResponse {
-}
+export interface PostUserOwnResponse {}
+
+export interface AdminPostUserOwnResponse {}
+
+export interface DeleteUserOwnResponse {}
+
+export interface AdminDeleteUserOwnResponse {}
 
 export interface GetPostNodeResponse {
   exists: boolean;
@@ -70,18 +92,35 @@ export interface GetUserPostsResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface AdminGetUserPostsResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetFeedResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
 
-export interface PostLikePostResponse {
+export interface AdminGetFeedResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
 }
 
-export interface DeleteLikePostResponse {
-}
+export interface PostLikePostResponse {}
+
+export interface AdminPostLikePostResponse {}
+
+export interface DeleteLikePostResponse {}
+
+export interface AdminDeleteLikePostResponse {}
 
 export interface GetUserLikesResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetUserLikesResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -91,31 +130,36 @@ export interface GetPostLikersResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface CreateEventNodeResponse {
-}
+export interface CreateEventNodeResponse {}
 
-export interface DeleteEventNodeResponse {
-}
+export interface DeleteEventNodeResponse {}
 
-export interface PostUserEventResponse {
-}
+export interface PostUserEventResponse {}
 
-export interface DeleteUserEventResponse {
-}
+export interface DeleteUserEventResponse {}
 
-export interface PostUserParticipateEventResponse {
-}
+export interface PostUserParticipateEventResponse {}
 
-export interface DeleteUserParticipateEventResponse {
-}
+export interface AdminPostUserParticipateEventResponse {}
 
-export interface PostUserWishEventResponse {
-}
+export interface DeleteUserParticipateEventResponse {}
 
-export interface DeleteUserWishEventResponse {
-}
+export interface AdminDeleteUserParticipateEventResponse {}
+
+export interface PostUserWishEventResponse {}
+
+export interface AdminPostUserWishEventResponse {}
+
+export interface DeleteUserWishEventResponse {}
+
+export interface AdminDeleteUserWishEventResponse {}
 
 export interface GetUserEventResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetUserEventResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -125,7 +169,17 @@ export interface GetUserParticipateEventResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface AdminGetUserParticipateEventResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetUserWishEventResponse {
+  ids: string[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface AdminGetUserWishEventResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;
 }
@@ -135,11 +189,9 @@ export interface GetEventParticipantsResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface LinkPostToEventResponse {
-}
+export interface LinkPostToEventResponse {}
 
-export interface UnlinkPostFromEventResponse {
-}
+export interface UnlinkPostFromEventResponse {}
 
 export interface GetEventRelatedToPostResponse {
   eventId: string;

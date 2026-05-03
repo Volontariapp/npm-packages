@@ -11,21 +11,37 @@ message DeleteSocialUserCommand {
 }
 
 message PostFollowUserCommand {
-  string follower_id = 1;
-  string followed_id = 2;
+  string followed_id = 1;
 }
 
 message DeleteFollowUserCommand {
+  string followed_id = 1;
+}
+
+message PostBlockUserCommand {
+  string blocked_id = 1;
+}
+
+message DeleteBlockUserCommand {
+  string blocked_id = 1;
+}
+
+message AdminPostFollowUserCommand {
   string follower_id = 1;
   string followed_id = 2;
 }
 
-message PostBlockUserCommand {
+message AdminDeleteFollowUserCommand {
+  string follower_id = 1;
+  string followed_id = 2;
+}
+
+message AdminPostBlockUserCommand {
   string blocker_id = 1;
   string blocked_id = 2;
 }
 
-message DeleteBlockUserCommand {
+message AdminDeleteBlockUserCommand {
   string blocker_id = 1;
   string blocked_id = 2;
 }
@@ -39,21 +55,37 @@ message DeleteSocialPostCommand {
 }
 
 message PostUserOwnCommand {
+  string post_id = 1;
+}
+
+message DeleteUserOwnCommand {
+  string post_id = 1;
+}
+
+message AdminPostUserOwnCommand {
   string user_id = 1;
   string post_id = 2;
 }
 
-message DeleteUserOwnCommand {
+message AdminDeleteUserOwnCommand {
   string user_id = 1;
   string post_id = 2;
 }
 
 message PostLikePostCommand {
+  string post_id = 1;
+}
+
+message DeleteLikePostCommand {
+  string post_id = 1;
+}
+
+message AdminPostLikePostCommand {
   string user_id = 1;
   string post_id = 2;
 }
 
-message DeleteLikePostCommand {
+message AdminDeleteLikePostCommand {
   string user_id = 1;
   string post_id = 2;
 }
@@ -77,21 +109,37 @@ message DeleteUserEventCommand {
 }
 
 message PostUserParticipateEventCommand {
-  string user_id = 1;
-  string event_id = 2;
+  string event_id = 1;
 }
 
 message DeleteUserParticipateEventCommand {
-  string user_id = 1;
-  string event_id = 2;
+  string event_id = 1;
 }
 
 message PostUserWishEventCommand {
+  string event_id = 1;
+}
+
+message DeleteUserWishEventCommand {
+  string event_id = 1;
+}
+
+message AdminPostUserParticipateEventCommand {
   string user_id = 1;
   string event_id = 2;
 }
 
-message DeleteUserWishEventCommand {
+message AdminDeleteUserParticipateEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
+message AdminPostUserWishEventCommand {
+  string user_id = 1;
+  string event_id = 2;
+}
+
+message AdminDeleteUserWishEventCommand {
   string user_id = 1;
   string event_id = 2;
 }

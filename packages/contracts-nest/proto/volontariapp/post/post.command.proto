@@ -3,6 +3,11 @@ syntax = "proto3";
 package volontariapp.post;
 
 message CreatePostCommand {
+  string title = 1;
+  string content = 2;
+}
+
+message AdminCreatePostCommand {
   string author_id = 1;
   string title = 2;
   string content = 3;

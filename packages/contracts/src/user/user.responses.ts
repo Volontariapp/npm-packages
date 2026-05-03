@@ -12,6 +12,10 @@ export interface UserResponse {
   user: User | undefined;
 }
 
+export interface AdminUserResponse {
+  user: User | undefined;
+}
+
 export interface SignUpResponse {
   user: User | undefined;
   auth: AuthResponse | undefined;
@@ -24,7 +28,11 @@ export interface ListUsersResponse {
 
 export interface UpdateUserResponse {}
 
+export interface AdminUpdateUserResponse {}
+
 export interface DeleteUserResponse {}
+
+export interface AdminDeleteUserResponse {}
 
 export interface AuthResponse {
   accessToken: string;

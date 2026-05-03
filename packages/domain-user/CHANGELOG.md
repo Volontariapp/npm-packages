@@ -6,6 +6,7 @@
 
 - Updated dependencies []:
   - @volontariapp/database@1.13.0
+  - @volontariapp/contracts@4.0.8
 
 ## 2.4.5
 

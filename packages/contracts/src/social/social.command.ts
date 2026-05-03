@@ -4,8 +4,6 @@
 //   protoc               unknown
 // source: volontariapp/social/social.command.proto
 
-/* eslint-disable */
-
 export interface CreateSocialUserCommand {
   userId: string;
 }
@@ -15,21 +13,37 @@ export interface DeleteSocialUserCommand {
 }
 
 export interface PostFollowUserCommand {
-  followerId: string;
   followedId: string;
 }
 
 export interface DeleteFollowUserCommand {
-  followerId: string;
   followedId: string;
 }
 
 export interface PostBlockUserCommand {
-  blockerId: string;
   blockedId: string;
 }
 
 export interface DeleteBlockUserCommand {
+  blockedId: string;
+}
+
+export interface AdminPostFollowUserCommand {
+  followerId: string;
+  followedId: string;
+}
+
+export interface AdminDeleteFollowUserCommand {
+  followerId: string;
+  followedId: string;
+}
+
+export interface AdminPostBlockUserCommand {
+  blockerId: string;
+  blockedId: string;
+}
+
+export interface AdminDeleteBlockUserCommand {
   blockerId: string;
   blockedId: string;
 }
@@ -43,21 +57,37 @@ export interface DeleteSocialPostCommand {
 }
 
 export interface PostUserOwnCommand {
-  userId: string;
   postId: string;
 }
 
 export interface DeleteUserOwnCommand {
+  postId: string;
+}
+
+export interface AdminPostUserOwnCommand {
+  userId: string;
+  postId: string;
+}
+
+export interface AdminDeleteUserOwnCommand {
   userId: string;
   postId: string;
 }
 
 export interface PostLikePostCommand {
-  userId: string;
   postId: string;
 }
 
 export interface DeleteLikePostCommand {
+  postId: string;
+}
+
+export interface AdminPostLikePostCommand {
+  userId: string;
+  postId: string;
+}
+
+export interface AdminDeleteLikePostCommand {
   userId: string;
   postId: string;
 }
@@ -81,21 +111,37 @@ export interface DeleteUserEventCommand {
 }
 
 export interface PostUserParticipateEventCommand {
-  userId: string;
   eventId: string;
 }
 
 export interface DeleteUserParticipateEventCommand {
-  userId: string;
   eventId: string;
 }
 
 export interface PostUserWishEventCommand {
-  userId: string;
   eventId: string;
 }
 
 export interface DeleteUserWishEventCommand {
+  eventId: string;
+}
+
+export interface AdminPostUserParticipateEventCommand {
+  userId: string;
+  eventId: string;
+}
+
+export interface AdminDeleteUserParticipateEventCommand {
+  userId: string;
+  eventId: string;
+}
+
+export interface AdminPostUserWishEventCommand {
+  userId: string;
+  eventId: string;
+}
+
+export interface AdminDeleteUserWishEventCommand {
   userId: string;
   eventId: string;
 }

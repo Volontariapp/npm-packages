@@ -18,6 +18,19 @@ export interface SignUpCommand {
 }
 
 export interface UpdateUserCommand {
+  email?: string | undefined;
+  previousPassword?: string | undefined;
+  newPassword?: string | undefined;
+  phone?: string | undefined;
+  pseudo?: string | undefined;
+  bio?: string | undefined;
+  logoPath?: string | undefined;
+  organisationInfo?: OrganisationInfo | undefined;
+}
+
+export interface DeleteUserCommand {}
+
+export interface AdminUpdateUserCommand {
   userId: string;
   email?: string | undefined;
   previousPassword?: string | undefined;
@@ -29,7 +42,7 @@ export interface UpdateUserCommand {
   organisationInfo?: OrganisationInfo | undefined;
 }
 
-export interface DeleteUserCommand {
+export interface AdminDeleteUserCommand {
   userId: string;
 }
 

@@ -12,6 +12,7 @@ service PostService {
   rpc GetPost (PostQuery) returns (GetPostResponse) {}
   rpc ListPosts (ListPostsQuery) returns (ListPostsResponse) {}
   rpc CreatePost (CreatePostCommand) returns (CreatePostResponse) {}
+  rpc AdminCreatePost (AdminCreatePostCommand) returns (AdminCreatePostResponse) {}
   rpc UpdatePost (UpdatePostCommand) returns (UpdatePostResponse) {}
   rpc DeletePost (DeletePostCommand) returns (DeletePostResponse) {}
 }

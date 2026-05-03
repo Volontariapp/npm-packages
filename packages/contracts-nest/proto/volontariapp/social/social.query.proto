@@ -9,21 +9,37 @@ message GetSocialUserQuery {
 }
 
 message GetMyFollowsQuery {
-  string user_id = 1;
-  volontariapp.common.PaginationRequest pagination = 2;
+  volontariapp.common.PaginationRequest pagination = 1;
 }
 
 message GetMyFollowersQuery {
-  string user_id = 1;
-  volontariapp.common.PaginationRequest pagination = 2;
+  volontariapp.common.PaginationRequest pagination = 1;
 }
 
 message GetMyBlocksQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message GetWhoBlockedMeQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message AdminGetMyFollowsQuery {
   string user_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
 }
 
-message GetWhoBlockedMeQuery {
+message AdminGetMyFollowersQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message AdminGetMyBlocksQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message AdminGetWhoBlockedMeQuery {
   string user_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
 }
@@ -33,16 +49,28 @@ message GetSocialPostQuery {
 }
 
 message GetUserPostsQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message GetFeedQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message AdminGetUserPostsQuery {
   string user_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
 }
 
-message GetFeedQuery {
+message AdminGetFeedQuery {
   string user_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
 }
 
 message GetUserLikesQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message AdminGetUserLikesQuery {
   string user_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
 }
@@ -53,16 +81,28 @@ message GetPostLikersQuery {
 }
 
 message GetUserEventQuery {
-  string user_id = 1;
-  volontariapp.common.PaginationRequest pagination = 2;
+  volontariapp.common.PaginationRequest pagination = 1;
 }
 
 message GetUserParticipateEventQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message GetUserWishEventQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message AdminGetUserEventQuery {
   string user_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
 }
 
-message GetUserWishEventQuery {
+message AdminGetUserParticipateEventQuery {
+  string user_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message AdminGetUserWishEventQuery {
   string user_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
 }
