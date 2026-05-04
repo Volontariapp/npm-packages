@@ -5,24 +5,23 @@ import {
   type JobsOutboxConsumerRepositoryMock,
 } from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import {
+  makeJobsOutboxPusherMock,
+  type JobsOutboxPusherMock,
+} from '../../utils/helpers/jobs-outbox-pusher-mock.helper.js';
 import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
 import { type BaseRepository, OutboxStatus } from '@volontariapp/database';
 import type { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
-import type { JobsOutboxPusher } from '../../../pushers/jobs-outbox.pusher.js';
 
 describe('JobsOutboxConsumer (Unit)', () => {
   let consumer: JobsOutboxConsumer;
   let repository: JobsOutboxConsumerRepositoryMock;
-  let pusher: jest.Mocked<JobsOutboxPusher>;
+  let pusher: JobsOutboxPusherMock;
   const logger = makeLoggerMock();
 
   beforeEach(() => {
     repository = makeJobsOutboxConsumerRepositoryMock();
-    pusher = {
-      pushElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-      pushBulkElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-      close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-    } as unknown as jest.Mocked<JobsOutboxPusher>;
+    pusher = makeJobsOutboxPusherMock();
     consumer = new JobsOutboxConsumer(
       logger,
       repository as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
@@ -30,7 +29,6 @@ describe('JobsOutboxConsumer (Unit)', () => {
       pusher,
     );
   });
-
   afterEach(() => {
     jest.restoreAllMocks();
   });

@@ -6,26 +6,25 @@ import {
 } from '../../utils/helpers/event-queue-repository-mock.helper.js';
 import type { LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import {
+  makeEventQueuePusherMock,
+  type EventQueuePusherMock,
+} from '../../utils/helpers/event-queue-pusher-mock.helper.js';
 import type { EventQueueEntity } from '@volontariapp/database';
 import { OutboxStatus } from '@volontariapp/database';
 import type { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
-import type { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
 
 describe('EventQueueConsumer (Unit)', () => {
   let consumer: EventQueueConsumer;
   let repository: EventQueueConsumerRepositoryMock;
-  let pusher: jest.Mocked<EventQueuePusher>;
+  let pusher: EventQueuePusherMock;
   const logger: LoggerMock = makeLoggerMock();
 
   beforeEach(() => {
     repository = makeEventQueueConsumerRepositoryMock();
-    pusher = {
-      pushElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-      pushBulkElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-    } as unknown as jest.Mocked<EventQueuePusher>;
+    pusher = makeEventQueuePusherMock();
     consumer = new EventQueueConsumer(logger, repository, 10, pusher);
   });
-
   afterEach(() => {
     jest.restoreAllMocks();
   });
