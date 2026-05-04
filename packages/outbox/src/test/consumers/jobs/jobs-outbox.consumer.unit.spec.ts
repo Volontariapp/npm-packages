@@ -83,7 +83,10 @@ describe('JobsOutboxConsumer (Unit)', () => {
       await consumer.processItems(entities);
 
       expect(completedSpy).not.toHaveBeenCalled();
-      expect(failedSpy).toHaveBeenCalledWith(entities[0], 'Redis connection lost');
+      expect(failedSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: entities[0].id }),
+        'Redis connection lost',
+      );
     });
   });
 

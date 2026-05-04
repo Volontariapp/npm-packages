@@ -1,7 +1,14 @@
 import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals';
+import type { Job, JobsOptions } from 'bullmq';
 
-const mockQueueAdd = jest.fn<(...args: unknown[]) => Promise<unknown>>();
-const mockQueueAddBulk = jest.fn<(...args: unknown[]) => Promise<unknown>>();
+interface MockJob {
+  name: string;
+  data: unknown;
+  opts: JobsOptions;
+}
+
+const mockQueueAdd = jest.fn<(name: string, data: unknown, opts?: JobsOptions) => Promise<Job>>();
+const mockQueueAddBulk = jest.fn<(jobs: MockJob[]) => Promise<Job[]>>();
 const mockQueueClose = jest.fn<() => Promise<void>>();
 
 jest.unstable_mockModule('bullmq', () => ({
@@ -16,13 +23,6 @@ const { JobsOutboxPusher } = await import('../../pushers/jobs-outbox.pusher.js')
 const { makeLoggerMock } = await import('../utils/helpers/logger-mock.helper.js');
 const { makeJobsOutboxEvent } = await import('../utils/helpers/jobs-outbox-event.helper.js');
 const { RedisConfig } = await import('@volontariapp/config');
-import type { JobsOptions } from 'bullmq';
-
-interface MockJob {
-  name: string;
-  data: unknown;
-  opts: JobsOptions;
-}
 
 describe('JobsOutboxPusher (Unit)', () => {
   let pusher: InstanceType<typeof JobsOutboxPusher>;
