@@ -4,8 +4,10 @@ import { ForbiddenError } from '@volontariapp/errors';
 import { RolesGuard } from '../../guards/roles.guard.js';
 import { createAuthUser } from '../factories/auth-user.factory.js';
 import { createMock } from '@golevelup/ts-jest';
+import { ROLES_KEY } from '../../decorators/roles.decorator.js';
 import type { ExecutionContext } from '@nestjs/common';
 import { UserRoles } from '@volontariapp/shared';
+import { IS_PUBLIC_KEY } from '../../index.js';
 
 describe('RolesGuard (Unit)', () => {
   let guard: RolesGuard;
@@ -21,14 +23,20 @@ describe('RolesGuard (Unit)', () => {
   });
 
   it('should allow access if no roles are required', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([]);
+    jest.spyOn(reflector, 'getAllAndOverride').mockImplementation((key) => {
+      if (key === ROLES_KEY) return [];
+      return undefined;
+    });
     const context = createMock<ExecutionContext>();
     expect(guard.canActivate(context)).toBe(true);
   });
 
   it('should allow access if user has the required role', () => {
     const user = createAuthUser({ role: UserRoles.ADMIN });
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRoles.ADMIN]);
+    jest.spyOn(reflector, 'getAllAndOverride').mockImplementation((key) => {
+      if (key === ROLES_KEY) return [UserRoles.ADMIN];
+      return undefined;
+    });
 
     const context = createMock<ExecutionContext>({
       switchToHttp: () => ({
@@ -41,7 +49,10 @@ describe('RolesGuard (Unit)', () => {
 
   it('should throw 403 if user has insufficient role', () => {
     const user = createAuthUser({ role: UserRoles.VOLUNTEER });
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRoles.ADMIN]);
+    jest.spyOn(reflector, 'getAllAndOverride').mockImplementation((key) => {
+      if (key === ROLES_KEY) return [UserRoles.ADMIN];
+      return undefined;
+    });
 
     const context = createMock<ExecutionContext>({
       switchToHttp: () => ({
@@ -53,7 +64,10 @@ describe('RolesGuard (Unit)', () => {
   });
 
   it('should throw 403 if user is missing', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRoles.ADMIN]);
+    jest.spyOn(reflector, 'getAllAndOverride').mockImplementation((key) => {
+      if (key === ROLES_KEY) return [UserRoles.ADMIN];
+      return undefined;
+    });
 
     const context = createMock<ExecutionContext>({
       switchToHttp: () => ({
@@ -62,5 +76,15 @@ describe('RolesGuard (Unit)', () => {
     });
 
     expect(() => guard.canActivate(context as object as ExecutionContext)).toThrow(ForbiddenError);
+  });
+
+  it('should allow access if route is public even if roles are specified', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockImplementation((key) => {
+      if (key === ROLES_KEY) return [UserRoles.ADMIN];
+      if (key === IS_PUBLIC_KEY) return true;
+      return undefined;
+    });
+    const context = createMock<ExecutionContext>();
+    expect(guard.canActivate(context as object as ExecutionContext)).toBe(true);
   });
 });

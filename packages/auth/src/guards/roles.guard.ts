@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
+import { IS_PUBLIC_KEY } from '../constants/index.js';
 import { INSUFFICIENT_PERMISSIONS, MISSING_AUTHENTICATED_USER } from '@volontariapp/errors-nest';
 import { Logger } from '@volontariapp/logger';
 import type { JwtPayload } from '@volontariapp/shared';
@@ -17,7 +19,12 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (requiredRoles.length === 0) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic || !requiredRoles || requiredRoles.length === 0) {
       return true;
     }
 
