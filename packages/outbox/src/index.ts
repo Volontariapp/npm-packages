@@ -6,3 +6,6 @@ export * from './consumers/jobs-outbox.consumer.js';
 
 export * from './dispatchers/event-queue.dispatcher.js';
 export * from './dispatchers/jobs-outbox.dispatcher.js';
+
+export * from './pushers/event-queue.pusher.js';
+export * from './pushers/jobs-outbox.pusher.js';

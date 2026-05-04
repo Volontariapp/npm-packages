@@ -12,6 +12,7 @@
 ### Patch Changes
 
 - Updated dependencies []:
+  - @volontariapp/database@1.13.0
   - @volontariapp/contracts@4.0.8
 
 All notable changes to this project will be documented in this file.

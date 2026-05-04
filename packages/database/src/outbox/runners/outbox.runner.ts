@@ -5,6 +5,7 @@ import { OutboxConsumer } from '../consumers/outbox.consumer.js';
 import type { OutboxDispatcher } from '../dispatchers/outbox.dispatcher.js';
 import type { OutboxEntity, OutboxModel } from '../index.js';
 import type { BaseRepository } from '../../core/base.repository.js';
+import type { OutboxPusher } from '../pushers/outbox.pusher.js';
 
 export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   private abortController?: AbortController;
@@ -18,6 +19,7 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     private readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
     private readonly config: OutboxRunnerConfig,
     dispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>,
+    pusher: OutboxPusher<TOutboxEntity>,
   ) {
     this.logger = new Logger(config.logger);
     this.dispatcher = dispatcher;
@@ -26,6 +28,7 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
       this.repository,
       config.batchSize,
       this.dispatcher,
+      pusher,
     );
   }
 
@@ -71,7 +74,10 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
 
   async runCycle(): Promise<void> {
     try {
-      await this.consumer.fetchPendingItems();
+      const items = await this.consumer.fetchPendingItems();
+      if (items.length > 0) {
+        await this.consumer.processItems(items);
+      }
     } catch (error) {
       this.logger.error('Error during outbox run cycle', { error });
     }

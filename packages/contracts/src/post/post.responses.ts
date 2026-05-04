@@ -5,8 +5,8 @@
 // source: volontariapp/post/post.responses.proto
 
 /* eslint-disable */
-import { PaginationResponse } from "../common/pagination.js";
-import { Post } from "./post.js";
+import { PaginationResponse } from '../common/pagination.js';
+import { Post } from './post.js';
 
 export interface GetPostResponse {
   post: Post | undefined;

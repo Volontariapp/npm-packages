@@ -13,6 +13,7 @@
 ### Patch Changes
 
 - Updated dependencies []:
+  - @volontariapp/database@1.13.0
   - @volontariapp/contracts@4.0.8
   - @volontariapp/messaging@1.0.1
 

@@ -8,7 +8,7 @@ import { EventQueueModel } from '../outbox/models/event-queue.model.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
+  host: '127.0.0.1',
   port: 5433,
   username: 'testuser',
   password: 'testpassword',

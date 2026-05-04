@@ -5,16 +5,16 @@
 // source: volontariapp/post/post.services.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 import {
   AdminCreatePostCommand,
   CreatePostCommand,
   DeleteMyPostsCommand,
   DeletePostCommand,
   UpdatePostCommand,
-} from "./post.command.js";
-import { GetPostQuery, ListPostsQuery } from "./post.query.js";
+} from './post.command.js';
+import { GetPostQuery, ListPostsQuery } from './post.query.js';
 import {
   AdminCreatePostResponse,
   CreatePostResponse,
@@ -23,7 +23,7 @@ import {
   GetPostResponse,
   ListPostsResponse,
   UpdatePostResponse,
-} from "./post.responses.js";
+} from './post.responses.js';
 
 export interface PostServiceClient {
   getPost(request: GetPostQuery): Observable<GetPostResponse>;
@@ -42,9 +42,13 @@ export interface PostServiceClient {
 }
 
 export interface PostServiceController {
-  getPost(request: GetPostQuery): Promise<GetPostResponse> | Observable<GetPostResponse> | GetPostResponse;
+  getPost(
+    request: GetPostQuery,
+  ): Promise<GetPostResponse> | Observable<GetPostResponse> | GetPostResponse;
 
-  listPosts(request: ListPostsQuery): Promise<ListPostsResponse> | Observable<ListPostsResponse> | ListPostsResponse;
+  listPosts(
+    request: ListPostsQuery,
+  ): Promise<ListPostsResponse> | Observable<ListPostsResponse> | ListPostsResponse;
 
   createPost(
     request: CreatePostCommand,
@@ -52,7 +56,10 @@ export interface PostServiceController {
 
   adminCreatePost(
     request: AdminCreatePostCommand,
-  ): Promise<AdminCreatePostResponse> | Observable<AdminCreatePostResponse> | AdminCreatePostResponse;
+  ):
+    | Promise<AdminCreatePostResponse>
+    | Observable<AdminCreatePostResponse>
+    | AdminCreatePostResponse;
 
   updatePost(
     request: UpdatePostCommand,
@@ -70,24 +77,24 @@ export interface PostServiceController {
 export function PostServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
-      "getPost",
-      "listPosts",
-      "createPost",
-      "adminCreatePost",
-      "updatePost",
-      "deletePost",
-      "deleteMyPosts",
+      'getPost',
+      'listPosts',
+      'createPost',
+      'adminCreatePost',
+      'updatePost',
+      'deletePost',
+      'deleteMyPosts',
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("PostService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod('PostService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("PostService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod('PostService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const POST_SERVICE_NAME = "PostService";
+export const POST_SERVICE_NAME = 'PostService';

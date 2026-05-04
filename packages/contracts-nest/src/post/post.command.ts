@@ -5,7 +5,7 @@
 // source: volontariapp/post/post.command.proto
 
 /* eslint-disable */
-import { Post } from "./post.js";
+import { Post } from './post.js';
 
 export interface CreatePostCommand {
   title: string;
@@ -27,5 +27,4 @@ export interface DeletePostCommand {
   id: string;
 }
 
-export interface DeleteMyPostsCommand {
-}
+export interface DeleteMyPostsCommand {}

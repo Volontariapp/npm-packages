@@ -1,11 +1,6 @@
-export * from './helpers/extended-outbox-event.helper.js';
-export * from './helpers/logger-mock.helper.js';
-export * from './helpers/outbox-repository-mock.helper.js';
-export * from './helpers/mock.helper.js';
-
-export * from './repositories/event-queue-test.repository.js';
-export * from './repositories/outbox-extended-test.repository.js';
-export * from './repositories/outbox-test.repository.js';
+export * from './helpers/index.js';
+export * from './repositories/index.js';
 
 export * from './integration.helper.js';
-export { testDataSource, initializeTestDb, closeTestDb } from '../data-source.js';
+export * from '../data-source.js';
+export * from '../redis-config.js';

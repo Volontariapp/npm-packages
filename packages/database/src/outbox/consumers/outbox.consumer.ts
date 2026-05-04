@@ -5,6 +5,7 @@ import { OutboxStatus } from '../types/outbox.status.js';
 import type { OutboxModel } from '../models/outbox.model.js';
 import type { Logger } from '@volontariapp/logger';
 import type { OutboxDispatcher } from '../dispatchers/outbox.dispatcher.js';
+import type { OutboxPusher } from '../pushers/outbox.pusher.js';
 
 export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   constructor(
@@ -12,6 +13,7 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
     protected readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
     protected readonly batchSize: number,
     protected readonly outboxDispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>,
+    protected readonly outboxPusher: OutboxPusher<TOutboxEntity>,
   ) {
     if (this.batchSize <= 0) {
       throw new InvalidOutboxSizeError();
@@ -92,10 +94,8 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
     for (const item of entities) {
       try {
         this.logger.info(`Pushing outbox item ${item.id.toString()}`);
-        await Promise.resolve(); // Simulate async processing
+        await this.outboxPusher.pushElement(item);
         await this.outboxDispatcher.markAsCompleted(item);
-        // Here you would add the actual pushing logic for the outbox item
-        // For example, you might publish an event to a message broker
       } catch (error) {
         this.logger.error(`Error pushing outbox item ${item.id.toString()}`, { error });
         await this.outboxDispatcher.markAsFailed(

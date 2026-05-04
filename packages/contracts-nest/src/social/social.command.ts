@@ -4,8 +4,6 @@
 //   protoc               unknown
 // source: volontariapp/social/social.command.proto
 
-/* eslint-disable */
-
 export interface CreateSocialUserCommand {
   userId: string;
 }

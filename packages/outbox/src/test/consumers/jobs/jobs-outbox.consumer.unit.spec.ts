@@ -5,25 +5,30 @@ import {
   type JobsOutboxConsumerRepositoryMock,
 } from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import {
+  makeJobsOutboxPusherMock,
+  type JobsOutboxPusherMock,
+} from '../../utils/helpers/jobs-outbox-pusher-mock.helper.js';
 import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
 import { type BaseRepository, OutboxStatus } from '@volontariapp/database';
-import type { Logger } from '@volontariapp/logger';
 import type { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
 
 describe('JobsOutboxConsumer (Unit)', () => {
   let consumer: JobsOutboxConsumer;
   let repository: JobsOutboxConsumerRepositoryMock;
+  let pusher: JobsOutboxPusherMock;
   const logger = makeLoggerMock();
 
   beforeEach(() => {
     repository = makeJobsOutboxConsumerRepositoryMock();
+    pusher = makeJobsOutboxPusherMock();
     consumer = new JobsOutboxConsumer(
-      logger as unknown as Logger,
+      logger,
       repository as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
       10,
+      pusher,
     );
   });
-
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -33,10 +38,8 @@ describe('JobsOutboxConsumer (Unit)', () => {
   });
 
   it('fetchPendingItems() should delegate to repository and return results', async () => {
-    const mockEntities = [{ id: '1' }, { id: '2' }];
-    const toEntitiesSpy = jest
-      .spyOn(repository, 'toEntities')
-      .mockReturnValue(mockEntities as JobsOutboxEntity[]);
+    const mockEntities = [{ id: '1' } as JobsOutboxEntity, { id: '2' } as JobsOutboxEntity];
+    const toEntitiesSpy = jest.spyOn(repository, 'toEntities').mockReturnValue(mockEntities);
     const executeInTransactionSpy = jest.spyOn(repository, 'executeInTransaction');
 
     const result = await consumer.fetchPendingItems();
@@ -47,7 +50,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
   });
 
   describe('processItems', () => {
-    it('should process items and mark them as completed', async () => {
+    it('should process items, push them and mark them as completed', async () => {
       const entities = [
         { id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
         { id: '2', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
@@ -58,10 +61,32 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
       await consumer.processItems(entities);
 
+      expect(pusher.pushElement).toHaveBeenCalledTimes(2);
+      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
       const spyMock = completedSpy as jest.Mock;
       expect(spyMock).toHaveBeenCalledTimes(2);
-      expect(spyMock).toHaveBeenCalledWith(entities[0]);
-      expect(spyMock).toHaveBeenCalledWith(entities[1]);
+      expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
+    });
+
+    it('should mark items as failed if pushing throws error', async () => {
+      const entities = [{ id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity];
+      const error = new Error('Redis connection lost');
+      pusher.pushElement.mockRejectedValueOnce(error);
+
+      const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
+        .outboxDispatcher;
+      const failedSpy = jest.spyOn(dispatcher, 'markAsFailed');
+      const completedSpy = jest.spyOn(dispatcher, 'markAsCompleted');
+
+      await consumer.processItems(entities);
+
+      expect(completedSpy).not.toHaveBeenCalled();
+      expect(failedSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: entities[0].id }),
+        'Redis connection lost',
+      );
     });
   });
 
@@ -79,7 +104,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
       const spyMock = completedSpy as jest.Mock;
       expect(spyMock).toHaveBeenCalledTimes(1);
-      expect(spyMock).toHaveBeenCalledWith(entities[0]);
+      expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
     });
   });
 });

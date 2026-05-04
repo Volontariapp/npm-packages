@@ -5,41 +5,31 @@
 // source: volontariapp/social/social.responses.proto
 
 /* eslint-disable */
-import { PaginationResponse } from "../common/pagination.js";
+import { PaginationResponse } from '../common/pagination.js';
 
-export interface CreateUserNodeResponse {
-}
+export interface CreateUserNodeResponse {}
 
-export interface DeleteUserNodeResponse {
-}
+export interface DeleteUserNodeResponse {}
 
 export interface GetUserNodeResponse {
   exists: boolean;
 }
 
-export interface PostFollowUserResponse {
-}
+export interface PostFollowUserResponse {}
 
-export interface AdminPostFollowUserResponse {
-}
+export interface AdminPostFollowUserResponse {}
 
-export interface DeleteFollowUserResponse {
-}
+export interface DeleteFollowUserResponse {}
 
-export interface AdminDeleteFollowUserResponse {
-}
+export interface AdminDeleteFollowUserResponse {}
 
-export interface PostBlockUserResponse {
-}
+export interface PostBlockUserResponse {}
 
-export interface AdminPostBlockUserResponse {
-}
+export interface AdminPostBlockUserResponse {}
 
-export interface DeleteBlockUserResponse {
-}
+export interface DeleteBlockUserResponse {}
 
-export interface AdminDeleteBlockUserResponse {
-}
+export interface AdminDeleteBlockUserResponse {}
 
 export interface GetMyFollowsResponse {
   ids: string[];
@@ -81,23 +71,17 @@ export interface AdminGetWhoBlockedMeResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface CreatePostNodeResponse {
-}
+export interface CreatePostNodeResponse {}
 
-export interface DeletePostNodeResponse {
-}
+export interface DeletePostNodeResponse {}
 
-export interface PostUserOwnResponse {
-}
+export interface PostUserOwnResponse {}
 
-export interface AdminPostUserOwnResponse {
-}
+export interface AdminPostUserOwnResponse {}
 
-export interface DeleteUserOwnResponse {
-}
+export interface DeleteUserOwnResponse {}
 
-export interface AdminDeleteUserOwnResponse {
-}
+export interface AdminDeleteUserOwnResponse {}
 
 export interface GetPostNodeResponse {
   exists: boolean;
@@ -123,17 +107,13 @@ export interface AdminGetFeedResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface PostLikePostResponse {
-}
+export interface PostLikePostResponse {}
 
-export interface AdminPostLikePostResponse {
-}
+export interface AdminPostLikePostResponse {}
 
-export interface DeleteLikePostResponse {
-}
+export interface DeleteLikePostResponse {}
 
-export interface AdminDeleteLikePostResponse {
-}
+export interface AdminDeleteLikePostResponse {}
 
 export interface GetUserLikesResponse {
   ids: string[];
@@ -150,41 +130,29 @@ export interface GetPostLikersResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface CreateEventNodeResponse {
-}
+export interface CreateEventNodeResponse {}
 
-export interface DeleteEventNodeResponse {
-}
+export interface DeleteEventNodeResponse {}
 
-export interface PostUserEventResponse {
-}
+export interface PostUserEventResponse {}
 
-export interface DeleteUserEventResponse {
-}
+export interface DeleteUserEventResponse {}
 
-export interface PostUserParticipateEventResponse {
-}
+export interface PostUserParticipateEventResponse {}
 
-export interface AdminPostUserParticipateEventResponse {
-}
+export interface AdminPostUserParticipateEventResponse {}
 
-export interface DeleteUserParticipateEventResponse {
-}
+export interface DeleteUserParticipateEventResponse {}
 
-export interface AdminDeleteUserParticipateEventResponse {
-}
+export interface AdminDeleteUserParticipateEventResponse {}
 
-export interface PostUserWishEventResponse {
-}
+export interface PostUserWishEventResponse {}
 
-export interface AdminPostUserWishEventResponse {
-}
+export interface AdminPostUserWishEventResponse {}
 
-export interface DeleteUserWishEventResponse {
-}
+export interface DeleteUserWishEventResponse {}
 
-export interface AdminDeleteUserWishEventResponse {
-}
+export interface AdminDeleteUserWishEventResponse {}
 
 export interface GetUserEventResponse {
   ids: string[];
@@ -221,11 +189,9 @@ export interface GetEventParticipantsResponse {
   pagination: PaginationResponse | undefined;
 }
 
-export interface LinkPostToEventResponse {
-}
+export interface LinkPostToEventResponse {}
 
-export interface UnlinkPostFromEventResponse {
-}
+export interface UnlinkPostFromEventResponse {}
 
 export interface GetEventRelatedToPostResponse {
   eventId: string;

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.13.0
+
+### Minor Changes
+
+- Added outboxPusher, jobsOutboxPusher and updated outboxConsumer implementation & behavior
+
 ## 1.12.0
 
 ### Minor Changes

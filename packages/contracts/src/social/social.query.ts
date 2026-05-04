@@ -5,7 +5,7 @@
 // source: volontariapp/social/social.query.proto
 
 /* eslint-disable */
-import { PaginationRequest } from "../common/pagination.js";
+import { PaginationRequest } from '../common/pagination.js';
 
 export interface GetSocialUserQuery {
   userId: string;

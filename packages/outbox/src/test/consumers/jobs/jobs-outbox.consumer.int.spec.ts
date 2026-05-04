@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeAll, afterAll, beforeEach } from '@jest/globals';
+import { describe, expect, it, beforeAll, afterAll, beforeEach, jest } from '@jest/globals';
 import {
   databaseMapper,
   JobsOutboxModel,
@@ -10,29 +10,35 @@ import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source
 import { JobsOutboxConsumer } from '../../../consumers/jobs-outbox.consumer.js';
 import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { JobsOutboxPusher } from '../../../pushers/jobs-outbox.pusher.js';
+import { testRedisConfig } from '../../redis-config.js';
 
 describe('JobsOutboxConsumer (Integration)', () => {
   let consumer: JobsOutboxConsumer;
   let repository: Repository<JobsOutboxModel>;
+  let pusher: JobsOutboxPusher;
   const logger = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
     repository = testDataSource.getRepository(JobsOutboxModel);
+    pusher = new JobsOutboxPusher(logger, testRedisConfig);
   });
 
   afterAll(async () => {
+    await pusher.close();
     await closeTestDb();
   });
 
   beforeEach(async () => {
     await repository.createQueryBuilder().delete().execute();
+    jest.clearAllMocks();
   });
 
   it('fetchPendingItems() should fetch pending items and mark them as processing', async () => {
     const testRepository = new TestJobsOutboxRepository(repository);
-    consumer = new JobsOutboxConsumer(logger, testRepository, 10);
+    consumer = new JobsOutboxConsumer(logger, testRepository, 10, pusher);
 
     const jobId = '00000000-0000-0000-0000-000000000001';
     const pendingItem = repository.create({
@@ -63,9 +69,9 @@ describe('JobsOutboxConsumer (Integration)', () => {
 
   it('should handle parallel consumption correctly', async () => {
     const testRepository = new TestJobsOutboxRepository(repository);
-    const consumer1 = new JobsOutboxConsumer(logger, testRepository, 2);
-    const consumer2 = new JobsOutboxConsumer(logger, testRepository, 2);
-    const consumer3 = new JobsOutboxConsumer(logger, testRepository, 2);
+    const consumer1 = new JobsOutboxConsumer(logger, testRepository, 2, pusher);
+    const consumer2 = new JobsOutboxConsumer(logger, testRepository, 2, pusher);
+    const consumer3 = new JobsOutboxConsumer(logger, testRepository, 2, pusher);
 
     // Seed 4 items
     const items = [1, 2, 3, 4].map((i) =>
@@ -101,5 +107,36 @@ describe('JobsOutboxConsumer (Integration)', () => {
     // One consumer should get 0 items
     const lengths = [res1.length, res2.length, res3.length].sort();
     expect(lengths).toEqual([0, 2, 2]);
+  });
+
+  it('processItems() should push items and mark them as COMPLETED', async () => {
+    const testRepository = new TestJobsOutboxRepository(repository);
+    consumer = new JobsOutboxConsumer(logger, testRepository, 10, pusher);
+
+    const jobId = '00000000-0000-0000-0000-000000000010';
+    const item = repository.create({
+      id: jobId,
+      type: 'test.job',
+      emitter: 'test.service',
+      status: OutboxStatus.PROCESSING,
+      payload: { data: 'test' },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      scheduledAt: new Date(),
+      version: 1,
+      attempts: 0,
+      target: 'test.target',
+    } as Partial<JobsOutboxModel>);
+    await repository.save(item);
+
+    const entity = await testRepository.findOneOrFail({ id: jobId });
+    const pushSpy = jest.spyOn(pusher, 'pushElement');
+
+    await consumer.processItems([entity]);
+
+    expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ id: jobId }));
+
+    const dbItem = await repository.findOneByOrFail({ id: jobId });
+    expect(dbItem.status).toBe(OutboxStatus.COMPLETED);
   });
 });

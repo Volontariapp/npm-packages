@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals';
 import type { QueryRunner, UpdateQueryBuilder } from 'typeorm';
 import { OutboxConsumer } from '../../../outbox/consumers/outbox.consumer.js';
 import type { OutboxDispatcher } from '../../../outbox/dispatchers/outbox.dispatcher.js';
@@ -9,12 +9,14 @@ import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import type { BaseRepository } from '../../../core/base.repository.js';
 import { makeLoggerMock, type LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeQueryRunnerMock } from '../../utils/helpers/query-runner-mock.helper.js';
-import type { Logger } from '@volontariapp/logger';
+import { makeOutboxPusherMock } from '../../utils/helpers/outbox-pusher-mock.helper.js';
+import type { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
 
 describe('OutboxConsumer (Unit)', () => {
   let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;
   let dispatcherMock: jest.Mocked<OutboxDispatcher<OutboxModel, OutboxEntity>>;
   let repositoryMock: jest.Mocked<BaseRepository<OutboxModel, OutboxEntity, string>>;
+  let pusherMock: jest.Mocked<OutboxPusher<OutboxEntity>>;
   let queryRunnerMock: QueryRunner;
   let loggerMock: LoggerMock;
 
@@ -41,12 +43,9 @@ describe('OutboxConsumer (Unit)', () => {
       markAsProcessing: jest.fn(),
     } as unknown as jest.Mocked<OutboxDispatcher<OutboxModel, OutboxEntity>>;
 
-    consumer = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repositoryMock,
-      10,
-      dispatcherMock,
-    );
+    pusherMock = makeOutboxPusherMock();
+
+    consumer = new OutboxConsumer(loggerMock, repositoryMock, 10, dispatcherMock, pusherMock);
   });
 
   afterEach(() => {
@@ -56,12 +55,10 @@ describe('OutboxConsumer (Unit)', () => {
   describe('constructor', () => {
     it('should throw InvalidOutboxSizeError if batchSize <= 0', () => {
       expect(
-        () =>
-          new OutboxConsumer(loggerMock as unknown as Logger, repositoryMock, 0, dispatcherMock),
+        () => new OutboxConsumer(loggerMock, repositoryMock, 0, dispatcherMock, pusherMock),
       ).toThrow(InvalidOutboxSizeError);
       expect(
-        () =>
-          new OutboxConsumer(loggerMock as unknown as Logger, repositoryMock, -1, dispatcherMock),
+        () => new OutboxConsumer(loggerMock, repositoryMock, -1, dispatcherMock, pusherMock),
       ).toThrow(InvalidOutboxSizeError);
     });
   });
@@ -126,25 +123,40 @@ describe('OutboxConsumer (Unit)', () => {
   });
 
   describe('processItems', () => {
-    it('should process items and mark them as completed', async () => {
+    it('should process items, push them and mark them as completed', async () => {
       const entities = [{ id: '1' } as OutboxEntity, { id: '2' } as OutboxEntity];
       const completedSpy = jest.spyOn(dispatcherMock, 'markAsCompleted');
+      const pushSpy = jest.spyOn(pusherMock, 'pushElement');
 
       await consumer.processItems(entities);
 
+      expect(pushSpy).toHaveBeenCalledTimes(2);
+      expect(pushSpy).toHaveBeenCalledWith(entities[0]);
+      expect(pushSpy).toHaveBeenCalledWith(entities[1]);
       expect(completedSpy).toHaveBeenCalledTimes(2);
       expect(completedSpy).toHaveBeenCalledWith(entities[0]);
       expect(completedSpy).toHaveBeenCalledWith(entities[1]);
     });
 
-    it('should mark items as failed if processing throws error', async () => {
+    it('should mark items as failed if pushing throws error', async () => {
+      const entities = [{ id: '1' } as OutboxEntity];
+      const error = new Error('Push error');
+      jest.spyOn(pusherMock, 'pushElement').mockRejectedValueOnce(error);
+      const failedSpy = jest.spyOn(dispatcherMock, 'markAsFailed');
+      const completedSpy = jest.spyOn(dispatcherMock, 'markAsCompleted');
+
+      await consumer.processItems(entities);
+
+      expect(completedSpy).not.toHaveBeenCalled();
+      expect(failedSpy).toHaveBeenCalledWith(entities[0], 'Push error');
+    });
+
+    it('should mark items as failed if marking as completed throws error', async () => {
       const entities = [{ id: '1' } as OutboxEntity];
       const error = new Error('Test error');
       const completedSpy = jest
         .spyOn(dispatcherMock, 'markAsCompleted')
-        .mockImplementationOnce(() => {
-          throw error;
-        });
+        .mockRejectedValueOnce(error);
       const failedSpy = jest.spyOn(dispatcherMock, 'markAsFailed');
 
       await consumer.processItems(entities);
