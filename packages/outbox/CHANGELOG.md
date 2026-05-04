@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- Updated outboxDispatcher behavior: the attempts are now incremented on failure to push a Job
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.14.0
+
 ## 0.4.0
 
 ### Minor Changes
