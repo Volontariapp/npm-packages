@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- grpc helpers updated
+
 ## 3.0.7
 
 ### Patch Changes
