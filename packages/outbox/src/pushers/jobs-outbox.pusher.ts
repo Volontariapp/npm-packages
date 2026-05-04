@@ -50,8 +50,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
     try {
       const queue = this.getQueue(entity.target);
       const jobOptions: JobsOptions = {
-        // BullMQ forbids integer-like strings AND colons in custom jobIds
-        jobId: `outbox-${entity.id.toString()}`,
+        jobId: entity.id.toString(),
       };
 
       if (entity.scheduledAt) {
@@ -84,7 +83,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
           const queue = this.getQueue(target);
           const jobs = targetEntities.map((entity) => {
             const jobOptions: JobsOptions = {
-              jobId: `outbox-${entity.id.toString()}`,
+              jobId: entity.id.toString(),
             };
 
             if (entity.scheduledAt) {

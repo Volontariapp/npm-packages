@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from '@jest/globals';
 import type { Redis } from 'ioredis';
-import { testDataSource, setupIntegrationTest } from '../../utils/index.js';
+import { testDataSource, setupIntegrationTest, RealRedisPusher } from '../../utils/index.js';
 import { OutboxModel } from '../../../outbox/models/outbox.model.js';
 import { OutboxConsumer } from '../../../outbox/consumers/outbox.consumer.js';
 import { OutboxDispatcher } from '../../../outbox/dispatchers/outbox.dispatcher.js';
@@ -10,26 +10,7 @@ import { TestOutboxRepository } from '../../utils/repositories/outbox-test.repos
 import type { LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
-import { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
 import { clearTestRedis, createTestRedisConnection } from '../../redis-config.js';
-
-class RealRedisPusher extends OutboxPusher<OutboxEntity> {
-  constructor(private readonly redis: Redis) {
-    super();
-  }
-
-  async pushElement(entity: OutboxEntity): Promise<void> {
-    await this.redis.set(`outbox:${entity.id}`, JSON.stringify(entity));
-  }
-
-  async pushBulkElement(entities: OutboxEntity[]): Promise<void> {
-    const pipeline = this.redis.pipeline();
-    for (const entity of entities) {
-      pipeline.set(`outbox:${entity.id}`, JSON.stringify(entity));
-    }
-    await pipeline.exec();
-  }
-}
 
 describe('OutboxConsumer (Integration)', () => {
   let repository: TestOutboxRepository;

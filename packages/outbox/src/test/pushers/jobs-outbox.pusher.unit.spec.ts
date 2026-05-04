@@ -59,11 +59,7 @@ describe('JobsOutboxPusher (Unit)', () => {
 
       const { Queue } = await import('bullmq');
       expect(Queue).toHaveBeenCalledWith('test-service', expect.any(Object));
-      expect(mockQueueAdd).toHaveBeenCalledWith(
-        'test.job',
-        { data: 'test' },
-        { jobId: 'outbox-1' },
-      );
+      expect(mockQueueAdd).toHaveBeenCalledWith('test.job', { data: 'test' }, { jobId: '1' });
     });
 
     it('should include delay if scheduledAt is in the future', async () => {
@@ -83,7 +79,7 @@ describe('JobsOutboxPusher (Unit)', () => {
         { data: 'test' },
         expect.objectContaining({
           delay: expect.any(Number),
-          jobId: 'outbox-1',
+          jobId: '1',
         }),
       );
     });
@@ -130,7 +126,7 @@ describe('JobsOutboxPusher (Unit)', () => {
       expect(jobsA).toContainEqual({
         name: 'job.1',
         data: { p: 1 },
-        opts: { jobId: 'outbox-1' },
+        opts: { jobId: '1' },
       });
     });
   });

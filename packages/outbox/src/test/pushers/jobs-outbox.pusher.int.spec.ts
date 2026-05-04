@@ -36,8 +36,7 @@ describe('JobsOutboxPusher (Integration)', () => {
 
     const inspectorQueue = new Queue(target, { connection: testRedisOptions });
     try {
-      // Pusher uses outbox- prefix
-      const job = await inspectorQueue.getJob('outbox-int-1');
+      const job = await inspectorQueue.getJob('int-1');
 
       expect(job).toBeDefined();
       expect(job?.name).toBe('test.job');
@@ -81,9 +80,9 @@ describe('JobsOutboxPusher (Integration)', () => {
     const queueB = new Queue(targetB, { connection: testRedisOptions });
 
     try {
-      const job1 = await queueA.getJob('outbox-bulk-1');
-      const job3 = await queueA.getJob('outbox-bulk-3');
-      const job2 = await queueB.getJob('outbox-bulk-2');
+      const job1 = await queueA.getJob('bulk-1');
+      const job3 = await queueA.getJob('bulk-3');
+      const job2 = await queueB.getJob('bulk-2');
 
       expect(job1).toBeDefined();
       expect(job3).toBeDefined();
@@ -107,7 +106,7 @@ describe('JobsOutboxPusher (Integration)', () => {
 
     const inspectorQueue = new Queue(target, { connection: testRedisOptions });
     try {
-      const job = await inspectorQueue.getJob('outbox-delayed-1');
+      const job = await inspectorQueue.getJob('delayed-1');
 
       expect(job).toBeDefined();
       // Using optional chaining satisfies linter and fails test correctly if job is undefined
