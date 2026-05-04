@@ -30,3 +30,7 @@ message ListPostsResponse {
 message DeletePostResponse {
   bool success = 1;
 }
+
+message DeleteMyPostsResponse {
+  bool success = 1;
+}

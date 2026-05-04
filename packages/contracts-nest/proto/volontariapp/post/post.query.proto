@@ -5,7 +5,7 @@ package volontariapp.post;
 import "volontariapp/common/pagination.proto";
 
 
-message PostQuery {
+message GetPostQuery {
   string id = 1;
 }
 
