@@ -14,10 +14,6 @@ message CreatePostResponse {
   Post post = 1;
 }
 
-message AdminCreatePostResponse {
-  Post post = 1;
-}
-
 message UpdatePostResponse {
   Post post = 1;
 }
@@ -28,5 +24,9 @@ message ListPostsResponse {
 }
 
 message DeletePostResponse {
+  bool success = 1;
+}
+
+message DeleteMyPostsResponse {
   bool success = 1;
 }

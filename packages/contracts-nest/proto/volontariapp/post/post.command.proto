@@ -2,23 +2,22 @@ syntax = "proto3";
 
 package volontariapp.post;
 
+import "volontariapp/post/post.proto";
+
 message CreatePostCommand {
   string title = 1;
   string content = 2;
 }
 
-message AdminCreatePostCommand {
-  string author_id = 1;
-  string title = 2;
-  string content = 3;
-}
-
 message UpdatePostCommand {
   string id = 1;
-  optional string title = 2;
-  optional string content = 3;
+  Post post = 2;
+  repeated string update_mask = 3;
 }
 
 message DeletePostCommand {
   string id = 1;
+}
+
+message DeleteMyPostsCommand {
 }
