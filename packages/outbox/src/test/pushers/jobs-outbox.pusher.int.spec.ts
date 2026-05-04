@@ -4,11 +4,10 @@ import { makeLoggerMock } from '../utils/helpers/logger-mock.helper.js';
 import { makeJobsOutboxEvent } from '../utils/helpers/jobs-outbox-event.helper.js';
 import { testRedisConfig, testRedisOptions, clearTestRedis } from '../redis-config.js';
 import { Queue } from 'bullmq';
-import type { Logger } from '@volontariapp/logger';
 
 describe('JobsOutboxPusher (Integration)', () => {
   let pusher: JobsOutboxPusher;
-  const logger = makeLoggerMock() as unknown as Logger;
+  const logger = makeLoggerMock();
 
   beforeEach(async () => {
     await clearTestRedis();

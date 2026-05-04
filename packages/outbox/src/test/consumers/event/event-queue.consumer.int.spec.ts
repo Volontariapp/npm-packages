@@ -11,7 +11,6 @@ import { EventQueueConsumer } from '../../../consumers/event-queue.consumer.js';
 import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
-import type { Logger } from '@volontariapp/logger';
 
 describe('EventQueueConsumer (Integration)', () => {
   let consumer: EventQueueConsumer;
@@ -23,7 +22,7 @@ describe('EventQueueConsumer (Integration)', () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
     repository = testDataSource.getRepository(EventQueueModel);
-    pusher = new EventQueuePusher(logger as unknown as Logger);
+    pusher = new EventQueuePusher(logger);
   });
 
   afterAll(async () => {
@@ -37,7 +36,7 @@ describe('EventQueueConsumer (Integration)', () => {
 
   it('fetchPendingItems() should fetch pending items and mark them as processing', async () => {
     const testRepository = new TestEventQueueRepository(repository);
-    consumer = new EventQueueConsumer(logger as unknown as Logger, testRepository, 10, pusher);
+    consumer = new EventQueueConsumer(logger, testRepository, 10, pusher);
 
     const eventId = '00000000-0000-0000-0000-000000000001';
     const pendingItem = repository.create({
@@ -67,7 +66,7 @@ describe('EventQueueConsumer (Integration)', () => {
 
   it('fetchPendingItems() should return empty array when no pending items', async () => {
     const testRepository = new TestEventQueueRepository(repository);
-    consumer = new EventQueueConsumer(logger as unknown as Logger, testRepository, 10, pusher);
+    consumer = new EventQueueConsumer(logger, testRepository, 10, pusher);
 
     const fetchedItems = await consumer.fetchPendingItems();
     expect(fetchedItems).toHaveLength(0);
@@ -75,7 +74,7 @@ describe('EventQueueConsumer (Integration)', () => {
 
   it('fetchPendingItems() should respect the size limit', async () => {
     const testRepository = new TestEventQueueRepository(repository);
-    consumer = new EventQueueConsumer(logger as unknown as Logger, testRepository, 2, pusher);
+    consumer = new EventQueueConsumer(logger, testRepository, 2, pusher);
 
     const items = [1, 2, 3].map((i) =>
       repository.create({
@@ -98,24 +97,9 @@ describe('EventQueueConsumer (Integration)', () => {
 
   it('should handle parallel consumption correctly', async () => {
     const testRepository = new TestEventQueueRepository(repository);
-    const consumer1 = new EventQueueConsumer(
-      logger as unknown as Logger,
-      testRepository,
-      2,
-      pusher,
-    );
-    const consumer2 = new EventQueueConsumer(
-      logger as unknown as Logger,
-      testRepository,
-      2,
-      pusher,
-    );
-    const consumer3 = new EventQueueConsumer(
-      logger as unknown as Logger,
-      testRepository,
-      2,
-      pusher,
-    );
+    const consumer1 = new EventQueueConsumer(logger, testRepository, 2, pusher);
+    const consumer2 = new EventQueueConsumer(logger, testRepository, 2, pusher);
+    const consumer3 = new EventQueueConsumer(logger, testRepository, 2, pusher);
 
     const items = [1, 2, 3, 4].map((i) =>
       repository.create({
@@ -147,7 +131,7 @@ describe('EventQueueConsumer (Integration)', () => {
 
   it('processItems() should push items and mark them as COMPLETED', async () => {
     const testRepository = new TestEventQueueRepository(repository);
-    consumer = new EventQueueConsumer(logger as unknown as Logger, testRepository, 10, pusher);
+    consumer = new EventQueueConsumer(logger, testRepository, 10, pusher);
 
     const eventId = '00000000-0000-0000-0000-000000000005';
     const item = repository.create({

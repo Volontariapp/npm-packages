@@ -16,7 +16,6 @@ const { JobsOutboxPusher } = await import('../../pushers/jobs-outbox.pusher.js')
 const { makeLoggerMock } = await import('../utils/helpers/logger-mock.helper.js');
 const { makeJobsOutboxEvent } = await import('../utils/helpers/jobs-outbox-event.helper.js');
 const { RedisConfig } = await import('@volontariapp/config');
-import type { Logger } from '@volontariapp/logger';
 import type { JobsOptions } from 'bullmq';
 
 interface MockJob {
@@ -35,7 +34,7 @@ describe('JobsOutboxPusher (Unit)', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    pusher = new JobsOutboxPusher(loggerMock as unknown as Logger, redisConfig);
+    pusher = new JobsOutboxPusher(loggerMock, redisConfig);
   });
 
   afterEach(async () => {

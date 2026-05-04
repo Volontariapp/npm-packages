@@ -10,7 +10,6 @@ import type { EventQueueEntity } from '@volontariapp/database';
 import { OutboxStatus } from '@volontariapp/database';
 import type { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
 import type { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
-import type { Logger } from '@volontariapp/logger';
 
 describe('EventQueueConsumer (Unit)', () => {
   let consumer: EventQueueConsumer;
@@ -24,7 +23,7 @@ describe('EventQueueConsumer (Unit)', () => {
       pushElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
       pushBulkElement: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<EventQueuePusher>;
-    consumer = new EventQueueConsumer(logger as unknown as Logger, repository, 10, pusher);
+    consumer = new EventQueueConsumer(logger, repository, 10, pusher);
   });
 
   afterEach(() => {

@@ -12,7 +12,6 @@ import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-t
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { JobsOutboxPusher } from '../../../pushers/jobs-outbox.pusher.js';
 import { testRedisConfig } from '../../redis-config.js';
-import type { Logger } from '@volontariapp/logger';
 
 describe('JobsOutboxConsumer (Integration)', () => {
   let consumer: JobsOutboxConsumer;
@@ -24,7 +23,7 @@ describe('JobsOutboxConsumer (Integration)', () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
     repository = testDataSource.getRepository(JobsOutboxModel);
-    pusher = new JobsOutboxPusher(logger as unknown as Logger, testRedisConfig);
+    pusher = new JobsOutboxPusher(logger, testRedisConfig);
   });
 
   afterAll(async () => {
@@ -39,7 +38,7 @@ describe('JobsOutboxConsumer (Integration)', () => {
 
   it('fetchPendingItems() should fetch pending items and mark them as processing', async () => {
     const testRepository = new TestJobsOutboxRepository(repository);
-    consumer = new JobsOutboxConsumer(logger as unknown as Logger, testRepository, 10, pusher);
+    consumer = new JobsOutboxConsumer(logger, testRepository, 10, pusher);
 
     const jobId = '00000000-0000-0000-0000-000000000001';
     const pendingItem = repository.create({
@@ -70,24 +69,9 @@ describe('JobsOutboxConsumer (Integration)', () => {
 
   it('should handle parallel consumption correctly', async () => {
     const testRepository = new TestJobsOutboxRepository(repository);
-    const consumer1 = new JobsOutboxConsumer(
-      logger as unknown as Logger,
-      testRepository,
-      2,
-      pusher,
-    );
-    const consumer2 = new JobsOutboxConsumer(
-      logger as unknown as Logger,
-      testRepository,
-      2,
-      pusher,
-    );
-    const consumer3 = new JobsOutboxConsumer(
-      logger as unknown as Logger,
-      testRepository,
-      2,
-      pusher,
-    );
+    const consumer1 = new JobsOutboxConsumer(logger, testRepository, 2, pusher);
+    const consumer2 = new JobsOutboxConsumer(logger, testRepository, 2, pusher);
+    const consumer3 = new JobsOutboxConsumer(logger, testRepository, 2, pusher);
 
     // Seed 4 items
     const items = [1, 2, 3, 4].map((i) =>
@@ -127,7 +111,7 @@ describe('JobsOutboxConsumer (Integration)', () => {
 
   it('processItems() should push items and mark them as COMPLETED', async () => {
     const testRepository = new TestJobsOutboxRepository(repository);
-    consumer = new JobsOutboxConsumer(logger as unknown as Logger, testRepository, 10, pusher);
+    consumer = new JobsOutboxConsumer(logger, testRepository, 10, pusher);
 
     const jobId = '00000000-0000-0000-0000-000000000010';
     const item = repository.create({

@@ -7,7 +7,6 @@ import {
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
 import { type BaseRepository, OutboxStatus } from '@volontariapp/database';
-import type { Logger } from '@volontariapp/logger';
 import type { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
 import type { JobsOutboxPusher } from '../../../pushers/jobs-outbox.pusher.js';
 
@@ -25,7 +24,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
       close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<JobsOutboxPusher>;
     consumer = new JobsOutboxConsumer(
-      logger as unknown as Logger,
+      logger,
       repository as BaseRepository<JobsOutboxModel, JobsOutboxEntity, string>,
       10,
       pusher,

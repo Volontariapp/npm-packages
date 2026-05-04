@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import type { OutboxEntity, OutboxModel, Constructor, MapperService } from '@volontariapp/database';
 import type { BaseRepository } from '@volontariapp/database';
-import type { Logger } from '@volontariapp/logger';
+import { makeLoggerMock } from './logger-mock.helper.js';
 import type {
   QueryRunner,
   SelectQueryBuilder,
@@ -65,7 +65,7 @@ export function makeOutboxConsumerRepositoryMock<
     entityClass: {} as Constructor<TEntity>,
     modelClass: {} as Constructor<TModel>,
     mapper: {} as unknown as MapperService,
-    logger: {} as unknown as Logger,
+    logger: makeLoggerMock(),
   };
 
   return mockRepository as unknown as OutboxConsumerRepositoryMock<TModel, TEntity>;
