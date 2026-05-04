@@ -19,7 +19,7 @@ import { EventFactory } from '../__test-utils__/factories/event.factory.js';
 import { TagFactory } from '../__test-utils__/factories/tag.factory.js';
 import { RequirementFactory } from '../__test-utils__/factories/requirement.factory.js';
 
-describe('PostgresEventRepository (Integration)', () => {
+describe('PostgresPostRepository (Integration)', () => {
   let eventRepository: PostgresEventRepository;
   let tagRepository: PostgresTagRepository;
   let requirementRepository: PostgresRequirementRepository;

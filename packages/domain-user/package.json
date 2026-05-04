@@ -44,7 +44,7 @@
     "@volontariapp/crypto": "workspace:*",
     "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
-    "@volontariapp/errors-nest": "workspace:*",
+    "@volontariapp/errors-nest": "0.12.0-snap-26e8dd4",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
     "@volontariapp/shared": "workspace:*"

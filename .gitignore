@@ -17,3 +17,6 @@ coverage/
 !.vscode/extensions.json
 .gitnexus
 .DS*
+
+#intelliJ
+.idea/
