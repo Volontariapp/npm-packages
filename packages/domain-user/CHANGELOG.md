@@ -21,6 +21,8 @@
 
 - Updated dependencies []:
   - @volontariapp/database@1.14.0
+  - @volontariapp/errors-nest@0.11.0
+  - @volontariapp/auth@3.2.2
 
 ## 2.4.8
 

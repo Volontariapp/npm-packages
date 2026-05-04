@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- added post errors in nest errors lib
+
 ## 0.10.2
 
 ### Patch Changes
