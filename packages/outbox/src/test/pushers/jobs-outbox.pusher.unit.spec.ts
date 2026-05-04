@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals';
 
-const mockQueueAdd = jest.fn();
-const mockQueueAddBulk = jest.fn();
-const mockQueueClose = jest.fn();
+const mockQueueAdd = jest.fn<(...args: unknown[]) => Promise<unknown>>();
+const mockQueueAddBulk = jest.fn<(...args: unknown[]) => Promise<unknown>>();
+const mockQueueClose = jest.fn<() => Promise<void>>();
 
 jest.unstable_mockModule('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -83,6 +83,23 @@ describe('JobsOutboxPusher (Unit)', () => {
         }),
       );
     });
+
+    it('should throw and log error if queue.add fails', async () => {
+      const entity = makeJobsOutboxEvent({
+        id: '1',
+        type: 'test.job',
+        target: 'test-service',
+      });
+
+      const error = new Error('Queue error');
+      mockQueueAdd.mockRejectedValueOnce(error);
+
+      await expect(pusher.pushElement(entity)).rejects.toThrow('Queue error');
+      expect(loggerMock.error).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to push job outbox item 1'),
+        expect.objectContaining({ error }),
+      );
+    });
   });
 
   describe('pushBulkElement', () => {
@@ -128,6 +145,19 @@ describe('JobsOutboxPusher (Unit)', () => {
         data: { p: 1 },
         opts: { jobId: '1' },
       });
+    });
+
+    it('should throw and log error if queue.addBulk fails', async () => {
+      const entities = [makeJobsOutboxEvent({ id: '1', target: 'service-a' })];
+
+      const error = new Error('Bulk error');
+      mockQueueAddBulk.mockRejectedValueOnce(error);
+
+      await expect(pusher.pushBulkElement(entities)).rejects.toThrow('Bulk error');
+      expect(loggerMock.error).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to push bulk job outbox items'),
+        expect.objectContaining({ error }),
+      );
     });
   });
 });

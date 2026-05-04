@@ -28,7 +28,9 @@ describe('OutboxConsumer (Integration)', () => {
   });
 
   afterAll(async () => {
-    await redis.quit();
+    if (redis.status !== 'end') {
+      await redis.quit();
+    }
   });
 
   beforeEach(async () => {
@@ -166,5 +168,27 @@ describe('OutboxConsumer (Integration)', () => {
     const redisItem = await redis.get(`outbox:${entity.id}`);
     expect(redisItem).not.toBeNull();
     expect(JSON.parse(redisItem as string).id).toBe(entity.id);
+  });
+
+  it('processItems() should mark items as FAILED in database if pusher fails', async () => {
+    const repo = testDataSource.getRepository(OutboxModel);
+    const event = makeOutboxEvent({
+      id: '00000000-0000-0000-0000-000000000200',
+      status: OutboxStatus.PROCESSING,
+    });
+    await repo.save(event);
+
+    const dispatcher = new OutboxDispatcher(loggerMock, repository);
+    const consumer = new OutboxConsumer(loggerMock, repository, 10, dispatcher, pusher);
+
+    // Disconnect Redis to simulate a connection failure
+    redis.disconnect();
+
+    const entity = await repository.findOneOrFail({ id: event.id });
+    await consumer.processItems([entity]);
+
+    const dbItem = await repo.findOneBy({ id: event.id });
+    expect(dbItem?.status).toBe(OutboxStatus.FAILED);
+    expect(dbItem?.lastError).toContain('Connection is closed');
   });
 });

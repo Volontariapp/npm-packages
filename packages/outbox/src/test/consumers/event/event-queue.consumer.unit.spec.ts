@@ -64,6 +64,25 @@ describe('EventQueueConsumer (Unit)', () => {
       expect(completedSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
       expect(completedSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
     });
+
+    it('should mark items as failed if pushing throws error', async () => {
+      const entities = [{ id: '1', status: OutboxStatus.PROCESSING } as EventQueueEntity];
+      const error = new Error('Redis connection lost');
+      pusher.pushElement.mockRejectedValueOnce(error);
+
+      const dispatcher = (consumer as unknown as { outboxDispatcher: EventQueueDispatcher })
+        .outboxDispatcher;
+      const failedSpy = jest.spyOn(dispatcher, 'markAsFailed');
+      const completedSpy = jest.spyOn(dispatcher, 'markAsCompleted');
+
+      await consumer.processItems(entities);
+
+      expect(completedSpy).not.toHaveBeenCalled();
+      expect(failedSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: entities[0].id }),
+        'Redis connection lost',
+      );
+    });
   });
 
   describe('markItemsAsCompleted', () => {

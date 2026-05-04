@@ -116,4 +116,54 @@ describe('JobsOutboxPusher (Integration)', () => {
       await inspectorQueue.close();
     }
   });
+
+  it('pushElement() should throw error if Redis connection is disconnected', async () => {
+    const target = 'failure-test-target';
+    const entity = makeJobsOutboxEvent({
+      id: 'fail-1',
+      target,
+    });
+
+    // Ensure queue is created
+    await pusher.pushElement(entity);
+
+    // Get the internal queue and disconnect its client
+    const queues = (pusher as unknown as { queues: Map<string, Queue> }).queues;
+    const queue = queues.get(target) as Queue;
+    const client = await queue.client;
+    client.disconnect();
+
+    const entity2 = makeJobsOutboxEvent({
+      id: 'fail-2',
+      target,
+    });
+
+    await expect(pusher.pushElement(entity2)).rejects.toThrow();
+  });
+
+  it('pushBulkElement() should throw error if Redis connection is disconnected', async () => {
+    const target = 'failure-bulk-test-target';
+    const entity = makeJobsOutboxEvent({
+      id: 'fail-bulk-1',
+      target,
+    });
+
+    // Ensure queue is created
+    await pusher.pushElement(entity);
+
+    // Get the internal queue and disconnect its client
+    const queues = (pusher as unknown as { queues: Map<string, Queue> }).queues;
+    const queue = queues.get(target) as Queue;
+    const client = await queue.client;
+    client.disconnect();
+
+    const entities = [
+      makeJobsOutboxEvent({
+        id: 'fail-bulk-2',
+        target,
+      }),
+    ];
+
+    await expect(pusher.pushBulkElement(entities)).rejects.toThrow();
+  });
 });

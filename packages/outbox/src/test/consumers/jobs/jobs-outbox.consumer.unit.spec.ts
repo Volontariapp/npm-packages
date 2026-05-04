@@ -69,6 +69,22 @@ describe('JobsOutboxConsumer (Unit)', () => {
       expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
       expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
     });
+
+    it('should mark items as failed if pushing throws error', async () => {
+      const entities = [{ id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity];
+      const error = new Error('Redis connection lost');
+      pusher.pushElement.mockRejectedValueOnce(error);
+
+      const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
+        .outboxDispatcher;
+      const failedSpy = jest.spyOn(dispatcher, 'markAsFailed');
+      const completedSpy = jest.spyOn(dispatcher, 'markAsCompleted');
+
+      await consumer.processItems(entities);
+
+      expect(completedSpy).not.toHaveBeenCalled();
+      expect(failedSpy).toHaveBeenCalledWith(entities[0], 'Redis connection lost');
+    });
   });
 
   describe('markItemsAsCompleted', () => {
