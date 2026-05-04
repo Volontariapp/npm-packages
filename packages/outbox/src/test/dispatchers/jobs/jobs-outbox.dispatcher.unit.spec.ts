@@ -50,6 +50,7 @@ describe('JobsOutboxDispatcher (Unit)', () => {
 
       expect(job.status).toBe(OutboxStatus.FAILED);
       expect(job.lastError).toBe(error);
+      expect(job.attempts).toBe(1);
       expect(updateSpy as jest.Mock).toHaveBeenCalledWith(job.id, job);
     });
 

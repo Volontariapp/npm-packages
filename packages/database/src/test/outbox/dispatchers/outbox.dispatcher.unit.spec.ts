@@ -71,6 +71,7 @@ describe('OutboxDispatcher (Unit)', () => {
 
       expect(entity.status).toBe(OutboxStatus.FAILED);
       expect(entity.lastError).toBe(error);
+      expect(entity.attempts).toBe(1);
       expect(updateSpy).toHaveBeenCalledWith(entity.id, entity);
       expect(errorSpy).toHaveBeenCalledWith('Marking outbox entity test-id as failed', {
         error,

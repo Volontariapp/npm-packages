@@ -53,6 +53,7 @@ describe('OutboxDispatcher (Integration)', () => {
     const updated = await repo.findOneBy({ id: model.id });
     expect(updated?.status).toBe(OutboxStatus.FAILED);
     expect(updated?.lastError).toBe(error);
+    expect(updated?.attempts).toBe(1);
   });
 
   it('markAsCompleted() should update status to COMPLETED in database', async () => {
