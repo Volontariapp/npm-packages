@@ -47,6 +47,7 @@ describe('EventQueueDispatcher (Unit)', () => {
 
       expect(event.status).toBe(OutboxStatus.FAILED);
       expect(event.lastError).toBe(error);
+      expect(event.attempts).toBe(1);
       expect(updateSpy as jest.Mock).toHaveBeenCalledWith(event.id, event);
     });
 

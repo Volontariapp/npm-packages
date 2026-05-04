@@ -47,6 +47,7 @@ export class OutboxDispatcher<
 
     entity.status = OutboxStatus.FAILED;
     entity.lastError = error;
+    entity.attempts += 1;
     entity.updatedAt = new Date();
     return this.repository.update(entity.id, entity);
   }

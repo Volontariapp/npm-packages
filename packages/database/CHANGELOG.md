@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.14.0
+
+### Minor Changes
+
+- Updated outboxDispatcher behavior: the attempts are now incremented on failure to push a Job
+
 ## 1.13.0
 
 ### Minor Changes
