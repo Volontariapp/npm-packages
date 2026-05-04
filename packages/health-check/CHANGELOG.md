@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies [[`69d0ab7`](https://github.com/Volontariapp/npm-packages/commit/69d0ab769c7b61d7685222a1c602831039f31e48)]:
+  - @volontariapp/errors@0.6.0
+  - @volontariapp/bridge@0.2.11
+
 ## 0.1.12
 
 ### Patch Changes

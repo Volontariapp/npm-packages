@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- [#123](https://github.com/Volontariapp/npm-packages/pull/123) [`69d0ab7`](https://github.com/Volontariapp/npm-packages/commit/69d0ab769c7b61d7685222a1c602831039f31e48) Thanks [@vicoescobar](https://github.com/vicoescobar)! - added errors for ms-posts
+
+- added post errors
+
 ## 0.5.0
 
 ### Minor Changes

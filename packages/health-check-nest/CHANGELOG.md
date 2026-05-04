@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@0.2.11
+  - @volontariapp/bridge-nest@0.3.12
+  - @volontariapp/errors-nest@0.10.3
+  - @volontariapp/health-check@0.1.13
+
 ## 0.1.29
 
 ### Patch Changes

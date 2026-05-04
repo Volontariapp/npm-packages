@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.11
+
+### Patch Changes
+
+- Updated dependencies [[`69d0ab7`](https://github.com/Volontariapp/npm-packages/commit/69d0ab769c7b61d7685222a1c602831039f31e48)]:
+  - @volontariapp/errors@0.6.0
+  - @volontariapp/bridge-nest@0.3.12
+  - @volontariapp/errors-nest@0.10.3
+
 ## 0.3.10
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.4.8
+
+### Patch Changes
+
+- Updated dependencies [[`69d0ab7`](https://github.com/Volontariapp/npm-packages/commit/69d0ab769c7b61d7685222a1c602831039f31e48)]:
+  - @volontariapp/errors@0.6.0
+  - @volontariapp/auth@3.2.2
+  - @volontariapp/crypto@0.3.7
+  - @volontariapp/database@1.12.1
+  - @volontariapp/errors-nest@0.10.3
+
 ## 2.4.7
 
 ### Patch Changes
