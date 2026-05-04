@@ -9,7 +9,6 @@ import { makeOutboxEvent } from '../../utils/helpers/outbox-event.helper.js';
 import { TestOutboxRepository } from '../../utils/repositories/outbox-test.repository.js';
 import type { LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import type { Logger } from '@volontariapp/logger';
 import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
 import { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
 import { clearTestRedis, createTestRedisConnection } from '../../redis-config.js';
@@ -68,14 +67,8 @@ describe('OutboxConsumer (Integration)', () => {
     });
     await repo.save([event1, event2]);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const singleConsumer = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      1,
-      dispatcher,
-      pusher,
-    );
+    const dispatcher = new OutboxDispatcher(loggerMock, repository);
+    const singleConsumer = new OutboxConsumer(loggerMock, repository, 1, dispatcher, pusher);
     const items = await singleConsumer.fetchPendingItems();
     expect(items).toHaveLength(1);
     expect(items[0].status).toBe(OutboxStatus.PROCESSING);
@@ -97,21 +90,9 @@ describe('OutboxConsumer (Integration)', () => {
     );
     await repo.save(events);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const consumer1 = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      5,
-      dispatcher,
-      pusher,
-    );
-    const consumer2 = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      5,
-      dispatcher,
-      pusher,
-    );
+    const dispatcher = new OutboxDispatcher(loggerMock, repository);
+    const consumer1 = new OutboxConsumer(loggerMock, repository, 5, dispatcher, pusher);
+    const consumer2 = new OutboxConsumer(loggerMock, repository, 5, dispatcher, pusher);
     const [results1, results2] = await Promise.all([
       consumer1.fetchPendingItems(),
       consumer2.fetchPendingItems(),
@@ -140,28 +121,10 @@ describe('OutboxConsumer (Integration)', () => {
     );
     await repo.save(events);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const consumer1 = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      5,
-      dispatcher,
-      pusher,
-    );
-    const consumer2 = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      5,
-      dispatcher,
-      pusher,
-    );
-    const consumer3 = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      5,
-      dispatcher,
-      pusher,
-    );
+    const dispatcher = new OutboxDispatcher(loggerMock, repository);
+    const consumer1 = new OutboxConsumer(loggerMock, repository, 5, dispatcher, pusher);
+    const consumer2 = new OutboxConsumer(loggerMock, repository, 5, dispatcher, pusher);
+    const consumer3 = new OutboxConsumer(loggerMock, repository, 5, dispatcher, pusher);
 
     const [results1, results2, results3] = await Promise.all([
       consumer1.fetchPendingItems(),
@@ -188,14 +151,8 @@ describe('OutboxConsumer (Integration)', () => {
     });
     await repo.save(event);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const consumer = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      10,
-      dispatcher,
-      pusher,
-    );
+    const dispatcher = new OutboxDispatcher(loggerMock, repository);
+    const consumer = new OutboxConsumer(loggerMock, repository, 10, dispatcher, pusher);
 
     const entity = await repository.findOneOrFail({ id: event.id });
     await consumer.markItemsAsCompleted([entity]);
@@ -212,14 +169,8 @@ describe('OutboxConsumer (Integration)', () => {
     });
     await repo.save(event);
 
-    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
-    const consumer = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repository,
-      10,
-      dispatcher,
-      pusher,
-    );
+    const dispatcher = new OutboxDispatcher(loggerMock, repository);
+    const consumer = new OutboxConsumer(loggerMock, repository, 10, dispatcher, pusher);
 
     const pushSpy = jest.spyOn(pusher, 'pushElement');
     const entity = await repository.findOneOrFail({ id: event.id });

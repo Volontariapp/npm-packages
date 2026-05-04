@@ -9,7 +9,6 @@ import { OutboxStatus } from '../../../outbox/types/outbox.status.js';
 import type { BaseRepository } from '../../../core/base.repository.js';
 import { makeLoggerMock, type LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
 import { makeQueryRunnerMock } from '../../utils/helpers/query-runner-mock.helper.js';
-import type { Logger } from '@volontariapp/logger';
 import { makeOutboxPusherMock } from '../../utils/helpers/outbox-pusher-mock.helper.js';
 import type { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
 
@@ -46,13 +45,7 @@ describe('OutboxConsumer (Unit)', () => {
 
     pusherMock = makeOutboxPusherMock();
 
-    consumer = new OutboxConsumer(
-      loggerMock as unknown as Logger,
-      repositoryMock,
-      10,
-      dispatcherMock,
-      pusherMock,
-    );
+    consumer = new OutboxConsumer(loggerMock, repositoryMock, 10, dispatcherMock, pusherMock);
   });
 
   afterEach(() => {
@@ -62,24 +55,10 @@ describe('OutboxConsumer (Unit)', () => {
   describe('constructor', () => {
     it('should throw InvalidOutboxSizeError if batchSize <= 0', () => {
       expect(
-        () =>
-          new OutboxConsumer(
-            loggerMock as unknown as Logger,
-            repositoryMock,
-            0,
-            dispatcherMock,
-            pusherMock,
-          ),
+        () => new OutboxConsumer(loggerMock, repositoryMock, 0, dispatcherMock, pusherMock),
       ).toThrow(InvalidOutboxSizeError);
       expect(
-        () =>
-          new OutboxConsumer(
-            loggerMock as unknown as Logger,
-            repositoryMock,
-            -1,
-            dispatcherMock,
-            pusherMock,
-          ),
+        () => new OutboxConsumer(loggerMock, repositoryMock, -1, dispatcherMock, pusherMock),
       ).toThrow(InvalidOutboxSizeError);
     });
   });

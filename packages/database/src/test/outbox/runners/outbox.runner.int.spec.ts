@@ -21,7 +21,6 @@ import { makeLoggerMock, type LoggerMock } from '../../utils/helpers/logger-mock
 import { makeOutboxEvent } from '../../utils/helpers/outbox-event.helper.js';
 import { OutboxRunnerConfig, LoggerConfig, LoggerFormat } from '@volontariapp/config';
 import { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
-import type { Logger } from '@volontariapp/logger';
 import { clearTestRedis, createTestRedisConnection } from '../../redis-config.js';
 
 // Increase Jest timeout for integration tests
@@ -62,7 +61,7 @@ describe('Outbox Flow (Integration)', () => {
   beforeAll(() => {
     loggerMock = makeLoggerMock();
     repository = new EventQueueTestRepository(testDataSource.getRepository(EventQueueModel));
-    writer = new OutboxWriter(loggerMock as unknown as Logger, repository);
+    writer = new OutboxWriter(loggerMock, repository);
     redis = createTestRedisConnection();
   });
 
@@ -79,7 +78,7 @@ describe('Outbox Flow (Integration)', () => {
     config.logger.format = LoggerFormat.JSON;
     config.logger.level = 'debug';
 
-    const dispatcher = new OutboxDispatcher(loggerMock as unknown as Logger, repository);
+    const dispatcher = new OutboxDispatcher(loggerMock, repository);
     pusher = new RealRedisPusher<EventQueueEntity>(redis);
     runner = new OutboxRunner(repository, config, dispatcher, pusher);
     jest.clearAllMocks();
