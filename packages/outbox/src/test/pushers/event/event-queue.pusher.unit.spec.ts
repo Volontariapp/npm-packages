@@ -55,6 +55,20 @@ describe('EventQueuePusher (Unit)', () => {
         '~',
         10000,
         '*',
+        'id',
+        entity.id,
+        'type',
+        entity.type,
+        'emitter',
+        entity.emitter,
+        'traceId',
+        entity.traceId ?? '',
+        'version',
+        entity.version.toString(),
+        'createdAt',
+        entity.createdAt.toISOString(),
+        'payload',
+        expect.any(String),
         'event',
         expect.any(String),
       );
@@ -64,6 +78,20 @@ describe('EventQueuePusher (Unit)', () => {
         '~',
         10000,
         '*',
+        'id',
+        entity.id,
+        'type',
+        entity.type,
+        'emitter',
+        entity.emitter,
+        'traceId',
+        entity.traceId ?? '',
+        'version',
+        entity.version.toString(),
+        'createdAt',
+        entity.createdAt.toISOString(),
+        'payload',
+        expect.any(String),
         'event',
         expect.any(String),
       );
@@ -185,8 +213,26 @@ describe('EventQueuePusher (Unit)', () => {
       // Assert
       expect(xaddSpy).toHaveBeenCalledTimes(1);
 
-      const rawPayload = xaddSpy.mock.calls[0][6] as string;
+      const xaddArgs = xaddSpy.mock.calls[0];
+      const rawPayload = xaddArgs[xaddArgs.length - 1] as string;
       const parsed = JSON.parse(rawPayload) as Record<string, unknown>;
+
+      expect(xaddArgs).toContain('id');
+      expect(xaddArgs).toContain('evt-serial-1');
+      expect(xaddArgs).toContain('type');
+      expect(xaddArgs).toContain('user.created');
+      expect(xaddArgs).toContain('emitter');
+      expect(xaddArgs).toContain('ms-user');
+      expect(xaddArgs).toContain('traceId');
+      expect(xaddArgs).toContain('trace-abc');
+      expect(xaddArgs).toContain('version');
+      expect(xaddArgs).toContain('2');
+      expect(xaddArgs).toContain('createdAt');
+      expect(xaddArgs).toContain('2025-01-01T12:00:00.000Z');
+
+      const payloadIdx = xaddArgs.indexOf('payload');
+      const payloadStr = xaddArgs[payloadIdx + 1] as string;
+      expect(JSON.parse(payloadStr)).toEqual({ after: { userId: '42' } });
 
       expect(parsed.id).toBe('evt-serial-1');
       expect(parsed.type).toBe('user.created');
@@ -215,8 +261,12 @@ describe('EventQueuePusher (Unit)', () => {
       await pusher.pushElement(entity);
 
       // Assert
-      const rawPayload = xaddSpy.mock.calls[0][6] as string;
+      const xaddArgs = xaddSpy.mock.calls[0];
+      const rawPayload = xaddArgs[xaddArgs.length - 1] as string;
       const parsed = JSON.parse(rawPayload) as Record<string, unknown>;
+
+      const traceIdIdx = xaddArgs.indexOf('traceId');
+      expect(xaddArgs[traceIdIdx + 1]).toBe('');
 
       expect(parsed.traceId).toBeUndefined();
     });
