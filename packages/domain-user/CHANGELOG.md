@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.0
+
+### Minor Changes
+
+- refacto: email secret
+
 ## 2.4.9
 
 ### Patch Changes

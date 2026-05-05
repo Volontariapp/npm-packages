@@ -8,8 +8,7 @@ import { UserModel } from '../models/user.model.js';
 import { UserEntity } from '../entities/user.entity.js';
 import { IUserRepository } from './interfaces/user.repository.js';
 import { encryptDeterministic, decrypt } from '@volontariapp/crypto';
-
-export const EMAIL_ENCRYPTION_SECRET = 'EMAIL_ENCRYPTION_SECRET';
+import { EMAIL_ENCRYPTION_SECRET } from '../constants.js';
 
 @Injectable()
 export class PostgresUserRepository
