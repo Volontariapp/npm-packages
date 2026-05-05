@@ -1,12 +1,5 @@
 # Changelog
 
-## 1.15.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @volontariapp/bridge@1.0.0
-
 ## 1.15.0
 
 ### Minor Changes
@@ -14,6 +7,10 @@
 - Event queue pusher added
 
 ### Patch Changes
+
+- Updated dependencies []:
+
+  - @volontariapp/bridge@1.0.0
 
 - Updated dependencies []:
   - @volontariapp/shared@0.4.0
