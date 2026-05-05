@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.2
+
+### Patch Changes
+
+- add @volontariapp/auth dependency
+
 ## 3.2.1
 
 ### Patch Changes

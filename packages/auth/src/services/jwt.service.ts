@@ -1,3 +1,4 @@
+import { Injectable, Inject } from '@nestjs/common';
 import * as jose from 'jose';
 import type { CryptoKey } from 'jose';
 import fs from 'node:fs';
@@ -10,7 +11,9 @@ import {
   VERIFY_TOKEN_FAILED,
 } from '@volontariapp/errors-nest';
 import type { AuthConfig, AuthUser } from '../interfaces/index.js';
+import { AUTH_OPTIONS } from '../constants/index.js';
 
+@Injectable()
 export class JwtService {
   private internalPrivateKey?: CryptoKey;
   private internalPublicKey?: CryptoKey;
@@ -20,7 +23,7 @@ export class JwtService {
   private refreshTokenPublicKey?: CryptoKey;
   private readonly logger = new Logger({ context: 'JwtService', format: 'json' });
 
-  constructor(private readonly options: AuthConfig) {}
+  constructor(@Inject(AUTH_OPTIONS) private readonly options: AuthConfig) {}
 
   private validateExpiration(expiresIn: string | number | undefined, type: string): void {
     if (expiresIn === undefined || expiresIn === '' || expiresIn === 0) {
