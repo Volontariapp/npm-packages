@@ -38,7 +38,10 @@ describe('JobsOutboxConsumer (Unit)', () => {
   });
 
   it('fetchPendingItems() should delegate to repository and return results', async () => {
-    const mockEntities = [{ id: '1' } as JobsOutboxEntity, { id: '2' } as JobsOutboxEntity];
+    const mockEntities = [
+      { id: '1' } as unknown as JobsOutboxEntity,
+      { id: '2' } as unknown as JobsOutboxEntity,
+    ];
     const toEntitiesSpy = jest.spyOn(repository, 'toEntities').mockReturnValue(mockEntities);
     const executeInTransactionSpy = jest.spyOn(repository, 'executeInTransaction');
 
@@ -52,8 +55,8 @@ describe('JobsOutboxConsumer (Unit)', () => {
   describe('processItems', () => {
     it('should process items, push them and mark them as completed', async () => {
       const entities = [
-        { id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
-        { id: '2', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
+        { id: '1', status: OutboxStatus.PROCESSING } as unknown as JobsOutboxEntity,
+        { id: '2', status: OutboxStatus.PROCESSING } as unknown as JobsOutboxEntity,
       ];
       const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
         .outboxDispatcher;
@@ -72,7 +75,9 @@ describe('JobsOutboxConsumer (Unit)', () => {
     });
 
     it('should mark items as failed if pushing throws error', async () => {
-      const entities = [{ id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity];
+      const entities = [
+        { id: '1', status: OutboxStatus.PROCESSING } as unknown as JobsOutboxEntity,
+      ];
       const error = new Error('Redis connection lost');
       const pushSpy = jest.spyOn(pusher, 'pushElement').mockRejectedValueOnce(error);
 
@@ -95,8 +100,8 @@ describe('JobsOutboxConsumer (Unit)', () => {
   describe('markItemsAsCompleted', () => {
     it('should mark processing items as completed', async () => {
       const entities = [
-        { id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity,
-        { id: '2', status: OutboxStatus.PENDING } as JobsOutboxEntity,
+        { id: '1', status: OutboxStatus.PROCESSING } as unknown as JobsOutboxEntity,
+        { id: '2', status: OutboxStatus.PENDING } as unknown as JobsOutboxEntity,
       ];
       const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
         .outboxDispatcher;

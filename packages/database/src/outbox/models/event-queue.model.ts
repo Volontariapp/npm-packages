@@ -10,7 +10,7 @@ export class EventQueueModel<K extends EventType = EventType> extends OutboxMode
   version!: number;
 
   @Column({ name: 'target_services', type: 'varchar', array: true, default: [] })
-  targetServices!: ServiceType[];
+  targetServices: ServiceType[] = [];
 
   @Column({ type: 'jsonb' })
   payload!: {

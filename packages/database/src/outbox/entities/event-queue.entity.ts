@@ -9,7 +9,7 @@ export class EventQueueEntity<
 > extends OutboxEntity<K> {
   version!: number;
 
-  targetServices!: ServiceType[];
+  targetServices: ServiceType[] = [];
 
   payload!: {
     before?: P;

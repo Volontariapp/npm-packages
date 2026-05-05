@@ -33,12 +33,23 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity> {
       const payload = this.formatMessage(entity);
       const pipeline = this.redis.pipeline();
 
-      for (const targetService of entity.targetServices) {
+      const targetServices = entity.targetServices;
+      if (targetServices.length === 0) {
+        this.logger.warn(`Event ${entity.id} has no target services, skipping push`);
+        return;
+      }
+
+      for (const targetService of targetServices) {
         const streamName = getEventStreamName(targetService);
         pipeline.xadd(streamName, 'MAXLEN', '~', this.MAX_LEN, '*', 'event', payload);
       }
 
-      await pipeline.exec();
+      const results = await pipeline.exec();
+      if (results) {
+        for (const [err] of results) {
+          if (err) throw err;
+        }
+      }
     } catch (error) {
       this.logger.error(`Failed to push event queue item ${entity.id}`, { error });
       throw error;
@@ -46,23 +57,29 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity> {
   }
 
   async pushBulkElement(entities: EventQueueEntity[]): Promise<void> {
-    this.logger.info(`Pushing ${entities.length.toString()} event queue items`);
+    this.logger.info(`Pushing bulk event queue items (${entities.length.toString()})`);
 
     try {
       const pipeline = this.redis.pipeline();
 
       for (const entity of entities) {
         const payload = this.formatMessage(entity);
+        const targetServices = entity.targetServices;
 
-        for (const targetService of entity.targetServices) {
+        for (const targetService of targetServices) {
           const streamName = getEventStreamName(targetService);
           pipeline.xadd(streamName, 'MAXLEN', '~', this.MAX_LEN, '*', 'event', payload);
         }
       }
 
-      await pipeline.exec();
+      const results = await pipeline.exec();
+      if (results) {
+        for (const [err] of results) {
+          if (err) throw err;
+        }
+      }
     } catch (error) {
-      this.logger.error(`Failed to push bulk event queue items`, { error });
+      this.logger.error('Failed to push bulk event queue items', { error });
       throw error;
     }
   }

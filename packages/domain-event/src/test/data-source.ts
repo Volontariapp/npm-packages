@@ -14,6 +14,7 @@ import { JobsOutboxAndEventQueue1776786226145 } from './migrations/1776786226145
 import { JobsOutboxAndEventQueueWithTraceId1776974876099 } from './migrations/1776974876099-JobsOutboxAndEventQueueWithTraceId.js';
 import { UpdateOutboxModels1777630647718 } from './migrations/1777630647718-UpdateOutboxModels.js';
 import { SetupEventTriggers1776786226146 } from './migrations/1776786226146-SetupEventTriggers.js';
+import { AddTargetServicesToEventQueue1777985367963 } from './migrations/1777985367963-AddTargetServicesToEventQueue.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -33,6 +34,7 @@ export const testDataSource = new DataSource({
     JobsOutboxAndEventQueueWithTraceId1776974876099,
     UpdateOutboxModels1777630647718,
     SetupEventTriggers1776786226146,
+    AddTargetServicesToEventQueue1777985367963,
   ],
   synchronize: false,
   logging: false,

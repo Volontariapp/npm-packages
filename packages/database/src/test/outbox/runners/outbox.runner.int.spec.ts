@@ -100,7 +100,7 @@ describe('Outbox Flow (Integration)', () => {
     // Verify it's in Redis
     const redisItem = await redis.get(`outbox:${event.id}`);
     expect(redisItem).not.toBeNull();
-    expect(JSON.parse(redisItem as string).id).toBe(event.id);
+    expect((JSON.parse(redisItem as string) as Record<string, unknown>).id).toBe(event.id);
   });
 
   it('should process multiple EventQueue items in the flow', async () => {
@@ -136,7 +136,7 @@ describe('Outbox Flow (Integration)', () => {
     for (const event of events) {
       const redisItem = await redis.get(`outbox:${event.id}`);
       expect(redisItem).not.toBeNull();
-      expect(JSON.parse(redisItem as string).id).toBe(event.id);
+      expect((JSON.parse(redisItem as string) as Record<string, unknown>).id).toBe(event.id);
     }
   });
 

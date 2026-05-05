@@ -167,7 +167,7 @@ describe('OutboxConsumer (Integration)', () => {
     // Verify it's actually in Redis
     const redisItem = await redis.get(`outbox:${entity.id}`);
     expect(redisItem).not.toBeNull();
-    expect(JSON.parse(redisItem as string).id).toBe(entity.id);
+    expect((JSON.parse(redisItem as string) as Record<string, unknown>).id).toBe(entity.id);
   });
 
   it('processItems() should mark items as FAILED in database if pusher fails', async () => {

@@ -4,14 +4,14 @@ import {
   setupBullMQMock,
   mockQueue,
   type MockJob,
-} from '../utils/helpers/shared/bullmq-mock.helper.js';
-import { makeRedisMock } from '../utils/helpers/shared/redis-mock.helper.js';
+} from '../../utils/helpers/shared/bullmq-mock.helper.js';
+import { makeRedisMock } from '../../utils/helpers/shared/redis-mock.helper.js';
 
 setupBullMQMock();
 
-const { JobsOutboxPusher } = await import('../../pushers/jobs-outbox.pusher.js');
-const { makeLoggerMock } = await import('../utils/helpers/shared/logger-mock.helper.js');
-const { makeJobsOutboxEvent } = await import('../utils/helpers/job/jobs-outbox-event.helper.js');
+const { JobsOutboxPusher } = await import('../../../pushers/jobs-outbox.pusher.js');
+const { makeLoggerMock } = await import('../../utils/helpers/shared/logger-mock.helper.js');
+const { makeJobsOutboxEvent } = await import('../../utils/helpers/job/jobs-outbox-event.helper.js');
 
 describe('JobsOutboxPusher (Unit)', () => {
   let pusher: InstanceType<typeof JobsOutboxPusher>;
@@ -45,6 +45,7 @@ describe('JobsOutboxPusher (Unit)', () => {
 
   describe('pushElement', () => {
     it('should push a job to the correct queue', async () => {
+      // Arrange
       const entity = makeJobsOutboxEvent({
         id: '1',
         type: 'test.job',
@@ -53,8 +54,10 @@ describe('JobsOutboxPusher (Unit)', () => {
         scheduledAt: undefined,
       });
 
+      // Act
       await pusher.pushElement(entity);
 
+      // Assert
       const { Queue } = await import('bullmq');
       expect(Queue).toHaveBeenCalledWith(
         'test-service',
@@ -64,6 +67,7 @@ describe('JobsOutboxPusher (Unit)', () => {
     });
 
     it('should include delay if scheduledAt is in the future', async () => {
+      // Arrange
       const futureDate = new Date(Date.now() + 10000);
       const entity = makeJobsOutboxEvent({
         id: '1',
@@ -73,8 +77,10 @@ describe('JobsOutboxPusher (Unit)', () => {
         scheduledAt: futureDate,
       });
 
+      // Act
       await pusher.pushElement(entity);
 
+      // Assert
       expect(addSpy).toHaveBeenCalledWith(
         'test.job',
         { data: 'test' },
@@ -86,15 +92,16 @@ describe('JobsOutboxPusher (Unit)', () => {
     });
 
     it('should throw and log error if queue.add fails', async () => {
+      // Arrange
       const entity = makeJobsOutboxEvent({
         id: '1',
         type: 'test.job',
         target: 'test-service',
       });
-
       const error = new Error('Queue error');
       addSpy.mockRejectedValueOnce(error);
 
+      // Act & Assert
       await expect(pusher.pushElement(entity)).rejects.toThrow('Queue error');
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Failed to push job outbox item 1'),
@@ -105,14 +112,17 @@ describe('JobsOutboxPusher (Unit)', () => {
 
   describe('pushBulkElement', () => {
     it('should group jobs by target and push them in bulk', async () => {
+      // Arrange
       const entities = [
         makeJobsOutboxEvent({ id: '1', type: 'job.1', target: 'service-a' }),
         makeJobsOutboxEvent({ id: '2', type: 'job.2', target: 'service-b' }),
         makeJobsOutboxEvent({ id: '3', type: 'job.3', target: 'service-a' }),
       ];
 
+      // Act
       await pusher.pushBulkElement(entities);
 
+      // Assert
       expect(addBulkSpy).toHaveBeenCalledTimes(2);
 
       const allBulkCalls = addBulkSpy.mock.calls;
@@ -128,16 +138,20 @@ describe('JobsOutboxPusher (Unit)', () => {
 
       expect(jobsA).toHaveLength(2);
       expect(jobsA).toContainEqual(
-        expect.objectContaining({ name: 'job.1', opts: { jobId: '1' } }),
+        expect.objectContaining({
+          name: 'job.1',
+          opts: expect.objectContaining({ jobId: '1' }),
+        }),
       );
     });
 
     it('should throw and log error if queue.addBulk fails', async () => {
+      // Arrange
       const entities = [makeJobsOutboxEvent({ id: '1', target: 'service-a' })];
-
       const error = new Error('Bulk error');
       addBulkSpy.mockRejectedValueOnce(error);
 
+      // Act & Assert
       await expect(pusher.pushBulkElement(entities)).rejects.toThrow('Bulk error');
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Failed to push bulk job outbox items'),

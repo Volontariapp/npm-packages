@@ -59,6 +59,7 @@ export function makeOutboxConsumerRepositoryMock<
     create: jest.fn(),
     createMany: jest.fn(),
     update: jest.fn(),
+
     delete: jest.fn(),
     // satisfy BaseRepository structure
     repository: {} as Repository<TModel>,
