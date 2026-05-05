@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4
+
+### Patch Changes
+
+- export type to avoid compilation error
+
 ## 1.0.3
 
 ### Patch Changes

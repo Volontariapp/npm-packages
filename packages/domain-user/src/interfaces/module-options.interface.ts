@@ -1,5 +1,8 @@
+import type { AuthConfig } from '@volontariapp/auth';
+
 export interface DomainUserModuleOptions {
   emailEncryptionSecret: string;
+  auth: AuthConfig;
 }
 
 export type BaseType = object | string | number | boolean | symbol | undefined | null;
