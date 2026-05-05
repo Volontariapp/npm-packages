@@ -2,9 +2,9 @@ import { describe, expect, it, beforeEach, jest } from '@jest/globals';
 import { UnprocessableEntityError } from '@volontariapp/errors';
 import { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
 import { OutboxStatus } from '@volontariapp/database';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import { makeEventQueueRepositoryMock } from '../../utils/helpers/event-queue-repository-mock.helper.js';
-import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
+import { makeEventQueueRepositoryMock } from '../../utils/helpers/event/event-queue-repository-mock.helper.js';
+import { makeEventQueueEvent } from '../../utils/helpers/event/event-queue-event.helper.js';
 
 describe('EventQueueDispatcher (Unit)', () => {
   let dispatcher: EventQueueDispatcher;

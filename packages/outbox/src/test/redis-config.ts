@@ -9,11 +9,14 @@ export const testRedisOptions: RedisOptions = {
   lazyConnect: true,
 };
 
-export const testRedisConfig = {
+export const testRedisConfig: RedisConfig = {
   host: '127.0.0.1',
   port: 6379,
   dbIndex: 0,
-} as unknown as RedisConfig;
+  username: '',
+  password: '',
+  database: '',
+};
 
 export const createTestRedisConnection = (): Redis => {
   return new Redis(testRedisOptions);

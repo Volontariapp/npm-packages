@@ -3,11 +3,11 @@ import { JobsOutboxModel } from '@volontariapp/database';
 import {
   makeOutboxRepositoryMock,
   type OutboxRepositoryMock,
-} from './outbox-repository-mock.helper.js';
+} from '../shared/outbox-repository-mock.helper.js';
 import {
   makeOutboxConsumerRepositoryMock,
   type OutboxConsumerRepositoryMock,
-} from './outbox-consumer-repository-mock.helper.js';
+} from '../shared/outbox-consumer-repository-mock.helper.js';
 
 export type JobsOutboxRepositoryMock = OutboxRepositoryMock<JobsOutboxEntity, JobsOutboxModel>;
 

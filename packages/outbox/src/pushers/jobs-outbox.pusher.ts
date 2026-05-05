@@ -1,27 +1,16 @@
 import { Queue, type JobsOptions } from 'bullmq';
 import { OutboxPusher, type JobsOutboxEntity } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
-import type { RedisOptions } from 'ioredis';
-import type { RedisConfig } from '@volontariapp/config';
+import type { Redis } from 'ioredis';
 
 export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
   private readonly queues = new Map<string, Queue>();
-  private readonly redisOptions: RedisOptions;
 
   constructor(
     private readonly logger: Logger,
-    redisConfig: RedisConfig,
+    private readonly redis: Redis,
   ) {
     super();
-
-    this.redisOptions = {
-      host: redisConfig.host,
-      port: redisConfig.port,
-      password: redisConfig.password,
-      db: redisConfig.dbIndex,
-      keyPrefix: redisConfig.keyPrefix,
-      maxRetriesPerRequest: null, // BullMQ requirement
-    };
   }
 
   private getQueue(targetService: string): Queue {
@@ -29,7 +18,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
     if (!queue) {
       this.logger.debug(`Creating new BullMQ queue for service: ${targetService}`);
       queue = new Queue(targetService, {
-        connection: this.redisOptions,
+        connection: this.redis,
         defaultJobOptions: {
           attempts: 3,
           backoff: {

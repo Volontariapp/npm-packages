@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.15.0
+  - @volontariapp/shared@0.4.0
+  - @volontariapp/auth@3.2.3
+
 ## 2.5.0
 
 ### Minor Changes

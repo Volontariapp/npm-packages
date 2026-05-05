@@ -3,12 +3,12 @@ import { JobsOutboxConsumer } from '../../../consumers/jobs-outbox.consumer.js';
 import {
   makeJobsOutboxConsumerRepositoryMock,
   type JobsOutboxConsumerRepositoryMock,
-} from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+} from '../../utils/helpers/job/jobs-outbox-repository-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import {
   makeJobsOutboxPusherMock,
   type JobsOutboxPusherMock,
-} from '../../utils/helpers/jobs-outbox-pusher-mock.helper.js';
+} from '../../utils/helpers/job/jobs-outbox-pusher-mock.helper.js';
 import type { JobsOutboxEntity, JobsOutboxModel } from '@volontariapp/database';
 import { type BaseRepository, OutboxStatus } from '@volontariapp/database';
 import type { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
@@ -58,12 +58,13 @@ describe('JobsOutboxConsumer (Unit)', () => {
       const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
         .outboxDispatcher;
       const completedSpy = jest.spyOn(dispatcher, 'markAsCompleted');
+      const pushSpy = jest.spyOn(pusher, 'pushElement');
 
       await consumer.processItems(entities);
 
-      expect(pusher.pushElement).toHaveBeenCalledTimes(2);
-      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
-      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
+      expect(pushSpy).toHaveBeenCalledTimes(2);
+      expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
       const spyMock = completedSpy as jest.Mock;
       expect(spyMock).toHaveBeenCalledTimes(2);
       expect(spyMock).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
@@ -73,7 +74,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
     it('should mark items as failed if pushing throws error', async () => {
       const entities = [{ id: '1', status: OutboxStatus.PROCESSING } as JobsOutboxEntity];
       const error = new Error('Redis connection lost');
-      pusher.pushElement.mockRejectedValueOnce(error);
+      const pushSpy = jest.spyOn(pusher, 'pushElement').mockRejectedValueOnce(error);
 
       const dispatcher = (consumer as unknown as { outboxDispatcher: JobsOutboxDispatcher })
         .outboxDispatcher;
@@ -82,6 +83,7 @@ describe('JobsOutboxConsumer (Unit)', () => {
 
       await consumer.processItems(entities);
 
+      expect(pushSpy).toHaveBeenCalledTimes(1);
       expect(completedSpy).not.toHaveBeenCalled();
       expect(failedSpy).toHaveBeenCalledWith(
         expect.objectContaining({ id: entities[0].id }),

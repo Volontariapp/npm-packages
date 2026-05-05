@@ -8,7 +8,7 @@ import {
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
 import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 
 describe('EventQueueDispatcher (Integration)', () => {
   let dispatcher: EventQueueDispatcher;

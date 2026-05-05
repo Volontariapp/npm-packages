@@ -21,3 +21,4 @@ export interface EventRegistry {
 }
 
 export * from './event/payloads.js';
+export * from './utils.js';

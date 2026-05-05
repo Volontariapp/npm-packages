@@ -7,8 +7,8 @@ import {
 } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { EventQueueWriter } from '../../../writers/event-queue.writer.js';
-import { makeEventQueueEvent } from '../../utils/helpers/event-queue-event.helper.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeEventQueueEvent } from '../../utils/helpers/event/event-queue-event.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
 
 describe('EventQueueWriter (Full Integration)', () => {

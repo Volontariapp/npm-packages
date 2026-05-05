@@ -6,26 +6,31 @@ import {
   OutboxStatus,
 } from '@volontariapp/database';
 import type { Repository } from 'typeorm';
+import type { Redis } from 'ioredis';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { EventQueueConsumer } from '../../../consumers/event-queue.consumer.js';
 import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
+import { createTestRedisConnection } from '../../redis-config.js';
 
 describe('EventQueueConsumer (Integration)', () => {
   let consumer: EventQueueConsumer;
   let repository: Repository<EventQueueModel>;
   let pusher: EventQueuePusher;
+  let redis: Redis;
   const logger = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
     repository = testDataSource.getRepository(EventQueueModel);
-    pusher = new EventQueuePusher(logger);
+    redis = createTestRedisConnection();
+    pusher = new EventQueuePusher(logger, redis);
   });
 
   afterAll(async () => {
+    await redis.quit();
     await closeTestDb();
   });
 

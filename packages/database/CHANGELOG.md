@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.15.0
+
+### Minor Changes
+
+- Event queue pusher added
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.4.0
+
 ## 1.14.0
 
 ### Minor Changes

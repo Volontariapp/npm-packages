@@ -12,6 +12,7 @@ export const makeEventQueueEvent = (
     },
     status: OutboxStatus.PENDING,
     attempts: 0,
+    targetServices: [],
     createdAt: new Date(Date.now() - 60_000),
     updatedAt: new Date(),
     ...overrides,
