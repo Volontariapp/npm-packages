@@ -1,9 +1,14 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { DBConfig } from './db-config.js';
+import { BaseDbConfig } from './db-config.js';
 import type { IRedisConfig } from '../../interfaces/database.config.interface.js';
 
-export class RedisConfig extends DBConfig implements IRedisConfig {
+export class RedisConfig extends BaseDbConfig implements IRedisConfig {
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  password!: string;
+
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

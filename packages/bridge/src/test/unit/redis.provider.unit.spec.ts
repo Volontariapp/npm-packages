@@ -9,6 +9,7 @@ describe('RedisProvider Unit Tests', () => {
   const config: IRedisConfig = {
     host: 'localhost',
     port: 6379,
+    password: 'password',
   };
 
   beforeEach(() => {
