@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- bump bridge + health check for adding redis cred
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@1.0.0
+
 ## 0.1.12
 
 ### Patch Changes

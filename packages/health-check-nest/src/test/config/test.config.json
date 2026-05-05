@@ -26,8 +26,8 @@
   "redis": {
     "host": "localhost",
     "port": 6379,
-    "username": "default",
-    "password": "test",
+    "username": "user",
+    "password": "password",
     "database": "0",
     "dbIndex": 0,
     "keyPrefix": ""
