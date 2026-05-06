@@ -5,6 +5,7 @@ import type { RedisConfig } from '@volontariapp/config';
 export const testRedisOptions: RedisOptions = {
   host: '127.0.0.1',
   port: 6379,
+  password: 'password',
   maxRetriesPerRequest: null,
   lazyConnect: true,
 };
@@ -13,6 +14,7 @@ export const testRedisConfig: Partial<RedisConfig> = {
   host: '127.0.0.1',
   port: 6379,
   dbIndex: 0,
+  password: 'password',
 };
 
 export const createTestRedisConnection = (): Redis => {

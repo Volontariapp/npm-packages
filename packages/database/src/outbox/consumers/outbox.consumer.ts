@@ -64,30 +64,33 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
   }
 
   private normalizeRows(result: unknown): TOutboxModel[] {
-    this.logger.debug('Normalizing query result', { isArray: Array.isArray(result) });
+    let data: Record<string, unknown>[];
 
-    const data =
-      result !== null && typeof result === 'object' && 'rows' in result
-        ? (result as { rows: unknown }).rows
-        : result;
-
-    if (!Array.isArray(data)) {
-      this.logger.warn('Query result data is not an array after normalization', {
-        type: typeof data,
-      });
+    if (this.isRawResult(result)) {
+      data = result.rows;
+    } else if (Array.isArray(result)) {
+      data = result as Record<string, unknown>[];
+    } else {
       return [];
     }
 
-    this.logger.debug(`Mapping ${data.length.toString()} raw rows to models`);
+    return data.map((row) => {
+      const entries = Object.entries(row).map(([key, value]) => {
+        const camelKey = key.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase());
+        return [camelKey, value] as [string, unknown];
+      });
 
-    return data.map((item: unknown) => {
-      const row = item as Record<string, unknown>;
-      return {
-        ...row,
-        createdAt: (row.createdAt ?? row.created_at) as Date,
-        updatedAt: (row.updatedAt ?? row.updated_at) as Date,
-      } as TOutboxModel;
+      return Object.fromEntries(entries) as unknown as TOutboxModel;
     });
+  }
+
+  private isRawResult(result: unknown): result is { rows: Record<string, unknown>[] } {
+    return (
+      result !== null &&
+      typeof result === 'object' &&
+      'rows' in result &&
+      Array.isArray((result as Record<string, unknown>).rows)
+    );
   }
 
   async processItems(entities: TOutboxEntity[]): Promise<void> {

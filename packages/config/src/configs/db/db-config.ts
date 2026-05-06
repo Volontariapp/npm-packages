@@ -1,7 +1,7 @@
 import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class DBConfig {
+export class BaseDbConfig {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
@@ -11,7 +11,9 @@ export class DBConfig {
   @Type(() => Number)
   @IsNumber()
   port!: number;
+}
 
+export class DBConfig extends BaseDbConfig {
   @IsDefined()
   @IsNotEmpty()
   @IsString()

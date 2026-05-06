@@ -20,4 +20,5 @@ export const neo4jConfig: INeo4jConfig = {
 export const redisConfig: IRedisConfig = {
   host: 'localhost',
   port: 6379,
+  password: 'password',
 };

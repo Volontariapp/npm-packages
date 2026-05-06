@@ -6,12 +6,12 @@ import {
   type JobsOutboxModel,
 } from '@volontariapp/database';
 import { JobsOutboxWriter } from '../../../writers/jobs-outbox.writer.js';
-import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeJobsOutboxEvent } from '../../utils/helpers/job/jobs-outbox-event.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import {
   makeJobsOutboxRepositoryMock,
   type JobsOutboxRepositoryMock,
-} from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
+} from '../../utils/helpers/job/jobs-outbox-repository-mock.helper.js';
 
 describe('JobsOutboxWriter (Unit)', () => {
   let writer: JobsOutboxWriter;

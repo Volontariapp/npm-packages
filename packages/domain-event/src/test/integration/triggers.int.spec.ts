@@ -17,6 +17,13 @@ import { TagFactory } from '../__test-utils__/factories/tag.factory.js';
 import { RequirementFactory } from '../__test-utils__/factories/requirement.factory.js';
 import { EventQueueModel } from '@volontariapp/database';
 import { EventMessagingType } from '@volontariapp/messaging';
+import {
+  EVENT_QUEUE_TRIGGER_FUNCTION,
+  EVENTS_TRIGGER,
+  REQUIREMENTS_TRIGGER,
+  TAGS_TRIGGER,
+  EVENT_TAGS_TRIGGER,
+} from '../../database/triggers/index.js';
 
 describe('SQL Triggers (Integration)', () => {
   let eventRepository: PostgresEventRepository;
@@ -26,6 +33,13 @@ describe('SQL Triggers (Integration)', () => {
   beforeAll(async () => {
     await initializeTestDb();
     await testDataSource.runMigrations();
+
+    await testDataSource.query(EVENT_QUEUE_TRIGGER_FUNCTION);
+    await testDataSource.query(EVENTS_TRIGGER);
+    await testDataSource.query(REQUIREMENTS_TRIGGER);
+    await testDataSource.query(TAGS_TRIGGER);
+    await testDataSource.query(EVENT_TAGS_TRIGGER);
+
     eventRepository = new PostgresEventRepository(getTestRepository(EventModel));
     tagRepository = new PostgresTagRepository(getTestRepository(TagModel));
     requirementRepository = new PostgresRequirementRepository(getTestRepository(RequirementModel));
@@ -50,6 +64,7 @@ describe('SQL Triggers (Integration)', () => {
     expect(record.payload.after.name).toBe('Trigger Test Event');
     expect(record.payload.before).toBeFalsy();
     expect(record.emitter).toBe('ms-event-db');
+    expect(record.targetServices).toContain('social');
   });
 
   it('should create an event_queue record when a requirement is updated', async () => {

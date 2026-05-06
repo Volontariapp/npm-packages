@@ -54,7 +54,7 @@ export const testDbNeo4jConfig: INeo4jConfig = {
 export const testDbRedisConfig: IRedisConfig = {
   host: config.redis.host,
   port: config.redis.port,
-  username: config.redis.username,
+  password: config.redis.password,
   db: config.redis.dbIndex,
   keyPrefix: config.redis.keyPrefix,
 };

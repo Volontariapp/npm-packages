@@ -2,11 +2,15 @@ import type { EventPayload } from '../types/payload.registry.js';
 import { OutboxModel } from './outbox.model.js';
 import { Column, Entity } from 'typeorm';
 import type { EventType } from '../types/event.type.js';
+import { ServiceType } from '@volontariapp/shared';
 
 @Entity('event_queue')
 export class EventQueueModel<K extends EventType = EventType> extends OutboxModel<K> {
   @Column({ type: 'integer' })
   version!: number;
+
+  @Column({ name: 'target_services', type: 'varchar', array: true, default: [] })
+  targetServices: ServiceType[] = [];
 
   @Column({ type: 'jsonb' })
   payload!: {

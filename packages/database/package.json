@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/database",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -44,6 +44,7 @@
     "@volontariapp/config": "workspace:*",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*",
+    "@volontariapp/shared": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "pg": "^8.20.0",

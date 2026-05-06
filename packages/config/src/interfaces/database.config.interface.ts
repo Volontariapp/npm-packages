@@ -26,4 +26,5 @@ export interface INeo4jConfig {
 export interface IRedisConfig extends RedisOptions {
   host: string;
   port: number;
+  password: string;
 }

@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.15.1
+  - @volontariapp/messaging@1.1.1
+
+## 0.6.0
+
+### Minor Changes
+
+- Event queue pusher added
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@1.1.0
+  - @volontariapp/database@1.15.0
+  - @volontariapp/shared@0.4.0
+
 ## 0.5.0
 
 ### Minor Changes

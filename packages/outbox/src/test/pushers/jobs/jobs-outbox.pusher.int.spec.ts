@@ -1,21 +1,27 @@
 import { describe, expect, it, beforeEach, afterAll, afterEach } from '@jest/globals';
-import { JobsOutboxPusher } from '../../pushers/jobs-outbox.pusher.js';
-import { makeLoggerMock } from '../utils/helpers/logger-mock.helper.js';
-import { makeJobsOutboxEvent } from '../utils/helpers/jobs-outbox-event.helper.js';
-import { testRedisConfig, testRedisOptions, clearTestRedis } from '../redis-config.js';
+import { JobsOutboxPusher } from '../../../pushers/jobs-outbox.pusher.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
+import { makeJobsOutboxEvent } from '../../utils/helpers/job/jobs-outbox-event.helper.js';
+import { createTestRedisConnection, testRedisOptions, clearTestRedis } from '../../redis-config.js';
 import { Queue } from 'bullmq';
+import type { Redis } from 'ioredis';
 
 describe('JobsOutboxPusher (Integration)', () => {
   let pusher: JobsOutboxPusher;
+  let redis: Redis;
   const logger = makeLoggerMock();
 
   beforeEach(async () => {
     await clearTestRedis();
-    pusher = new JobsOutboxPusher(logger, testRedisConfig);
+    redis = createTestRedisConnection();
+    pusher = new JobsOutboxPusher(logger, redis);
   });
 
   afterEach(async () => {
     await pusher.close();
+    if (redis.status !== 'end') {
+      await redis.quit();
+    }
   });
 
   afterAll(async () => {

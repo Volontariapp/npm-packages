@@ -8,7 +8,7 @@ import {
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
 import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 
 describe('JobsOutboxDispatcher (Integration)', () => {
   let dispatcher: JobsOutboxDispatcher;

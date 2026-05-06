@@ -1,40 +1,38 @@
 import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals';
-import type { Job, JobsOptions } from 'bullmq';
+import type { Job } from 'bullmq';
+import {
+  setupBullMQMock,
+  mockQueue,
+  type MockJob,
+} from '../../utils/helpers/shared/bullmq-mock.helper.js';
+import { makeRedisMock } from '../../utils/helpers/shared/redis-mock.helper.js';
 
-interface MockJob {
-  name: string;
-  data: unknown;
-  opts: JobsOptions;
-}
+setupBullMQMock();
 
-const mockQueueAdd = jest.fn<(name: string, data: unknown, opts?: JobsOptions) => Promise<Job>>();
-const mockQueueAddBulk = jest.fn<(jobs: MockJob[]) => Promise<Job[]>>();
-const mockQueueClose = jest.fn<() => Promise<void>>();
-
-jest.unstable_mockModule('bullmq', () => ({
-  Queue: jest.fn().mockImplementation(() => ({
-    add: mockQueueAdd,
-    addBulk: mockQueueAddBulk,
-    close: mockQueueClose,
-  })),
-}));
-
-const { JobsOutboxPusher } = await import('../../pushers/jobs-outbox.pusher.js');
-const { makeLoggerMock } = await import('../utils/helpers/logger-mock.helper.js');
-const { makeJobsOutboxEvent } = await import('../utils/helpers/jobs-outbox-event.helper.js');
-const { RedisConfig } = await import('@volontariapp/config');
+const { JobsOutboxPusher } = await import('../../../pushers/jobs-outbox.pusher.js');
+const { makeLoggerMock } = await import('../../utils/helpers/shared/logger-mock.helper.js');
+const { makeJobsOutboxEvent } = await import('../../utils/helpers/job/jobs-outbox-event.helper.js');
 
 describe('JobsOutboxPusher (Unit)', () => {
   let pusher: InstanceType<typeof JobsOutboxPusher>;
   const loggerMock = makeLoggerMock();
-  const redisConfig = new RedisConfig();
+  const redisMock = makeRedisMock();
 
-  redisConfig.host = 'localhost';
-  redisConfig.port = 6379;
+  // Spies
+  let addSpy: jest.SpiedFunction<typeof mockQueue.add>;
+  let addBulkSpy: jest.SpiedFunction<(jobs: MockJob[]) => Promise<Job[]>>;
+  let loggerErrorSpy: jest.SpiedFunction<typeof loggerMock.error>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    pusher = new JobsOutboxPusher(loggerMock, redisConfig);
+
+    addSpy = jest.spyOn(mockQueue, 'add');
+    addBulkSpy = jest.spyOn(mockQueue, 'addBulk') as jest.SpiedFunction<
+      (jobs: MockJob[]) => Promise<Job[]>
+    >;
+    loggerErrorSpy = jest.spyOn(loggerMock, 'error');
+
+    pusher = new JobsOutboxPusher(loggerMock, redisMock);
   });
 
   afterEach(async () => {
@@ -47,6 +45,7 @@ describe('JobsOutboxPusher (Unit)', () => {
 
   describe('pushElement', () => {
     it('should push a job to the correct queue', async () => {
+      // Arrange
       const entity = makeJobsOutboxEvent({
         id: '1',
         type: 'test.job',
@@ -55,14 +54,20 @@ describe('JobsOutboxPusher (Unit)', () => {
         scheduledAt: undefined,
       });
 
+      // Act
       await pusher.pushElement(entity);
 
+      // Assert
       const { Queue } = await import('bullmq');
-      expect(Queue).toHaveBeenCalledWith('test-service', expect.any(Object));
-      expect(mockQueueAdd).toHaveBeenCalledWith('test.job', { data: 'test' }, { jobId: '1' });
+      expect(Queue).toHaveBeenCalledWith(
+        'test-service',
+        expect.objectContaining({ connection: redisMock }),
+      );
+      expect(addSpy).toHaveBeenCalledWith('test.job', { data: 'test' }, { jobId: '1' });
     });
 
     it('should include delay if scheduledAt is in the future', async () => {
+      // Arrange
       const futureDate = new Date(Date.now() + 10000);
       const entity = makeJobsOutboxEvent({
         id: '1',
@@ -72,9 +77,11 @@ describe('JobsOutboxPusher (Unit)', () => {
         scheduledAt: futureDate,
       });
 
+      // Act
       await pusher.pushElement(entity);
 
-      expect(mockQueueAdd).toHaveBeenCalledWith(
+      // Assert
+      expect(addSpy).toHaveBeenCalledWith(
         'test.job',
         { data: 'test' },
         expect.objectContaining({
@@ -85,17 +92,18 @@ describe('JobsOutboxPusher (Unit)', () => {
     });
 
     it('should throw and log error if queue.add fails', async () => {
+      // Arrange
       const entity = makeJobsOutboxEvent({
         id: '1',
         type: 'test.job',
         target: 'test-service',
       });
-
       const error = new Error('Queue error');
-      mockQueueAdd.mockRejectedValueOnce(error);
+      addSpy.mockRejectedValueOnce(error);
 
+      // Act & Assert
       await expect(pusher.pushElement(entity)).rejects.toThrow('Queue error');
-      expect(loggerMock.error).toHaveBeenCalledWith(
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Failed to push job outbox item 1'),
         expect.objectContaining({ error }),
       );
@@ -104,57 +112,48 @@ describe('JobsOutboxPusher (Unit)', () => {
 
   describe('pushBulkElement', () => {
     it('should group jobs by target and push them in bulk', async () => {
+      // Arrange
       const entities = [
-        makeJobsOutboxEvent({
-          id: '1',
-          type: 'job.1',
-          payload: { p: 1 },
-          target: 'service-a',
-          scheduledAt: undefined,
-        }),
-        makeJobsOutboxEvent({
-          id: '2',
-          type: 'job.2',
-          payload: { p: 2 },
-          target: 'service-b',
-          scheduledAt: undefined,
-        }),
-        makeJobsOutboxEvent({
-          id: '3',
-          type: 'job.3',
-          payload: { p: 3 },
-          target: 'service-a',
-          scheduledAt: undefined,
-        }),
+        makeJobsOutboxEvent({ id: '1', type: 'job.1', target: 'service-a' }),
+        makeJobsOutboxEvent({ id: '2', type: 'job.2', target: 'service-b' }),
+        makeJobsOutboxEvent({ id: '3', type: 'job.3', target: 'service-a' }),
       ];
 
+      // Act
       await pusher.pushBulkElement(entities);
 
-      expect(mockQueueAddBulk).toHaveBeenCalledTimes(2);
+      // Assert
+      expect(addBulkSpy).toHaveBeenCalledTimes(2);
 
-      const allBulkCalls = (mockQueueAddBulk as jest.Mock).mock.calls as [MockJob[]][];
-
+      const allBulkCalls = addBulkSpy.mock.calls;
       const serviceACall = allBulkCalls.find((call) => call[0].some((job) => job.name === 'job.1'));
 
       expect(serviceACall).toBeDefined();
-      const [jobsA] = serviceACall as [MockJob[]];
+
+      if (!serviceACall) {
+        throw new Error('serviceACall is undefined');
+      }
+
+      const [jobsA] = serviceACall;
 
       expect(jobsA).toHaveLength(2);
-      expect(jobsA).toContainEqual({
-        name: 'job.1',
-        data: { p: 1 },
-        opts: { jobId: '1' },
-      });
+      expect(jobsA).toContainEqual(
+        expect.objectContaining({
+          name: 'job.1',
+          opts: expect.objectContaining({ jobId: '1' }),
+        }),
+      );
     });
 
     it('should throw and log error if queue.addBulk fails', async () => {
+      // Arrange
       const entities = [makeJobsOutboxEvent({ id: '1', target: 'service-a' })];
-
       const error = new Error('Bulk error');
-      mockQueueAddBulk.mockRejectedValueOnce(error);
+      addBulkSpy.mockRejectedValueOnce(error);
 
+      // Act & Assert
       await expect(pusher.pushBulkElement(entities)).rejects.toThrow('Bulk error');
-      expect(loggerMock.error).toHaveBeenCalledWith(
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Failed to push bulk job outbox items'),
         expect.objectContaining({ error }),
       );

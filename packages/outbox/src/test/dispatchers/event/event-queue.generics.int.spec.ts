@@ -8,9 +8,9 @@ import {
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
 import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import type { FakePayload } from '../../utils/helpers/event-queue-generics.helper.js';
-import { EventType } from '../../utils/helpers/event-queue-generics.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
+import type { FakePayload } from '../../utils/helpers/event/event-queue-generics.helper.js';
+import { EventType } from '../../utils/helpers/event/event-queue-generics.helper.js';
 
 describe('EventQueue Generics (Integration)', () => {
   let dispatcher: EventQueueDispatcher<EventType, FakePayload>;

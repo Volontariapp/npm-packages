@@ -19,5 +19,6 @@ export const bridgeConfigExample: IBridgeConfig = {
   redis: {
     host: 'localhost',
     port: 6379,
+    password: 'password',
   },
 };

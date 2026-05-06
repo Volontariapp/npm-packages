@@ -3,13 +3,13 @@ import { EventQueueConsumer } from '../../../consumers/event-queue.consumer.js';
 import {
   makeEventQueueConsumerRepositoryMock,
   type EventQueueConsumerRepositoryMock,
-} from '../../utils/helpers/event-queue-repository-mock.helper.js';
-import type { LoggerMock } from '../../utils/helpers/logger-mock.helper.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+} from '../../utils/helpers/event/event-queue-repository-mock.helper.js';
+import type { LoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import {
   makeEventQueuePusherMock,
   type EventQueuePusherMock,
-} from '../../utils/helpers/event-queue-pusher-mock.helper.js';
+} from '../../utils/helpers/event/event-queue-pusher-mock.helper.js';
 import type { EventQueueEntity } from '@volontariapp/database';
 import { OutboxStatus } from '@volontariapp/database';
 import type { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
@@ -54,12 +54,13 @@ describe('EventQueueConsumer (Unit)', () => {
       const dispatcher = (consumer as unknown as { outboxDispatcher: EventQueueDispatcher })
         .outboxDispatcher;
       const completedSpy = jest.spyOn(dispatcher, 'markAsCompleted') as jest.Mock;
+      const pushSpy = jest.spyOn(pusher, 'pushElement');
 
       await consumer.processItems(entities);
 
-      expect(pusher.pushElement).toHaveBeenCalledTimes(2);
-      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
-      expect(pusher.pushElement).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
+      expect(pushSpy).toHaveBeenCalledTimes(2);
+      expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+      expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
       expect(completedSpy).toHaveBeenCalledTimes(2);
       expect(completedSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
       expect(completedSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '2' }));
@@ -68,7 +69,7 @@ describe('EventQueueConsumer (Unit)', () => {
     it('should mark items as failed if pushing throws error', async () => {
       const entities = [{ id: '1', status: OutboxStatus.PROCESSING } as EventQueueEntity];
       const error = new Error('Redis connection lost');
-      pusher.pushElement.mockRejectedValueOnce(error);
+      const pushSpy = jest.spyOn(pusher, 'pushElement').mockRejectedValueOnce(error);
 
       const dispatcher = (consumer as unknown as { outboxDispatcher: EventQueueDispatcher })
         .outboxDispatcher;
@@ -77,6 +78,7 @@ describe('EventQueueConsumer (Unit)', () => {
 
       await consumer.processItems(entities);
 
+      expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
       expect(completedSpy).not.toHaveBeenCalled();
       expect(failedSpy).toHaveBeenCalledWith(
         expect.objectContaining({ id: entities[0].id }),

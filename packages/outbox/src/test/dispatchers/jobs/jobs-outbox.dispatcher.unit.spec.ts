@@ -2,12 +2,12 @@ import { describe, expect, it, beforeEach, jest, afterEach } from '@jest/globals
 import { UnprocessableEntityError } from '@volontariapp/errors';
 import { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
 import { OutboxStatus } from '@volontariapp/database';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import {
   makeJobsOutboxRepositoryMock,
   type JobsOutboxRepositoryMock,
-} from '../../utils/helpers/jobs-outbox-repository-mock.helper.js';
-import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
+} from '../../utils/helpers/job/jobs-outbox-repository-mock.helper.js';
+import { makeJobsOutboxEvent } from '../../utils/helpers/job/jobs-outbox-event.helper.js';
 
 describe('JobsOutboxDispatcher (Unit)', () => {
   let dispatcher: JobsOutboxDispatcher;

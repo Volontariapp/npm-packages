@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- Event queue pusher added
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.15.1
+
 ## 1.0.4
 
 ### Patch Changes

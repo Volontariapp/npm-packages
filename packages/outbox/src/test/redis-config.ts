@@ -5,15 +5,17 @@ import type { RedisConfig } from '@volontariapp/config';
 export const testRedisOptions: RedisOptions = {
   host: '127.0.0.1',
   port: 6379,
+  password: 'password',
   maxRetriesPerRequest: null, // Required by BullMQ
   lazyConnect: true,
 };
 
-export const testRedisConfig = {
+export const testRedisConfig: RedisConfig = {
   host: '127.0.0.1',
   port: 6379,
   dbIndex: 0,
-} as unknown as RedisConfig;
+  password: 'password',
+};
 
 export const createTestRedisConnection = (): Redis => {
   return new Redis(testRedisOptions);

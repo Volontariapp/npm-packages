@@ -6,28 +6,32 @@ import {
   OutboxStatus,
 } from '@volontariapp/database';
 import type { Repository } from 'typeorm';
+import type { Redis } from 'ioredis';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { JobsOutboxConsumer } from '../../../consumers/jobs-outbox.consumer.js';
 import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import { JobsOutboxPusher } from '../../../pushers/jobs-outbox.pusher.js';
-import { testRedisConfig } from '../../redis-config.js';
+import { createTestRedisConnection } from '../../redis-config.js';
 
 describe('JobsOutboxConsumer (Integration)', () => {
   let consumer: JobsOutboxConsumer;
   let repository: Repository<JobsOutboxModel>;
   let pusher: JobsOutboxPusher;
+  let redis: Redis;
   const logger = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
     repository = testDataSource.getRepository(JobsOutboxModel);
-    pusher = new JobsOutboxPusher(logger, testRedisConfig);
+    redis = createTestRedisConnection();
+    pusher = new JobsOutboxPusher(logger, redis);
   });
 
   afterAll(async () => {
     await pusher.close();
+    await redis.quit();
     await closeTestDb();
   });
 

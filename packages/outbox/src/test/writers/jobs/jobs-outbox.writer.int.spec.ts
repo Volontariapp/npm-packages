@@ -7,10 +7,10 @@ import {
 } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { JobsOutboxWriter } from '../../../writers/jobs-outbox.writer.js';
-import { makeJobsOutboxEvent } from '../../utils/helpers/jobs-outbox-event.helper.js';
+import { makeJobsOutboxEvent } from '../../utils/helpers/job/jobs-outbox-event.helper.js';
 import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
 import type { Logger } from '@volontariapp/logger';
-import { makeLoggerMock } from '../../utils/helpers/logger-mock.helper.js';
+import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 
 describe('JobsOutboxWriter (Full Integration)', () => {
   let writer: JobsOutboxWriter;

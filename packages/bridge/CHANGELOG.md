@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- bump bridge + health check for adding redis cred
+
 ## 0.2.10
 
 ### Patch Changes

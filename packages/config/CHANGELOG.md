@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- **BREAKING**: `username` removed from `RedisConfig` and `IRedisConfig` (ioredis `RedisOptions` already provides it as optional)
+- **BREAKING**: `password` is now required in `RedisConfig` and `IRedisConfig`
+
 ## 2.1.0
 
 ### Minor Changes
