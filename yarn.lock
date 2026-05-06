@@ -4319,6 +4319,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/workers@workspace:packages/workers":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/workers@workspace:packages/workers"
+  dependencies:
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "abbrev@npm:^4.0.0":
   version: 4.0.0
   resolution: "abbrev@npm:4.0.0"
