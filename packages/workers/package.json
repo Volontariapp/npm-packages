@@ -32,7 +32,12 @@
     "lint": "eslint src/",
     "test": "echo \"No tests yet\""
   },
+  "dependencies": {
+    "@volontariapp/logger": "workspace:*",
+    "bullmq": "^5.76.5"
+  },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "typescript": "5.7.3"
   }
 }

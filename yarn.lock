@@ -3405,7 +3405,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.1.0":
+"@types/node@npm:^24.0.0, @types/node@npm:^24.1.0":
   version: 24.12.2
   resolution: "@types/node@npm:24.12.2"
   dependencies:
@@ -4323,6 +4323,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/workers@workspace:packages/workers"
   dependencies:
+    "@types/node": "npm:^24.0.0"
+    "@volontariapp/logger": "workspace:*"
+    bullmq: "npm:^5.76.5"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
