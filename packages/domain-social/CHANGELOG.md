@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - Updated dependencies []:
+  - @volontariapp/errors-nest@0.11.0
   - @volontariapp/bridge-nest@0.3.12
 
 ## 0.3.11

@@ -6,6 +6,7 @@
 
 - Updated dependencies []:
   - @volontariapp/bridge@1.0.0
+  - @volontariapp/errors-nest@0.11.0
 
 ## 0.3.11
 
