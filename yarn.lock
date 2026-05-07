@@ -4355,7 +4355,6 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.0.0"
     "@volontariapp/config": "workspace:*"
-    "@volontariapp/database": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
     bullmq: "npm:^5.76.5"
