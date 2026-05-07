@@ -30,7 +30,9 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "dependencies": {
     "@volontariapp/config": "workspace:*",
@@ -43,10 +45,14 @@
     "bullmq": "^5.0.0"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
     "@nestjs/bullmq": "^11.0.0",
     "@nestjs/common": "^11.0.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
     "bullmq": "^5.76.5",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.6",
     "typescript": "5.7.3"
   }
 }

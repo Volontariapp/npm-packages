@@ -4349,13 +4349,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/workers@workspace:packages/workers"
   dependencies:
+    "@jest/globals": "npm:^30.3.0"
     "@nestjs/bullmq": "npm:^11.0.0"
     "@nestjs/common": "npm:^11.0.0"
+    "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.0.0"
     "@volontariapp/config": "workspace:*"
+    "@volontariapp/database": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
     bullmq: "npm:^5.76.5"
+    jest: "npm:^30.3.0"
+    ts-jest: "npm:^29.4.6"
     typescript: "npm:5.7.3"
   peerDependencies:
     "@nestjs/bullmq": ^11.0.0
