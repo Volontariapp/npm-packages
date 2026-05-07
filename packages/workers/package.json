@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
-  "description": "",
+  "description": "Abstract BullMQ worker base for Volontariapp NestJS workers",
   "license": "UNLICENSED",
   "type": "module",
   "main": "./dist/index.js",
@@ -33,11 +33,20 @@
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
+    "@volontariapp/config": "workspace:*",
     "@volontariapp/logger": "workspace:*",
-    "bullmq": "^5.76.5"
+    "@volontariapp/messaging": "workspace:*"
+  },
+  "peerDependencies": {
+    "@nestjs/bullmq": "^11.0.0",
+    "@nestjs/common": "^11.0.0",
+    "bullmq": "^5.0.0"
   },
   "devDependencies": {
+    "@nestjs/bullmq": "^11.0.0",
+    "@nestjs/common": "^11.0.0",
     "@types/node": "^24.0.0",
+    "bullmq": "^5.76.5",
     "typescript": "5.7.3"
   }
 }
