@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.1
+
+### Patch Changes
+
+- testing lib added
+
+- Updated dependencies []:
+  - @volontariapp/database@1.15.1
+  - @volontariapp/contracts@4.0.10
+
 ## 1.1.0
 
 ### Minor Changes

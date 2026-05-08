@@ -1,10 +1,5 @@
-import { describe, expect, it, beforeEach } from '@jest/globals';
-import {
-  OutboxStatus,
-  type BaseRepository,
-  type EventQueueEntity,
-  type EventQueueModel,
-} from '@volontariapp/database';
+import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { OutboxStatus } from '@volontariapp/database';
 import { EventQueueWriter } from '../../../writers/event-queue.writer.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event/event-queue-event.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
@@ -20,19 +15,17 @@ describe('EventQueueWriter (Unit)', () => {
   beforeEach(() => {
     repository = makeEventQueueRepositoryMock();
     const logger = makeLoggerMock();
-    writer = new EventQueueWriter(
-      logger,
-      repository as unknown as BaseRepository<EventQueueModel, EventQueueEntity, string>,
-    );
+    writer = new EventQueueWriter(logger, repository);
   });
 
   it('create() should pass default values when not overridden', async () => {
     const event = makeEventQueueEvent();
+    const spy = jest.spyOn(repository, 'create');
 
     await writer.create(event);
 
-    expect(repository.create).toHaveBeenCalledTimes(1);
-    const created = repository.create.mock.calls[0][0];
+    expect(spy).toHaveBeenCalledTimes(1);
+    const created = spy.mock.calls[0][0];
     expect(created.status).toBe(OutboxStatus.PENDING);
     expect(created.attempts).toBe(0);
     expect(created.version).toBe(1);
@@ -50,10 +43,11 @@ describe('EventQueueWriter (Unit)', () => {
       },
     });
 
+    const spy = jest.spyOn(repository, 'create');
     await writer.create(event);
 
-    expect(repository.create).toHaveBeenCalledTimes(1);
-    const created = repository.create.mock.calls[0][0];
+    expect(spy).toHaveBeenCalledTimes(1);
+    const created = spy.mock.calls[0][0];
     expect(created.status).toBe(OutboxStatus.FAILED);
     expect(created.attempts).toBe(2);
     expect(created.version).toBe(7);

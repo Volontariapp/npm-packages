@@ -9,21 +9,21 @@ import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source
 import { JobsOutboxDispatcher } from '../../../dispatchers/jobs-outbox.dispatcher.js';
 import { TestJobsOutboxRepository } from '../../utils/repositories/jobs-outbox-test.repository.js';
 import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
-import type { FakePayload } from '../../utils/helpers/job/jobs-outbox-generics.helper.js';
+import type { JobsOutboxFakePayload } from '../../utils/helpers/job/jobs-outbox-generics.helper.js';
 import { JobType } from '../../utils/helpers/job/jobs-outbox-generics.helper.js';
 
 describe('JobsOutbox Generics (Integration)', () => {
-  let dispatcher: JobsOutboxDispatcher<JobType, FakePayload>;
-  let repository: TestJobsOutboxRepository<JobType, FakePayload>;
+  let dispatcher: JobsOutboxDispatcher<JobType, JobsOutboxFakePayload>;
+  let repository: TestJobsOutboxRepository<JobType, JobsOutboxFakePayload>;
   const logger = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
-    repository = new TestJobsOutboxRepository<JobType, FakePayload>(
+    repository = new TestJobsOutboxRepository<JobType, JobsOutboxFakePayload>(
       testDataSource.getRepository(JobsOutboxModel),
     );
-    dispatcher = new JobsOutboxDispatcher<JobType, FakePayload>(logger, repository);
+    dispatcher = new JobsOutboxDispatcher<JobType, JobsOutboxFakePayload>(logger, repository);
   });
 
   afterAll(async () => {
@@ -35,7 +35,7 @@ describe('JobsOutbox Generics (Integration)', () => {
   });
 
   it('should persist and retrieve a perfectly typed generic job', async () => {
-    const job = new JobsOutboxEntity<JobType.FAKE, FakePayload>();
+    const job = new JobsOutboxEntity<JobType.FAKE, JobsOutboxFakePayload>();
     job.id = '00000000-0000-0000-0000-000000000001';
     job.type = JobType.FAKE;
     job.emitter = 'test';

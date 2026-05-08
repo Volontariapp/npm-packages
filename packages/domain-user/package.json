@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-user",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@nestjs/typeorm": "^11.0.1",
+    "@volontariapp/testing": "workspace:*",
     "reflect-metadata": "^0.2.2",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.28",

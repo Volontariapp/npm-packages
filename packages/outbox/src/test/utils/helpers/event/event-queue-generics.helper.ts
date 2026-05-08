@@ -4,7 +4,7 @@ export enum EventType {
   FAKE = 'fake.event',
 }
 
-export interface FakePayload extends JsonObject {
+export interface EventQueueFakePayload extends JsonObject {
   foo: string;
   count: number;
 }

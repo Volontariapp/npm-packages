@@ -1,6 +1,6 @@
 import type { jest } from '@jest/globals';
 import type { OutboxEntity, BaseRepository, OutboxModel } from '@volontariapp/database';
-import { createMock } from '@volontariapp/database/testing';
+import { createMock } from '@volontariapp/testing';
 
 export type OutboxRepositoryMock<
   TEntity extends OutboxEntity,

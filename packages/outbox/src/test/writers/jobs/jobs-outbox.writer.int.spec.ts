@@ -33,7 +33,7 @@ describe('JobsOutboxWriter (Full Integration)', () => {
     await testDataSource.getRepository(JobsOutboxModel).createQueryBuilder().delete().execute();
   });
 
-  it('create() should persist default values when not overridden', async () => {
+  it('should persist default values when not overridden', async () => {
     const event = makeJobsOutboxEvent();
 
     await writer.create(event);
@@ -49,7 +49,7 @@ describe('JobsOutboxWriter (Full Integration)', () => {
     expect(row.scheduledAt).toEqual(event.scheduledAt);
   });
 
-  it('create() should persist overridden values', async () => {
+  it('should persist overridden values', async () => {
     const event = makeJobsOutboxEvent({
       type: 'jobs.retry',
       status: OutboxStatus.PROCESSING,

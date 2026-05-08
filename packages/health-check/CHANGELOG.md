@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@1.0.1
+  - @volontariapp/config@3.0.1
+  - @volontariapp/errors@0.5.1
+
 ## 1.0.0
 
 ### Major Changes

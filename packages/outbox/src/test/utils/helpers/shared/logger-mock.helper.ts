@@ -1,6 +1,6 @@
 import type { jest } from '@jest/globals';
+import { createMock } from '@volontariapp/testing';
 import type { Logger } from '@volontariapp/logger';
-import { createMock } from '@volontariapp/database/testing';
 
 export type LoggerMock = jest.Mocked<Logger>;
 

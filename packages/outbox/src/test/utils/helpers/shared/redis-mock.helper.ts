@@ -1,5 +1,5 @@
 import type { jest } from '@jest/globals';
-import { createMock } from '@volontariapp/database/testing';
+import { createMock } from '@volontariapp/testing';
 import type { Redis, ChainableCommander } from 'ioredis';
 
 export type RedisMock = jest.Mocked<Redis>;

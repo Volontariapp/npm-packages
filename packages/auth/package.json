@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/auth",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -62,6 +62,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.1.0",
     "@types/supertest": "^7.2.0",
+    "@volontariapp/testing": "workspace:*",
     "jest": "^30.3.0",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.15.1
+
+### Patch Changes
+
+- testing lib added
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.4
+  - @volontariapp/bridge@1.0.1
+  - @volontariapp/config@3.0.1
+  - @volontariapp/errors@0.5.1
+
 ## 1.15.0
 
 ### Minor Changes

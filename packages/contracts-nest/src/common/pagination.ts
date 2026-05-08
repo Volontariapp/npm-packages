@@ -4,8 +4,6 @@
 //   protoc               unknown
 // source: volontariapp/common/pagination.proto
 
-/* eslint-disable */
-
 export interface PaginationRequest {
   page: number;
   limit: number;

@@ -4,8 +4,6 @@
 //   protoc               unknown
 // source: volontariapp/common/geo.proto
 
-/* eslint-disable */
-
 export interface Point {
   latitude: number;
   longitude: number;

@@ -9,21 +9,21 @@ import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source
 import { EventQueueDispatcher } from '../../../dispatchers/event-queue.dispatcher.js';
 import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
 import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
-import type { FakePayload } from '../../utils/helpers/event/event-queue-generics.helper.js';
+import type { EventQueueFakePayload } from '../../utils/helpers/event/event-queue-generics.helper.js';
 import { EventType } from '../../utils/helpers/event/event-queue-generics.helper.js';
 
 describe('EventQueue Generics (Integration)', () => {
-  let dispatcher: EventQueueDispatcher<EventType, FakePayload>;
-  let repository: TestEventQueueRepository<EventType, FakePayload>;
+  let dispatcher: EventQueueDispatcher<EventType, EventQueueFakePayload>;
+  let repository: TestEventQueueRepository<EventType, EventQueueFakePayload>;
   const logger = makeLoggerMock();
 
   beforeAll(async () => {
     await initializeTestDb();
     databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
-    repository = new TestEventQueueRepository<EventType, FakePayload>(
+    repository = new TestEventQueueRepository<EventType, EventQueueFakePayload>(
       testDataSource.getRepository(EventQueueModel),
     );
-    dispatcher = new EventQueueDispatcher<EventType, FakePayload>(logger, repository);
+    dispatcher = new EventQueueDispatcher<EventType, EventQueueFakePayload>(logger, repository);
   });
 
   afterAll(async () => {
@@ -35,7 +35,7 @@ describe('EventQueue Generics (Integration)', () => {
   });
 
   it('should persist and retrieve a perfectly typed generic event', async () => {
-    const event = new EventQueueEntity<EventType.FAKE, FakePayload>();
+    const event = new EventQueueEntity<EventType.FAKE, EventQueueFakePayload>();
     event.id = '00000000-0000-0000-0000-000000000001';
     event.type = EventType.FAKE;
     event.emitter = 'test';
