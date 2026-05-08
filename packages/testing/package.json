@@ -1,6 +1,6 @@
 {
-  "name": "@volontariapp/messaging",
-  "version": "1.1.1",
+  "name": "@volontariapp/testing",
+  "version": "1.0.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
-  "description": "Universal messaging contracts for Volontariapp (Events and Jobs)",
+  "description": "",
   "license": "UNLICENSED",
   "type": "module",
   "main": "./dist/index.js",
@@ -32,12 +32,11 @@
     "lint": "eslint src/",
     "test": "echo \"No tests yet\""
   },
-  "devDependencies": {
-    "@volontariapp/testing": "workspace:*",
-    "typescript": "5.7.3"
-  },
   "dependencies": {
-    "@volontariapp/contracts": "workspace:*",
-    "@volontariapp/database": "workspace:*"
+    "@jest/globals": "^30.3.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "typescript": "5.7.3"
   }
 }

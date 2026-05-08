@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.6.6
+
+### Patch Changes
+
+- testing lib added
+
+- Updated dependencies []:
+  - @volontariapp/messaging@1.1.1
+  - @volontariapp/database@1.15.1
+  - @volontariapp/logger@0.2.4
+  - @volontariapp/contracts@4.0.10
+  - @volontariapp/errors@0.5.1
+  - @volontariapp/errors-nest@0.11.1
+
 ## 2.6.5
 
 ### Patch Changes

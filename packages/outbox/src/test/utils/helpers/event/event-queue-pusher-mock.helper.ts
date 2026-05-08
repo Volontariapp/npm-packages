@@ -1,5 +1,5 @@
 import type { jest } from '@jest/globals';
-import { createMock } from '@volontariapp/database/testing';
+import { createMock } from '@volontariapp/testing';
 import type { EventQueuePusher } from '../../../../pushers/event-queue.pusher.js';
 
 export type EventQueuePusherMock = jest.Mocked<EventQueuePusher>;

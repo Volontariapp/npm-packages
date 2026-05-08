@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { createMock } from '@volontariapp/database/testing';
+import { createMock } from '@volontariapp/testing';
 import type { Queue, JobsOptions } from 'bullmq';
 
 export interface MockJob {

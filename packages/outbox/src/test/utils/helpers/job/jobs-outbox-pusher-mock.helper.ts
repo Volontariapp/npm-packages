@@ -1,5 +1,5 @@
 import type { jest } from '@jest/globals';
-import { createMock } from '@volontariapp/database/testing';
+import { createMock } from '@volontariapp/testing';
 import type { JobsOutboxPusher } from '../../../../pushers/jobs-outbox.pusher.js';
 
 export type JobsOutboxPusherMock = jest.Mocked<JobsOutboxPusher>;

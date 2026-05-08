@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/outbox",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -43,6 +43,7 @@
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
     "@volontariapp/shared": "workspace:*",
+    "@volontariapp/testing": "workspace:*",
     "bullmq": "^5.76.5",
     "ioredis": "^5.10.1"
   },
@@ -51,6 +52,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/pg": "^8",
+    "@volontariapp/testing": "workspace:*",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",

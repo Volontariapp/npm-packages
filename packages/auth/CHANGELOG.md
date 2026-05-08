@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.2.4
+
+### Patch Changes
+
+- testing lib added
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.4
+  - @volontariapp/errors@0.5.1
+  - @volontariapp/errors-nest@0.11.1
+
 ## 3.2.3
 
 ### Patch Changes
