@@ -1,12 +1,10 @@
-export interface BullConnectionConfig {
-  host: string;
-  port: number;
-  password: string;
-  db: number;
+import type { IRedisConfig } from '@volontariapp/config';
+
+export type BullConnectionConfig = IRedisConfig & {
   maxRetriesPerRequest: null;
   enableReadyCheck: boolean;
   enableOfflineQueue: boolean;
-}
+};
 
 export interface BullDefaultJobOptions {
   attempts: number;

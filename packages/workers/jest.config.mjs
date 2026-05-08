@@ -4,6 +4,7 @@ export default {
   testEnvironment: 'node',
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@volontariapp/testing$': '<rootDir>/../testing/src/index.ts',
     '^@volontariapp/messaging$': '<rootDir>/../messaging/src/index.ts',
     '^@volontariapp/logger$': '<rootDir>/../logger/src/index.ts',
   },
