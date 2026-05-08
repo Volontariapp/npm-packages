@@ -4,7 +4,7 @@ export enum JobType {
   FAKE = 'fake.job',
 }
 
-export interface FakePayload extends JsonObject {
+export interface JobsOutboxFakePayload extends JsonObject {
   foo: string;
   count: number;
 }
