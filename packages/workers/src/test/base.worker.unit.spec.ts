@@ -1,9 +1,4 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-
-jest.unstable_mockModule('@nestjs/bullmq', () => ({
-  WorkerHost: class WorkerHost {},
-}));
-
 import type { TestJob } from './utils/test-job.utils.js';
 import { JobMessagingType } from '@volontariapp/messaging';
 import { TestWorker } from './utils/test-worker.utils.js';
