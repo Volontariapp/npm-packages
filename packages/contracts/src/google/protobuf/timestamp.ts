@@ -4,8 +4,6 @@
 //   protoc               unknown
 // source: google/protobuf/timestamp.proto
 
-/* eslint-disable */
-
 /**
  * A Timestamp represents a point in time independent of any time zone or local
  * calendar, encoded as a count of seconds and fractions of seconds at

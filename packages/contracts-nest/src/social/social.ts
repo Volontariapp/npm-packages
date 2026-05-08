@@ -4,8 +4,6 @@
 //   protoc               unknown
 // source: volontariapp/social/social.proto
 
-/* eslint-disable */
-
 export interface SocialUser {
   userId: string;
 }

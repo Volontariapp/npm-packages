@@ -4,8 +4,6 @@
 //   protoc               unknown
 // source: volontariapp/post/post.proto
 
-/* eslint-disable */
-
 export interface Post {
   id: string;
   authorId: string;
