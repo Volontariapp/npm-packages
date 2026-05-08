@@ -4357,6 +4357,7 @@ __metadata:
     "@volontariapp/config": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/testing": "workspace:*"
     bullmq: "npm:^5.76.5"
     jest: "npm:^30.3.0"
     ts-jest: "npm:^29.4.6"
