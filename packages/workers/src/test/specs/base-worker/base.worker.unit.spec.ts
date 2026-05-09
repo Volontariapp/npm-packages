@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import type { TestJob } from './utils/test-job.utils.js';
 import { JobMessagingType } from '@volontariapp/messaging';
-import { TestWorker } from './utils/test-worker.utils.js';
-import { makeTestJob } from './utils/test-job.utils.js';
+import { TestWorker, makeTestJob, type TestJob } from '../../utils/index.js';
 
 describe('BaseWorker', () => {
   let worker: TestWorker;
@@ -42,6 +40,7 @@ describe('BaseWorker', () => {
       await worker.process(mockJob);
 
       expect(worker.logger.info).toHaveBeenCalledTimes(2);
+
       expect(worker.logger.info).toHaveBeenNthCalledWith(2, 'Job completed', {
         jobId: 'job-123',
         type: JobMessagingType.SEND_WELCOME_EMAIL,
@@ -81,6 +80,7 @@ describe('BaseWorker', () => {
       await expect(worker.process(mockJob)).rejects.toThrow();
 
       expect(worker.logger.error).toHaveBeenCalledTimes(1);
+
       expect(worker.logger.error).toHaveBeenCalledWith('Job failed', {
         jobId: 'job-123',
         type: JobMessagingType.SEND_WELCOME_EMAIL,
@@ -95,6 +95,7 @@ describe('BaseWorker', () => {
       await expect(worker.process(mockJob)).rejects.toThrow();
 
       expect(worker.logger.info).toHaveBeenCalledTimes(1);
+
       expect(worker.logger.info).toHaveBeenCalledWith('Processing job', expect.any(Object));
     });
 
@@ -103,6 +104,7 @@ describe('BaseWorker', () => {
       worker.processJob.mockRejectedValue(thrown);
 
       await expect(worker.process(mockJob)).rejects.toBe(thrown);
+
       expect(worker.logger.error).toHaveBeenCalledWith(
         'Job failed',
         expect.objectContaining({ error: thrown }),

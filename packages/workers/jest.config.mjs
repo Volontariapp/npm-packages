@@ -2,8 +2,13 @@
 export default {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
+  globalSetup:
+    process.env.INTEGRATION === 'true' ? '<rootDir>/src/test/global-setup.ts' : undefined,
+  maxWorkers: process.env.INTEGRATION === 'true' ? 1 : '50%',
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@volontariapp/database$': '<rootDir>/../database/src/index.ts',
     '^@volontariapp/testing$': '<rootDir>/../testing/src/index.ts',
     '^@volontariapp/messaging$': '<rootDir>/../messaging/src/index.ts',
     '^@volontariapp/logger$': '<rootDir>/../logger/src/index.ts',
@@ -20,5 +25,5 @@ export default {
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
   coverageProvider: 'v8',
   collectCoverageFrom: ['src/**/*.ts', '!**/node_modules/**', '!**/dist/**', '!**/index.ts'],
-  testMatch: ['**/*.unit.spec.ts'],
+  testMatch: process.env.INTEGRATION === 'true' ? ['**/*.spec.ts'] : ['**/*.unit.spec.ts'],
 };

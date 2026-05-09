@@ -1,5 +1,5 @@
 import { JobMessagingType } from '@volontariapp/messaging';
-import type { JobOf } from '../../types/index.js';
+import type { JobOf } from '../../../../types/index.js';
 
 export type TestJobType = typeof JobMessagingType.SEND_WELCOME_EMAIL;
 export type TestJob = JobOf<TestJobType>;
