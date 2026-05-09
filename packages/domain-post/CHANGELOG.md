@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- Finished domain-post package
+
 ## 2.3.0
 
 ### Minor Changes

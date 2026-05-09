@@ -11,7 +11,7 @@ export class PostModel {
   @Column({ type: 'varchar', length: 255 })
   title!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 500 })
   content!: string;
 
   @CreateDateColumn()

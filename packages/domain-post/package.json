@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-post",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -41,9 +41,9 @@
   "devDependencies": {
     "@jest/globals": "^30.3.0",
     "@nestjs/typeorm": "^11.0.1",
-    "@volontariapp/testing": "workspace:*",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
+    "@volontariapp/testing": "workspace:*",
     "jest": "^30.3.0",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
