@@ -7,9 +7,13 @@ import type { JobAuditRepository } from '../../../../data/repositories/job-audit
 
 export type LoggerMock = jest.Mocked<Logger>;
 
+function createLoggerMock(): LoggerMock {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  return createMockLogger<Logger>() as jest.Mocked<Logger>;
+}
+
 export class TestWorker extends BaseWorker<TestJobType> {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  public override logger: LoggerMock = createMockLogger<Logger>();
+  public override logger: LoggerMock = createLoggerMock();
   public processJob = jest.fn() as jest.MockedFunction<(job: TestJob) => Promise<void>>;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

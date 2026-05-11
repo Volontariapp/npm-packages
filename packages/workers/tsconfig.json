@@ -6,5 +6,5 @@
     "baseUrl": "./"
   },
   "include": ["src"],
-  "exclude": ["src/test"]
+  "exclude": []
 }
