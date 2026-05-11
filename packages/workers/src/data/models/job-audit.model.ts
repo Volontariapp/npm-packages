@@ -3,21 +3,21 @@ import { BaseModel } from '@volontariapp/database';
 import { JobAuditStatus } from '../types/job-audit.status.js';
 
 @Entity('job_audit')
-@Index(['jobId'])
+@Index(['jobId'], { unique: true })
 @Index(['jobType'])
 @Index(['workerId'])
 @Index(['status'])
 export class JobAuditModel extends BaseModel {
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, name: 'job_id', unique: true })
   jobId!: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, name: 'job_type' })
   jobType!: string;
 
   @Column({ type: 'varchar', length: 20, default: JobAuditStatus.PENDING })
   status: JobAuditStatus = JobAuditStatus.PENDING;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, name: 'worker_id' })
   workerId!: string;
 
   @Column({ name: 'current_attempt', type: 'int', default: 1 })

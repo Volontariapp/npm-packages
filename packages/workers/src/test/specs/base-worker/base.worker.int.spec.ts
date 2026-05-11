@@ -46,7 +46,7 @@ describe('BaseWorker — Integration', () => {
       await worker.process(mockJob);
 
       // Assert
-      const audit = await auditRepo.findById(jobId);
+      const audit = await auditRepo.findByJobId(jobId);
       expect(audit).not.toBeNull();
       if (!audit) return;
 
@@ -71,7 +71,7 @@ describe('BaseWorker — Integration', () => {
       await worker.process(mockJob);
 
       // Assert
-      const audit = await auditRepo.findById(jobId);
+      const audit = await auditRepo.findByJobId(jobId);
       expect(audit).not.toBeNull();
       if (!audit) return;
 
@@ -96,7 +96,7 @@ describe('BaseWorker — Integration', () => {
       // Act & Assert
       await expect(worker.process(mockJob)).rejects.toThrow(error);
 
-      const audit = await auditRepo.findById(jobId);
+      const audit = await auditRepo.findByJobId(jobId);
       expect(audit).not.toBeNull();
       if (!audit) return;
 
@@ -118,13 +118,13 @@ describe('BaseWorker — Integration', () => {
       // Act & Assert
       await expect(worker.process(mockJob)).rejects.toBe('string-error');
 
-      const audit = await auditRepo.findById(jobId);
+      const audit = await auditRepo.findByJobId(jobId);
       expect(audit).not.toBeNull();
       if (!audit) return;
 
       expect(audit.status).toBe(JobAuditStatus.FAILED);
       expect(audit.errorMessage).toBe('string-error');
-      expect(audit.errorStack).toBeUndefined();
+      expect(audit.errorStack).toBeNull();
     });
   });
 
@@ -140,7 +140,7 @@ describe('BaseWorker — Integration', () => {
       worker.processJob.mockResolvedValue(undefined);
       await worker.process(mockJob);
 
-      let audit = await auditRepo.findById(jobId);
+      let audit = await auditRepo.findByJobId(jobId);
       expect(audit).not.toBeNull();
       if (!audit) return;
       expect(audit.currentAttempt).toBe(1);
@@ -150,7 +150,7 @@ describe('BaseWorker — Integration', () => {
       await worker.process(mockJob);
 
       // Assert
-      audit = await auditRepo.findById(jobId);
+      audit = await auditRepo.findByJobId(jobId);
       expect(audit).not.toBeNull();
       if (!audit) return;
       expect(audit.currentAttempt).toBe(2);
@@ -214,7 +214,7 @@ describe('BaseWorker — Integration', () => {
       const afterEnd = new Date();
 
       // Assert
-      const audit = await auditRepo.findById(jobId);
+      const audit = await auditRepo.findByJobId(jobId);
       expect(audit).not.toBeNull();
       if (!audit) return;
 

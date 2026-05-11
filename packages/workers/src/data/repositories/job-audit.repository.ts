@@ -13,4 +13,8 @@ export class JobAuditRepository extends BaseRepository<JobAuditModel, JobAuditEn
   ) {
     super(repository, JobAuditEntity, JobAuditModel);
   }
+
+  async findByJobId(jobId: string): Promise<JobAuditEntity | null> {
+    return this.findOne({ jobId });
+  }
 }
