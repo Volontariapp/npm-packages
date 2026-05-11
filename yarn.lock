@@ -1570,6 +1570,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/bull-shared@npm:^11.0.4":
+  version: 11.0.4
+  resolution: "@nestjs/bull-shared@npm:11.0.4"
+  dependencies:
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+  checksum: 10c0/88b819fa8e24033f41b9764712ebe130b1c6b78c9dfecbda1dbdf6c97f9f63a70fd0eb1cde870d2839590f8c712612c3d46ed30732361afe066c93bf320834fd
+  languageName: node
+  linkType: hard
+
+"@nestjs/bullmq@npm:^11.0.0":
+  version: 11.0.4
+  resolution: "@nestjs/bullmq@npm:11.0.4"
+  dependencies:
+    "@nestjs/bull-shared": "npm:^11.0.4"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+    bullmq: ^3.0.0 || ^4.0.0 || ^5.0.0
+  checksum: 10c0/be2aed53e06d1c66a9f93e22553973b7037529c376a8d4922ff6d33255edf1e1af1e813a1bd450bcac9375ea56619c301a37cee72bcaef7f5593086eb6350aa1
+  languageName: node
+  linkType: hard
+
 "@nestjs/common@npm:^11.0.0, @nestjs/common@npm:^11.0.1, @nestjs/common@npm:^11.1.17, @nestjs/common@npm:^11.1.18":
   version: 11.1.19
   resolution: "@nestjs/common@npm:11.1.19"
@@ -3405,7 +3431,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.1.0":
+"@types/node@npm:^24.0.0, @types/node@npm:^24.1.0":
   version: 24.12.2
   resolution: "@types/node@npm:24.12.2"
   dependencies:
@@ -4316,6 +4342,30 @@ __metadata:
       optional: true
     class-validator:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/workers@workspace:packages/workers":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/workers@workspace:packages/workers"
+  dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@nestjs/bullmq": "npm:^11.0.0"
+    "@nestjs/common": "npm:^11.0.0"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^24.0.0"
+    "@volontariapp/config": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
+    "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/testing": "workspace:*"
+    bullmq: "npm:^5.76.5"
+    jest: "npm:^30.3.0"
+    ts-jest: "npm:^29.4.6"
+    typescript: "npm:5.7.3"
+  peerDependencies:
+    "@nestjs/bullmq": ^11.0.0
+    "@nestjs/common": ^11.0.0
+    bullmq: ^5.0.0
   languageName: unknown
   linkType: soft
 

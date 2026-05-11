@@ -1,0 +1,59 @@
+{
+  "name": "@volontariapp/workers",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
+  },
+  "description": "Abstract BullMQ worker base for Volontariapp NestJS workers",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/",
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
+  },
+  "dependencies": {
+    "@volontariapp/config": "workspace:*",
+    "@volontariapp/logger": "workspace:*",
+    "@volontariapp/messaging": "workspace:*"
+  },
+  "peerDependencies": {
+    "@nestjs/bullmq": "^11.0.0",
+    "@nestjs/common": "^11.0.0",
+    "bullmq": "^5.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@nestjs/bullmq": "^11.0.0",
+    "@nestjs/common": "^11.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "@volontariapp/testing": "workspace:*",
+    "bullmq": "^5.76.5",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "5.7.3"
+  }
+}
