@@ -25,5 +25,5 @@ export default {
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
   coverageProvider: 'v8',
   collectCoverageFrom: ['src/**/*.ts', '!**/node_modules/**', '!**/dist/**', '!**/index.ts'],
-  testMatch: process.env.INTEGRATION === 'true' ? ['**/*.spec.ts'] : ['**/*.unit.spec.ts'],
+  testMatch: process.env.INTEGRATION === 'true' ? ['**/*.int.spec.ts'] : ['**/*.unit.spec.ts'],
 };

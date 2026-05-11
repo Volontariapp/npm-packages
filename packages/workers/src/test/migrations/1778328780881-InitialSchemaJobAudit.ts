@@ -12,6 +12,7 @@ export class InitialSchemaJobAudit1778328780881 implements MigrationInterface {
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'uuid',
+            default: 'gen_random_uuid()',
           },
           {
             name: 'job_id',
