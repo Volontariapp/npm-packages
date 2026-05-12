@@ -22,8 +22,16 @@ export default {
       },
     ],
   },
-  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
+  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/', '/src/test/'],
   coverageProvider: 'v8',
-  collectCoverageFrom: ['src/**/*.ts', '!**/node_modules/**', '!**/dist/**', '!**/index.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
+    '!**/index.ts',
+    '!**/*.spec.ts',
+    '!**/*.int.spec.ts',
+    '!src/test/**',
+  ],
   testMatch: process.env.INTEGRATION === 'true' ? ['**/*.int.spec.ts'] : ['**/*.unit.spec.ts'],
 };
