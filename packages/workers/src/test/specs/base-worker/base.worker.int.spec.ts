@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import type { Repository } from 'typeorm';
 import { databaseMapper } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
@@ -26,10 +35,12 @@ describe('BaseWorker — Integration', () => {
 
   beforeEach(async () => {
     await clearTestDatabase(modelRepo);
+    jest.clearAllMocks();
   });
 
   afterEach(async () => {
     await clearTestRedis();
+    jest.restoreAllMocks();
   });
 
   describe('Succès — PROCESSING → COMPLETED', () => {
@@ -129,53 +140,31 @@ describe('BaseWorker — Integration', () => {
   });
 
   describe('Retry — Upsert & Increment', () => {
-    it('devrait incrémenter currentAttempt sur 2e tentative', async () => {
+    it('devrait créer une seule row audit pour un job (idempotent sur COMPLETED)', async () => {
+      // Test that subsequent calls don't create multiple rows, they upsert the same row
       // Arrange
-      const jobId = 'int-retry-001';
+      const jobId = 'int-single-row-001';
       const mockJob = makeTestJob({ id: jobId });
       const worker = new TestWorker(auditRepo);
 
-      // 1re tentative
       mockJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
-      await worker.process(mockJob);
 
-      let audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
-      expect(audit.currentAttempt).toBe(1);
-
-      // 2e tentative
-      mockJob.attemptsMade = 1;
+      // Act
       await worker.process(mockJob);
 
       // Assert
-      audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
-      expect(audit.currentAttempt).toBe(2);
-      expect(audit.status).toBe(JobAuditStatus.COMPLETED);
-    });
+      const allAudits = await modelRepo.find({ where: { jobId } });
+      expect(allAudits).toHaveLength(1);
+      expect(allAudits[0].status).toBe(JobAuditStatus.COMPLETED);
 
-    it('devrait faire upsert sur retry (une seule row en DB)', async () => {
-      // Arrange
-      const jobId = 'int-upsert-001';
-      const mockJob = makeTestJob({ id: jobId });
-      const worker = new TestWorker(auditRepo);
-
-      // 1re tentative
-      mockJob.attemptsMade = 0;
-      worker.processJob.mockResolvedValue(undefined);
-      await worker.process(mockJob);
-
-      // 2e tentative
+      // If we were to retry, idempotence guard would skip processing
       mockJob.attemptsMade = 1;
       await worker.process(mockJob);
 
-      // Assert — une seule ligne
-      const allAudits = await modelRepo.find({ where: { jobId } });
-      expect(allAudits).toHaveLength(1);
-      expect(allAudits[0].currentAttempt).toBe(2);
+      // Should still be just 1 row
+      const finalAudits = await modelRepo.find({ where: { jobId } });
+      expect(finalAudits).toHaveLength(1);
     });
   });
 
@@ -225,6 +214,181 @@ describe('BaseWorker — Integration', () => {
         expect(audit.finishedAt.getTime()).toBeLessThanOrEqual(afterEnd.getTime());
         expect(audit.startedAt.getTime()).toBeLessThanOrEqual(audit.finishedAt.getTime());
       }
+    });
+  });
+
+  describe('Idempotence — Job déjà COMPLETED', () => {
+    it('devrait ignorer processJob si statut COMPLETED', async () => {
+      // Arrange
+      const jobId = 'int-idempotent-001';
+      const mockJob = makeTestJob({ id: jobId });
+      const worker = new TestWorker(auditRepo);
+
+      // 1re tentative: traite et complète
+      mockJob.attemptsMade = 0;
+      worker.processJob.mockResolvedValue(undefined);
+      await worker.process(mockJob);
+
+      let audit = await auditRepo.findByJobId(jobId);
+      expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
+
+      // 2e tentative: job ID même, attemptsMade=1
+      mockJob.attemptsMade = 1;
+      worker.processJob.mockClear();
+
+      // Act
+      await worker.process(mockJob);
+
+      // Assert
+      expect(worker.processJob).not.toHaveBeenCalled();
+
+      audit = await auditRepo.findByJobId(jobId);
+      expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
+
+      // Vérifier une seule row
+      const allAudits = await modelRepo.find({ where: { jobId } });
+      expect(allAudits).toHaveLength(1);
+    });
+
+    it('devrait loger warning quand job déjà complété', async () => {
+      // Arrange
+      const jobId = 'int-idempotent-warn-001';
+      const mockJob = makeTestJob({ id: jobId });
+      const worker = new TestWorker(auditRepo);
+
+      mockJob.attemptsMade = 0;
+      worker.processJob.mockResolvedValue(undefined);
+      await worker.process(mockJob);
+
+      mockJob.attemptsMade = 1;
+      worker.logger.warn.mockClear();
+
+      // Act
+      await worker.process(mockJob);
+
+      // Assert
+      expect(worker.logger.warn).toHaveBeenCalledWith('Job already processed, skipping', {
+        jobId,
+        type: mockJob.name,
+      });
+    });
+  });
+
+  describe('Audit failure resilience', () => {
+    it('devrait rejeter si updateWhere échoue après succès', async () => {
+      // Arrange
+      const jobId = 'int-audit-fail-success-001';
+      const mockJob = makeTestJob({ id: jobId });
+
+      // Créer un mock auditRepo qui échoue sur COMPLETED update
+      const mockAuditRepo = {
+        findByJobId: jest.fn().mockResolvedValue(null),
+        upsert: jest.fn().mockResolvedValue({ jobId, status: JobAuditStatus.PROCESSING }),
+        updateWhere: jest
+          .fn()
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .mockImplementation((_where: any, data: any) => {
+            if (data?.status === JobAuditStatus.COMPLETED) {
+              throw new Error('Simulated DB failure on COMPLETED update');
+            }
+            return Promise.resolve(undefined);
+          }),
+      };
+
+      const worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
+      mockJob.attemptsMade = 0;
+      worker.processJob.mockResolvedValue(undefined);
+
+      // Act & Assert
+      await expect(worker.process(mockJob)).rejects.toThrow(
+        'Simulated DB failure on COMPLETED update',
+      );
+
+      // Vérifier que upsert a été appelé
+      expect(mockAuditRepo.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: JobAuditStatus.PROCESSING,
+        }),
+        ['jobId'],
+      );
+
+      // Vérifier que updateWhere a été appelé et a échoué
+      expect(mockAuditRepo.updateWhere).toHaveBeenCalledWith(
+        { jobId },
+        expect.objectContaining({ status: JobAuditStatus.COMPLETED }),
+      );
+
+      // processJob avait bien été appelé
+      expect(worker.processJob).toHaveBeenCalledTimes(1);
+    });
+
+    it('devrait rejeter si updateWhere échoue lors de failure', async () => {
+      // Arrange
+      const jobId = 'int-audit-fail-failure-001';
+      const mockJob = makeTestJob({ id: jobId });
+      const jobError = new Error('Job processing failed');
+
+      // Créer un mock auditRepo qui échoue sur FAILED update
+      const mockAuditRepo = {
+        findByJobId: jest.fn().mockResolvedValue(null),
+        upsert: jest.fn().mockResolvedValue({ jobId, status: JobAuditStatus.PROCESSING }),
+        updateWhere: jest
+          .fn()
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .mockImplementation((_where: any, data: any) => {
+            if (data?.status === JobAuditStatus.FAILED) {
+              throw new Error('Simulated DB failure on FAILED update');
+            }
+            return Promise.resolve(undefined);
+          }),
+      };
+
+      const worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
+      mockJob.attemptsMade = 0;
+      worker.processJob.mockRejectedValue(jobError);
+
+      // Act & Assert
+      const thrown = await worker.process(mockJob).catch((error: unknown) => error);
+      expect(thrown instanceof Error && thrown.message).toBe(
+        'Simulated DB failure on FAILED update',
+      );
+
+      // Vérifier que upsert a été appelé
+      expect(mockAuditRepo.upsert).toHaveBeenCalled();
+
+      // Vérifier que updateWhere a été appelé et a échoué
+      expect(mockAuditRepo.updateWhere).toHaveBeenCalledWith(
+        { jobId },
+        expect.objectContaining({ status: JobAuditStatus.FAILED }),
+      );
+
+      // processJob avait bien été appelé
+      expect(worker.processJob).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Type de Job Invalide', () => {
+    it("devrait traiter un job de type différent sans corrompre l'audit", async () => {
+      // Arrange
+      const jobId = 'int-wrong-type-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+      const wrongTypeJob = makeTestJob({ id: jobId, name: 'DIFFERENT_JOB_TYPE' as any });
+      const worker = new TestWorker(auditRepo);
+
+      wrongTypeJob.attemptsMade = 0;
+      worker.processJob.mockResolvedValue(undefined);
+
+      // Act
+      await worker.process(wrongTypeJob);
+
+      // Assert
+      const audit = await auditRepo.findByJobId(jobId);
+      expect(audit).not.toBeNull();
+      if (!audit) return;
+
+      expect(audit.status).toBe(JobAuditStatus.COMPLETED);
+      expect(audit.jobType).toBe('DIFFERENT_JOB_TYPE');
+      expect(worker.processJob).toHaveBeenCalledTimes(1);
     });
   });
 });

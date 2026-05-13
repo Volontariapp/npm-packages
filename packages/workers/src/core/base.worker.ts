@@ -23,6 +23,15 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
 
     const startedAt = new Date();
 
+    const alreadyCompleted = await this.isJobAlreadyCompleted(job);
+    if (alreadyCompleted) {
+      this.logger.warn('Job already processed, skipping', {
+        jobId: job.id,
+        type: job.name,
+      });
+      return;
+    }
+
     await this.recordAuditStart(job, startedAt);
 
     try {
@@ -46,6 +55,21 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
   }
 
   protected abstract processJob(job: Job<JobRegistry[K], void, K>): Promise<void>;
+
+  private async isJobAlreadyCompleted(job: Job<JobRegistry[K], void, K>): Promise<boolean> {
+    if (!this.auditRepo || !job.id) return false;
+
+    try {
+      const audit = await this.auditRepo.findByJobId(job.id);
+      return audit?.status === JobAuditStatus.COMPLETED;
+    } catch (error: unknown) {
+      this.logger.error('Failed to check job completion status', {
+        jobId: job.id,
+        error,
+      });
+      return false;
+    }
+  }
 
   private async recordAuditStart(
     job: Job<JobRegistry[K], void, K>,
@@ -79,20 +103,19 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     }
 
     try {
-      await this.auditRepo
-        .createQueryBuilder()
-        .update()
-        .set({
+      await this.auditRepo.updateWhere(
+        { jobId: job.id },
+        {
           status: JobAuditStatus.COMPLETED,
           finishedAt: new Date(),
-        })
-        .where('jobId = :jobId', { jobId: job.id })
-        .execute();
+        },
+      );
     } catch (error: unknown) {
       this.logger.error('Failed to record audit success', {
         jobId: job.id,
         error,
       });
+      throw error;
     }
   }
 
@@ -108,23 +131,22 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
       const errorMessage = error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
 
-      await this.auditRepo
-        .createQueryBuilder()
-        .update()
-        .set({
+      await this.auditRepo.updateWhere(
+        { jobId: job.id },
+        {
           status: JobAuditStatus.FAILED,
           errorMessage,
           errorStack,
           finishedAt: new Date(),
           currentAttempt: job.attemptsMade + 1,
-        })
-        .where('jobId = :jobId', { jobId: job.id })
-        .execute();
+        },
+      );
     } catch (auditError: unknown) {
       this.logger.error('Failed to record audit failure', {
         jobId: job.id,
         error: auditError,
       });
+      throw auditError;
     }
   }
 }
