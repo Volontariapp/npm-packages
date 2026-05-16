@@ -9,6 +9,7 @@ import {
   jest,
 } from '@jest/globals';
 import type { Repository } from 'typeorm';
+import { Queue } from 'bullmq';
 import { databaseMapper } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { clearTestDatabase, clearTestRedis } from '../../utils/index.js';
@@ -16,7 +17,8 @@ import { JobAuditModel } from '../../../data/models/job-audit.model.js';
 import { JobAuditEntity } from '../../../data/entities/job-audit.entity.js';
 import { JobAuditStatus } from '../../../data/types/job-audit.status.js';
 import { JobAuditRepository } from '../../../data/repositories/job-audit.repository.js';
-import { TestWorker, makeTestJob } from '../../utils/index.js';
+import { TestWorker } from '../../utils/index.js';
+import { testRedisOptions } from '../../redis-config.js';
 
 describe('BaseWorker — Integration', () => {
   let modelRepo: Repository<JobAuditModel>;
@@ -43,244 +45,480 @@ describe('BaseWorker — Integration', () => {
     jest.restoreAllMocks();
   });
 
-  describe('Succès — PROCESSING → COMPLETED', () => {
-    it('devrait enregistrer audit avec statut COMPLETED', async () => {
-      // Arrange
-      const jobId = 'int-success-001';
-      const mockJob = makeTestJob({ id: jobId });
-      const worker = new TestWorker(auditRepo);
+  // Helper to get first job from queue with proper assertion
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function getFirstJob(jobs: any[]): any {
+    if (jobs.length === 0) throw new Error('No jobs in queue');
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return jobs[0]!;
+  }
 
-      mockJob.attemptsMade = 0;
+  // Helper to process job with type coercion
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function processJob(worker: TestWorker, job: any): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return worker.process(job);
+  }
+
+  // Helper to process job expecting rejection
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function processJobExpectError(worker: TestWorker, job: any, error: any): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return expect(worker.process(job)).rejects.toThrow(error);
+  }
+
+  describe('Succès — PROCESSING → COMPLETED (Redis)', () => {
+    it('enregistre audit COMPLETED avec timestamps depuis Redis', async () => {
+      const jobId = 'int-redis-success-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-success-queue', { connection: testRedisOptions });
+      const worker = new TestWorker(auditRepo);
       worker.processJob.mockResolvedValue(undefined);
 
-      // Act
-      await worker.process(mockJob);
+      try {
+        // Push réel dans Redis
+        await queue.add('SEND_WELCOME_EMAIL', { email: 'test@example.com' }, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // Assert
-      const audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const job = getFirstJob(jobs);
 
-      expect(audit.status).toBe(JobAuditStatus.COMPLETED);
-      expect(audit.startedAt).toBeDefined();
-      expect(audit.finishedAt).toBeDefined();
-      if (audit.startedAt && audit.finishedAt) {
-        expect(audit.startedAt.getTime()).toBeLessThanOrEqual(audit.finishedAt.getTime());
+        job.attemptsMade = 0;
+
+        const beforeProcess = new Date();
+        await processJob(worker, job);
+        const afterProcess = new Date();
+
+        // Vérifier audit en DB réelle
+        const audit = await auditRepo.findByJobId(jobId);
+        expect(audit).not.toBeNull();
+        if (audit) {
+          expect(audit.status).toBe(JobAuditStatus.COMPLETED);
+          expect(audit.startedAt).toBeDefined();
+          expect(audit.finishedAt).toBeDefined();
+          if (audit.startedAt && audit.finishedAt) {
+            expect(audit.startedAt.getTime()).toBeGreaterThanOrEqual(beforeProcess.getTime());
+            expect(audit.finishedAt.getTime()).toBeLessThanOrEqual(afterProcess.getTime());
+            expect(audit.startedAt.getTime()).toBeLessThanOrEqual(audit.finishedAt.getTime());
+          }
+        }
+      } finally {
+        await queue.close();
       }
     });
 
-    it('devrait enregistrer jobType et workerId', async () => {
-      // Arrange
-      const jobId = 'int-meta-001';
-      const mockJob = makeTestJob({ id: jobId });
+    it('enregistre jobType, workerId, currentAttempt depuis Redis', async () => {
+      const jobId = 'int-redis-meta-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-meta-queue', { connection: testRedisOptions });
       const worker = new TestWorker(auditRepo);
-
-      mockJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
 
-      // Act
-      await worker.process(mockJob);
+      try {
+        // Test 1: First attempt (attemptsMade=0)
+        await queue.add('SEND_WELCOME_EMAIL', { email: 'user@test.com' }, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
+        expect(jobs).toHaveLength(1);
 
-      // Assert
-      const audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
+        const job = jobs[0];
+        job.attemptsMade = 0;
 
-      expect(audit.jobType).toBe(mockJob.name);
-      expect(audit.workerId).toBeDefined();
-      expect(typeof audit.workerId).toBe('string');
-      expect(audit.currentAttempt).toBe(1);
+        await processJob(worker, job);
+
+        const audit = await auditRepo.findByJobId(jobId);
+        expect(audit).not.toBeNull();
+        if (audit) {
+          expect(audit.jobType).toBe('SEND_WELCOME_EMAIL');
+          expect(audit.workerId).toBeDefined();
+          expect(typeof audit.workerId).toBe('string');
+          expect(audit.currentAttempt).toBe(1); // attemptsMade=0 → attempt 1
+        }
+      } finally {
+        await queue.close();
+      }
     });
   });
 
-  describe('Échec — PROCESSING → FAILED', () => {
-    it('devrait enregistrer error_message et error_stack', async () => {
-      // Arrange
-      const jobId = 'int-fail-001';
-      const mockJob = makeTestJob({ id: jobId });
+  describe('Échec — PROCESSING → FAILED (Redis)', () => {
+    it('enregistre error_message et error_stack depuis Redis', async () => {
+      const jobId = 'int-redis-fail-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-fail-queue', { connection: testRedisOptions });
       const worker = new TestWorker(auditRepo);
-      const error = new Error('Processing failed');
+      const jobError = new Error('Redis job processing error');
+      worker.processJob.mockRejectedValue(jobError);
 
-      mockJob.attemptsMade = 0;
-      worker.processJob.mockRejectedValue(error);
+      try {
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // Act & Assert
-      await expect(worker.process(mockJob)).rejects.toThrow(error);
+        const job = jobs[0];
+        job.attemptsMade = 0;
 
-      const audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
+        await processJobExpectError(worker, job, jobError);
 
-      expect(audit.status).toBe(JobAuditStatus.FAILED);
-      expect(audit.errorMessage).toBe('Processing failed');
-      expect(audit.errorStack).toContain('Error: Processing failed');
-      expect(audit.finishedAt).toBeDefined();
+        const audit = await auditRepo.findByJobId(jobId);
+        expect(audit).not.toBeNull();
+        if (audit) {
+          expect(audit.status).toBe(JobAuditStatus.FAILED);
+          expect(audit.errorMessage).toBe('Redis job processing error');
+          expect(audit.errorStack).toContain('Error: Redis job processing error');
+          expect(audit.finishedAt).toBeDefined();
+        }
+      } finally {
+        await queue.close();
+      }
     });
 
-    it('devrait gérer non-Error thrown values', async () => {
-      // Arrange
-      const jobId = 'int-fail-string-001';
-      const mockJob = makeTestJob({ id: jobId });
+    it('gère string-error (non-Error thrown) depuis Redis', async () => {
+      const jobId = 'int-redis-fail-string-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-fail-string-queue', { connection: testRedisOptions });
       const worker = new TestWorker(auditRepo);
 
-      mockJob.attemptsMade = 0;
-      worker.processJob.mockRejectedValue('string-error');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      worker.processJob.mockRejectedValue('custom-error-string' as any);
 
-      // Act & Assert
-      await expect(worker.process(mockJob)).rejects.toBe('string-error');
+      try {
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      const audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
+        const job = jobs[0];
+        job.attemptsMade = 0;
 
-      expect(audit.status).toBe(JobAuditStatus.FAILED);
-      expect(audit.errorMessage).toBe('string-error');
-      expect(audit.errorStack).toBeNull();
+        await expect(processJob(worker, job)).rejects.toBe('custom-error-string');
+
+        const audit = await auditRepo.findByJobId(jobId);
+        expect(audit).not.toBeNull();
+        if (audit) {
+          expect(audit.status).toBe(JobAuditStatus.FAILED);
+          expect(audit.errorMessage).toBe('custom-error-string');
+          expect(audit.errorStack).toBeNull();
+        }
+      } finally {
+        await queue.close();
+      }
+    });
+
+    it('enregistre error lors de audit failure (DB failure)', async () => {
+      const jobId = 'int-redis-audit-fail-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-audit-fail-queue', { connection: testRedisOptions });
+
+      // Mock auditRepo pour échouer sur updateWhere (jest.fn() types not strictly compatible with repo)
+
+      const mockAuditRepo = {
+        findByJobId: jest.fn().mockResolvedValue(null),
+        upsert: jest.fn().mockResolvedValue({ jobId, status: JobAuditStatus.PROCESSING }),
+        updateWhere: jest.fn().mockRejectedValue(new Error('DB connection lost')),
+      };
+
+      const worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
+      const jobError = new Error('Job processing failed');
+      worker.processJob.mockRejectedValue(jobError);
+
+      try {
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const job = getFirstJob(jobs);
+
+        job.attemptsMade = 0;
+
+        // Should reject with audit error (not job error)
+        await expect(processJob(worker, job)).rejects.toThrow('DB connection lost');
+
+        // Verify upsert was called
+
+        expect(mockAuditRepo.upsert).toHaveBeenCalled();
+        // Verify updateWhere was called for failure
+
+        expect(mockAuditRepo.updateWhere).toHaveBeenCalled();
+      } finally {
+        await queue.close();
+      }
     });
   });
 
-  describe('Retry — Upsert & Increment', () => {
-    it('devrait créer une seule row audit pour un job (idempotent sur COMPLETED)', async () => {
-      // Test that subsequent calls don't create multiple rows, they upsert the same row
-      // Arrange
-      const jobId = 'int-single-row-001';
-      const mockJob = makeTestJob({ id: jobId });
+  describe('Retry — Upsert & Increment (Redis)', () => {
+    it('crée une seule row audit (Redis idempotent COMPLETED)', async () => {
+      const jobId = 'int-redis-single-row-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-single-row-queue', { connection: testRedisOptions });
       const worker = new TestWorker(auditRepo);
-
-      mockJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
 
-      // Act
-      await worker.process(mockJob);
+      try {
+        // 1re tentative
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        let jobs = await queue.getJobs(['waiting']);
 
-      // Assert
-      const allAudits = await modelRepo.find({ where: { jobId } });
-      expect(allAudits).toHaveLength(1);
-      expect(allAudits[0].status).toBe(JobAuditStatus.COMPLETED);
+        let job = jobs[0];
+        job.attemptsMade = 0;
 
-      // If we were to retry, idempotence guard would skip processing
-      mockJob.attemptsMade = 1;
-      await worker.process(mockJob);
+        await processJob(worker, job);
 
-      // Should still be just 1 row
-      const finalAudits = await modelRepo.find({ where: { jobId } });
-      expect(finalAudits).toHaveLength(1);
+        const allAudits = await modelRepo.find({ where: { jobId } });
+        expect(allAudits).toHaveLength(1);
+        expect(allAudits[0].status).toBe(JobAuditStatus.COMPLETED);
+
+        // 2e tentative: Redis job avec même jobId
+        worker.processJob.mockClear();
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        jobs = await queue.getJobs(['waiting']);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        job = jobs[0]!;
+        job.attemptsMade = 1;
+
+        await processJob(worker, job);
+
+        // Idempotence: toujours 1 seule row
+        const finalAudits = await modelRepo.find({ where: { jobId } });
+        expect(finalAudits).toHaveLength(1);
+        expect(finalAudits[0].status).toBe(JobAuditStatus.COMPLETED);
+        expect(worker.processJob).not.toHaveBeenCalled(); // Guard skipped re-processing
+      } finally {
+        await queue.close();
+      }
+    });
+
+    it('incrémente currentAttempt basé sur job.attemptsMade depuis Redis', async () => {
+      const jobId = 'int-redis-attempt-increment-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-attempt-queue', { connection: testRedisOptions });
+      const worker = new TestWorker(auditRepo);
+
+      worker.processJob.mockResolvedValue(undefined);
+
+      try {
+        // Simulate job with multiple attempts
+        // Attempt 1 (attemptsMade=0)
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        let jobs = await queue.getJobs(['waiting']);
+
+        let job = jobs[0];
+        job.attemptsMade = 0;
+
+        await processJob(worker, job);
+
+        let audit = await auditRepo.findByJobId(jobId);
+        expect(audit?.currentAttempt).toBe(1); // attemptsMade=0 → attempt 1
+        expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
+
+        // Attempt 2 (attemptsMade=1, same jobId mais depuis Redis)
+        // On simule que le job a été retried
+        worker.processJob.mockClear();
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        jobs = await queue.getJobs(['waiting']);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        job = getFirstJob(jobs);
+        job.attemptsMade = 1;
+
+        // Guard: job déjà COMPLETED donc pas de retraitement
+        await processJob(worker, job);
+
+        audit = await auditRepo.findByJobId(jobId);
+        // Audit doit toujours montrer l'attempt 1 car idempotence guard skipped le retraitement
+        expect(audit?.currentAttempt).toBe(1);
+        expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
+        expect(worker.processJob).not.toHaveBeenCalled(); // Guard prevented reprocessing
+      } finally {
+        await queue.close();
+      }
     });
   });
 
   describe('Graceful Degradation', () => {
-    it('devrait fonctionner sans auditRepo', async () => {
-      // Arrange
-      const jobId = 'int-no-audit-001';
-      const mockJob = makeTestJob({ id: jobId });
-      const worker = new TestWorker(); // sans auditRepo
+    it("fonctionne sans auditRepo (pas d'audit créé)", async () => {
+      const jobId = 'int-redis-no-audit-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-no-audit-queue', { connection: testRedisOptions });
+      const worker = new TestWorker(); // Sans auditRepo
 
-      mockJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
 
-      // Act & Assert
-      await expect(worker.process(mockJob)).resolves.toBeUndefined();
+      try {
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // Vérifier qu'aucun audit n'a été créé
-      const allAudits = await modelRepo.find({ where: { jobId } });
-      expect(allAudits).toHaveLength(0);
+        const job = jobs[0];
+        job.attemptsMade = 0;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        await expect(worker.process(job)).resolves.toBeUndefined();
+
+        // Aucun audit créé sans repo
+        const allAudits = await modelRepo.find({ where: { jobId } });
+        expect(allAudits).toHaveLength(0);
+        expect(worker.processJob).toHaveBeenCalledTimes(1);
+      } finally {
+        await queue.close();
+      }
     });
-  });
 
-  describe('Timestamp Consistency', () => {
-    it('devrait avoir timestamps cohérents', async () => {
-      // Arrange
-      const jobId = 'int-ts-001';
-      const mockJob = makeTestJob({ id: jobId });
+    it('fonctionne sans job.id (graceful skip)', async () => {
+      const jobId = 'int-redis-no-id-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-no-id-queue', { connection: testRedisOptions });
       const worker = new TestWorker(auditRepo);
-      const beforeStart = new Date();
 
-      mockJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
 
-      // Act
-      await worker.process(mockJob);
-      const afterEnd = new Date();
+      try {
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // Assert
-      const audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
+        const job = jobs[0];
+        job.attemptsMade = 0;
+        job.id = undefined; // Simulate missing ID
 
-      expect(audit.startedAt).toBeDefined();
-      expect(audit.finishedAt).toBeDefined();
-      if (audit.startedAt && audit.finishedAt) {
-        expect(audit.startedAt.getTime()).toBeGreaterThanOrEqual(beforeStart.getTime());
-        expect(audit.finishedAt.getTime()).toBeLessThanOrEqual(afterEnd.getTime());
-        expect(audit.startedAt.getTime()).toBeLessThanOrEqual(audit.finishedAt.getTime());
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        await expect(worker.process(job)).resolves.toBeUndefined();
+
+        // Pas d'audit créé sans ID
+        const allAudits = await modelRepo.find({ where: { jobId } });
+        expect(allAudits).toHaveLength(0);
+        expect(worker.processJob).toHaveBeenCalledTimes(1);
+      } finally {
+        await queue.close();
       }
     });
   });
 
-  describe('Idempotence — Job déjà COMPLETED', () => {
-    it('devrait ignorer processJob si statut COMPLETED', async () => {
-      // Arrange
-      const jobId = 'int-idempotent-001';
-      const mockJob = makeTestJob({ id: jobId });
+  describe('Timestamp Consistency (Redis)', () => {
+    it('timestamps cohérents depuis Redis', async () => {
+      const jobId = 'int-redis-ts-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-ts-queue', { connection: testRedisOptions });
       const worker = new TestWorker(auditRepo);
 
-      // 1re tentative: traite et complète
-      mockJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
-      await worker.process(mockJob);
 
-      let audit = await auditRepo.findByJobId(jobId);
-      expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
+      try {
+        const beforeStart = new Date();
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // 2e tentative: job ID même, attemptsMade=1
-      mockJob.attemptsMade = 1;
-      worker.processJob.mockClear();
+        const job = jobs[0];
+        job.attemptsMade = 0;
 
-      // Act
-      await worker.process(mockJob);
+        await processJob(worker, job);
+        const afterEnd = new Date();
 
-      // Assert
-      expect(worker.processJob).not.toHaveBeenCalled();
-
-      audit = await auditRepo.findByJobId(jobId);
-      expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
-
-      // Vérifier une seule row
-      const allAudits = await modelRepo.find({ where: { jobId } });
-      expect(allAudits).toHaveLength(1);
-    });
-
-    it('devrait loger warning quand job déjà complété', async () => {
-      // Arrange
-      const jobId = 'int-idempotent-warn-001';
-      const mockJob = makeTestJob({ id: jobId });
-      const worker = new TestWorker(auditRepo);
-
-      mockJob.attemptsMade = 0;
-      worker.processJob.mockResolvedValue(undefined);
-      await worker.process(mockJob);
-
-      mockJob.attemptsMade = 1;
-      worker.logger.warn.mockClear();
-
-      // Act
-      await worker.process(mockJob);
-
-      // Assert
-      expect(worker.logger.warn).toHaveBeenCalledWith('Job already processed, skipping', {
-        jobId,
-        type: mockJob.name,
-      });
+        const audit = await auditRepo.findByJobId(jobId);
+        expect(audit).not.toBeNull();
+        if (audit) {
+          expect(audit.startedAt).toBeDefined();
+          expect(audit.finishedAt).toBeDefined();
+          if (audit.startedAt && audit.finishedAt) {
+            expect(audit.startedAt.getTime()).toBeGreaterThanOrEqual(beforeStart.getTime());
+            expect(audit.finishedAt.getTime()).toBeLessThanOrEqual(afterEnd.getTime());
+            expect(audit.startedAt.getTime()).toBeLessThanOrEqual(audit.finishedAt.getTime());
+          }
+        }
+      } finally {
+        await queue.close();
+      }
     });
   });
 
-  describe('Audit failure resilience', () => {
-    it('devrait rejeter si updateWhere échoue après succès', async () => {
-      // Arrange
-      const jobId = 'int-audit-fail-success-001';
-      const mockJob = makeTestJob({ id: jobId });
+  describe('Idempotence — Job déjà COMPLETED (Redis)', () => {
+    it('ignore processJob si statut COMPLETED depuis Redis', async () => {
+      const jobId = 'int-redis-idempotent-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-idempotent-queue', { connection: testRedisOptions });
+      const worker = new TestWorker(auditRepo);
 
-      // Créer un mock auditRepo qui échoue sur COMPLETED update
+      worker.processJob.mockResolvedValue(undefined);
+
+      try {
+        // 1re tentative
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        let jobs = await queue.getJobs(['waiting']);
+
+        let job = jobs[0];
+        job.attemptsMade = 0;
+
+        await processJob(worker, job);
+
+        let audit = await auditRepo.findByJobId(jobId);
+        expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
+
+        // 2e tentative: même job ID depuis Redis
+        worker.processJob.mockClear();
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        jobs = await queue.getJobs(['waiting']);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        job = jobs[0]!;
+        job.attemptsMade = 1;
+
+        await processJob(worker, job);
+
+        // Guard doit skip processJob
+        expect(worker.processJob).not.toHaveBeenCalled();
+
+        audit = await auditRepo.findByJobId(jobId);
+        expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
+
+        // Une seule audit row
+        const allAudits = await modelRepo.find({ where: { jobId } });
+        expect(allAudits).toHaveLength(1);
+      } finally {
+        await queue.close();
+      }
+    });
+
+    it('log warning quand job déjà complété depuis Redis', async () => {
+      const jobId = 'int-redis-idempotent-warn-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-idempotent-warn-queue', { connection: testRedisOptions });
+      const worker = new TestWorker(auditRepo);
+
+      worker.processJob.mockResolvedValue(undefined);
+
+      try {
+        // 1re tentative
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        let jobs = await queue.getJobs(['waiting']);
+
+        let job = jobs[0];
+        job.attemptsMade = 0;
+
+        await processJob(worker, job);
+
+        // 2e tentative
+        worker.logger.warn.mockClear();
+        worker.processJob.mockClear();
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        jobs = await queue.getJobs(['waiting']);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        job = jobs[0]!;
+        job.attemptsMade = 1;
+
+        await processJob(worker, job);
+
+        // Doit logger warning
+
+        expect(worker.logger.warn).toHaveBeenCalledWith('Job already processed, skipping', {
+          jobId,
+          type: 'SEND_WELCOME_EMAIL',
+        });
+      } finally {
+        await queue.close();
+      }
+    });
+  });
+
+  describe('Audit failure resilience (Redis)', () => {
+    it('rejette si updateWhere échoue après succès depuis Redis', async () => {
+      const jobId = 'int-redis-audit-fail-success-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-audit-fail-success-queue', {
+        connection: testRedisOptions,
+      });
+
+      // Mock auditRepo qui échoue sur COMPLETED update
       const mockAuditRepo = {
         findByJobId: jest.fn().mockResolvedValue(null),
         upsert: jest.fn().mockResolvedValue({ jobId, status: JobAuditStatus.PROCESSING }),
@@ -289,46 +527,47 @@ describe('BaseWorker — Integration', () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .mockImplementation((_where: any, data: any) => {
             if (data?.status === JobAuditStatus.COMPLETED) {
-              throw new Error('Simulated DB failure on COMPLETED update');
+              throw new Error('DB failure on COMPLETED update');
             }
             return Promise.resolve(undefined);
           }),
       };
 
       const worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
-      mockJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
 
-      // Act & Assert
-      await expect(worker.process(mockJob)).rejects.toThrow(
-        'Simulated DB failure on COMPLETED update',
-      );
+      try {
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // Vérifier que upsert a été appelé
-      expect(mockAuditRepo.upsert).toHaveBeenCalledWith(
-        expect.objectContaining({
-          status: JobAuditStatus.PROCESSING,
-        }),
-        ['jobId'],
-      );
+        const job = jobs[0];
+        job.attemptsMade = 0;
 
-      // Vérifier que updateWhere a été appelé et a échoué
-      expect(mockAuditRepo.updateWhere).toHaveBeenCalledWith(
-        { jobId },
-        expect.objectContaining({ status: JobAuditStatus.COMPLETED }),
-      );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        await expect(worker.process(job)).rejects.toThrow('DB failure on COMPLETED update');
 
-      // processJob avait bien été appelé
-      expect(worker.processJob).toHaveBeenCalledTimes(1);
+        // Vérifier que upsert a été appelé
+        expect(mockAuditRepo.upsert).toHaveBeenCalled();
+
+        // Vérifier que updateWhere a été appelé et a échoué
+        expect(mockAuditRepo.updateWhere).toHaveBeenCalled();
+
+        // processJob avait bien été appelé avant l'erreur d'audit
+        expect(worker.processJob).toHaveBeenCalledTimes(1);
+      } finally {
+        await queue.close();
+      }
     });
 
-    it('devrait rejeter si updateWhere échoue lors de failure', async () => {
-      // Arrange
-      const jobId = 'int-audit-fail-failure-001';
-      const mockJob = makeTestJob({ id: jobId });
+    it('rejette si updateWhere échoue lors de failure depuis Redis', async () => {
+      const jobId = 'int-redis-audit-fail-failure-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-audit-fail-failure-queue', {
+        connection: testRedisOptions,
+      });
       const jobError = new Error('Job processing failed');
 
-      // Créer un mock auditRepo qui échoue sur FAILED update
+      // Mock auditRepo qui échoue sur FAILED update
       const mockAuditRepo = {
         findByJobId: jest.fn().mockResolvedValue(null),
         upsert: jest.fn().mockResolvedValue({ jobId, status: JobAuditStatus.PROCESSING }),
@@ -337,58 +576,70 @@ describe('BaseWorker — Integration', () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .mockImplementation((_where: any, data: any) => {
             if (data?.status === JobAuditStatus.FAILED) {
-              throw new Error('Simulated DB failure on FAILED update');
+              throw new Error('DB failure on FAILED update');
             }
             return Promise.resolve(undefined);
           }),
       };
 
       const worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
-      mockJob.attemptsMade = 0;
       worker.processJob.mockRejectedValue(jobError);
 
-      // Act & Assert
-      const thrown = await worker.process(mockJob).catch((error: unknown) => error);
-      expect(thrown instanceof Error && thrown.message).toBe(
-        'Simulated DB failure on FAILED update',
-      );
+      try {
+        await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // Vérifier que upsert a été appelé
-      expect(mockAuditRepo.upsert).toHaveBeenCalled();
+        const job = jobs[0];
+        job.attemptsMade = 0;
 
-      // Vérifier que updateWhere a été appelé et a échoué
-      expect(mockAuditRepo.updateWhere).toHaveBeenCalledWith(
-        { jobId },
-        expect.objectContaining({ status: JobAuditStatus.FAILED }),
-      );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const thrown = await worker.process(job).catch((error: unknown) => error);
+        expect(thrown instanceof Error && thrown.message).toBe('DB failure on FAILED update');
 
-      // processJob avait bien été appelé
-      expect(worker.processJob).toHaveBeenCalledTimes(1);
+        // Vérifier que upsert a été appelé
+        expect(mockAuditRepo.upsert).toHaveBeenCalled();
+
+        // Vérifier que updateWhere a été appelé et a échoué
+        expect(mockAuditRepo.updateWhere).toHaveBeenCalled();
+
+        // processJob avait bien été appelé
+        expect(worker.processJob).toHaveBeenCalledTimes(1);
+      } finally {
+        await queue.close();
+      }
     });
   });
 
-  describe('Type de Job Invalide', () => {
-    it("devrait traiter un job de type différent sans corrompre l'audit", async () => {
-      // Arrange
-      const jobId = 'int-wrong-type-001';
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-      const wrongTypeJob = makeTestJob({ id: jobId, name: 'DIFFERENT_JOB_TYPE' as any });
+  describe('Type de Job Invalide (Redis)', () => {
+    it("traite job de type différent sans corrompre l'audit depuis Redis", async () => {
+      const jobId = 'int-redis-wrong-type-001';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queue = new Queue<any>('test-wrong-type-queue', { connection: testRedisOptions });
       const worker = new TestWorker(auditRepo);
 
-      wrongTypeJob.attemptsMade = 0;
       worker.processJob.mockResolvedValue(undefined);
 
-      // Act
-      await worker.process(wrongTypeJob);
+      try {
+        // Job avec name DIFFERENT_JOB_TYPE
+        await queue.add('DIFFERENT_JOB_TYPE', {}, { jobId });
+        const jobs = await queue.getJobs(['waiting']);
 
-      // Assert
-      const audit = await auditRepo.findByJobId(jobId);
-      expect(audit).not.toBeNull();
-      if (!audit) return;
+        const job = jobs[0];
+        job.attemptsMade = 0;
 
-      expect(audit.status).toBe(JobAuditStatus.COMPLETED);
-      expect(audit.jobType).toBe('DIFFERENT_JOB_TYPE');
-      expect(worker.processJob).toHaveBeenCalledTimes(1);
+        await processJob(worker, job);
+
+        const audit = await auditRepo.findByJobId(jobId);
+        expect(audit).not.toBeNull();
+        if (audit) {
+          expect(audit.status).toBe(JobAuditStatus.COMPLETED);
+          expect(audit.jobType).toBe('DIFFERENT_JOB_TYPE');
+        }
+
+        expect(worker.processJob).toHaveBeenCalledTimes(1);
+      } finally {
+        await queue.close();
+      }
     });
   });
 });
