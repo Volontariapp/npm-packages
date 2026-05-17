@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- Fixed db_ssl config parameter to convert "true" to the boolean true (before: was setting the boolean to false anyway")
+
 ## 3.0.1
 
 ### Patch Changes
