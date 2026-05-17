@@ -31,8 +31,12 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
-    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
-    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
+    "test:coverage": "INTEGRATION=all node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch",
+    "test:int": "INTEGRATION=true node --experimental-vm-modules $(yarn bin jest)",
+    "test:int:watch": "INTEGRATION=true node --experimental-vm-modules $(yarn bin jest) --watch",
+    "db:up": "docker compose -f ../../ci-tools/testing/docker-compose.yml --profile test up -d test-db redis",
+    "db:down": "docker compose -f ../../ci-tools/testing/docker-compose.yml --profile test stop test-db redis"
   },
   "dependencies": {
     "@volontariapp/config": "workspace:*",
@@ -50,10 +54,14 @@
     "@nestjs/common": "^11.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
+    "@volontariapp/database": "workspace:*",
     "@volontariapp/testing": "workspace:*",
     "bullmq": "^5.76.5",
+    "ioredis": "^5.3.7",
     "jest": "^30.3.0",
+    "pg": "^8.11.5",
     "ts-jest": "^29.4.6",
+    "typeorm": "^0.3.21",
     "typescript": "5.7.3"
   }
 }
