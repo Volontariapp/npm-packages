@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+### Minor Changes
+
+- Export job audit entities, models, repository, and status types from main package index
+
 ## 0.1.1
 
 ### Patch Changes
