@@ -7,3 +7,4 @@ export type {
   BullDefaultJobOptions,
 } from './interfaces/index.js';
 export { createBullConfig } from './utils/index.js';
+export * from './data/index.js';
