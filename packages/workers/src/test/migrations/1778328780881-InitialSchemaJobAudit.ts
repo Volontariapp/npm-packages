@@ -19,6 +19,7 @@ export class InitialSchemaJobAudit1778328780881 implements MigrationInterface {
             type: 'varchar',
             length: '100',
             isNullable: false,
+            isUnique: true,
           },
           {
             name: 'job_type',
@@ -84,7 +85,7 @@ export class InitialSchemaJobAudit1778328780881 implements MigrationInterface {
     );
 
     await queryRunner.createIndices('job_audit', [
-      new TableIndex({ columnNames: ['job_id'] }),
+      new TableIndex({ columnNames: ['job_id'], isUnique: true }),
       new TableIndex({ columnNames: ['job_type'] }),
       new TableIndex({ columnNames: ['worker_id'] }),
       new TableIndex({ columnNames: ['status'] }),
