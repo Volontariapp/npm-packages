@@ -11,5 +11,6 @@ export class PostgresConfig extends DBConfig implements IPostgresConfig {
 
   @IsDefined()
   @IsBoolean()
+  @Type(() => Boolean)
   ssl!: boolean;
 }
