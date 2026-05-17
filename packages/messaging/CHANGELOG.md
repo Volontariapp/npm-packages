@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.15.2
+
 ## 1.1.1
 
 ### Patch Changes
