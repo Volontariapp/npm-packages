@@ -3,9 +3,10 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
-  globalSetup:
-    process.env.INTEGRATION === 'true' ? '<rootDir>/src/test/global-setup.ts' : undefined,
-  maxWorkers: process.env.INTEGRATION === 'true' ? 1 : '50%',
+  globalSetup: ['true', 'all'].includes(process.env.INTEGRATION ?? '')
+    ? '<rootDir>/src/test/global-setup.ts'
+    : undefined,
+  maxWorkers: ['true', 'all'].includes(process.env.INTEGRATION ?? '') ? 1 : '50%',
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
     '^@volontariapp/database$': '<rootDir>/../database/src/index.ts',
@@ -32,6 +33,17 @@ export default {
     '!**/*.spec.ts',
     '!**/*.int.spec.ts',
     '!src/test/**',
+    '!src/interfaces/**',
+    '!src/types/**',
+    '!**/*.interface.ts',
+    '!**/*.types.ts',
+    '!src/data/models/**',
+    '!src/data/entities/**',
   ],
-  testMatch: process.env.INTEGRATION === 'true' ? ['**/*.int.spec.ts'] : ['**/*.unit.spec.ts'],
+  testMatch:
+    process.env.INTEGRATION === 'true'
+      ? ['**/*.int.spec.ts']
+      : process.env.INTEGRATION === 'all'
+        ? ['**/*.unit.spec.ts', '**/*.int.spec.ts']
+        : ['**/*.unit.spec.ts'],
 };
