@@ -8,8 +8,7 @@ import type { JobAuditRepository } from '../../../../data/repositories/job-audit
 export type LoggerMock = jest.Mocked<Logger>;
 
 function createLoggerMock(): LoggerMock {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  return createMockLogger<Logger>() as jest.Mocked<Logger>;
+  return createMockLogger<Logger>();
 }
 
 export class TestWorker extends BaseWorker<TestJobType> {

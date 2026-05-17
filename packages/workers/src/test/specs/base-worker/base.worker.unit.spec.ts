@@ -1,7 +1,11 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { JobMessagingType } from '@volontariapp/messaging';
-import { TestWorker, makeTestJob, type TestJob } from '../../utils/index.js';
-import type { JobAuditRepository } from '../../../data/repositories/job-audit.repository.js';
+import {
+  TestWorker,
+  makeTestJob,
+  type TestJob,
+  createAuditRepositoryMock,
+} from '../../utils/index.js';
 import { JobAuditStatus } from '../../../data/types/job-audit.status.js';
 import type { JobAuditEntity } from '../../../data/entities/job-audit.entity.js';
 
@@ -127,17 +131,11 @@ describe('BaseWorker', () => {
   });
 
   describe('audit — with auditRepo', () => {
-    let mockAuditRepo: jest.Mocked<
-      Pick<JobAuditRepository, 'upsert' | 'updateWhere' | 'findByJobId'>
-    >;
+    let mockAuditRepo: ReturnType<typeof createAuditRepositoryMock>;
 
     beforeEach(() => {
-      mockAuditRepo = {
-        upsert: jest.fn(),
-        updateWhere: jest.fn(),
-        findByJobId: jest.fn(),
-      };
-      worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
+      mockAuditRepo = createAuditRepositoryMock();
+      worker = new TestWorker(mockAuditRepo);
     });
 
     it('should call auditRepo.upsert on process start with PROCESSING status', async () => {
@@ -194,8 +192,7 @@ describe('BaseWorker', () => {
     });
 
     it('should not call audit if job.id is undefined', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-      const noIdJob = makeTestJob({ id: undefined as any });
+      const noIdJob = makeTestJob({ id: undefined });
       worker.processJob.mockResolvedValue(undefined);
 
       await worker.process(noIdJob);
@@ -206,17 +203,11 @@ describe('BaseWorker', () => {
   });
 
   describe('idempotence — COMPLETED guard', () => {
-    let mockAuditRepo: jest.Mocked<
-      Pick<JobAuditRepository, 'findByJobId' | 'upsert' | 'updateWhere'>
-    >;
+    let mockAuditRepo: ReturnType<typeof createAuditRepositoryMock>;
 
     beforeEach(() => {
-      mockAuditRepo = {
-        findByJobId: jest.fn(),
-        upsert: jest.fn(),
-        updateWhere: jest.fn(),
-      };
-      worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
+      mockAuditRepo = createAuditRepositoryMock();
+      worker = new TestWorker(mockAuditRepo);
     });
 
     it('should skip processJob if job already COMPLETED', async () => {
@@ -280,21 +271,16 @@ describe('BaseWorker', () => {
   });
 
   describe('audit resilience', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockAuditRepo: any;
+    let mockAuditRepo: ReturnType<typeof createAuditRepositoryMock>;
 
     beforeEach(() => {
-      mockAuditRepo = {
-        findByJobId: jest.fn().mockResolvedValue(null),
-        upsert: jest.fn(),
-        updateWhere: jest.fn(),
-      };
-      worker = new TestWorker(mockAuditRepo as unknown as JobAuditRepository);
+      mockAuditRepo = createAuditRepositoryMock();
+      mockAuditRepo.findByJobId.mockResolvedValue(null);
+      worker = new TestWorker(mockAuditRepo);
     });
 
     it('should continue if upsert throws', async () => {
       mockJob.attemptsMade = 0;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       mockAuditRepo.upsert.mockRejectedValue(new Error('Upsert failed'));
       worker.processJob.mockResolvedValue(undefined);
 
@@ -309,7 +295,6 @@ describe('BaseWorker', () => {
 
     it('should re-throw if updateWhere throws on success', async () => {
       mockJob.attemptsMade = 0;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       mockAuditRepo.updateWhere.mockRejectedValue(new Error('Update failed'));
       worker.processJob.mockResolvedValue(undefined);
 
@@ -325,11 +310,15 @@ describe('BaseWorker', () => {
     it('should re-throw if updateWhere throws on failure', async () => {
       mockJob.attemptsMade = 0;
       const originalError = new Error('Job logic failed');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       mockAuditRepo.updateWhere.mockRejectedValue(new Error('Audit update failed'));
       worker.processJob.mockRejectedValue(originalError);
 
-      const thrown = await worker.process(mockJob).catch((error: unknown) => error);
+      let thrown: Error | undefined;
+      try {
+        await worker.process(mockJob);
+      } catch (error) {
+        thrown = error as Error;
+      }
 
       expect(thrown instanceof Error && thrown.message).toBe('Audit update failed');
       expect(worker.processJob).toHaveBeenCalled();
