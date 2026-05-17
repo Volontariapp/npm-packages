@@ -206,6 +206,9 @@ describe('BaseWorker — Integration', () => {
       const jobError = new Error('Job processing failed');
       worker.processJob.mockRejectedValue(jobError);
 
+      const upsertSpy = jest.spyOn(mockAuditRepo, 'upsert');
+      const updateWhereSpy = jest.spyOn(mockAuditRepo, 'updateWhere');
+
       try {
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
         const jobs = await queue.getJobs(['waiting']);
@@ -216,8 +219,8 @@ describe('BaseWorker — Integration', () => {
 
         await expect(processJob(worker, job)).rejects.toThrow('DB connection lost');
 
-        expect(mockAuditRepo.upsert).toHaveBeenCalled();
-        expect(mockAuditRepo.updateWhere).toHaveBeenCalled();
+        expect(upsertSpy).toHaveBeenCalled();
+        expect(updateWhereSpy).toHaveBeenCalled();
       } finally {
         await queue.close();
       }
@@ -232,6 +235,7 @@ describe('BaseWorker — Integration', () => {
       });
       const worker = new TestWorker(auditRepo);
       worker.processJob.mockResolvedValue(undefined);
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         // 1re tentative
@@ -248,7 +252,7 @@ describe('BaseWorker — Integration', () => {
         expect(allAudits[0].status).toBe(JobAuditStatus.COMPLETED);
 
         // 2e tentative: Redis job avec même jobId
-        worker.processJob.mockClear();
+        processJobSpy.mockClear();
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
         jobs = await queue.getJobs(['waiting']);
         job = getFirstJob(jobs);
@@ -260,7 +264,7 @@ describe('BaseWorker — Integration', () => {
         const finalAudits = await modelRepo.find({ where: { jobId } });
         expect(finalAudits).toHaveLength(1);
         expect(finalAudits[0].status).toBe(JobAuditStatus.COMPLETED);
-        expect(worker.processJob).not.toHaveBeenCalled(); // Guard skipped re-processing
+        expect(processJobSpy).not.toHaveBeenCalled(); // Guard skipped re-processing
       } finally {
         await queue.close();
       }
@@ -274,6 +278,7 @@ describe('BaseWorker — Integration', () => {
       const worker = new TestWorker(auditRepo);
 
       worker.processJob.mockResolvedValue(undefined);
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         // Simulate job with multiple attempts
@@ -292,7 +297,7 @@ describe('BaseWorker — Integration', () => {
 
         // Attempt 2 (attemptsMade=1, same jobId mais depuis Redis)
         // On simule que le job a été retried
-        worker.processJob.mockClear();
+        processJobSpy.mockClear();
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
         jobs = await queue.getJobs(['waiting']);
         job = getFirstJob(jobs);
@@ -305,7 +310,7 @@ describe('BaseWorker — Integration', () => {
         // Audit doit toujours montrer l'attempt 1 car idempotence guard skipped le retraitement
         expect(audit?.currentAttempt).toBe(1);
         expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
-        expect(worker.processJob).not.toHaveBeenCalled(); // Guard prevented reprocessing
+        expect(processJobSpy).not.toHaveBeenCalled(); // Guard prevented reprocessing
       } finally {
         await queue.close();
       }
@@ -321,6 +326,7 @@ describe('BaseWorker — Integration', () => {
       const worker = new TestWorker(); // Sans auditRepo
 
       worker.processJob.mockResolvedValue(undefined);
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
@@ -334,7 +340,7 @@ describe('BaseWorker — Integration', () => {
         // Aucun audit créé sans repo
         const allAudits = await modelRepo.find({ where: { jobId } });
         expect(allAudits).toHaveLength(0);
-        expect(worker.processJob).toHaveBeenCalledTimes(1);
+        expect(processJobSpy).toHaveBeenCalledTimes(1);
       } finally {
         await queue.close();
       }
@@ -348,6 +354,7 @@ describe('BaseWorker — Integration', () => {
       const worker = new TestWorker(auditRepo);
 
       worker.processJob.mockResolvedValue(undefined);
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
@@ -362,7 +369,7 @@ describe('BaseWorker — Integration', () => {
         // Pas d'audit créé sans ID
         const allAudits = await modelRepo.find({ where: { jobId } });
         expect(allAudits).toHaveLength(0);
-        expect(worker.processJob).toHaveBeenCalledTimes(1);
+        expect(processJobSpy).toHaveBeenCalledTimes(1);
       } finally {
         await queue.close();
       }
@@ -416,6 +423,7 @@ describe('BaseWorker — Integration', () => {
       const worker = new TestWorker(auditRepo);
 
       worker.processJob.mockResolvedValue(undefined);
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         // 1re tentative
@@ -431,7 +439,7 @@ describe('BaseWorker — Integration', () => {
         expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
 
         // 2e tentative: même job ID depuis Redis
-        worker.processJob.mockClear();
+        processJobSpy.mockClear();
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
         jobs = await queue.getJobs(['waiting']);
         job = getFirstJob(jobs);
@@ -440,7 +448,7 @@ describe('BaseWorker — Integration', () => {
         await processJob(worker, job);
 
         // Guard doit skip processJob
-        expect(worker.processJob).not.toHaveBeenCalled();
+        expect(processJobSpy).not.toHaveBeenCalled();
 
         audit = await auditRepo.findByJobId(jobId);
         expect(audit?.status).toBe(JobAuditStatus.COMPLETED);
@@ -461,6 +469,7 @@ describe('BaseWorker — Integration', () => {
       const worker = new TestWorker(auditRepo);
 
       worker.processJob.mockResolvedValue(undefined);
+      const warnSpy = jest.spyOn(worker.logger, 'warn');
 
       try {
         // 1re tentative
@@ -473,8 +482,7 @@ describe('BaseWorker — Integration', () => {
         await processJob(worker, job);
 
         // 2e tentative
-        worker.logger.warn.mockClear();
-        worker.processJob.mockClear();
+        warnSpy.mockClear();
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
         jobs = await queue.getJobs(['waiting']);
         job = getFirstJob(jobs);
@@ -484,7 +492,7 @@ describe('BaseWorker — Integration', () => {
 
         // Doit logger warning
 
-        expect(worker.logger.warn).toHaveBeenCalledWith('Job already processed, skipping', {
+        expect(warnSpy).toHaveBeenCalledWith('Job already processed, skipping', {
           jobId,
           type: 'SEND_WELCOME_EMAIL',
         });
@@ -517,6 +525,9 @@ describe('BaseWorker — Integration', () => {
 
       const worker = new TestWorker(mockAuditRepo);
       worker.processJob.mockResolvedValue(undefined);
+      const upsertSpy = jest.spyOn(mockAuditRepo, 'upsert');
+      const updateWhereSpy = jest.spyOn(mockAuditRepo, 'updateWhere');
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
@@ -530,13 +541,13 @@ describe('BaseWorker — Integration', () => {
         );
 
         // Vérifier que upsert a été appelé
-        expect(mockAuditRepo.upsert).toHaveBeenCalled();
+        expect(upsertSpy).toHaveBeenCalled();
 
         // Vérifier que updateWhere a été appelé et a échoué
-        expect(mockAuditRepo.updateWhere).toHaveBeenCalled();
+        expect(updateWhereSpy).toHaveBeenCalled();
 
         // processJob avait bien été appelé avant l'erreur d'audit
-        expect(worker.processJob).toHaveBeenCalledTimes(1);
+        expect(processJobSpy).toHaveBeenCalledTimes(1);
       } finally {
         await queue.close();
       }
@@ -565,6 +576,9 @@ describe('BaseWorker — Integration', () => {
 
       const worker = new TestWorker(mockAuditRepo);
       worker.processJob.mockRejectedValue(jobError);
+      const upsertSpy = jest.spyOn(mockAuditRepo, 'upsert');
+      const updateWhereSpy = jest.spyOn(mockAuditRepo, 'updateWhere');
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         await queue.add('SEND_WELCOME_EMAIL', {}, { jobId });
@@ -582,13 +596,13 @@ describe('BaseWorker — Integration', () => {
         expect(thrown instanceof Error && thrown.message).toBe('DB failure on FAILED update');
 
         // Vérifier que upsert a été appelé
-        expect(mockAuditRepo.upsert).toHaveBeenCalled();
+        expect(upsertSpy).toHaveBeenCalled();
 
         // Vérifier que updateWhere a été appelé et a échoué
-        expect(mockAuditRepo.updateWhere).toHaveBeenCalled();
+        expect(updateWhereSpy).toHaveBeenCalled();
 
         // processJob avait bien été appelé
-        expect(worker.processJob).toHaveBeenCalledTimes(1);
+        expect(processJobSpy).toHaveBeenCalledTimes(1);
       } finally {
         await queue.close();
       }
@@ -604,6 +618,7 @@ describe('BaseWorker — Integration', () => {
       const worker = new TestWorker(auditRepo);
 
       worker.processJob.mockResolvedValue(undefined);
+      const processJobSpy = jest.spyOn(worker, 'processJob');
 
       try {
         // Job avec name DIFFERENT_JOB_TYPE
@@ -622,7 +637,7 @@ describe('BaseWorker — Integration', () => {
           expect(audit.jobType).toBe('DIFFERENT_JOB_TYPE');
         }
 
-        expect(worker.processJob).toHaveBeenCalledTimes(1);
+        expect(processJobSpy).toHaveBeenCalledTimes(1);
       } finally {
         await queue.close();
       }

@@ -9,10 +9,12 @@ export interface TestJobPayload {
 }
 
 /**
- * Helper to get the first job from a list of jobs with a proper assertion
+ * Helper to get the first job from a list of jobs with a assertion
  * Generics used to avoid 'any', 'unknown', or 'never'
  */
-export function getFirstJob<T, R, N extends string>(jobs: Job<T, R, N>[]): Job<T, R, N> {
+export function getFirstJob<JobData, JobReturn, JobName extends string>(
+  jobs: Job<JobData, JobReturn, JobName>[],
+): Job<JobData, JobReturn, JobName> {
   if (jobs.length === 0) {
     throw new Error('No jobs in queue');
   }
@@ -23,9 +25,9 @@ export function getFirstJob<T, R, N extends string>(jobs: Job<T, R, N>[]): Job<T
  * Helper to process a job on a worker with proper type-safe casting
  * Generics used to avoid 'any', 'unknown', or 'never'
  */
-export async function processJob<T, R, N extends string>(
+export async function processJob<JobData, JobReturn, JobName extends string>(
   worker: TestWorker,
-  job: Job<T, R, N>,
+  job: Job<JobData, JobReturn, JobName>,
 ): Promise<void> {
   return worker.process(job as TestJob);
 }
@@ -34,9 +36,9 @@ export async function processJob<T, R, N extends string>(
  * Helper to process a job expecting a rejection with a specific error
  * Generics used to avoid 'any', 'unknown', or 'never'
  */
-export async function processJobExpectError<T, R, N extends string>(
+export async function processJobExpectError<JobData, JobReturn, JobName extends string>(
   worker: TestWorker,
-  job: Job<T, R, N>,
+  job: Job<JobData, JobReturn, JobName>,
   error: Error,
 ): Promise<void> {
   return expect(worker.process(job as TestJob)).rejects.toThrow(error);
