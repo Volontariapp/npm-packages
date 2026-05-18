@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.17.0
+
+### Minor Changes
+
+- update job audit model
+
 ## 1.16.0
 
 ### Minor Changes

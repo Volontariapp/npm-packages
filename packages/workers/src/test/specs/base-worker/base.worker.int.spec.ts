@@ -216,7 +216,7 @@ describe('BaseWorker — Integration', () => {
 
         job.attemptsMade = 0;
 
-        await expect(processJob(worker, job)).rejects.toThrow('DB connection lost');
+        await expect(processJob(worker, job)).rejects.toThrow('Job processing failed');
 
         expect(upsertSpy).toHaveBeenCalled();
         expect(updateWhereSpy).toHaveBeenCalled();
@@ -502,7 +502,7 @@ describe('BaseWorker — Integration', () => {
   });
 
   describe('Audit failure resilience (Redis)', () => {
-    it('rejette si updateWhere échoue après succès depuis Redis', async () => {
+    it('résout avec succès si updateWhere échoue après succès depuis Redis', async () => {
       const jobId = 'int-redis-audit-fail-success-001';
       const queue = new Queue<TestJobPayload, void, string>('test-audit-fail-success-queue', {
         connection: testRedisOptions,
@@ -535,9 +535,7 @@ describe('BaseWorker — Integration', () => {
         const job = jobs[0];
         job.attemptsMade = 0;
 
-        await expect(worker.process(job as TestJob)).rejects.toThrow(
-          'DB failure on COMPLETED update',
-        );
+        await expect(worker.process(job as TestJob)).resolves.toBeUndefined();
 
         // Vérifier que upsert a été appelé
         expect(upsertSpy).toHaveBeenCalled();
@@ -592,7 +590,7 @@ describe('BaseWorker — Integration', () => {
         } catch (error) {
           thrown = error as Error;
         }
-        expect(thrown instanceof Error && thrown.message).toBe('DB failure on FAILED update');
+        expect(thrown instanceof Error && thrown.message).toBe('Job processing failed');
 
         // Vérifier que upsert a été appelé
         expect(upsertSpy).toHaveBeenCalled();

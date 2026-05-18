@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-event",
-  "version": "2.6.9",
+  "version": "2.6.10",
   "publishConfig": {
     "access": "public",
     "provenance": true
