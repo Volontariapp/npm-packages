@@ -21,7 +21,7 @@ export class JobAuditModel extends BaseModel {
   workerId!: string;
 
   @Column({ name: 'current_attempt', type: 'int', default: 1 })
-  currentAttempt: number = 1;
+  currentAttempt!: number;
 
   @Column({ name: 'started_at', type: 'timestamp', nullable: true })
   startedAt?: Date;

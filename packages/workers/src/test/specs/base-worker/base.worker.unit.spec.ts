@@ -329,21 +329,21 @@ describe('BaseWorker', () => {
       );
     });
 
-    it('should re-throw if updateWhere throws on success', async () => {
+    it('should swallow and continue if updateWhere throws on success', async () => {
       mockJob.attemptsMade = 0;
       updateWhereSpy.mockRejectedValue(new Error('Update failed'));
       processJobSpy.mockResolvedValue(undefined);
 
-      await expect(worker.process(mockJob)).rejects.toThrow('Update failed');
+      await expect(worker.process(mockJob)).resolves.toBeUndefined();
 
       expect(processJobSpy).toHaveBeenCalled();
       expect(loggerErrorSpy).toHaveBeenCalledWith(
-        'Failed to record audit success',
+        'Failed to record audit success (swallowing to ensure job processing is marked as completed)',
         expect.any(Object),
       );
     });
 
-    it('should re-throw if updateWhere throws on failure', async () => {
+    it('should re-throw the original error if updateWhere throws on failure', async () => {
       mockJob.attemptsMade = 0;
       const originalError = new Error('Job logic failed');
       updateWhereSpy.mockRejectedValue(new Error('Audit update failed'));
@@ -358,7 +358,7 @@ describe('BaseWorker', () => {
         }
       }
 
-      expect(thrown instanceof Error && thrown.message).toBe('Audit update failed');
+      expect(thrown instanceof Error && thrown.message).toBe('Job logic failed');
       expect(processJobSpy).toHaveBeenCalled();
     });
   });

@@ -4276,7 +4276,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/outbox@workspace:packages/outbox":
+"@volontariapp/outbox@workspace:*, @volontariapp/outbox@workspace:packages/outbox":
   version: 0.0.0-use.local
   resolution: "@volontariapp/outbox@workspace:packages/outbox"
   dependencies:
@@ -4360,6 +4360,7 @@ __metadata:
     "@volontariapp/health-check": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/outbox": "workspace:*"
     "@volontariapp/testing": "workspace:*"
     bullmq: "npm:^5.76.5"
     ioredis: "npm:^5.3.7"
@@ -4371,6 +4372,7 @@ __metadata:
   peerDependencies:
     "@nestjs/bullmq": ^11.0.0
     "@nestjs/common": ^11.0.0
+    "@nestjs/typeorm": ^11.0.0
     bullmq: ^5.0.0
   languageName: unknown
   linkType: soft

@@ -1,7 +1,7 @@
 import { WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@volontariapp/logger';
 import { hostname } from 'node:os';
-import type { Job } from 'bullmq';
+import type { Job, RedisClient } from 'bullmq';
 import type { JobMessagingType, JobRegistry } from '@volontariapp/messaging';
 import type { JobAuditRepository } from '../data/index.js';
 import { JobAuditStatus } from '@volontariapp/database';
@@ -42,32 +42,98 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
         workerId: this.workerId,
       });
       await this.recordAuditSuccess(job);
-    } catch (error: unknown) {
+    } catch (err) {
+      const error = err instanceof Error || typeof err === 'string' ? err : new Error(String(err));
+
       this.logger.error('Job failed', {
         jobId: job.id,
         type: job.name,
         workerId: this.workerId,
-        error,
+        error: err,
       });
       await this.recordAuditFailure(job, error);
-      throw error;
+      throw err;
     }
   }
 
   protected abstract processJob(job: Job<JobRegistry[K], void, K>): Promise<void>;
 
+  private async getRedisClient(): Promise<RedisClient | null> {
+    try {
+      return await this.worker.client;
+    } catch {
+      return null;
+    }
+  }
+
   private async isJobAlreadyCompleted(job: Job<JobRegistry[K], void, K>): Promise<boolean> {
-    if (!this.auditRepo || !job.id) return false;
+    if (!job.id) return false;
+
+    const client = await this.getRedisClient();
+    if (client) {
+      try {
+        if (typeof client.get === 'function') {
+          const isCompletedInRedis = await client.get(`job:completed:${job.id}`);
+          if (isCompletedInRedis === 'true') {
+            this.logger.warn(
+              'Idempotency Guard: Job already processed and marked as completed in Redis. Skipping execution.',
+              {
+                jobId: job.id,
+                type: job.name,
+              },
+            );
+            return true;
+          }
+        }
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        this.logger.warn('Failed to check job completion in Redis, falling back to database', {
+          jobId: job.id,
+          error,
+        });
+      }
+    }
+
+    if (!this.auditRepo) return false;
 
     try {
       const audit = await this.auditRepo.findByJobId(job.id);
-      return audit?.status === JobAuditStatus.COMPLETED;
-    } catch (error: unknown) {
+      const isCompletedInDb = audit?.status === JobAuditStatus.COMPLETED;
+      if (isCompletedInDb) {
+        this.logger.warn(
+          'Idempotency Guard: Job already marked as COMPLETED in audit database. Skipping execution.',
+          {
+            jobId: job.id,
+            type: job.name,
+          },
+        );
+        await this.markJobAsCompletedInRedis(job.id);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Failed to check job completion status', {
         jobId: job.id,
         error,
       });
       return false;
+    }
+  }
+
+  private async markJobAsCompletedInRedis(jobId: string): Promise<void> {
+    const client = await this.getRedisClient();
+    if (!client) return;
+    try {
+      if (typeof client.set === 'function') {
+        await client.set(`job:completed:${jobId}`, 'true', 'EX', 86400); // 24h TTL
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      this.logger.error('Failed to mark job as completed in Redis', {
+        jobId,
+        error,
+      });
     }
   }
 
@@ -89,7 +155,8 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
         },
         ['jobId'],
       );
-    } catch (error: unknown) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Failed to record audit start', {
         jobId: job.id,
         error,
@@ -98,6 +165,10 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
   }
 
   private async recordAuditSuccess(job: Job<JobRegistry[K], void, K>): Promise<void> {
+    if (job.id) {
+      await this.markJobAsCompletedInRedis(job.id);
+    }
+
     if (!this.auditRepo || !job.id) {
       return;
     }
@@ -110,26 +181,29 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
           finishedAt: new Date(),
         },
       );
-    } catch (error: unknown) {
-      this.logger.error('Failed to record audit success', {
-        jobId: job.id,
-        error,
-      });
-      throw error;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      this.logger.error(
+        'Failed to record audit success (swallowing to ensure job processing is marked as completed)',
+        {
+          jobId: job.id,
+          error,
+        },
+      );
     }
   }
 
   private async recordAuditFailure(
     job: Job<JobRegistry[K], void, K>,
-    error: unknown,
+    error: Error | string,
   ): Promise<void> {
     if (!this.auditRepo || !job.id) {
       return;
     }
 
     try {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorStack = error instanceof Error ? error.stack : undefined;
+      const errorMessage = typeof error === 'string' ? error : error.message;
+      const errorStack = typeof error === 'string' ? undefined : error.stack;
 
       await this.auditRepo.updateWhere(
         { jobId: job.id },
@@ -141,12 +215,13 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
           currentAttempt: job.attemptsMade + 1,
         },
       );
-    } catch (auditError: unknown) {
+    } catch (err) {
+      const auditError = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Failed to record audit failure', {
         jobId: job.id,
         error: auditError,
       });
-      throw auditError;
+      throw typeof error === 'string' ? new Error(error) : error;
     }
   }
 }

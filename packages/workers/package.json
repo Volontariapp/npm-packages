@@ -41,14 +41,15 @@
   "dependencies": {
     "@volontariapp/bridge": "workspace:*",
     "@volontariapp/config": "workspace:*",
+    "@volontariapp/database": "workspace:*",
     "@volontariapp/health-check": "workspace:*",
     "@volontariapp/logger": "workspace:*",
-    "@volontariapp/messaging": "workspace:*",
-    "@volontariapp/database": "workspace:*"
+    "@volontariapp/messaging": "workspace:*"
   },
   "peerDependencies": {
     "@nestjs/bullmq": "^11.0.0",
     "@nestjs/common": "^11.0.0",
+    "@nestjs/typeorm": "^11.0.0",
     "bullmq": "^5.0.0"
   },
   "devDependencies": {
@@ -58,6 +59,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
     "@volontariapp/database": "workspace:*",
+    "@volontariapp/outbox": "workspace:*",
     "@volontariapp/testing": "workspace:*",
     "bullmq": "^5.76.5",
     "ioredis": "^5.3.7",

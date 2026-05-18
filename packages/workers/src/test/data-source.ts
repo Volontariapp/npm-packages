@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
-import { JobAuditModel } from '@volontariapp/database';
+import { JobAuditModel, JobsOutboxModel } from '@volontariapp/database';
 import { InitialSchemaJobAudit1778328780881 } from './migrations/1778328780881-InitialSchemaJobAudit.js';
+import { CreateJobsOutbox1776783577425 } from './migrations/1776783577425-CreateJobsOutbox.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -9,8 +10,8 @@ export const testDataSource = new DataSource({
   username: 'testuser',
   password: 'testpassword',
   database: 'volontariapp_test',
-  entities: [JobAuditModel],
-  migrations: [InitialSchemaJobAudit1778328780881],
+  entities: [JobAuditModel, JobsOutboxModel],
+  migrations: [CreateJobsOutbox1776783577425, InitialSchemaJobAudit1778328780881],
   synchronize: false,
   logging: false,
 });
@@ -20,13 +21,10 @@ export const initializeTestDb = async () => {
     await testDataSource.initialize();
     const queryRunner = testDataSource.createQueryRunner();
     await queryRunner.dropTable('job_audit', true);
+    await queryRunner.dropTable('jobs_outbox', true);
+    await queryRunner.dropTable('migrations', true);
     await queryRunner.release();
-    const migrations = await testDataSource.runMigrations();
-    console.log('[initDb] Migrations executed:', migrations.length);
-    if (migrations.length === 0) {
-      console.error('[initDb] No migrations! Loading manually...');
-      await testDataSource.synchronize();
-    }
+    await testDataSource.runMigrations();
   }
 };
 
