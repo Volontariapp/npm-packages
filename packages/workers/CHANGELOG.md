@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- workers server health check
+
 ## 0.2.0
 
 ### Minor Changes
