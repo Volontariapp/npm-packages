@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+### Minor Changes
+
+- workers for events, post, social, user
+
 ## 1.1.2
 
 ### Patch Changes
