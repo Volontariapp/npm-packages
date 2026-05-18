@@ -1,4 +1,5 @@
 export { BaseWorker } from './core/base.worker.js';
+export { DiagnosticServer } from './core/diagnostic-server.js';
 export type { JobOf } from './types/index.js';
 export type {
   WorkerAppConfig,
