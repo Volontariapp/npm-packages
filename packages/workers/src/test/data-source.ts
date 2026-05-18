@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { JobAuditModel } from '../data/models/job-audit.model.js';
+import { JobAuditModel } from '@volontariapp/database';
 import { InitialSchemaJobAudit1778328780881 } from './migrations/1778328780881-InitialSchemaJobAudit.js';
 
 export const testDataSource = new DataSource({
