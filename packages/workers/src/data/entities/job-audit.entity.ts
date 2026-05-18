@@ -1,5 +1,5 @@
+import type { JobAuditStatus } from '@volontariapp/database';
 import { BaseEntity } from '@volontariapp/database';
-import type { JobAuditStatus } from '../types/job-audit.status.js';
 
 export class JobAuditEntity extends BaseEntity {
   jobId!: string;

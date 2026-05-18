@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- workers models on database
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.16.0
+  - @volontariapp/messaging@1.2.1
+
 ## 1.0.0
 
 ### Major Changes

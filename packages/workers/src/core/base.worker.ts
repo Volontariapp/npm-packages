@@ -4,7 +4,7 @@ import { hostname } from 'node:os';
 import type { Job } from 'bullmq';
 import type { JobMessagingType, JobRegistry } from '@volontariapp/messaging';
 import type { JobAuditRepository } from '../data/index.js';
-import { JobAuditStatus } from '../data/index.js';
+import { JobAuditStatus } from '@volontariapp/database';
 
 export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost {
   protected readonly logger = new Logger({ context: this.constructor.name });

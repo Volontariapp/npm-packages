@@ -1,6 +1,6 @@
 import type { Repository } from 'typeorm';
 import { QueryFailedError } from 'typeorm';
-import { JobAuditModel } from '../../../../data/models/job-audit.model.js';
+import { JobAuditModel } from '@volontariapp/database';
 
 export async function clearTestDatabase(repo: Repository<JobAuditModel>): Promise<void> {
   try {

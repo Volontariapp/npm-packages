@@ -9,13 +9,11 @@ import {
   jest,
 } from '@jest/globals';
 import type { Repository } from 'typeorm';
-import { databaseMapper } from '@volontariapp/database';
+import { databaseMapper, JobAuditModel, JobAuditStatus } from '@volontariapp/database';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-source.js';
 import { clearTestDatabase, makeJobAuditModel, makeJobAuditEntity } from '../../../utils/index.js';
-import { JobAuditModel } from '../../../../data/models/job-audit.model.js';
 import { JobAuditEntity } from '../../../../data/entities/job-audit.entity.js';
 import { JobAuditRepository } from '../../../../data/repositories/job-audit.repository.js';
-import { JobAuditStatus } from '../../../../data/types/job-audit.status.js';
 
 describe('JobAuditRepository — Integration', () => {
   let modelRepo: Repository<JobAuditModel>;
@@ -47,7 +45,6 @@ describe('JobAuditRepository — Integration', () => {
       const model = makeJobAuditModel({ jobId, workerId: 'worker-123' });
       await modelRepo.save(model);
 
-      // Mettre un spy sur findOne de JobAuditRepository
       const findOneSpy = jest.spyOn(repository, 'findOne');
 
       const result = await repository.findByJobId(jobId);

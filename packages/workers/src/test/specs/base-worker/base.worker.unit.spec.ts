@@ -7,7 +7,7 @@ import {
   type TestJob,
   createAuditRepositoryMock,
 } from '../../utils/index.js';
-import { JobAuditStatus } from '../../../data/types/job-audit.status.js';
+import { JobAuditStatus } from '@volontariapp/database';
 import type { JobAuditEntity } from '../../../data/entities/job-audit.entity.js';
 import type { JobAuditRepository } from '../../../data/repositories/job-audit.repository.js';
 

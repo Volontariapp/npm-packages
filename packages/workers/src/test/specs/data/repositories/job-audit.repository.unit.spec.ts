@@ -3,9 +3,8 @@ import type { Repository } from 'typeorm';
 import { databaseMapper } from '@volontariapp/database';
 import { createMock } from '@volontariapp/testing';
 import { JobAuditRepository } from '../../../../data/repositories/job-audit.repository.js';
-import { JobAuditModel } from '../../../../data/models/job-audit.model.js';
+import { JobAuditModel, JobAuditStatus } from '@volontariapp/database';
 import { JobAuditEntity } from '../../../../data/entities/job-audit.entity.js';
-import { JobAuditStatus } from '../../../../data/types/job-audit.status.js';
 import { makeJobAuditModel } from '../../../utils/index.js';
 
 describe('JobAuditRepository', () => {

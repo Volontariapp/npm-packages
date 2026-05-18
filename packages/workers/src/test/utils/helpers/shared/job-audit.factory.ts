@@ -1,6 +1,5 @@
-import { JobAuditModel } from '../../../../data/models/job-audit.model.js';
+import { JobAuditModel, JobAuditStatus } from '@volontariapp/database';
 import type { JobAuditEntity } from '../../../../data/entities/job-audit.entity.js';
-import { JobAuditStatus } from '../../../../data/types/job-audit.status.js';
 
 export function makeJobAuditModel(overrides?: Partial<JobAuditModel>): JobAuditModel {
   const model = new JobAuditModel();

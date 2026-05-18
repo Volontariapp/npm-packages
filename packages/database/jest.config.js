@@ -18,7 +18,13 @@ export default {
       },
     ],
   },
-  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/', '/src/test/'],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/coverage/',
+    '/src/test/',
+    '/src/workers/',
+  ],
   testMatch: ['**/*.int.spec.ts', '**/*.unit.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
 };
