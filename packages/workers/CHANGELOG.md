@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@1.17.0
+  - @volontariapp/messaging@1.2.2
+
+## 1.2.0
+
+### Minor Changes
+
+- workers e2e tests added
+
 ## 1.1.0
 
 ### Minor Changes
