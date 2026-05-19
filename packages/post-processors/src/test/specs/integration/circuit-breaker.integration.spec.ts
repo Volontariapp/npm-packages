@@ -80,10 +80,15 @@ describe('CircuitBreaker Integration', () => {
     processor.processError = new Error('Processor failed');
     await processor.start();
 
-    await new Promise<void>((resolve) => {
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+        reject(new Error('Circuit breaker did not open within 10000ms'));
+      }, 10000);
       const interval = setInterval(() => {
         if (cb.getState() === CircuitBreakerState.OPEN) {
           clearInterval(interval);
+          clearTimeout(timeout);
           resolve();
         }
       }, 10);
@@ -114,10 +119,15 @@ describe('CircuitBreaker Integration', () => {
     processor.processError = new Error('Processor failed');
     await processor.start();
 
-    await new Promise<void>((resolve) => {
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+        reject(new Error('Circuit breaker did not open within 10000ms'));
+      }, 10000);
       const interval = setInterval(() => {
         if (cb.getState() === CircuitBreakerState.OPEN) {
           clearInterval(interval);
+          clearTimeout(timeout);
           resolve();
         }
       }, 10);

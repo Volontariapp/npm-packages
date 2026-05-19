@@ -39,8 +39,8 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
   });
 
   afterAll(async () => {
-    await redis.quit();
-    await closeTestDb();
+    await redis.quit().catch(() => undefined);
+    await closeTestDb().catch(() => undefined);
   });
 
   beforeEach(async () => {

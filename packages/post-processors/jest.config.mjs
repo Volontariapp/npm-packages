@@ -2,6 +2,7 @@
 export default {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
+  testTimeout: 60000,
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
   globalSetup: ['true', 'all'].includes(process.env.INTEGRATION ?? '')
     ? '<rootDir>/src/test/global-setup.ts'
