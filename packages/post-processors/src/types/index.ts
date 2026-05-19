@@ -6,3 +6,4 @@ export type {
   ClaimResult,
   ExtractPayload,
 } from './post-processor.types.js';
+export * from './parse-event.types.js';

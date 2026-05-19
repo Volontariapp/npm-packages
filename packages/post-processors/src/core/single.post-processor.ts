@@ -5,7 +5,7 @@ import type {
   StreamEvent,
   EventChangedPayload,
 } from '@volontariapp/messaging';
-import type { RedisStreamEntry } from '../types/index.js';
+import type { ParseResult, RedisStreamEntry } from '../types/index.js';
 import { RedisStreamHelper } from './redis-stream.helper.js';
 
 type ExtractPayload<T> = T extends EventChangedPayload<infer P> ? P : T;
@@ -69,7 +69,7 @@ export abstract class SinglePostProcessor<
   }
 
   /**
-   * Parse the event payload and run subclass processEvent handler.
+   * Parse the event payload and run subclass processEvent handler with retry logic.
    */
   private async executeEventProcessing(
     id: string,
@@ -81,6 +81,8 @@ export abstract class SinglePostProcessor<
       this.logger.info('Processing event', { messageId: id, eventId: event.id, type: event.type });
 
       await this.processEvent(event, id);
+
+      await this.retryHelper.clearRetryData(this.redis, this.options.groupName, id);
       await this.acknowledge(id);
       this.logger.info('Successfully processed event', {
         messageId: id,
@@ -90,9 +92,91 @@ export abstract class SinglePostProcessor<
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Failed to process event from stream', { messageId: id, error });
-      if (useIdempotency) {
-        await RedisStreamHelper.removeIdempotencyLock(this.redis, this.options.groupName, id);
+
+      // Handle retry logic
+      await this.handleProcessingFailure(id, error, rawEvent, useIdempotency);
+    }
+  }
+
+  /**
+   * Handles retry logic when event processing fails.
+   */
+  private async handleProcessingFailure(
+    messageId: string,
+    error: Error,
+    rawEvent: string,
+    useIdempotency: boolean,
+  ): Promise<void> {
+    try {
+      const attemptCount = await this.retryHelper.recordRetry(
+        this.redis,
+        this.options.groupName,
+        messageId,
+        error,
+        this.options.idempotencyTtlSeconds,
+      );
+
+      if (this.retryHelper.shouldRetry(attemptCount)) {
+        await this.retryHelper.enqueueForRetry(
+          this.redis,
+          this.options.groupName,
+          messageId,
+          attemptCount,
+        );
+
+        const delayMs = this.retryHelper.calculateDelay(attemptCount);
+        this.logger.warn('Message scheduled for retry', {
+          messageId,
+          attemptCount,
+          delayMs,
+          nextRetryIn: new Date(Date.now() + delayMs).toISOString(),
+        });
+      } else {
+        // Max retries exceeded - send to DLQ
+        const payloadFields = this.parsePayloadFields(rawEvent);
+        await this.sendMessageToDlq(messageId, payloadFields, error.message);
+
+        this.logger.error('Message max retries exceeded, sent to DLQ', {
+          messageId,
+          attemptCount,
+          maxRetries: this.options.retry.maxRetries,
+        });
       }
+
+      await this.acknowledge(messageId);
+    } catch (retryErr) {
+      const retryError = retryErr instanceof Error ? retryErr : new Error(String(retryErr));
+      this.logger.error('Failed to handle retry logic', { messageId, error: retryError });
+    } finally {
+      if (useIdempotency) {
+        await RedisStreamHelper.removeIdempotencyLock(
+          this.redis,
+          this.options.groupName,
+          messageId,
+        );
+      }
+    }
+  }
+
+  /**
+   * Helper to parse payload fields from raw event JSON.
+   */
+  private parsePayloadFields(rawEvent: string): ParseResult {
+    try {
+      const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[TKey]>>;
+
+      return {
+        success: true,
+        type: event.type,
+        id: event.id,
+        payload: JSON.stringify(event),
+      };
+    } catch {
+      return {
+        success: false,
+        error: 'Failed to parse event payload',
+        raw: rawEvent.substring(0, 200),
+      };
     }
   }
 }

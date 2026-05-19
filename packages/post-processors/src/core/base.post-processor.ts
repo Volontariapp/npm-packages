@@ -1,16 +1,20 @@
 import { Logger } from '@volontariapp/logger';
 import { hostname } from 'node:os';
 import type { Redis } from 'ioredis';
-import type { PostProcessorOptions } from '../interfaces/index.js';
-import type { RedisStreamEntry, RedisStreamRawResponse } from '../types/index.js';
+import type { PostProcessorOptions, NormalizedPostProcessorOptions } from '../interfaces/index.js';
+import type { ParseResult, RedisStreamEntry, RedisStreamRawResponse } from '../types/index.js';
 import { RedisStreamHelper } from './redis-stream.helper.js';
+import { RetryHelper } from './retry.helper.js';
 
 export abstract class BasePostProcessor {
   protected readonly logger: Logger;
-  protected readonly options: Required<PostProcessorOptions>;
+  protected readonly options: NormalizedPostProcessorOptions;
+  protected readonly retryHelper: RetryHelper;
   private isRunning = false;
   private readPending = true;
   private claimTimeout: NodeJS.Timeout | null = null;
+  private retryLoopTimeout: NodeJS.Timeout | null = null;
+  private dlqSyncTimeout: NodeJS.Timeout | null = null;
   private loopPromise: Promise<void> | null = null;
 
   constructor(
@@ -28,7 +32,9 @@ export abstract class BasePostProcessor {
       claimIntervalMs: options.claimIntervalMs ?? 30000,
       claimMinIdleTimeMs: options.claimMinIdleTimeMs ?? 60000,
       idempotencyTtlSeconds: options.idempotencyTtlSeconds ?? 86400,
+      retry: RetryHelper.normalizeRetryOptions(options.retry),
     };
+    this.retryHelper = new RetryHelper(this.options.retry);
   }
 
   /**
@@ -64,6 +70,8 @@ export abstract class BasePostProcessor {
     });
 
     this.startClaimLoop();
+    this.startRetryLoop();
+    this.startDlqSyncLoop();
   }
 
   /**
@@ -80,6 +88,16 @@ export abstract class BasePostProcessor {
     if (this.claimTimeout) {
       clearTimeout(this.claimTimeout);
       this.claimTimeout = null;
+    }
+
+    if (this.retryLoopTimeout) {
+      clearTimeout(this.retryLoopTimeout);
+      this.retryLoopTimeout = null;
+    }
+
+    if (this.dlqSyncTimeout) {
+      clearTimeout(this.dlqSyncTimeout);
+      this.dlqSyncTimeout = null;
     }
 
     if (this.loopPromise) {
@@ -292,5 +310,121 @@ export abstract class BasePostProcessor {
       }
     }
     return claimedCount;
+  }
+
+  /**
+   * Starts periodic retry loop in background.
+   * Checks for messages ready to be retried and re-reads them from the stream.
+   */
+  private startRetryLoop(): void {
+    if (!this.isRunning) return;
+
+    this.retryLoopTimeout = setTimeout(() => {
+      this.processRetryQueue()
+        .catch((err: unknown) => {
+          const error = err instanceof Error ? err : new Error(String(err));
+          this.logger.error('Failed processing retry queue', { error });
+        })
+        .finally(() => {
+          this.startRetryLoop();
+        });
+    }, this.options.claimIntervalMs);
+  }
+
+  /**
+   * Processes messages from the retry queue.
+   */
+  private async processRetryQueue(): Promise<void> {
+    const readyMessages = await this.retryHelper.getReadyForRetry(
+      this.redis,
+      this.options.groupName,
+    );
+
+    if (readyMessages.length === 0) return;
+
+    this.logger.info('Found ready-to-retry messages', {
+      count: readyMessages.length,
+      messageIds: readyMessages.slice(0, 10), // log first 10
+    });
+
+    // Mark as pending to re-read these messages from the stream
+    this.readPending = true;
+  }
+
+  /**
+   * Starts periodic DLQ sync loop in background.
+   * Removes DLQ entries after a retention period.
+   */
+  private startDlqSyncLoop(): void {
+    if (!this.isRunning) return;
+
+    this.dlqSyncTimeout = setTimeout(() => {
+      this.syncDlqRetention()
+        .catch((err: unknown) => {
+          const error = err instanceof Error ? err : new Error(String(err));
+          this.logger.error('Failed syncing DLQ retention', { error });
+        })
+        .finally(() => {
+          this.startDlqSyncLoop();
+        });
+    }, this.options.claimIntervalMs * 10); // Less frequent than retry loop
+  }
+
+  /**
+   * Maintains DLQ retention by removing old entries.
+   */
+  private async syncDlqRetention(): Promise<void> {
+    if (!this.options.retry.enableDlq) return;
+
+    const dlqStreamName = this.retryHelper.getDlqStreamName(this.options.streamName);
+    const retentionMs = this.options.idempotencyTtlSeconds * 1000;
+    const cutoffTime = Date.now() - retentionMs;
+
+    try {
+      // Get all entries and filter old ones
+      const entries = (await this.redis.xrange(dlqStreamName, '-', '+')) as [string, string[]][];
+
+      const idsToRemove = entries
+        .filter((entry) => {
+          const timestamp = Number(entry[0].split('-')[0]);
+          return timestamp < cutoffTime;
+        })
+        .map((entry) => entry[0]);
+
+      if (idsToRemove.length > 0) {
+        await this.redis.xdel(dlqStreamName, ...idsToRemove);
+        this.logger.info('Cleaned up DLQ entries', { count: idsToRemove.length });
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      this.logger.error('Failed to clean DLQ', { error });
+    }
+  }
+
+  /**
+   * Helper to send a message to the dead-letter queue.
+   * Called by subclasses when a message is beyond max retries.
+   */
+  protected async sendMessageToDlq(
+    messageId: string,
+    originalPayload: ParseResult,
+    error: string,
+  ): Promise<void> {
+    if (!this.options.retry.enableDlq) return;
+
+    try {
+      const dlqStreamName = this.retryHelper.getDlqStreamName(this.options.streamName);
+      await this.retryHelper.sendToDlq(
+        this.redis,
+        dlqStreamName,
+        messageId,
+        originalPayload,
+        error,
+      );
+      this.logger.error('Message sent to DLQ', { messageId, dlqStreamName, error });
+    } catch (err) {
+      const dlqError = err instanceof Error ? err : new Error(String(err));
+      this.logger.error('Failed to send message to DLQ', { messageId, error: dlqError });
+    }
   }
 }

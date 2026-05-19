@@ -1,3 +1,5 @@
+import type { RetryOptions } from './retry-options.interface.js';
+
 export interface PostProcessorOptions {
   /**
    * The Redis Stream name to read from (e.g. 'stream:user').
@@ -45,4 +47,10 @@ export interface PostProcessorOptions {
    * @default 86400 (24 hours)
    */
   idempotencyTtlSeconds?: number;
+
+  /**
+   * Retry options with exponential backoff configuration.
+   * @default { maxRetries: 5, initialDelayMs: 1000, maxDelayMs: 60000, backoffMultiplier: 2, enableDlq: true }
+   */
+  retry?: RetryOptions;
 }

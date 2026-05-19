@@ -1,6 +1,6 @@
 import { BasePostProcessor } from './base.post-processor.js';
 import type { EventMessagingType, EventRegistry, StreamEvent } from '@volontariapp/messaging';
-import type { RedisStreamEntry, ExtractPayload } from '../types/index.js';
+import type { RedisStreamEntry, ExtractPayload, ParseResult } from '../types/index.js';
 import type { BatchEventItem } from '../interfaces/index.js';
 import { RedisStreamHelper } from './redis-stream.helper.js';
 
@@ -98,27 +98,98 @@ export abstract class BatchPostProcessor<
   }
 
   /**
-   * Invokes processEvents and acknowledges processed messages on success.
+   * Invokes processEvents with retry logic for failed batches.
    */
   private async executeBatchProcessing(
     items: BatchEventItem<TKey>[],
-    acquiredMessageIds: string[],
+    _acquiredMessageIds: string[],
     useIdempotency: boolean,
   ): Promise<void> {
     try {
       this.logger.info('Processing batch of events', { count: items.length });
       await this.processEvents(items);
 
+      // Successfully processed - clear retry data and acknowledge all
       for (const item of items) {
+        await this.retryHelper.clearRetryData(this.redis, this.options.groupName, item.messageId);
         await this.acknowledge(item.messageId);
       }
       this.logger.info('Successfully processed batch of events', { count: items.length });
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Failed to process batch of events from stream', { error });
-      if (useIdempotency) {
-        await this.releaseIdempotencyLocks(acquiredMessageIds);
+
+      // Handle retry for each item in the batch individually
+      await this.handleBatchProcessingFailure(items, error, useIdempotency);
+    }
+  }
+
+  /**
+   * Handles retry logic when batch processing fails.
+   * Processes each message individually to decide if it should be retried or sent to DLQ.
+   */
+  private async handleBatchProcessingFailure(
+    items: BatchEventItem<TKey>[],
+    error: Error,
+    useIdempotency: boolean,
+  ): Promise<void> {
+    for (const item of items) {
+      try {
+        const attemptCount = await this.retryHelper.recordRetry(
+          this.redis,
+          this.options.groupName,
+          item.messageId,
+          error,
+          this.options.idempotencyTtlSeconds,
+        );
+
+        if (this.retryHelper.shouldRetry(attemptCount)) {
+          // Schedule for retry
+          await this.retryHelper.enqueueForRetry(
+            this.redis,
+            this.options.groupName,
+            item.messageId,
+            attemptCount,
+          );
+
+          const delayMs = this.retryHelper.calculateDelay(attemptCount);
+          this.logger.warn('Batch item scheduled for retry', {
+            messageId: item.messageId,
+            attemptCount,
+            delayMs,
+          });
+        } else {
+          // Max retries exceeded - send to DLQ
+          const payloadFields: ParseResult = {
+            success: true,
+            type: item.event.type,
+            id: item.event.id,
+            payload: JSON.stringify(item.event),
+          };
+
+          await this.sendMessageToDlq(item.messageId, payloadFields, error.message);
+
+          this.logger.error('Batch item max retries exceeded, sent to DLQ', {
+            messageId: item.messageId,
+            attemptCount,
+            maxRetries: this.options.retry.maxRetries,
+          });
+        }
+
+        // Always acknowledge from stream
+        await this.acknowledge(item.messageId);
+      } catch (handleErr) {
+        const handleError = handleErr instanceof Error ? handleErr : new Error(String(handleErr));
+        this.logger.error('Failed to handle batch item retry', {
+          messageId: item.messageId,
+          error: handleError,
+        });
       }
+    }
+
+    // Clean up idempotency locks
+    if (useIdempotency) {
+      await this.releaseIdempotencyLocks(items.map((item) => item.messageId));
     }
   }
 
