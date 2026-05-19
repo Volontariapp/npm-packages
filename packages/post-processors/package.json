@@ -37,10 +37,10 @@
     "test:int:watch": "INTEGRATION=true node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "dependencies": {
+    "@volontariapp/database": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
-    "@volontariapp/shared": "workspace:*",
-    "@volontariapp/database": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
