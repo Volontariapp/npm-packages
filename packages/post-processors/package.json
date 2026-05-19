@@ -39,7 +39,8 @@
   "dependencies": {
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
-    "@volontariapp/shared": "workspace:*"
+    "@volontariapp/shared": "workspace:*",
+    "@volontariapp/database": "workspace:*"
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
