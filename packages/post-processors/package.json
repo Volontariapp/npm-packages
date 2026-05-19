@@ -48,14 +48,14 @@
     "ioredis": "^5.0.0"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^29.7.0",
     "@nestjs/common": "^11.0.0",
-    "@types/jest": "^30.0.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^24.0.0",
     "@volontariapp/contracts": "workspace:*",
     "@volontariapp/testing": "workspace:*",
     "ioredis": "^5.3.7",
-    "jest": "^30.3.0",
+    "jest": "^29.7.0",
     "reflect-metadata": "^0.2.2",
     "ts-jest": "^29.4.6",
     "typescript": "5.7.3"
