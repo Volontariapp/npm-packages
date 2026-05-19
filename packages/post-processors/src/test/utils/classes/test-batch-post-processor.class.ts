@@ -21,4 +21,12 @@ export class TestBatchPostProcessor extends BatchPostProcessor {
   public override async acknowledge(messageId: string): Promise<void> {
     return super.acknowledge(messageId);
   }
+
+  public getCircuitBreaker() {
+    return this.circuitBreaker;
+  }
+
+  public getLogger() {
+    return this.logger;
+  }
 }

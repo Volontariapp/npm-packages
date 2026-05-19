@@ -6,10 +6,6 @@ import type { PostProcessorOptions } from '../../interfaces/index.js';
  */
 export class OptionsValidator {
   static validate(options: PostProcessorOptions): void {
-    if (typeof options !== 'object') {
-      throw new Error('PostProcessorOptions must be an object');
-    }
-
     if (!options.streamName || options.streamName.trim() === '') {
       throw new Error('PostProcessorOptions.streamName is required and must not be empty');
     }

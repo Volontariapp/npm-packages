@@ -113,6 +113,13 @@ export abstract class BasePostProcessor {
   }
 
   /**
+   * Gets the current batch size (possibly adjusted by dynamic batching).
+   */
+  getCurrentBatchSize(): number {
+    return this.currentBatchSize;
+  }
+
+  /**
    * Stops the post-processor.
    */
   async stop(): Promise<void> {
@@ -250,6 +257,10 @@ export abstract class BasePostProcessor {
   private async processNextCycle(): Promise<void> {
     const idToRead = this.readPending ? '0' : '>';
     const args = this.buildXreadgroupArgs(idToRead);
+
+    if (idToRead === '0') {
+      this.readPending = false;
+    }
 
     const rawResult = (await this.redis.call(
       'XREADGROUP',

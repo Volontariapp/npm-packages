@@ -1,6 +1,45 @@
 import { EventMessagingType, type EventRegistry, type StreamEvent } from '@volontariapp/messaging';
 import { EventType, EventState } from '@volontariapp/contracts';
 import type { Redis } from 'ioredis';
+import type { EventQueueModel } from '@volontariapp/database';
+import { OutboxStatus } from '@volontariapp/database';
+import type { Repository } from 'typeorm';
+import type { ServiceType } from '@volontariapp/shared';
+
+export function makeTestDbEvent(
+  repository: Repository<EventQueueModel>,
+  id: string,
+  type: string,
+  targetServices: ServiceType[],
+): EventQueueModel {
+  return repository.create({
+    id,
+    type,
+    emitter: 'test-service',
+    status: OutboxStatus.PENDING,
+    payload: {
+      after: {
+        id,
+        name: 'E2E Event',
+        description: 'E2E Test Description',
+        startAt: new Date().toISOString(),
+        endAt: new Date().toISOString(),
+        type: EventType.EVENT_TYPE_SOCIAL,
+        state: EventState.EVENT_STATE_DRAFT,
+        awardedImpactScore: 10,
+        maxParticipants: 100,
+        localisationName: 'Paris',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    version: 1,
+    attempts: 0,
+    targetServices,
+  } as Partial<EventQueueModel>);
+}
 
 export function makeTestEvent(id: string): StreamEvent<EventRegistry['event.changed']> {
   return {

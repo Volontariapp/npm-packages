@@ -4312,6 +4312,7 @@ __metadata:
     "@volontariapp/database": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/outbox": "workspace:*"
     "@volontariapp/shared": "workspace:*"
     "@volontariapp/testing": "workspace:*"
     ioredis: "npm:^5.3.7"

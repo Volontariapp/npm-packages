@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  beforeAll,
+  afterAll,
+  jest,
+} from '@jest/globals';
 import { Redis } from 'ioredis';
 import { testRedisOptions } from '../../redis-config.js';
 import {
@@ -8,7 +17,9 @@ import {
   TestMessagingStream,
   TestMessagingGroup,
   TestMessagingConsumer,
+  waitFor,
 } from '../../utils/index.js';
+import type { ParseSuccess } from '../../../index.js';
 
 describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
   let redis: Redis;
@@ -32,6 +43,11 @@ describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
       claimIntervalMs: 100, // Frequent retry checks for testing
       claimMinIdleTimeMs: 50,
       blockMs: 50,
+      circuitBreaker: {
+        failureThreshold: 20, // Set high to prevent CB interference during retry tests
+        resetTimeoutMs: 10000,
+        successThreshold: 1,
+      },
       retry: {
         maxRetries: 3,
         initialDelayMs: 100,
@@ -58,22 +74,22 @@ describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
     // First attempt fails
     processor.processError = new Error('Simulated processing error');
     await processor.start();
-    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    // Wait for the message to be in the retry queue
+    const retryQueueKey = `retry-queue:post-processor:${TestMessagingGroup.TEST_GROUP}`;
+    await waitFor(async () => {
+      const retryCount = await redis.zcard(retryQueueKey);
+      return retryCount === 1;
+    });
 
     expect(processor.processedEvents).toHaveLength(0);
-
-    // Message should be in retry queue
-    const retryQueueKey = `retry-queue:post-processor:${TestMessagingGroup.TEST_GROUP}`;
-    const retryCount = await redis.zcard(retryQueueKey);
-    expect(retryCount).toBe(1);
 
     // Clear error, retry should succeed
     processor.processError = null;
 
-    // Wait for retry (initial delay 100ms + some buffer)
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    // Wait for retry to succeed
+    await waitFor(() => processor.processedEvents.length === 1);
 
-    expect(processor.processedEvents).toHaveLength(1);
     expect(processor.processedEvents[0]?.id).toBe('evt-retry-1');
 
     // Retry queue should be cleared
@@ -83,50 +99,48 @@ describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
 
   it('should respect exponential backoff delays', async () => {
     const eventPayload = makeTestEvent('evt-backoff-1');
-    const messageId = await pushTestEventToStream(
+    await pushTestEventToStream(
       redis,
       TestMessagingStream.TEST_STREAM,
       'evt-backoff-1',
       eventPayload,
     );
 
+    const retryHelper = processor['retryHelper'];
+    const calculateDelaySpy = jest.spyOn(retryHelper, 'calculateDelay');
+
     processor.processError = new Error('Simulated processing error');
     await processor.start();
 
-    const baseMs = 100;
-    let previousTimestamp: number | null = null;
+    // Wait until the spy has been called at least 4 times (2 calls per retry attempt, for 2 retry attempts)
+    await waitFor(() => calculateDelaySpy.mock.calls.length >= 4);
 
-    // Simulate 3 failures to see backoff progression
-    for (let attempt = 0; attempt < 3; attempt++) {
-      await new Promise((resolve) => setTimeout(resolve, 200));
+    // Check the spy calls
+    expect(calculateDelaySpy.mock.calls.length).toBeGreaterThanOrEqual(4);
 
-      processor.processError = new Error('Continue failing');
+    // First retry attempt: attemptCount=1, delay=200ms
+    expect(calculateDelaySpy).toHaveBeenNthCalledWith(1, 1);
+    expect(calculateDelaySpy.mock.results[0]?.value).toBe(200);
+    expect(calculateDelaySpy).toHaveBeenNthCalledWith(2, 1);
+    expect(calculateDelaySpy.mock.results[1]?.value).toBe(200);
 
-      const retryKey = `retry:post-processor:${TestMessagingGroup.TEST_GROUP}:${messageId}:attempt`;
-      const attemptCount = await redis.get(retryKey);
-      expect(Number(attemptCount)).toBe(attempt + 1);
+    // Second retry attempt: attemptCount=2, delay=400ms
+    expect(calculateDelaySpy).toHaveBeenNthCalledWith(3, 2);
+    expect(calculateDelaySpy.mock.results[2]?.value).toBe(400);
+    expect(calculateDelaySpy).toHaveBeenNthCalledWith(4, 2);
+    expect(calculateDelaySpy.mock.results[3]?.value).toBe(400);
 
-      // Get next retry timestamp from sorted set
-      const retryQueueKey = `retry-queue:post-processor:${TestMessagingGroup.TEST_GROUP}`;
-      const entries = await redis.zrange(retryQueueKey, 0, -1, 'WITHSCORES');
-
-      if (entries.length >= 2) {
-        const nextTimestamp = Number(entries[1]);
-        if (previousTimestamp !== null) {
-          const delayDiff = nextTimestamp - previousTimestamp;
-          // Each delay should be approximately 2x the previous (backoffMultiplier=2)
-          // Allow some tolerance for test timing
-          expect(delayDiff).toBeGreaterThanOrEqual(baseMs * Math.pow(2, attempt) - 50);
-          expect(delayDiff).toBeLessThanOrEqual(baseMs * Math.pow(2, attempt) + 100);
-        }
-        previousTimestamp = nextTimestamp;
-      }
-    }
+    calculateDelaySpy.mockRestore();
   });
 
   it('should send message to DLQ after max retries exceeded', async () => {
     const eventPayload = makeTestEvent('evt-dlq-1');
-    await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, 'evt-dlq-1', eventPayload);
+    const messageId = await pushTestEventToStream(
+      redis,
+      TestMessagingStream.TEST_STREAM,
+      'evt-dlq-1',
+      eventPayload,
+    );
 
     processor.processError = new Error('Persistent processing error');
     await processor.start();
@@ -146,13 +160,16 @@ describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
     const dlqEntry = dlqEntries[0];
     const dlqFields = dlqEntry[1];
 
-    // Convert array to object
     const dlqObject: Record<string, string> = {};
     for (let i = 0; i < dlqFields.length; i += 2) {
-      dlqObject[dlqFields[i]] = dlqFields[i + 1];
+      const key = dlqFields[i];
+      const val = dlqFields[i + 1];
+      dlqObject[key] = val;
     }
 
-    expect(dlqObject.messageId).toBe('evt-dlq-1');
+    expect(dlqObject.messageId).toBe(messageId);
+    const parsedPayload = JSON.parse(dlqObject.payload || '{}') as ParseSuccess;
+    expect(parsedPayload.id).toBe('evt-dlq-1');
     expect(dlqObject.error).toContain('Persistent processing error');
   });
 
@@ -165,26 +182,24 @@ describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
       eventPayload,
     );
 
-    // First attempt fails
     processor.processError = new Error('Simulated error');
     await processor.start();
-    await new Promise((resolve) => setTimeout(resolve, 200));
 
-    // Verify retry data exists
     const retryKey = `retry:post-processor:${TestMessagingGroup.TEST_GROUP}:${messageId}:attempt`;
-    let attemptCount = await redis.get(retryKey);
-    expect(attemptCount).toBe('1');
 
-    // Clear error, let it succeed
+    // Wait for the first failure
+    await waitFor(async () => {
+      const attemptCount = await redis.get(retryKey);
+      return attemptCount === '1';
+    });
+
     processor.processError = null;
-    await new Promise((resolve) => setTimeout(resolve, 300));
 
-    // Verify retry data is cleared
-    attemptCount = await redis.get(retryKey);
+    // Wait for successful processing
+    await waitFor(() => processor.processedEvents.length === 1);
+
+    const attemptCount = await redis.get(retryKey);
     expect(attemptCount).toBeNull();
-
-    // Event should be processed
-    expect(processor.processedEvents).toHaveLength(1);
   });
 
   it('should not retry when retry is disabled', async () => {
@@ -197,6 +212,9 @@ describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
       consumerName: TestMessagingConsumer.TEST_CONSUMER,
       claimIntervalMs: 100,
       blockMs: 50,
+      circuitBreaker: {
+        failureThreshold: 20,
+      },
       retry: {
         maxRetries: 0, // Disable retries
       },
