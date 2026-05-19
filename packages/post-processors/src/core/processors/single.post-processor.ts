@@ -5,8 +5,8 @@ import type {
   StreamEvent,
   EventChangedPayload,
 } from '@volontariapp/messaging';
-import type { ParseResult, RedisStreamEntry } from '../types/index.js';
-import { RedisStreamHelper } from './redis-stream.helper.js';
+import type { ParseResult, RedisStreamEntry } from '../../types/index.js';
+import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 
 type ExtractPayload<T> = T extends EventChangedPayload<infer P> ? P : T;
 
@@ -78,9 +78,20 @@ export abstract class SinglePostProcessor<
   ): Promise<void> {
     try {
       const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[TKey]>>;
+      if (typeof event !== 'object') {
+        throw new Error('Event payload must be a non-null object');
+      }
+      if (typeof event.id !== 'string' || event.id.trim() === '') {
+        throw new Error('Event payload is missing a valid string id');
+      }
+      if (typeof event.type !== 'string' || event.type.trim() === '') {
+        throw new Error('Event payload is missing a valid string type');
+      }
+
       this.logger.info('Processing event', { messageId: id, eventId: event.id, type: event.type });
 
       await this.processEvent(event, id);
+      this.circuitBreaker.recordSuccess();
 
       await this.retryHelper.clearRetryData(this.redis, this.options.groupName, id);
       await this.acknowledge(id);
@@ -92,6 +103,8 @@ export abstract class SinglePostProcessor<
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Failed to process event from stream', { messageId: id, error });
+
+      this.circuitBreaker.recordFailure();
 
       // Handle retry logic
       await this.handleProcessingFailure(id, error, rawEvent, useIdempotency);
@@ -141,9 +154,9 @@ export abstract class SinglePostProcessor<
           attemptCount,
           maxRetries: this.options.retry.maxRetries,
         });
-      }
 
-      await this.acknowledge(messageId);
+        await this.acknowledge(messageId);
+      }
     } catch (retryErr) {
       const retryError = retryErr instanceof Error ? retryErr : new Error(String(retryErr));
       this.logger.error('Failed to handle retry logic', { messageId, error: retryError });

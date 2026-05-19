@@ -1,6 +1,6 @@
 import type { Redis } from 'ioredis';
-import type { RetryOptions, RetryMetadata } from '../interfaces/index.js';
-import type { ParseResult } from '../index.js';
+import type { RetryOptions, RetryMetadata } from '../../interfaces/index.js';
+import type { ParseResult } from '../../index.js';
 
 /**
  * Helper class for managing message retries with exponential backoff.

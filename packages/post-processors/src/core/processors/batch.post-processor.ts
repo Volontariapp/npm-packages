@@ -1,8 +1,8 @@
 import { BasePostProcessor } from './base.post-processor.js';
 import type { EventMessagingType, EventRegistry, StreamEvent } from '@volontariapp/messaging';
-import type { RedisStreamEntry, ExtractPayload, ParseResult } from '../types/index.js';
-import type { BatchEventItem } from '../interfaces/index.js';
-import { RedisStreamHelper } from './redis-stream.helper.js';
+import type { RedisStreamEntry, ExtractPayload, ParseResult } from '../../types/index.js';
+import type { BatchEventItem } from '../../interfaces/index.js';
+import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 
 export abstract class BatchPostProcessor<
   TKey extends EventMessagingType = EventMessagingType,
@@ -80,12 +80,22 @@ export abstract class BatchPostProcessor<
   ): Promise<boolean> {
     try {
       const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[TKey]>>;
+      if (typeof event !== 'object') {
+        throw new Error('Event payload must be a non-null object');
+      }
+      if (typeof event.id !== 'string' || event.id.trim() === '') {
+        throw new Error('Event payload is missing a valid string id');
+      }
+      if (typeof event.type !== 'string' || event.type.trim() === '') {
+        throw new Error('Event payload is missing a valid string type');
+      }
+
       items.push({ event, messageId: id });
       if (useIdempotency) acquiredMessageIds.push(id);
       return true;
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
-      this.logger.error('Failed to parse event payload, acknowledging and skipping', {
+      this.logger.error('Failed to parse or validate event payload, acknowledging and skipping', {
         messageId: id,
         error,
       });
@@ -108,6 +118,7 @@ export abstract class BatchPostProcessor<
     try {
       this.logger.info('Processing batch of events', { count: items.length });
       await this.processEvents(items);
+      this.circuitBreaker.recordSuccess();
 
       // Successfully processed - clear retry data and acknowledge all
       for (const item of items) {
@@ -118,6 +129,8 @@ export abstract class BatchPostProcessor<
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Failed to process batch of events from stream', { error });
+
+      this.circuitBreaker.recordFailure();
 
       // Handle retry for each item in the batch individually
       await this.handleBatchProcessingFailure(items, error, useIdempotency);
@@ -144,7 +157,6 @@ export abstract class BatchPostProcessor<
         );
 
         if (this.retryHelper.shouldRetry(attemptCount)) {
-          // Schedule for retry
           await this.retryHelper.enqueueForRetry(
             this.redis,
             this.options.groupName,
@@ -159,7 +171,6 @@ export abstract class BatchPostProcessor<
             delayMs,
           });
         } else {
-          // Max retries exceeded - send to DLQ
           const payloadFields: ParseResult = {
             success: true,
             type: item.event.type,
@@ -174,10 +185,9 @@ export abstract class BatchPostProcessor<
             attemptCount,
             maxRetries: this.options.retry.maxRetries,
           });
-        }
 
-        // Always acknowledge from stream
-        await this.acknowledge(item.messageId);
+          await this.acknowledge(item.messageId);
+        }
       } catch (handleErr) {
         const handleError = handleErr instanceof Error ? handleErr : new Error(String(handleErr));
         this.logger.error('Failed to handle batch item retry', {
@@ -187,7 +197,6 @@ export abstract class BatchPostProcessor<
       }
     }
 
-    // Clean up idempotency locks
     if (useIdempotency) {
       await this.releaseIdempotencyLocks(items.map((item) => item.messageId));
     }

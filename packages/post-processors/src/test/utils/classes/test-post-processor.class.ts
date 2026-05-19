@@ -1,4 +1,4 @@
-import { SinglePostProcessor } from '../../../core/single.post-processor.js';
+import { SinglePostProcessor } from '../../../core/processors/single.post-processor.js';
 import type { EventMessagingType, EventRegistry, StreamEvent } from '@volontariapp/messaging';
 import type { ExtractPayload } from '../types/test-messaging.types.js';
 

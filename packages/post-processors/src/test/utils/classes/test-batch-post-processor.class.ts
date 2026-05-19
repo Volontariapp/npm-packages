@@ -1,4 +1,4 @@
-import { BatchPostProcessor } from '../../../core/batch.post-processor.js';
+import { BatchPostProcessor } from '../../../core/processors/batch.post-processor.js';
 import type { BatchEventItem } from '../../../interfaces/index.js';
 
 export class TestBatchPostProcessor extends BatchPostProcessor {

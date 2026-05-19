@@ -1,42 +1,78 @@
 import { Logger } from '@volontariapp/logger';
-import { hostname } from 'node:os';
+import os from 'node:os';
+import v8 from 'node:v8';
 import type { Redis } from 'ioredis';
-import type { PostProcessorOptions, NormalizedPostProcessorOptions } from '../interfaces/index.js';
-import type { ParseResult, RedisStreamEntry, RedisStreamRawResponse } from '../types/index.js';
-import { RedisStreamHelper } from './redis-stream.helper.js';
-import { RetryHelper } from './retry.helper.js';
+import type {
+  PostProcessorOptions,
+  NormalizedPostProcessorOptions,
+  CircuitBreakerConfig,
+} from '../../interfaces/index.js';
+import type { ParseResult, RedisStreamEntry, RedisStreamRawResponse } from '../../types/index.js';
+import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
+import { RetryHelper } from '../helpers/retry.helper.js';
+import { DEFAULT_POST_PROCESSOR_CONFIG } from '../../constants/index.js';
+import { OptionsValidator } from '../validators/options-validator.js';
+import { CircuitBreaker } from '../validators/circuit-breaker.js';
 
 export abstract class BasePostProcessor {
   protected readonly logger: Logger;
   protected readonly options: NormalizedPostProcessorOptions;
   protected readonly retryHelper: RetryHelper;
+  protected readonly circuitBreaker: CircuitBreaker;
   private isRunning = false;
   private readPending = true;
   private claimTimeout: NodeJS.Timeout | null = null;
   private retryLoopTimeout: NodeJS.Timeout | null = null;
   private dlqSyncTimeout: NodeJS.Timeout | null = null;
   private loopPromise: Promise<void> | null = null;
+  private currentBatchSize: number;
+
+  private readonly sigtermHandler = () => {
+    void this.handleShutdown('SIGTERM');
+  };
+  private readonly sigintHandler = () => {
+    void this.handleShutdown('SIGINT');
+  };
 
   constructor(
     protected readonly redis: Redis,
     options: PostProcessorOptions,
   ) {
+    if (typeof redis.call !== 'function') {
+      throw new Error('Invalid Redis instance: must support .call command execution');
+    }
+
     this.logger = new Logger({ context: this.constructor.name });
-    const host = hostname();
+    const host = os.hostname();
+
     this.options = {
+      ...DEFAULT_POST_PROCESSOR_CONFIG,
       streamName: options.streamName,
       groupName: options.groupName,
+      batchSize: options.batchSize ?? DEFAULT_POST_PROCESSOR_CONFIG.batchSize,
+      blockMs: options.blockMs ?? DEFAULT_POST_PROCESSOR_CONFIG.blockMs,
+      claimIntervalMs: options.claimIntervalMs ?? DEFAULT_POST_PROCESSOR_CONFIG.claimIntervalMs,
+      claimMinIdleTimeMs:
+        options.claimMinIdleTimeMs ?? DEFAULT_POST_PROCESSOR_CONFIG.claimMinIdleTimeMs,
+      idempotencyTtlSeconds:
+        options.idempotencyTtlSeconds ?? DEFAULT_POST_PROCESSOR_CONFIG.idempotencyTtlSeconds,
+      circuitBreaker: options.circuitBreaker ?? DEFAULT_POST_PROCESSOR_CONFIG.circuitBreaker,
       consumerName: options.consumerName ?? `${host}-${this.constructor.name}`,
-      batchSize: options.batchSize ?? 10,
-      blockMs: options.blockMs ?? 2000,
-      claimIntervalMs: options.claimIntervalMs ?? 30000,
-      claimMinIdleTimeMs: options.claimMinIdleTimeMs ?? 60000,
-      idempotencyTtlSeconds: options.idempotencyTtlSeconds ?? 86400,
-      retry: RetryHelper.normalizeRetryOptions(options.retry),
+      retry: RetryHelper.normalizeRetryOptions(
+        options.retry ?? DEFAULT_POST_PROCESSOR_CONFIG.retry,
+      ),
+      dynamicBatching: {
+        ...DEFAULT_POST_PROCESSOR_CONFIG.dynamicBatching,
+        ...options.dynamicBatching,
+      },
     };
+    OptionsValidator.validate(this.options);
     this.retryHelper = new RetryHelper(this.options.retry);
+    this.circuitBreaker = new CircuitBreaker(
+      this.options.circuitBreaker as Required<CircuitBreakerConfig>,
+    );
+    this.currentBatchSize = this.options.batchSize;
   }
-
   /**
    * Starts the post-processor consumption loop and periodic claim task.
    */
@@ -63,6 +99,8 @@ export abstract class BasePostProcessor {
       throw error;
     }
 
+    this.setupSignalHandlers();
+
     this.loopPromise = this.runLoop().catch((err: unknown) => {
       const error = err instanceof Error ? err : new Error(String(err));
       this.logger.error('Post-processor loop crashed', { error });
@@ -84,6 +122,8 @@ export abstract class BasePostProcessor {
 
     this.logger.info('Stopping post-processor...');
     this.isRunning = false;
+
+    this.cleanupSignalHandlers();
 
     if (this.claimTimeout) {
       clearTimeout(this.claimTimeout);
@@ -110,6 +150,25 @@ export abstract class BasePostProcessor {
     }
 
     this.logger.info('Post-processor stopped');
+  }
+
+  private setupSignalHandlers(): void {
+    process.on('SIGTERM', this.sigtermHandler);
+    process.on('SIGINT', this.sigintHandler);
+  }
+
+  private cleanupSignalHandlers(): void {
+    process.off('SIGTERM', this.sigtermHandler);
+    process.off('SIGINT', this.sigintHandler);
+  }
+
+  private async handleShutdown(signal: string): Promise<void> {
+    this.logger.info(`Received ${signal}, initiating graceful shutdown...`);
+    try {
+      await this.stop();
+    } catch (err) {
+      this.logger.error('Error during graceful shutdown', { error: err });
+    }
   }
 
   /**
@@ -171,6 +230,11 @@ export abstract class BasePostProcessor {
   private async runLoop(): Promise<void> {
     while (this.isRunning) {
       try {
+        if (!this.circuitBreaker.isAllowed()) {
+          this.logger.warn('Circuit breaker is OPEN. Suspending message processing.');
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          continue;
+        }
         await this.processNextCycle();
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -215,7 +279,16 @@ export abstract class BasePostProcessor {
       readPending: this.readPending,
     });
 
-    await this.processEntries(entries);
+    const startTime = Date.now();
+    try {
+      await this.processEntries(entries);
+      const latency = Date.now() - startTime;
+      this.adjustBatchSize(latency);
+    } catch (err) {
+      const latency = Date.now() - startTime;
+      this.adjustBatchSize(latency);
+      throw err;
+    }
   }
 
   /**
@@ -227,7 +300,7 @@ export abstract class BasePostProcessor {
       this.options.groupName,
       this.options.consumerName,
       'COUNT',
-      this.options.batchSize,
+      this.currentBatchSize,
     ];
 
     if (idToRead === '>') {
@@ -236,6 +309,68 @@ export abstract class BasePostProcessor {
 
     args.push('STREAMS', this.options.streamName, idToRead);
     return args;
+  }
+
+  private adjustBatchSize(latencyMs: number): void {
+    if (!this.options.dynamicBatching.enabled) {
+      return;
+    }
+
+    const config = this.options.dynamicBatching;
+    const minSize = config.minBatchSize ?? 1;
+    const maxSize = config.maxBatchSize ?? this.options.batchSize;
+    const targetLatency = config.targetLatencyMs ?? 1000;
+
+    // 1. Memory pressure check
+    const heapStats = v8.getHeapStatistics();
+    const memoryPressure = heapStats.used_heap_size / heapStats.heap_size_limit;
+
+    if (memoryPressure > 0.85) {
+      this.currentBatchSize = minSize;
+      this.logger.warn('High memory pressure detected, dropping batch size to minimum', {
+        memoryPressure,
+        currentBatchSize: this.currentBatchSize,
+      });
+      return;
+    }
+
+    // 2. CPU load check
+    const systemLoad = os.loadavg()[0];
+    const cpuCount = os.cpus().length;
+    const cpuPressure = systemLoad / cpuCount;
+
+    if (cpuPressure > 1.2) {
+      this.currentBatchSize = Math.max(minSize, Math.floor(this.currentBatchSize * 0.7));
+      this.logger.warn('High CPU load detected, reducing batch size', {
+        cpuPressure,
+        currentBatchSize: this.currentBatchSize,
+      });
+      return;
+    }
+
+    // 3. Latency check
+    const previousSize = this.currentBatchSize;
+    if (latencyMs > targetLatency) {
+      this.currentBatchSize = Math.max(minSize, Math.floor(this.currentBatchSize * 0.8));
+      if (this.currentBatchSize !== previousSize) {
+        this.logger.info('Reducing batch size due to high latency', {
+          latencyMs,
+          targetLatency,
+          previousSize,
+          currentBatchSize: this.currentBatchSize,
+        });
+      }
+    } else {
+      this.currentBatchSize = Math.min(maxSize, this.currentBatchSize + 1);
+      if (this.currentBatchSize !== previousSize) {
+        this.logger.debug('Increasing batch size due to low latency', {
+          latencyMs,
+          targetLatency,
+          previousSize,
+          currentBatchSize: this.currentBatchSize,
+        });
+      }
+    }
   }
 
   /**
@@ -260,13 +395,18 @@ export abstract class BasePostProcessor {
    * Find and claim long-idle pending messages.
    */
   private async claimPendingMessages(): Promise<void> {
+    if (!this.circuitBreaker.isAllowed()) {
+      this.logger.warn('Circuit breaker is OPEN. Skipping claim cycle.');
+      return;
+    }
+
     this.logger.debug('Scanning for pending messages to claim');
 
     const pendingMessages = await RedisStreamHelper.getPendingMessages(
       this.redis,
       this.options.streamName,
       this.options.groupName,
-      this.options.batchSize,
+      this.currentBatchSize,
     );
 
     const claimable = pendingMessages.filter(
@@ -335,6 +475,11 @@ export abstract class BasePostProcessor {
    * Processes messages from the retry queue.
    */
   private async processRetryQueue(): Promise<void> {
+    if (!this.circuitBreaker.isAllowed()) {
+      this.logger.warn('Circuit breaker is OPEN. Skipping retry queue processing.');
+      return;
+    }
+
     const readyMessages = await this.retryHelper.getReadyForRetry(
       this.redis,
       this.options.groupName,

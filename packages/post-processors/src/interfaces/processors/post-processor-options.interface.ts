@@ -1,4 +1,5 @@
-import type { RetryOptions } from './retry-options.interface.js';
+import type { CircuitBreakerConfig } from '../validators/circuit-breaker-config.interface.js';
+import type { RetryOptions } from '../retry/retry-options.interface.js';
 
 export interface PostProcessorOptions {
   /**
@@ -50,7 +51,39 @@ export interface PostProcessorOptions {
 
   /**
    * Retry options with exponential backoff configuration.
-   * @default { maxRetries: 5, initialDelayMs: 1000, maxDelayMs: 60000, backoffMultiplier: 2, enableDlq: true }
+   * @default maxRetries: 5, initialDelayMs: 1000, maxDelayMs: 60000, backoffMultiplier: 2, enableDlq: true }
    */
   retry?: RetryOptions;
+
+  /**
+   * Circuit breaker configuration.
+   * @default { failureThreshold: 3, resetTimeoutMs: 60000, successThreshold: 1 }
+   */
+  circuitBreaker?: CircuitBreakerConfig;
+
+  /**
+   * Configuration for dynamic batching based on CPU, memory, and processing latency.
+   */
+  dynamicBatching?: {
+    /**
+     * Whether dynamic batching is enabled.
+     * @default false
+     */
+    enabled?: boolean;
+    /**
+     * Minimum batch size to adjust down to.
+     * @default 1
+     */
+    minBatchSize?: number;
+    /**
+     * Maximum batch size to adjust up to.
+     * @default batchSize
+     */
+    maxBatchSize?: number;
+    /**
+     * Target latency in milliseconds for a batch processing cycle.
+     * @default 1000
+     */
+    targetLatencyMs?: number;
+  };
 }

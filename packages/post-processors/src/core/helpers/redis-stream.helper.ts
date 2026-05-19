@@ -1,6 +1,6 @@
 import type { Redis } from 'ioredis';
-import type { RedisStreamEntry, RedisStreamRawEntry } from '../types/index.js';
-import type { PendingMessageInfo } from '../interfaces/index.js';
+import type { RedisStreamEntry, RedisStreamRawEntry } from '../../types/index.js';
+import type { PendingMessageInfo } from '../../interfaces/index.js';
 
 export class RedisStreamHelper {
   /**

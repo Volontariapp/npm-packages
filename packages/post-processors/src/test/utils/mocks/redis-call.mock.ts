@@ -34,6 +34,17 @@ export function mockRedisCall(
     return null;
   });
 
+  // Mock direct Redis client methods used by helpers
+  redisMock.incr.mockResolvedValue(1);
+  redisMock.set.mockResolvedValue('OK');
+  redisMock.expire.mockResolvedValue(1);
+  redisMock.get.mockResolvedValue(null);
+  redisMock.zadd.mockResolvedValue('1');
+  redisMock.zrangebyscore.mockResolvedValue([]);
+  redisMock.zrem.mockResolvedValue(1);
+  redisMock.del.mockResolvedValue(1);
+  redisMock.xadd.mockResolvedValue('1-0');
+
   return callMock;
 }
 

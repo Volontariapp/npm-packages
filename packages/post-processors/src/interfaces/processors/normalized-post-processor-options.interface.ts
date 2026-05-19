@@ -1,5 +1,5 @@
 import type { PostProcessorOptions } from './post-processor-options.interface.js';
-import type { RetryOptions } from './retry-options.interface.js';
+import type { RetryOptions } from '../retry/retry-options.interface.js';
 
 /**
  * Normalized (fully required) version of PostProcessorOptions used internally by BasePostProcessor.
