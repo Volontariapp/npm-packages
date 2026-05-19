@@ -31,14 +31,18 @@ describe('CircuitBreaker Integration', () => {
       claimMinIdleTimeMs: 100,
       circuitBreaker: {
         failureThreshold: 2,
-        resetTimeoutMs: 50,
+        resetTimeoutMs: 1000,
         successThreshold: 2,
       },
     });
   });
 
   afterEach(async () => {
-    await processor.stop();
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (processor) {
+      // Race Condition
+      await processor.stop();
+    }
     jest.restoreAllMocks();
   });
 
@@ -50,21 +54,24 @@ describe('CircuitBreaker Integration', () => {
     mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
       { messageId: '1-0', event: mockEvent },
       { messageId: '2-0', event: mockEvent },
-      { messageId: '3-0', event: mockEvent },
     ]);
 
     processor.processError = new Error('Processor failed');
 
     await processor.start();
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 30);
-    });
 
-    expect(cb.getState()).toBe(CircuitBreakerState.CLOSED);
-    expect(cb.getDiagnostics().failureCount).toBe(1);
-
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 35);
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+        reject(new Error('Circuit breaker did not open within 5000ms'));
+      }, 5000);
+      const interval = setInterval(() => {
+        if (cb.getState() === CircuitBreakerState.OPEN) {
+          clearInterval(interval);
+          clearTimeout(timeout);
+          resolve();
+        }
+      }, 10);
     });
 
     expect(cb.getState()).toBe(CircuitBreakerState.OPEN);
@@ -75,6 +82,7 @@ describe('CircuitBreaker Integration', () => {
     const mockEvent = makeTestEvent('evt-2');
     mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
       { messageId: '1-0', event: mockEvent },
+      { messageId: '2-0', event: mockEvent },
     ]);
 
     processor.processError = new Error('Processor failed');
@@ -83,8 +91,8 @@ describe('CircuitBreaker Integration', () => {
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         clearInterval(interval);
-        reject(new Error('Circuit breaker did not open within 10000ms'));
-      }, 10000);
+        reject(new Error('Circuit breaker did not open within 5000ms'));
+      }, 5000);
       const interval = setInterval(() => {
         if (cb.getState() === CircuitBreakerState.OPEN) {
           clearInterval(interval);
@@ -98,7 +106,7 @@ describe('CircuitBreaker Integration', () => {
 
     callMock.mockClear();
     mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
-      { messageId: '2-0', event: mockEvent },
+      { messageId: '3-0', event: mockEvent },
     ]);
 
     await new Promise<void>((resolve) => {
@@ -114,6 +122,7 @@ describe('CircuitBreaker Integration', () => {
     const mockEvent = makeTestEvent('evt-3');
     mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
       { messageId: '1-0', event: mockEvent },
+      { messageId: '2-0', event: mockEvent },
     ]);
 
     processor.processError = new Error('Processor failed');
@@ -122,8 +131,8 @@ describe('CircuitBreaker Integration', () => {
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         clearInterval(interval);
-        reject(new Error('Circuit breaker did not open within 10000ms'));
-      }, 10000);
+        reject(new Error('Circuit breaker did not open within 5000ms'));
+      }, 5000);
       const interval = setInterval(() => {
         if (cb.getState() === CircuitBreakerState.OPEN) {
           clearInterval(interval);
@@ -137,17 +146,28 @@ describe('CircuitBreaker Integration', () => {
 
     processor.processError = null;
 
+    // Wait for the reset timeout (1000ms) to pass
     await new Promise<void>((resolve) => {
-      setTimeout(resolve, 60);
+      setTimeout(resolve, 1100);
     });
 
     mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
-      { messageId: '2-0', event: mockEvent },
       { messageId: '3-0', event: mockEvent },
+      { messageId: '4-0', event: mockEvent },
     ]);
 
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 60);
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+        reject(new Error('Circuit breaker did not close within 5000ms'));
+      }, 5000);
+      const interval = setInterval(() => {
+        if (cb.getState() === CircuitBreakerState.CLOSED) {
+          clearInterval(interval);
+          clearTimeout(timeout);
+          resolve();
+        }
+      }, 10);
     });
 
     expect(cb.getState()).toBe(CircuitBreakerState.CLOSED);

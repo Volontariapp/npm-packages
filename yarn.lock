@@ -3347,7 +3347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.12, @types/jest@npm:^29.5.14":
+"@types/jest@npm:^29.5.12":
   version: 29.5.14
   resolution: "@types/jest@npm:29.5.14"
   dependencies:
@@ -4304,9 +4304,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/post-processors@workspace:packages/post-processors"
   dependencies:
-    "@jest/globals": "npm:^29.7.0"
+    "@jest/globals": "npm:^30.3.0"
     "@nestjs/common": "npm:^11.0.0"
-    "@types/jest": "npm:^29.5.14"
+    "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.0.0"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/database": "workspace:*"

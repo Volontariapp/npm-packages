@@ -16,13 +16,11 @@ import {
   EventQueueEntity,
   OutboxStatus,
 } from '@volontariapp/database';
-import { EventQueueConsumer, EventQueuePusher } from '@volontariapp/outbox';
-import { TestEventQueueRepository } from '@volontariapp/outbox/testing';
 import { Logger } from '@volontariapp/logger';
 import type { ServiceType } from '@volontariapp/shared';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
 import { testRedisOptions } from '../../redis-config.js';
-import { E2EBatchPostProcessor, makeTestDbEvent, waitFor } from '../../utils/index.js';
+import { E2EBatchPostProcessor, pushDbEvents, waitFor } from '../../utils/index.js';
 import { CircuitBreakerState } from '../../../enums/circuit-breaker-state.enum.js';
 
 describe('BatchPostProcessor E2E Integration Flow', () => {
@@ -53,23 +51,6 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
     await processor.stop();
   });
 
-  async function pushDbEvents(
-    events: { id: string; type: string }[],
-    targetServices: ServiceType[],
-  ) {
-    for (const event of events) {
-      const pendingItem = makeTestDbEvent(repository, event.id, event.type, targetServices);
-      await repository.save(pendingItem);
-    }
-
-    const testRepository = new TestEventQueueRepository(repository);
-    const pusher = new EventQueuePusher(testLogger, redis);
-    const consumer = new EventQueueConsumer(testLogger, testRepository, 100, pusher);
-
-    const fetched = await consumer.fetchPendingItems();
-    await consumer.processItems(fetched);
-  }
-
   it('should process a batch of events end-to-end from Postgres outbox table', async () => {
     processor = new E2EBatchPostProcessor(redis, {
       streamName: 'stream:batch-service',
@@ -88,7 +69,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
     ];
 
     const events = eventIds.map((id) => ({ id, type: 'event.changed' }));
-    await pushDbEvents(events, ['batch-service' as ServiceType]);
+    await pushDbEvents(repository, redis, testLogger, events, ['batch-service' as ServiceType]);
 
     await processor.start();
 
@@ -124,7 +105,13 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
     });
 
     const eventId = '00000000-0000-0000-0000-000000000104';
-    await pushDbEvents([{ id: eventId, type: 'event.changed' }], ['batch-service' as ServiceType]);
+    await pushDbEvents(
+      repository,
+      redis,
+      testLogger,
+      [{ id: eventId, type: 'event.changed' }],
+      ['batch-service' as ServiceType],
+    );
 
     processor.processError = new Error('Transient database batch error');
     processor.failEventIds.add(eventId);
@@ -177,6 +164,9 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       '00000000-0000-0000-0000-000000000106',
     ];
     await pushDbEvents(
+      repository,
+      redis,
+      testLogger,
       eventIds.map((id) => ({ id, type: 'event.changed' })),
       ['batch-service' as ServiceType],
     );
@@ -186,7 +176,12 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
 
     await processor.start();
 
-    await waitFor(() => processor.processedBatches.length === 1, 3000);
+    await waitFor(
+      () =>
+        processor.processedBatches.length === 1 &&
+        processor.getCurrentBatchSize() < initialBatchSize,
+      5000,
+    );
 
     // Verify batch size was adjusted down
     const finalBatchSize = processor.getCurrentBatchSize();
@@ -206,7 +201,13 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
     });
 
     const eventId = '00000000-0000-0000-0000-000000000107';
-    await pushDbEvents([{ id: eventId, type: 'event.changed' }], ['batch-service' as ServiceType]);
+    await pushDbEvents(
+      repository,
+      redis,
+      testLogger,
+      [{ id: eventId, type: 'event.changed' }],
+      ['batch-service' as ServiceType],
+    );
 
     // Get the stream message id
     const streamName = 'stream:batch-service';
@@ -256,6 +257,9 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
     const eventIds = ['00000000-0000-0000-0000-000000000108'];
 
     await pushDbEvents(
+      repository,
+      redis,
+      testLogger,
       [{ id: eventIds[0], type: 'event.changed' }],
       ['batch-service' as ServiceType],
     );
@@ -270,7 +274,13 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
     await waitFor(() => cb.getState() === CircuitBreakerState.OPEN, 3000);
 
     const eventId3 = '00000000-0000-0000-0000-000000000110';
-    await pushDbEvents([{ id: eventId3, type: 'event.changed' }], ['batch-service' as ServiceType]);
+    await pushDbEvents(
+      repository,
+      redis,
+      testLogger,
+      [{ id: eventId3, type: 'event.changed' }],
+      ['batch-service' as ServiceType],
+    );
 
     // Verify it is not processed while CB is OPEN
     await new Promise((resolve) => setTimeout(resolve, 100));

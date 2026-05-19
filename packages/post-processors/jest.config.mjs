@@ -43,6 +43,6 @@ export default {
     process.env.INTEGRATION === 'true'
       ? ['**/*.int.spec.ts']
       : process.env.INTEGRATION === 'all'
-        ? ['**/*.unit.spec.ts', '**/*.int.spec.ts']
+        ? ['**/*.spec.ts']
         : ['**/*.unit.spec.ts'],
 };

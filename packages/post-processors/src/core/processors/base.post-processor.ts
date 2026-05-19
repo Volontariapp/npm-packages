@@ -120,6 +120,13 @@ export abstract class BasePostProcessor {
   }
 
   /**
+   * Gets the logger instance for testing and debugging.
+   */
+  getLogger(): Logger {
+    return this.logger;
+  }
+
+  /**
    * Stops the post-processor.
    */
   async stop(): Promise<void> {
