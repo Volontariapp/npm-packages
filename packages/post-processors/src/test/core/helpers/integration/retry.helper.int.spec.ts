@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterAll, beforeAll } from '@jest/globals';
 import { Redis } from 'ioredis';
-import { testRedisOptions } from '../../redis-config.js';
-import { RetryHelper } from '../../../core/helpers/retry.helper.js';
-import type { ParseResult } from '../../../types/index.js';
+import { testRedisOptions } from '../../../redis-config.js';
+import { RetryHelper } from '../../../../core/helpers/retry.helper.js';
+import type { ParseResult } from '../../../../types/index.js';
 
 describe('RetryHelper — Integration', () => {
   let redis: Redis;

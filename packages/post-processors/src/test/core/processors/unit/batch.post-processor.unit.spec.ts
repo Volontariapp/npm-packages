@@ -3,7 +3,7 @@ import type { Redis } from 'ioredis';
 import { createMock } from '@volontariapp/testing';
 import os from 'node:os';
 import v8 from 'node:v8';
-import { CircuitBreakerState } from '../../../enums/circuit-breaker-state.enum.js';
+import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enum.js';
 import {
   TestBatchPostProcessor,
   makeTestEvent,
@@ -13,7 +13,7 @@ import {
   mockRedisCall,
   mockRedisXreadgroup,
   formatEventsToXreadgroupResponse,
-} from '../../utils/index.js';
+} from '../../../utils/index.js';
 
 describe('BatchPostProcessor — Unit', () => {
   let redisMock: jest.Mocked<Redis>;

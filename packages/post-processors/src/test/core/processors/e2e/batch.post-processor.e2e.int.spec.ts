@@ -18,10 +18,10 @@ import {
 } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
 import type { ServiceType } from '@volontariapp/shared';
-import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
-import { testRedisOptions } from '../../redis-config.js';
-import { E2EBatchPostProcessor, pushDbEvents, waitFor } from '../../utils/index.js';
-import { CircuitBreakerState } from '../../../enums/circuit-breaker-state.enum.js';
+import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-source.js';
+import { testRedisOptions } from '../../../redis-config.js';
+import { E2EBatchPostProcessor, pushDbEvents, waitFor } from '../../../utils/index.js';
+import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enum.js';
 
 describe('BatchPostProcessor E2E Integration Flow', () => {
   let redis: Redis;

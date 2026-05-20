@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import type { Redis } from 'ioredis';
 import { createMock } from '@volontariapp/testing';
-import { RedisStreamHelper } from '../../../core/helpers/redis-stream.helper.js';
-import type { RedisStreamRawEntry } from '../../../types/index.js';
+import { RedisStreamHelper } from '../../../../core/helpers/redis-stream.helper.js';
+import type { RedisStreamRawEntry } from '../../../../types/index.js';
 
 describe('RedisStreamHelper — Unit', () => {
   let redisMock: jest.Mocked<Redis>;

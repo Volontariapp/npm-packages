@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals
 import { EventMessagingType } from '@volontariapp/messaging';
 import type { Redis } from 'ioredis';
 import { createMock } from '@volontariapp/testing';
-import { CircuitBreakerState } from '../../../enums/circuit-breaker-state.enum.js';
+import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enum.js';
 import {
   TestPostProcessor,
   makeTestEvent,
@@ -13,7 +13,7 @@ import {
   mockRedisCall,
   mockRedisXreadgroup,
   formatEventsToXreadgroupResponse,
-} from '../../utils/index.js';
+} from '../../../utils/index.js';
 
 describe('SinglePostProcessor — Unit', () => {
   let redisMock: jest.Mocked<Redis>;

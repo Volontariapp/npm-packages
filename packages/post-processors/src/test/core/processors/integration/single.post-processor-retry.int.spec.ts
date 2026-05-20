@@ -9,7 +9,7 @@ import {
   jest,
 } from '@jest/globals';
 import { Redis } from 'ioredis';
-import { testRedisOptions } from '../../redis-config.js';
+import { testRedisOptions } from '../../../redis-config.js';
 import {
   TestPostProcessor,
   makeTestEvent,
@@ -18,8 +18,8 @@ import {
   TestMessagingGroup,
   TestMessagingConsumer,
   waitFor,
-} from '../../utils/index.js';
-import type { ParseSuccess } from '../../../index.js';
+} from '../../../utils/index.js';
+import type { ParseSuccess } from '../../../../types/index.js';
 
 describe('SinglePostProcessor — Retry & Exponential Backoff', () => {
   let redis: Redis;

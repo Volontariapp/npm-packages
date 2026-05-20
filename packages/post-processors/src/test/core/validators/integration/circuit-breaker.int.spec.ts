@@ -1,16 +1,16 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import type { Redis } from 'ioredis';
 import { createMock } from '@volontariapp/testing';
-import { TestPostProcessor } from '../../utils/classes/test-post-processor.class.js';
-import { mockRedisCall, mockRedisXreadgroup } from '../../utils/mocks/redis-call.mock.js';
-import type { RedisMockCallReturn } from '../../utils/mocks/redis-call.mock.js';
-import { makeTestEvent } from '../../utils/factories/test-event.factory.js';
-import { CircuitBreakerState } from '../../../enums/circuit-breaker-state.enum.js';
+import { TestPostProcessor } from '../../../utils/classes/test-post-processor.class.js';
+import { mockRedisCall, mockRedisXreadgroup } from '../../../utils/mocks/redis-call.mock.js';
+import type { RedisMockCallReturn } from '../../../utils/mocks/redis-call.mock.js';
+import { makeTestEvent } from '../../../utils/factories/test-event.factory.js';
+import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enum.js';
 import {
   TestMessagingStream,
   TestMessagingGroup,
   TestMessagingConsumer,
-} from '../../utils/enums/test-messaging.enum.js';
+} from '../../../utils/enums/test-messaging.enum.js';
 
 describe('CircuitBreaker Integration', () => {
   let redisMock: jest.Mocked<Redis>;

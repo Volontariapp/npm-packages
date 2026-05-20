@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import { OptionsValidator } from '../../../core/validators/options-validator.js';
-import type { PostProcessorOptions } from '../../../interfaces/index.js';
+import { OptionsValidator } from '../../../../core/validators/options-validator.js';
+import type { PostProcessorOptions } from '../../../../interfaces/index.js';
 
 describe('OptionsValidator', () => {
   const validBaseOptions: PostProcessorOptions = {

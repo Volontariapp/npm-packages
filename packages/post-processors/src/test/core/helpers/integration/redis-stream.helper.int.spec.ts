@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterAll, beforeAll } from '@jest/globals';
 import { Redis } from 'ioredis';
-import { testRedisOptions } from '../../redis-config.js';
-import { RedisStreamHelper } from '../../../core/helpers/redis-stream.helper.js';
+import { testRedisOptions } from '../../../redis-config.js';
+import { RedisStreamHelper } from '../../../../core/helpers/redis-stream.helper.js';
 
 describe('RedisStreamHelper — Integration', () => {
   let redis: Redis;

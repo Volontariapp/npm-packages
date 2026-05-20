@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from '@jest/globals';
 import { Redis } from 'ioredis';
-import { testRedisOptions } from '../../redis-config.js';
-import { CircuitBreakerState } from '../../../enums/circuit-breaker-state.enum.js';
+import { testRedisOptions } from '../../../redis-config.js';
+import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enum.js';
 import {
   TestPostProcessor,
   makeTestEvent,
@@ -11,7 +11,7 @@ import {
   TestMessagingConsumer,
   waitFor,
   type RedisXPendingSummary,
-} from '../../utils/index.js';
+} from '../../../utils/index.js';
 
 describe('SinglePostProcessor — Integration', () => {
   let redis: Redis;

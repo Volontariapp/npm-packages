@@ -4,14 +4,14 @@ import { Redis } from 'ioredis';
 import { databaseMapper, EventQueueModel, EventQueueEntity } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
 import type { ServiceType } from '@volontariapp/shared';
-import { testDataSource, initializeTestDb, closeTestDb } from '../../data-source.js';
-import { testRedisOptions } from '../../redis-config.js';
+import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-source.js';
+import { testRedisOptions } from '../../../redis-config.js';
 import {
   E2ESinglePostProcessor,
   pushDbEvent,
   startOutboxLoop,
   waitFor,
-} from '../../utils/index.js';
+} from '../../../utils/index.js';
 
 describe('Multiple Post-Processors E2E Integration Flow', () => {
   let redis: Redis;

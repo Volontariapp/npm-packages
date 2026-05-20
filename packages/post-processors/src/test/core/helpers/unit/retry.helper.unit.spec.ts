@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import type { Redis } from 'ioredis';
 import { createMock } from '@volontariapp/testing';
-import { RetryHelper } from '../../../core/helpers/retry.helper.js';
-import type { ParseResult } from '../../../types/index.js';
+import { RetryHelper } from '../../../../core/helpers/retry.helper.js';
+import type { ParseResult } from '../../../../types/index.js';
 
 describe('RetryHelper — Unit', () => {
   let redisMock: jest.Mocked<Redis>;
