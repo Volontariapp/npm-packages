@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+### Patch Changes
+
+- license package
+
 ## 0.4.0
 
 ### Minor Changes

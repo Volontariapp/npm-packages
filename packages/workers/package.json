@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/workers",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "Abstract BullMQ worker base for Volontariapp NestJS workers",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

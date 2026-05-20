@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.5.6
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.11.2
+  - @volontariapp/contracts@4.0.11
+  - @volontariapp/database@1.17.1
+  - @volontariapp/crypto@0.3.8
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+  - @volontariapp/shared@0.4.1
+  - @volontariapp/auth@3.2.5
+
 ## 2.5.5
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.5
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.5
+
 ## 2.1.4
 
 ### Patch Changes

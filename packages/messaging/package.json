@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/messaging",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "Universal messaging contracts for Volontariapp (Events and Jobs)",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -55,7 +55,7 @@ cat > "${PKG_DIR}/package.json" << EOF
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
