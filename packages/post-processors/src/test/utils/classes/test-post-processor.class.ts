@@ -2,7 +2,7 @@ import { SinglePostProcessor } from '../../../core/processors/single.post-proces
 import type { EventMessagingType, EventRegistry, StreamEvent } from '@volontariapp/messaging';
 import type { ExtractPayload } from '../types/test-messaging.types.js';
 
-export class TestPostProcessor extends SinglePostProcessor {
+export class TestPostProcessor extends SinglePostProcessor<EventMessagingType> {
   public processedEvents: StreamEvent<ExtractPayload<EventRegistry[EventMessagingType]>>[] = [];
   public processError: Error | null = null;
   public shouldProcessVal = true;
@@ -18,7 +18,7 @@ export class TestPostProcessor extends SinglePostProcessor {
     this.processedEvents.push(event);
   }
 
-  public override shouldProcess(_eventType: string): boolean {
+  public override shouldProcess(_eventType: EventMessagingType): boolean {
     return this.shouldProcessVal;
   }
 

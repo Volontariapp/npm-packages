@@ -5,15 +5,15 @@ import type { BatchEventItem } from '../../interfaces/index.js';
 import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 
 export abstract class BatchPostProcessor<
-  TKey extends EventMessagingType = EventMessagingType,
-> extends BasePostProcessor {
-  protected abstract processEvents(events: BatchEventItem<TKey>[]): Promise<void>;
+  EventType extends EventMessagingType,
+> extends BasePostProcessor<EventType> {
+  protected abstract processEvents(events: BatchEventItem<EventType>[]): Promise<void>;
 
   /**
    * Reads and processes the stream entries in batches.
    */
   protected override async processEntries(entries: RedisStreamEntry[]): Promise<void> {
-    const items: BatchEventItem<TKey>[] = [];
+    const items: BatchEventItem<EventType>[] = [];
     const acquiredMessageIds: string[] = [];
     const ttl = this.options.idempotencyTtlSeconds;
 
@@ -32,7 +32,7 @@ export abstract class BatchPostProcessor<
   private async filterAndLockEntry(
     entry: RedisStreamEntry,
     ttl: number,
-    items: BatchEventItem<TKey>[],
+    items: BatchEventItem<EventType>[],
     acquiredMessageIds: string[],
   ): Promise<boolean> {
     const { id, fields } = entry;
@@ -45,7 +45,7 @@ export abstract class BatchPostProcessor<
       return false;
     }
 
-    if (!this.shouldProcess(fields.type ?? '')) {
+    if (!fields.type || !this.shouldProcess(fields.type as EventType)) {
       this.logger.debug('Skipping message: type not registered/handled', {
         messageId: id,
         type: fields.type,
@@ -75,11 +75,11 @@ export abstract class BatchPostProcessor<
     id: string,
     rawEvent: string,
     useIdempotency: boolean,
-    items: BatchEventItem<TKey>[],
+    items: BatchEventItem<EventType>[],
     acquiredMessageIds: string[],
   ): Promise<boolean> {
     try {
-      const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[TKey]>>;
+      const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[EventType]>>;
       if (typeof event !== 'object') {
         throw new Error('Event payload must be a non-null object');
       }
@@ -111,7 +111,7 @@ export abstract class BatchPostProcessor<
    * Invokes processEvents with retry logic for failed batches.
    */
   private async executeBatchProcessing(
-    items: BatchEventItem<TKey>[],
+    items: BatchEventItem<EventType>[],
     _acquiredMessageIds: string[],
     useIdempotency: boolean,
   ): Promise<void> {
@@ -142,7 +142,7 @@ export abstract class BatchPostProcessor<
    * Processes each message individually to decide if it should be retried or sent to DLQ.
    */
   private async handleBatchProcessingFailure(
-    items: BatchEventItem<TKey>[],
+    items: BatchEventItem<EventType>[],
     error: Error,
     useIdempotency: boolean,
   ): Promise<void> {

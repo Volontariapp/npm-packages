@@ -13,8 +13,9 @@ import { RetryHelper } from '../helpers/retry.helper.js';
 import { DEFAULT_POST_PROCESSOR_CONFIG } from '../../constants/index.js';
 import { OptionsValidator } from '../validators/options-validator.js';
 import { CircuitBreaker } from '../validators/circuit-breaker.js';
+import type { EventMessagingType } from '@volontariapp/messaging';
 
-export abstract class BasePostProcessor {
+export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   protected readonly logger: Logger;
   protected readonly options: NormalizedPostProcessorOptions;
   protected readonly retryHelper: RetryHelper;
@@ -194,7 +195,7 @@ export abstract class BasePostProcessor {
    * Helper to determine if a message should be processed.
    * By default, checks if the event type is processed by this processor.
    */
-  protected shouldProcess(_eventType: string): boolean {
+  protected shouldProcess(_eventType: EventType): boolean {
     return true;
   }
 

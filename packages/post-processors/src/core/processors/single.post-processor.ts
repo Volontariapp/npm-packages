@@ -11,13 +11,13 @@ import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 type ExtractPayload<T> = T extends EventChangedPayload<infer P> ? P : T;
 
 export abstract class SinglePostProcessor<
-  TKey extends EventMessagingType = EventMessagingType,
-> extends BasePostProcessor {
+  EventType extends EventMessagingType,
+> extends BasePostProcessor<EventType> {
   /**
    * Processes a single event. Must be implemented by subclasses.
    */
   protected abstract processEvent(
-    event: StreamEvent<ExtractPayload<EventRegistry[TKey]>>,
+    event: StreamEvent<ExtractPayload<EventRegistry[EventType]>>,
     messageId: string,
   ): Promise<void>;
 
@@ -44,7 +44,7 @@ export abstract class SinglePostProcessor<
       return;
     }
 
-    if (!this.shouldProcess(fields.type ?? '')) {
+    if (!fields.type || !this.shouldProcess(fields.type as EventType)) {
       this.logger.debug('Skipping message: type not registered/handled', {
         messageId: id,
         type: fields.type,
@@ -77,7 +77,7 @@ export abstract class SinglePostProcessor<
     useIdempotency: boolean,
   ): Promise<void> {
     try {
-      const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[TKey]>>;
+      const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[EventType]>>;
       if (typeof event !== 'object') {
         throw new Error('Event payload must be a non-null object');
       }
@@ -176,7 +176,7 @@ export abstract class SinglePostProcessor<
    */
   private parsePayloadFields(rawEvent: string): ParseResult {
     try {
-      const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[TKey]>>;
+      const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[EventType]>>;
 
       return {
         success: true,

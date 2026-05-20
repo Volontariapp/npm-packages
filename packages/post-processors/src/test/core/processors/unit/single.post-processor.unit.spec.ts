@@ -160,7 +160,9 @@ describe('SinglePostProcessor — Unit', () => {
       await new Promise((resolve) => setTimeout(resolve, 60));
 
       expect(processSpy).not.toHaveBeenCalled();
-      expect(shouldProcessSpy).toHaveBeenCalledWith('unregistered.type');
+      expect(shouldProcessSpy).toHaveBeenCalledWith(
+        'unregistered.type' as unknown as EventMessagingType,
+      );
       expect(acknowledgeSpy).toHaveBeenCalledWith(TestEventId.MSG_PENDING);
     });
   });

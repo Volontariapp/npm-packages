@@ -1,7 +1,8 @@
 import { BatchPostProcessor } from '../../../core/processors/batch.post-processor.js';
+import type { EventMessagingType } from '@volontariapp/messaging';
 import type { BatchEventItem } from '../../../interfaces/index.js';
 
-export class TestBatchPostProcessor extends BatchPostProcessor {
+export class TestBatchPostProcessor extends BatchPostProcessor<EventMessagingType> {
   public processedBatches: BatchEventItem[][] = [];
   public processError: Error | null = null;
   public shouldProcessVal = true;
@@ -14,7 +15,7 @@ export class TestBatchPostProcessor extends BatchPostProcessor {
     this.processedBatches.push(events);
   }
 
-  public override shouldProcess(_eventType: string): boolean {
+  public override shouldProcess(_eventType: EventMessagingType): boolean {
     return this.shouldProcessVal;
   }
 

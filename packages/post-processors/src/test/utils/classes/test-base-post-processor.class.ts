@@ -1,4 +1,5 @@
 import { BasePostProcessor } from '../../../core/processors/base.post-processor.js';
+import type { EventMessagingType } from '@volontariapp/messaging';
 import type { RedisStreamEntry, ParseResult } from '../../../types/index.js';
 import type { NormalizedPostProcessorOptions } from '../../../interfaces/index.js';
 
@@ -12,7 +13,7 @@ interface BasePostProcessorPrivate {
   adjustBatchSize(latencyMs: number): void;
 }
 
-export class TestBasePostProcessor extends BasePostProcessor {
+export class TestBasePostProcessor extends BasePostProcessor<EventMessagingType> {
   public processedEntries: RedisStreamEntry[] = [];
   public processError: Error | null = null;
   public shouldProcessVal = true;
@@ -25,7 +26,7 @@ export class TestBasePostProcessor extends BasePostProcessor {
     this.processedEntries.push(...entries);
   }
 
-  protected override shouldProcess(_eventType: string): boolean {
+  protected override shouldProcess(_eventType: EventMessagingType): boolean {
     return this.shouldProcessVal;
   }
 
