@@ -4442,6 +4442,7 @@ __metadata:
     "@types/node": "npm:^24.0.0"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/database": "workspace:*"
+    "@volontariapp/health-check": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
     "@volontariapp/outbox": "workspace:*"

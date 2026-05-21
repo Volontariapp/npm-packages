@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+### Minor Changes
+
+- health check diagnostics server
+
 ## 1.1.0
 
 ### Minor Changes
