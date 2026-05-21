@@ -8,6 +8,15 @@
 - fix: update job audit emitter to be required
 - Updated dependencies []:
   - @volontariapp/database@2.0.0
+## 1.2.3
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.11
+  - @volontariapp/database@1.17.1
 
 ## 1.2.2
 

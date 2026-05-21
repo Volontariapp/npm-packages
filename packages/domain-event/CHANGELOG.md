@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.6.11
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.11.2
+  - @volontariapp/contracts@4.0.11
+  - @volontariapp/messaging@1.2.3
+  - @volontariapp/database@1.17.1
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+
 ## 2.6.10
 
 ### Patch Changes

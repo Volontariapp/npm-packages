@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/config",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

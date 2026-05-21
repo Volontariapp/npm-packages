@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.8
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+
 ## 0.3.7
 
 ### Patch Changes

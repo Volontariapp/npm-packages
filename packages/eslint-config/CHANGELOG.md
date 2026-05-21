@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.4
+
+### Patch Changes
+
+- license package
+
 ## 2.2.3
 
 ### Patch Changes
