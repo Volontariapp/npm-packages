@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- license package
+
 ## 0.1.2
 
 ### Patch Changes

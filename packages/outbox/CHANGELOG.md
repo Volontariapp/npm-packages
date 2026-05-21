@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.7
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/messaging@1.2.3
+  - @volontariapp/database@1.17.1
+  - @volontariapp/testing@1.0.1
+  - @volontariapp/config@3.1.1
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+  - @volontariapp/shared@0.4.1
+
 ## 0.6.6
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.2.5
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.11.2
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+  - @volontariapp/shared@0.4.1
+
 ## 3.2.4
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/crypto",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

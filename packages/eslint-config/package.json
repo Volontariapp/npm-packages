@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/eslint-config",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "Shared ESLint flat config for all Volontariapp projects",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "./index.mjs",
   "exports": {
