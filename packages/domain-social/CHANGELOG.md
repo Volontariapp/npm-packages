@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- bump migration
+
 ## 0.3.14
 
 ### Patch Changes
