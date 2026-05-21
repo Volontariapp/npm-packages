@@ -9,3 +9,6 @@ export * from './enums/test-messaging.enum.js';
 export * from './mocks/redis-call.mock.js';
 export * from './helpers/wait.helper.js';
 export * from './helpers/push-db-event.helper.js';
+export * from './classes/test-job-outbox-success.post-processor.class.js';
+export * from './classes/test-job-outbox-failed.post-processor.class.js';
+export * from './factories/job-outbox-event.factory.js';

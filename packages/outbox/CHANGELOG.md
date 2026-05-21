@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- post-processors job outbox
+
 ## 0.7.1
 
 ### Patch Changes
