@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+### Major Changes
+
+- setup event type
+
 ## 1.3.0
 
 ### Minor Changes
@@ -8,6 +14,7 @@
 - fix: update job audit emitter to be required
 - Updated dependencies []:
   - @volontariapp/database@2.0.0
+
 ## 1.2.3
 
 ### Patch Changes
