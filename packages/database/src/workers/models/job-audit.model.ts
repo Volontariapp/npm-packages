@@ -17,8 +17,11 @@ export class JobAuditModel extends BaseModel {
   @Column({ type: 'varchar', length: 20, default: JobAuditStatus.PENDING })
   status: JobAuditStatus = JobAuditStatus.PENDING;
 
-  @Column({ type: 'varchar', length: 255, name: 'worker_id' })
+  @Column({ type: 'varchar', length: 100, name: 'worker_id' })
   workerId!: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  emitter!: string;
 
   @Column({ name: 'current_attempt', type: 'int', default: 1 })
   currentAttempt!: number;

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- fix: update job audit emitter to be required
+
+- Updated dependencies []:
+  - @volontariapp/database@2.0.0
+  - @volontariapp/messaging@1.3.0
+
 ## 0.6.6
 
 ### Patch Changes

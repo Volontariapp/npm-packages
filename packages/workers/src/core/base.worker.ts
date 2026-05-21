@@ -2,7 +2,7 @@ import { WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@volontariapp/logger';
 import { hostname } from 'node:os';
 import type { Job, RedisClient } from 'bullmq';
-import type { JobMessagingType, JobRegistry } from '@volontariapp/messaging';
+import type { JobMessagingType, JobRegistry, JobEnvelope } from '@volontariapp/messaging';
 import type { JobAuditRepository } from '../data/index.js';
 import { JobAuditStatus } from '@volontariapp/database';
 
@@ -14,7 +14,15 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     super();
   }
 
-  async process(job: Job<JobRegistry[K], void, K>, _token?: string): Promise<void> {
+  /**
+   * Returns the typed business payload from the job envelope.
+   * Use this in processJob implementations instead of job.data directly.
+   */
+  protected getPayload(job: Job<JobEnvelope<JobRegistry[K]>, void, K>): JobRegistry[K] {
+    return job.data.payload;
+  }
+
+  async process(job: Job<JobEnvelope<JobRegistry[K]>, void, K>, _token?: string): Promise<void> {
     this.logger.info('Processing job', {
       jobId: job.id,
       type: job.name,
@@ -56,7 +64,7 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     }
   }
 
-  protected abstract processJob(job: Job<JobRegistry[K], void, K>): Promise<void>;
+  protected abstract processJob(job: Job<JobEnvelope<JobRegistry[K]>, void, K>): Promise<void>;
 
   private async getRedisClient(): Promise<RedisClient | null> {
     try {
@@ -66,7 +74,9 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     }
   }
 
-  private async isJobAlreadyCompleted(job: Job<JobRegistry[K], void, K>): Promise<boolean> {
+  private async isJobAlreadyCompleted(
+    job: Job<JobEnvelope<JobRegistry[K]>, void, K>,
+  ): Promise<boolean> {
     if (!job.id) return false;
 
     const client = await this.getRedisClient();
@@ -138,7 +148,7 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
   }
 
   private async recordAuditStart(
-    job: Job<JobRegistry[K], void, K>,
+    job: Job<JobEnvelope<JobRegistry[K]>, void, K>,
     startedAt: Date,
   ): Promise<void> {
     if (!this.auditRepo || !job.id) return;
@@ -150,6 +160,7 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
           jobType: job.name,
           status: JobAuditStatus.PROCESSING,
           workerId: this.workerId,
+          emitter: job.data.emitter,
           currentAttempt: job.attemptsMade + 1,
           startedAt,
         },
@@ -164,7 +175,7 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     }
   }
 
-  private async recordAuditSuccess(job: Job<JobRegistry[K], void, K>): Promise<void> {
+  private async recordAuditSuccess(job: Job<JobEnvelope<JobRegistry[K]>, void, K>): Promise<void> {
     if (job.id) {
       await this.markJobAsCompletedInRedis(job.id);
     }
@@ -194,7 +205,7 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
   }
 
   private async recordAuditFailure(
-    job: Job<JobRegistry[K], void, K>,
+    job: Job<JobEnvelope<JobRegistry[K]>, void, K>,
     error: Error | string,
   ): Promise<void> {
     if (!this.auditRepo || !job.id) {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+### Major Changes
+
+- fix: update job audit emitter to be required
+
 ## 1.17.0
 
 ### Minor Changes

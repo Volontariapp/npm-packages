@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- feat: add job envelope type
+- fix: update job audit emitter to be required
+- Updated dependencies []:
+  - @volontariapp/database@2.0.0
+
 ## 1.2.2
 
 ### Patch Changes
