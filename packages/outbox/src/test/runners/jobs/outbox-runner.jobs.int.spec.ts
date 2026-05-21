@@ -79,7 +79,10 @@ describe('OutboxRunner — Jobs (Integration)', () => {
       const job = await queue.getJob(jobId);
       expect(job).toBeDefined();
       expect(job?.name).toBe('user.process');
-      expect(job?.data).toEqual({ userId: 'u-job-1' });
+      expect(job?.data).toEqual({
+        emitter: 'ms-user',
+        payload: { userId: 'u-job-1' },
+      });
     } finally {
       await queue.close();
     }

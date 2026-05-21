@@ -32,3 +32,4 @@ export * from './event/payloads.js';
 export * from './event/queue.js';
 export * from './post/payloads.js';
 export * from './post/queue.js';
+export * from './envelope.js';

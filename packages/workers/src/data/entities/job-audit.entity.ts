@@ -10,6 +10,8 @@ export class JobAuditEntity extends BaseEntity {
 
   workerId!: string;
 
+  emitter!: string;
+
   currentAttempt!: number;
 
   startedAt?: Date;

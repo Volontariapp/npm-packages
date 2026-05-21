@@ -2,6 +2,7 @@ import { Queue, type JobsOptions } from 'bullmq';
 import { OutboxPusher, type JobsOutboxEntity } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
 import type { Redis } from 'ioredis';
+import type { JobEnvelope } from '@volontariapp/messaging';
 
 export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
   private readonly queues = new Map<string, Queue>();
@@ -49,7 +50,12 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
         }
       }
 
-      await queue.add(entity.type, entity.payload, jobOptions);
+      const envelope: JobEnvelope<typeof entity.payload> = {
+        payload: entity.payload,
+        emitter: entity.emitter,
+      };
+
+      await queue.add(entity.type, envelope, jobOptions);
     } catch (error) {
       this.logger.error(`Failed to push job outbox item ${entity.id.toString()}`, { error });
       throw error;
@@ -84,7 +90,10 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
 
             return {
               name: entity.type,
-              data: entity.payload,
+              data: {
+                payload: entity.payload,
+                emitter: entity.emitter,
+              } as JobEnvelope<typeof entity.payload>,
               opts: jobOptions,
             };
           });
