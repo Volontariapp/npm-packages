@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.2.2
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/health-check@1.0.3
+  - @volontariapp/messaging@1.2.3
+  - @volontariapp/database@1.17.1
+  - @volontariapp/bridge@1.0.3
+  - @volontariapp/config@3.1.1
+  - @volontariapp/logger@0.2.5
+  - @volontariapp/outbox@0.6.7
+
 ## 1.2.1
 
 ### Patch Changes

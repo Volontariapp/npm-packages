@@ -4,6 +4,7 @@ import type {
   IRequirementPayload,
   ITagPayload,
   IEventTagLinkedPayload,
+  IJobAuditPayload,
   EventChangedPayload,
 } from './event/payloads.js';
 
@@ -18,6 +19,8 @@ export interface EventRegistry {
   [EventMessagingType.REQUIREMENT_CHANGED]: EventChangedPayload<IRequirementPayload>;
   [EventMessagingType.TAG_CHANGED]: EventChangedPayload<ITagPayload>;
   [EventMessagingType.EVENT_TAG_LINKED]: EventChangedPayload<IEventTagLinkedPayload>;
+  [EventMessagingType.JOB_OUTBOX_SUCCESS]: EventChangedPayload<IJobAuditPayload>;
+  [EventMessagingType.JOB_OUTBOX_FAILED]: EventChangedPayload<IJobAuditPayload>;
 }
 
 export * from './event/payloads.js';

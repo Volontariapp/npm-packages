@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { JobAuditModel, JobsOutboxModel } from '@volontariapp/database';
 import { InitialSchemaJobAudit1778328780881 } from './migrations/1778328780881-InitialSchemaJobAudit.js';
 import { CreateJobsOutbox1776783577425 } from './migrations/1776783577425-CreateJobsOutbox.js';
+import { AddEmitterToJobAudit1779115200000 } from './migrations/1779115200000-AddEmitterToJobAudit.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -11,7 +12,11 @@ export const testDataSource = new DataSource({
   password: 'testpassword',
   database: 'volontariapp_test',
   entities: [JobAuditModel, JobsOutboxModel],
-  migrations: [CreateJobsOutbox1776783577425, InitialSchemaJobAudit1778328780881],
+  migrations: [
+    CreateJobsOutbox1776783577425,
+    InitialSchemaJobAudit1778328780881,
+    AddEmitterToJobAudit1779115200000,
+  ],
   synchronize: false,
   logging: false,
 });

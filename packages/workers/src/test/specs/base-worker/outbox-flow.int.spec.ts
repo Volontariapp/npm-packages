@@ -96,8 +96,8 @@ describe('Outbox to Worker E2E Flow — Integration', () => {
     const testWorker = new TestWorker(auditRepo);
     const processedEmails: string[] = [];
     testWorker.processJob.mockImplementation((job) => {
-      if (typeof job.data.email === 'string') {
-        processedEmails.push(job.data.email);
+      if (typeof job.data.payload.email === 'string') {
+        processedEmails.push(job.data.payload.email);
       }
       return Promise.resolve();
     });
@@ -161,8 +161,8 @@ describe('Outbox to Worker E2E Flow — Integration', () => {
       if (attempts === 1) {
         throw new Error('Postgres connection timeout');
       }
-      if (typeof job.data.email === 'string') {
-        processedEmails.push(job.data.email);
+      if (typeof job.data.payload.email === 'string') {
+        processedEmails.push(job.data.payload.email);
       }
       return Promise.resolve();
     });
@@ -284,8 +284,8 @@ describe('Outbox to Worker E2E Flow — Integration', () => {
 
     const processedEmails: string[] = [];
     testWorker.processJob.mockImplementation((job) => {
-      if (typeof job.data.email === 'string') {
-        processedEmails.push(job.data.email);
+      if (typeof job.data.payload.email === 'string') {
+        processedEmails.push(job.data.payload.email);
       }
       return Promise.resolve();
     });
@@ -351,8 +351,8 @@ describe('Outbox to Worker E2E Flow — Integration', () => {
 
     const processedEmails: string[] = [];
     testWorker.processJob.mockImplementation(async (job) => {
-      if (typeof job.data.email === 'string') {
-        processedEmails.push(job.data.email);
+      if (typeof job.data.payload.email === 'string') {
+        processedEmails.push(job.data.payload.email);
       }
       return Promise.resolve();
     });
@@ -414,8 +414,8 @@ describe('Outbox to Worker E2E Flow — Integration', () => {
       if (attempts === 1) {
         throw new Error('Temporary business logic error');
       }
-      if (typeof job.data.email === 'string') {
-        processedEmails.push(job.data.email);
+      if (typeof job.data.payload.email === 'string') {
+        processedEmails.push(job.data.payload.email);
       }
       return Promise.resolve();
     });

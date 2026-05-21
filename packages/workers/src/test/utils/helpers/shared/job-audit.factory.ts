@@ -24,6 +24,7 @@ export function makeJobAuditEntity(overrides?: Partial<JobAuditEntity>): JobAudi
     jobType: 'SEND_WELCOME_EMAIL',
     status: JobAuditStatus.COMPLETED,
     workerId: 'worker-1',
+    emitter: 'ms-test',
     currentAttempt: 1,
     createdAt: new Date(),
     updatedAt: new Date(),

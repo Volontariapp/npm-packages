@@ -1,0 +1,63 @@
+{
+  "name": "@volontariapp/post-processors",
+  "version": "1.0.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
+  },
+  "description": "Abstract Redis Streams post-processor base for Volontariapp microservices",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/",
+    "test": "node --experimental-vm-modules $(yarn bin jest) --runInBand",
+    "test:coverage": "INTEGRATION=all node --experimental-vm-modules $(yarn bin jest) --runInBand --forceExit --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
+    "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch",
+    "test:int": "INTEGRATION=true node --experimental-vm-modules $(yarn bin jest) --runInBand --forceExit",
+    "test:int:watch": "INTEGRATION=true node --experimental-vm-modules $(yarn bin jest) --watch"
+  },
+  "dependencies": {
+    "@volontariapp/database": "workspace:*",
+    "@volontariapp/logger": "workspace:*",
+    "@volontariapp/messaging": "workspace:*",
+    "@volontariapp/outbox": "workspace:*",
+    "@volontariapp/shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "ioredis": "^5.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@nestjs/common": "^11.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "@volontariapp/contracts": "workspace:*",
+    "@volontariapp/testing": "workspace:*",
+    "ioredis": "^5.3.7",
+    "jest": "^29.7.0",
+    "reflect-metadata": "^0.2.2",
+    "ts-jest": "^29.4.6",
+    "typescript": "5.7.3"
+  }
+}

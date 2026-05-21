@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.0.0
+
+### Major Changes
+
+- fix: update job audit emitter to be required
+## 1.17.1
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/bridge@1.0.3
+  - @volontariapp/config@3.1.1
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+  - @volontariapp/shared@0.4.1
+
 ## 1.17.0
 
 ### Minor Changes
