@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { EventQueueModel } from '@volontariapp/database';
+import { EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -8,7 +8,7 @@ export const testDataSource = new DataSource({
   username: 'testuser',
   password: 'testpassword',
   database: 'volontariapp_test',
-  entities: [EventQueueModel],
+  entities: [EventQueueModel, JobsOutboxModel],
   synchronize: true,
   logging: false,
 });

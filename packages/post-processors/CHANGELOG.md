@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- post-processors job outbox
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/outbox@0.8.0
+
 ## 1.0.2
 
 ### Patch Changes

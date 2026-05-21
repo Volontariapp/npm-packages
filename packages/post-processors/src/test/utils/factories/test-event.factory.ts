@@ -71,11 +71,11 @@ export function makeTestEvent(id: string): StreamEvent<EventRegistry['event.chan
   };
 }
 
-export async function pushTestEventToStream(
+export async function pushTestEventToStream<T>(
   redis: Redis,
   streamName: string,
   id: string,
-  eventPayload = makeTestEvent(id),
+  eventPayload: StreamEvent<T> | ReturnType<typeof makeTestEvent> = makeTestEvent(id),
 ): Promise<string> {
   const fields = [
     'id',
