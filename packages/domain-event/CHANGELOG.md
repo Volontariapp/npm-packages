@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.7.1
+
+### Patch Changes
+
+- bump migration
+
 ## 2.7.0
 
 ### Minor Changes

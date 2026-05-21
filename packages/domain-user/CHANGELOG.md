@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.8
+
+### Patch Changes
+
+- bump migration
+
 ## 2.5.7
 
 ### Patch Changes
