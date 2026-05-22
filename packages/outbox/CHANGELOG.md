@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.1.0
+
 ## 0.8.0
 
 ### Minor Changes

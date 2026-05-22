@@ -22,6 +22,7 @@ import type { EventChangedPayload, IJobAuditPayload } from './common/payloads.js
 export interface EventRegistry {
   // Event
   [EventEventMessagingType.EVENT_CHANGED]: EventChangedPayload<IEventPayload>;
+  [EventEventMessagingType.EVENT_CREATED]: EventChangedPayload<IEventPayload>;
   [EventEventMessagingType.REQUIREMENT_CHANGED]: EventChangedPayload<IRequirementPayload>;
   [EventEventMessagingType.TAG_CHANGED]: EventChangedPayload<ITagPayload>;
   [EventEventMessagingType.EVENT_TAG_LINKED]: EventChangedPayload<IEventTagLinkedPayload>;

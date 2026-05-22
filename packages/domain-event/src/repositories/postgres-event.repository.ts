@@ -35,4 +35,22 @@ export class PostgresEventRepository
   async search(searchTerm: string): Promise<EventEntity[]> {
     return super.find({ where: { name: ILike(`%${searchTerm}%`) } });
   }
+
+  async createWithEventCreated(data: Partial<EventEntity>): Promise<EventEntity> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const modelData = this.toModel(data);
+      const eventModel = queryRunner.manager.create(this.modelClass, modelData);
+      const savedEventModel = await queryRunner.manager.save(this.modelClass, eventModel);
+      const savedEventEntity = this.toEntity(savedEventModel);
+
+      const payload = { before: null, after: savedEventEntity };
+      await queryRunner.manager.query(
+        `INSERT INTO event_queue (type, emitter, payload, target_services, version, status, attempts, updated_at, created_at)
+         VALUES ($1, $2, $3, $4, 1, 'PENDING', 0, now(), now())`,
+        ['event.created', 'ms-event', payload, ['ms-social']],
+      );
+
+      return savedEventEntity;
+    });
+  }
 }
