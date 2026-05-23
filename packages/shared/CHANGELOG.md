@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- refacto ServiceType --> STREAMS
+
 ## 0.4.1
 
 ### Patch Changes

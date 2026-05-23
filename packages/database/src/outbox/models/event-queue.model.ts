@@ -2,7 +2,7 @@ import type { EventPayload } from '../types/payload.registry.js';
 import { OutboxModel } from './outbox.model.js';
 import { Column, Entity } from 'typeorm';
 import type { EventType } from '../types/event.type.js';
-import { ServiceType } from '@volontariapp/shared';
+import { Streams } from '@volontariapp/shared';
 
 @Entity('event_queue')
 export class EventQueueModel<K extends EventType = EventType> extends OutboxModel<K> {
@@ -10,7 +10,7 @@ export class EventQueueModel<K extends EventType = EventType> extends OutboxMode
   version!: number;
 
   @Column({ name: 'target_services', type: 'varchar', array: true, default: [] })
-  targetServices: ServiceType[] = [];
+  targetServices: Streams[] = [];
 
   @Column({ type: 'jsonb' })
   payload!: {

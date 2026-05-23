@@ -4,13 +4,13 @@ import type { Redis } from 'ioredis';
 import type { EventQueueModel } from '@volontariapp/database';
 import { OutboxStatus } from '@volontariapp/database';
 import type { Repository } from 'typeorm';
-import type { ServiceType } from '@volontariapp/shared';
+import type { Streams } from '@volontariapp/shared';
 
 export function makeTestDbEvent(
   repository: Repository<EventQueueModel>,
   id: string,
   type: string,
-  targetServices: ServiceType[],
+  targetServices: Streams[],
 ): EventQueueModel {
   return repository.create({
     id,

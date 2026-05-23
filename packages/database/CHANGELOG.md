@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- refacto ServiceType --> STREAMS
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.0
+
 ## 3.0.0
 
 ### Major Changes

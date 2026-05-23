@@ -4159,6 +4159,7 @@ __metadata:
     "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
     "@volontariapp/testing": "workspace:*"
     class-transformer: "npm:^0.5.1"
     jest: "npm:^30.3.0"

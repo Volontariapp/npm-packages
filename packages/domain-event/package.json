@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-event",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -61,6 +61,7 @@
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
+    "@volontariapp/shared": "workspace:*",
     "class-transformer": "^0.5.1"
   }
 }
