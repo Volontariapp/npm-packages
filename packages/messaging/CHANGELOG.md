@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.2
+
+### Patch Changes
+
+- export WS Service
+
 ## 2.2.1
 
 ### Patch Changes
