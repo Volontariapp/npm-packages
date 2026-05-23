@@ -9,4 +9,5 @@
 export interface JobEnvelope<T> {
   payload: T;
   emitter: string;
+  emitterId: string;
 }

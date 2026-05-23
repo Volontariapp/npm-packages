@@ -13,6 +13,7 @@ export const makeTestJob = (overrides?: Partial<TestJob>): TestJob =>
     data: {
       payload: { userId: 'user-1', email: 'test@example.com', firstName: 'Test' },
       emitter: 'ms-test',
+      emitterId: '00000000-0000-0000-0000-000000000000',
     },
     ...overrides,
   }) as TestJob;

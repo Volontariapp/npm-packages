@@ -16,6 +16,7 @@ export function makeTestDbEvent(
     id,
     type,
     emitter: 'test-service',
+    emitterId: '00000000-0000-0000-0000-000000000000',
     status: OutboxStatus.PENDING,
     payload: {
       after: {
@@ -46,6 +47,7 @@ export function makeTestEvent(id: string): StreamEvent<EventRegistry['event.chan
     id,
     type: EventMessagingType.EVENT_CHANGED,
     emitter: 'test-emitter',
+    emitterId: '00000000-0000-0000-0000-000000000000',
     version: 1,
     payload: {
       after: {
@@ -84,6 +86,8 @@ export async function pushTestEventToStream<T>(
     eventPayload.type,
     'emitter',
     eventPayload.emitter,
+    'emitterId',
+    eventPayload.emitterId,
     'version',
     eventPayload.version.toString(),
     'createdAt',

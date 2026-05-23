@@ -35,6 +35,7 @@ describe('EventQueuePusher (Integration)', () => {
       id: 'evt-1',
       type: 'user.created',
       emitter: ServiceType.USER,
+      emitterId: '00000000-0000-0000-0000-000000000000',
       targetServices: [ServiceType.POST, ServiceType.SOCIAL],
       payload: { after: { userId: '123' } },
     });

@@ -7,6 +7,7 @@ export interface RedisEventMessage<T = unknown> {
   id: string;
   type: string;
   emitter: string;
+  emitterId: string;
   traceId?: string;
   version: number;
   payload: {
@@ -24,6 +25,7 @@ export interface RedisEventStreamFields {
   id: string;
   type: string;
   emitter: string;
+  emitterId: string;
   traceId: string;
   version: string;
   createdAt: string;

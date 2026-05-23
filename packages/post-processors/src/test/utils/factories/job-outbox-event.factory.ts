@@ -26,6 +26,7 @@ export function makeTestJobOutboxEvent(
     id: randomUUID(),
     type: eventType.toString(),
     emitter: 'test-emitter',
+    emitterId: randomUUID(),
     version: 1,
     payload: {
       after: auditPayload,

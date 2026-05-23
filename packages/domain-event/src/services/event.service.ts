@@ -63,7 +63,7 @@ export class EventService {
         data.tags = await this.validateTags(data.tags);
       }
 
-      return await this.eventRepository.create(data);
+      return await this.eventRepository.createWithEventCreated(data);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
 

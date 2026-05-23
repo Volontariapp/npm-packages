@@ -51,6 +51,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
         id: jobId,
         type: 'user.process',
         emitter: 'ms-user',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         target,
         status: OutboxStatus.PENDING,
         payload: { userId: 'u-job-1' },
@@ -81,6 +82,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
       expect(job?.name).toBe('user.process');
       expect(job?.data).toEqual({
         emitter: 'ms-user',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         payload: { userId: 'u-job-1' },
       });
     } finally {
@@ -96,6 +98,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
         id: `00000000-0000-0000-0001-0000000002${i.toString().padStart(2, '0')}`,
         type: 'batch.job',
         emitter: 'ms-jobs',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         target,
         status: OutboxStatus.PENDING,
         payload: { index: i },
@@ -140,6 +143,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
         id: firstJobId,
         type: 'first.job',
         emitter: 'ms-jobs',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         target,
         status: OutboxStatus.PENDING,
         payload: { order: 1 },
@@ -163,6 +167,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
         id: secondJobId,
         type: 'second.job',
         emitter: 'ms-jobs',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         target,
         status: OutboxStatus.PENDING,
         payload: { order: 2 },
@@ -196,6 +201,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
         id: jobId,
         type: 'fail.job',
         emitter: 'ms-jobs',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         target,
         status: OutboxStatus.PENDING,
         payload: { userId: 'u-fail' },
@@ -231,6 +237,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
         id: goodJobId,
         type: 'good.job',
         emitter: 'ms-jobs',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         target: goodTarget,
         status: OutboxStatus.PENDING,
         payload: { userId: 'u-good' },
@@ -254,6 +261,7 @@ describe('OutboxRunner — Jobs (Integration)', () => {
         id: badJobId,
         type: 'bad.job',
         emitter: 'ms-jobs',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         target: badTarget,
         status: OutboxStatus.PENDING,
         payload: { userId: 'u-bad' },

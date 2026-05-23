@@ -71,7 +71,14 @@ describe('SQL Triggers (Integration)', () => {
     const req = await requirementRepository.create(
       RequirementFactory.buildInput({ currentQuantity: 0 }),
     );
-    await requirementRepository.update(req.id, { currentQuantity: 5 });
+    await requirementRepository.update(req.id, {
+      currentQuantity: 5,
+      updatedBy: '11111111-1111-1111-1111-111111111111',
+    });
+    console.log(
+      'DB State Requirements:',
+      await testDataSource.query('SELECT * FROM requirements WHERE id = $1', [req.id]),
+    );
     const records = await testDataSource
       .getRepository(EventQueueModel<EventMessagingType>)
       .find({ where: { type: EventMessagingType.REQUIREMENT_CHANGED } });
@@ -82,11 +89,17 @@ describe('SQL Triggers (Integration)', () => {
       expect(updateRecord.payload.before?.currentQuantity).toBe(0);
       expect(updateRecord.payload.after.currentQuantity).toBe(5);
       expect(updateRecord.emitter).toBe('ms-event-db');
+      expect(updateRecord.emitterId).toBe('11111111-1111-1111-1111-111111111111');
     }
   });
 
   it('should create an event_queue record when a tag is deleted', async () => {
-    const tag = await tagRepository.create(TagFactory.buildInput({ name: 'To Delete' }));
+    const tag = await tagRepository.create(
+      TagFactory.buildInput({
+        name: 'To Delete',
+        updatedBy: '22222222-2222-2222-2222-222222222222',
+      }),
+    );
     await tagRepository.delete(tag.id);
     const records = await testDataSource
       .getRepository(EventQueueModel<EventMessagingType>)
@@ -96,6 +109,7 @@ describe('SQL Triggers (Integration)', () => {
     if (deleteRecord) {
       expect(deleteRecord.payload.after).toBeFalsy();
       expect(deleteRecord.payload.before?.name).toBe('To Delete');
+      expect(deleteRecord.emitterId).toBe('22222222-2222-2222-2222-222222222222');
     }
   });
 

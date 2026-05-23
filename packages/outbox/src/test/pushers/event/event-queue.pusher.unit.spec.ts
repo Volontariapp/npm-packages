@@ -33,6 +33,7 @@ describe('EventQueuePusher (Unit)', () => {
         id: '1',
         type: 'test.event',
         emitter: ServiceType.SOCIAL,
+        emitterId: '00000000-0000-0000-0000-000000000000',
         targetServices: [ServiceType.POST, ServiceType.USER],
       });
 
@@ -61,6 +62,8 @@ describe('EventQueuePusher (Unit)', () => {
         entity.type,
         'emitter',
         entity.emitter,
+        'emitterId',
+        entity.emitterId,
         'traceId',
         entity.traceId ?? '',
         'version',
@@ -84,6 +87,8 @@ describe('EventQueuePusher (Unit)', () => {
         entity.type,
         'emitter',
         entity.emitter,
+        'emitterId',
+        entity.emitterId,
         'traceId',
         entity.traceId ?? '',
         'version',
@@ -223,6 +228,8 @@ describe('EventQueuePusher (Unit)', () => {
       expect(xaddArgs).toContain('user.created');
       expect(xaddArgs).toContain('emitter');
       expect(xaddArgs).toContain('ms-user');
+      expect(xaddArgs).toContain('emitterId');
+      expect(xaddArgs).toContain('00000000-0000-0000-0000-000000000000');
       expect(xaddArgs).toContain('traceId');
       expect(xaddArgs).toContain('trace-abc');
       expect(xaddArgs).toContain('version');

@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.0.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.0.0
+  - @volontariapp/messaging@2.1.1
+
+## 2.8.0
+
+### Minor Changes
+
+- adding transactionnal create event
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.1.0
+
 ## 2.7.2
 
 ### Patch Changes

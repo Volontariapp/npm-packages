@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.0.0
+
+## 2.1.0
+
+### Minor Changes
+
+- adding transactionnal create event
+
 ## 2.0.0
 
 ### Major Changes

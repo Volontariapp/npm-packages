@@ -53,6 +53,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
       const envelope: JobEnvelope<typeof entity.payload> = {
         payload: entity.payload,
         emitter: entity.emitter,
+        emitterId: entity.emitterId,
       };
 
       await queue.add(entity.type, envelope, jobOptions);
@@ -93,6 +94,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
               data: {
                 payload: entity.payload,
                 emitter: entity.emitter,
+                emitterId: entity.emitterId,
               } as JobEnvelope<typeof entity.payload>,
               opts: jobOptions,
             };
