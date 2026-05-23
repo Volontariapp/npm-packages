@@ -20,6 +20,8 @@ import { AddJobAuditStatusTrigger1779115100001 } from './migrations/177911510000
 import { AddJobAudit1779114963391 } from './migrations/1779114963391-AddJobAudit.js';
 import { AddEmitterToJobAudit1779353596425 } from './migrations/1779353596425-AddEmitterToJobAudit.js';
 import { FixEventQueueStatusDefault1779360000000 } from './migrations/1779360000000-FixEventQueueStatusDefault.js';
+import { AddUpdatedByToTags1779555000000 } from './migrations/1779555000000-AddUpdatedByToTags.js';
+import { AddUpdatedByToRequirements1779555000001 } from './migrations/1779555000001-AddUpdatedByToRequirements.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -45,6 +47,8 @@ export const testDataSource = new DataSource({
     AddEmitterToJobAudit1779353596425,
     FixEventQueueStatusDefault1779360000000,
     MakeOrganizerIdMandatoryAndAddEmitterId1779542033290,
+    AddUpdatedByToTags1779555000000,
+    AddUpdatedByToRequirements1779555000001,
   ],
   synchronize: false,
   logging: false,

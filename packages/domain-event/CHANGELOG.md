@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.8.1
+## 3.0.0
 
 ### Patch Changes
 

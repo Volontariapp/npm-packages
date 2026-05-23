@@ -45,9 +45,15 @@ export class PostgresEventRepository
 
       const payload = { before: null, after: savedEventEntity };
       await queryRunner.manager.query(
-        `INSERT INTO event_queue (type, emitter, payload, target_services, version, status, attempts, updated_at, created_at)
-         VALUES ($1, $2, $3, $4, 1, 'PENDING', 0, now(), now())`,
-        ['event.created', 'ms-event', payload, ['ms-social']],
+        `INSERT INTO event_queue (type, emitter, "emitterId", payload, target_services, version, status, attempts, updated_at, created_at)
+         VALUES ($1, $2, $3, $4, $5, 1, 'PENDING', 0, now(), now())`,
+        [
+          'event.created',
+          'ms-event',
+          savedEventEntity.organizerId,
+          payload,
+          ['social:interaction'],
+        ],
       );
 
       return savedEventEntity;

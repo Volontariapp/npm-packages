@@ -15,9 +15,11 @@ BEGIN
     END IF;
 
     v_emitter_id := COALESCE(
+        (payload_data->'after'->>'updatedBy')::UUID,
         (payload_data->'after'->>'organizerId')::UUID,
-        (payload_data->'before'->>'organizerId')::UUID,
         (payload_data->'after'->>'createdBy')::UUID,
+        (payload_data->'before'->>'updatedBy')::UUID,
+        (payload_data->'before'->>'organizerId')::UUID,
         (payload_data->'before'->>'createdBy')::UUID
     );
 
