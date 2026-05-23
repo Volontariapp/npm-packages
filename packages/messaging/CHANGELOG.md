@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.3
+
+### Patch Changes
+
+- renaming WS event
+
 ## 2.2.2
 
 ### Patch Changes

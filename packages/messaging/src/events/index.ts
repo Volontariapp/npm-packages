@@ -43,7 +43,7 @@ export interface EventRegistry {
   [SocialEventMessagingType.SOCIAL_EVENT_CHANGED]: EventChangedPayload<ISocialEventPayload>;
 
   // WS
-  [WebsocketEventMessagingType.EVENT_CREATED]: EventChangedPayload<IEventCreatedWebsocketPayload>;
+  [WebsocketEventMessagingType.WS_EVENT_CREATED]: EventChangedPayload<IEventCreatedWebsocketPayload>;
 }
 
 export const EventMessagingType = {

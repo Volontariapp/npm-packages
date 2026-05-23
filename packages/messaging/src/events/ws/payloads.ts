@@ -1,7 +1,7 @@
 import type { IEventPayload } from '../event/payloads.js';
 
 export enum WebsocketEventMessagingType {
-  EVENT_CREATED = 'event.created',
+  WS_EVENT_CREATED = 'ws.event.created',
 }
 
 export interface IEventCreatedWebsocketPayload extends IEventPayload {}
