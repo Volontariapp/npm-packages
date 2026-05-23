@@ -4,7 +4,7 @@ import type { EventQueueModel } from '@volontariapp/database';
 import { EventQueueConsumer, EventQueuePusher } from '@volontariapp/outbox';
 import { TestEventQueueRepository } from '@volontariapp/outbox/testing';
 import type { Logger } from '@volontariapp/logger';
-import type { ServiceType } from '@volontariapp/shared';
+import type { Streams } from '@volontariapp/shared';
 import { makeTestDbEvent } from '../factories/test-event.factory.js';
 
 /**
@@ -17,7 +17,7 @@ export async function pushDbEvent(
   logger: Logger,
   id: string,
   type: string,
-  targetServices: ServiceType[],
+  targetServices: Streams[],
 ): Promise<void> {
   const pendingItem = makeTestDbEvent(repository, id, type, targetServices);
   await repository.save(pendingItem);
@@ -39,7 +39,7 @@ export async function pushDbEvents(
   redis: Redis,
   logger: Logger,
   events: { id: string; type: string }[],
-  targetServices: ServiceType[],
+  targetServices: Streams[],
 ): Promise<void> {
   for (const event of events) {
     const pendingItem = makeTestDbEvent(repository, event.id, event.type, targetServices);

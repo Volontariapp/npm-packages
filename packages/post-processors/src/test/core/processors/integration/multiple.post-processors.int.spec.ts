@@ -3,7 +3,7 @@ import type { Repository } from 'typeorm';
 import { Redis } from 'ioredis';
 import { databaseMapper, EventQueueModel, EventQueueEntity } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
-import type { ServiceType } from '@volontariapp/shared';
+import type { Streams } from '@volontariapp/shared';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-source.js';
 import { testRedisOptions } from '../../../redis-config.js';
 import {
@@ -77,7 +77,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
     for (let i = 1; i <= 5; i++) {
       const eventId = `00000000-0000-0000-0000-00000000000${String(i)}`;
       await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-        'shared-service' as ServiceType,
+        'shared-service' as Streams,
       ]);
     }
 
@@ -136,7 +136,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
     for (let i = 1; i <= 12; i++) {
       const eventId = `00000000-0000-0000-0000-0000000000${(10 + i).toString()}`;
       await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-        'shared-service' as ServiceType,
+        'shared-service' as Streams,
       ]);
     }
 
@@ -191,7 +191,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
     // Push 1 event
     const eventId = '00000000-0000-0000-0000-000000000030';
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'shared-service' as ServiceType,
+      'shared-service' as Streams,
     ]);
 
     // Make slowProcessor block on processEvent for a fixed time before failing,
@@ -254,7 +254,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
     // Push 1 event
     const eventId = '00000000-0000-0000-0000-000000000040';
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'shared-service' as ServiceType,
+      'shared-service' as Streams,
     ]);
 
     // Force failingProcessor to fail
@@ -310,8 +310,8 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
     // Push 1 event targeting service-a and service-b
     const eventId = '00000000-0000-0000-0000-000000000050';
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'service-a' as ServiceType,
-      'service-b' as ServiceType,
+      'service-a' as Streams,
+      'service-b' as Streams,
     ]);
 
     await processorA.start();

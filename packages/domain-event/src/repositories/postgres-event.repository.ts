@@ -4,6 +4,7 @@ import type { Repository } from '@volontariapp/database';
 import { BaseRepository, ILike } from '@volontariapp/database';
 import { EventModel } from '../models/event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
+import { Streams } from '@volontariapp/shared';
 import { IEventRepository } from './interfaces/event.repository.js';
 
 @Injectable()
@@ -52,7 +53,7 @@ export class PostgresEventRepository
           'ms-event',
           savedEventEntity.organizerId,
           payload,
-          ['social:interaction'],
+          [Streams.SOCIAL_INTERACTIONS],
         ],
       );
 

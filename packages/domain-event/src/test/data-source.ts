@@ -22,6 +22,7 @@ import { AddEmitterToJobAudit1779353596425 } from './migrations/1779353596425-Ad
 import { FixEventQueueStatusDefault1779360000000 } from './migrations/1779360000000-FixEventQueueStatusDefault.js';
 import { AddUpdatedByToTags1779555000000 } from './migrations/1779555000000-AddUpdatedByToTags.js';
 import { AddUpdatedByToRequirements1779555000001 } from './migrations/1779555000001-AddUpdatedByToRequirements.js';
+import { UpdateEventQueueTriggerTargetService1779700000000 } from './migrations/1779700000000-UpdateEventQueueTriggerTargetService.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -49,6 +50,7 @@ export const testDataSource = new DataSource({
     MakeOrganizerIdMandatoryAndAddEmitterId1779542033290,
     AddUpdatedByToTags1779555000000,
     AddUpdatedByToRequirements1779555000001,
+    UpdateEventQueueTriggerTargetService1779700000000,
   ],
   synchronize: false,
   logging: false,

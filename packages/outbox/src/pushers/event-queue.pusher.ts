@@ -68,7 +68,7 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
 
     const fields = this.createStreamFields(entity);
     for (const targetService of targetServices) {
-      const streamName = getEventStreamName(targetService);
+      const streamName = getEventStreamName(targetService as string);
       pipeline.xadd(
         streamName,
         'MAXLEN',

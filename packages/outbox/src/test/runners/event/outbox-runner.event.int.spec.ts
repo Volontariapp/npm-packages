@@ -15,7 +15,7 @@ import {
   waitForStatus,
 } from '../../utils/helpers/shared/outbox-runner.helper.js';
 import { clearTestRedis, testRedisOptions } from '../../redis-config.js';
-import { ServiceType } from '@volontariapp/shared';
+import { Streams } from '@volontariapp/shared';
 
 describe('OutboxRunner — Events (Integration)', () => {
   let modelRepo: Repository<EventQueueModel>;
@@ -55,7 +55,7 @@ describe('OutboxRunner — Events (Integration)', () => {
         payload: { after: { userId: 'u-1' } },
         version: 1,
         attempts: 0,
-        targetServices: [ServiceType.POST],
+        targetServices: [Streams.SOCIAL_POSTS],
         createdAt: new Date(),
         updatedAt: new Date(),
       } as Partial<EventQueueModel>),
@@ -73,7 +73,7 @@ describe('OutboxRunner — Events (Integration)', () => {
     expect(dbRow.status).toBe(OutboxStatus.COMPLETED);
 
     // Assert — Redis stream
-    const stream = await redis.xrange('stream:post', '-', '+');
+    const stream = await redis.xrange('stream:social:posts', '-', '+');
     expect(stream).toHaveLength(1);
 
     const [, fields] = stream[0];
@@ -89,7 +89,7 @@ describe('OutboxRunner — Events (Integration)', () => {
 
   it('should process multiple events targeting different Redis streams', async () => {
     // Arrange
-    const services = [ServiceType.POST, ServiceType.SOCIAL, ServiceType.USER];
+    const services = [Streams.SOCIAL_POSTS, Streams.SOCIAL_INTERACTIONS, Streams.USER_USERS];
     const ids = services.map(
       (_, i) => `00000000-0000-0000-0000-0000000002${i.toString().padStart(2, '0')}`,
     );
@@ -120,9 +120,9 @@ describe('OutboxRunner — Events (Integration)', () => {
     await harness.stop();
 
     // Assert — one entry per stream
-    expect(await redis.xlen('stream:post')).toBe(1);
-    expect(await redis.xlen('stream:social')).toBe(1);
-    expect(await redis.xlen('stream:user')).toBe(1);
+    expect(await redis.xlen('stream:social:posts')).toBe(1);
+    expect(await redis.xlen('stream:social:interactions')).toBe(1);
+    expect(await redis.xlen('stream:user:users')).toBe(1);
   });
 
   it('should process events inserted mid-run (continuous polling)', async () => {
@@ -138,7 +138,7 @@ describe('OutboxRunner — Events (Integration)', () => {
         payload: { after: { userId: 'u-batch1' } },
         version: 1,
         attempts: 0,
-        targetServices: [ServiceType.POST],
+        targetServices: [Streams.SOCIAL_POSTS],
         createdAt: new Date(),
         updatedAt: new Date(),
       } as Partial<EventQueueModel>),
@@ -161,7 +161,7 @@ describe('OutboxRunner — Events (Integration)', () => {
         payload: { after: { userId: 'u-batch2' } },
         version: 1,
         attempts: 0,
-        targetServices: [ServiceType.POST],
+        targetServices: [Streams.SOCIAL_POSTS],
         createdAt: new Date(),
         updatedAt: new Date(),
       } as Partial<EventQueueModel>),
@@ -171,7 +171,7 @@ describe('OutboxRunner — Events (Integration)', () => {
     await harness.stop();
 
     // Assert — both in stream
-    const stream = await redis.xrange('stream:post', '-', '+');
+    const stream = await redis.xrange('stream:social:posts', '-', '+');
     expect(stream).toHaveLength(2);
   });
 
@@ -188,7 +188,7 @@ describe('OutboxRunner — Events (Integration)', () => {
         payload: { after: { userId: 'u-fail' } },
         version: 1,
         attempts: 0,
-        targetServices: [ServiceType.POST],
+        targetServices: [Streams.SOCIAL_POSTS],
         createdAt: new Date(),
         updatedAt: new Date(),
       } as Partial<EventQueueModel>),
@@ -204,13 +204,13 @@ describe('OutboxRunner — Events (Integration)', () => {
     // Assert
     const dbRow = await modelRepo.findOneByOrFail({ id: eventId });
     expect(dbRow.status).toBe(OutboxStatus.FAILED);
-    expect(await redis.xlen('stream:post')).toBe(0);
+    expect(await redis.xlen('stream:social:posts')).toBe(0);
   });
 
   it('should process 50 events in bulk and mark all COMPLETED', async () => {
     // Arrange
     const count = 50;
-    const allServices = [ServiceType.POST, ServiceType.USER, ServiceType.SOCIAL];
+    const allServices = [Streams.SOCIAL_POSTS, Streams.USER_USERS, Streams.SOCIAL_INTERACTIONS];
     const models = Array.from({ length: count }).map((_, i) =>
       modelRepo.create({
         id: `00000000-0000-0000-0000-${String(i).padStart(12, '0')}`,

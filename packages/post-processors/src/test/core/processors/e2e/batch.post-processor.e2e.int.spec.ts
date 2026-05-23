@@ -17,7 +17,7 @@ import {
   OutboxStatus,
 } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
-import type { ServiceType } from '@volontariapp/shared';
+import type { Streams } from '@volontariapp/shared';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-source.js';
 import { testRedisOptions } from '../../../redis-config.js';
 import { E2EBatchPostProcessor, pushDbEvents, waitFor } from '../../../utils/index.js';
@@ -69,7 +69,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
     ];
 
     const events = eventIds.map((id) => ({ id, type: 'event.changed' }));
-    await pushDbEvents(repository, redis, testLogger, events, ['batch-service' as ServiceType]);
+    await pushDbEvents(repository, redis, testLogger, events, ['batch-service' as Streams]);
 
     await processor.start();
 
@@ -110,7 +110,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       redis,
       testLogger,
       [{ id: eventId, type: 'event.changed' }],
-      ['batch-service' as ServiceType],
+      ['batch-service' as Streams],
     );
 
     processor.processError = new Error('Transient database batch error');
@@ -168,7 +168,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       redis,
       testLogger,
       eventIds.map((id) => ({ id, type: 'event.changed' })),
-      ['batch-service' as ServiceType],
+      ['batch-service' as Streams],
     );
 
     // Make processing take longer than targetLatencyMs (e.g., 30ms) to trigger size reduction
@@ -206,7 +206,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       redis,
       testLogger,
       [{ id: eventId, type: 'event.changed' }],
-      ['batch-service' as ServiceType],
+      ['batch-service' as Streams],
     );
 
     // Get the stream message id
@@ -261,7 +261,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       redis,
       testLogger,
       [{ id: eventIds[0], type: 'event.changed' }],
-      ['batch-service' as ServiceType],
+      ['batch-service' as Streams],
     );
 
     processor.processError = new Error('Batch CB trigger failure');
@@ -279,7 +279,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       redis,
       testLogger,
       [{ id: eventId3, type: 'event.changed' }],
-      ['batch-service' as ServiceType],
+      ['batch-service' as Streams],
     );
 
     // Verify it is not processed while CB is OPEN

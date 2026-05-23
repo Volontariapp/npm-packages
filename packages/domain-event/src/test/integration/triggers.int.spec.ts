@@ -24,6 +24,7 @@ import {
   TAGS_TRIGGER,
   EVENT_TAGS_TRIGGER,
 } from '../../database/triggers/index.js';
+import { Streams } from '@volontariapp/shared';
 
 describe('SQL Triggers (Integration)', () => {
   let eventRepository: PostgresEventRepository;
@@ -64,7 +65,7 @@ describe('SQL Triggers (Integration)', () => {
     expect(record.payload.after.name).toBe('Trigger Test Event');
     expect(record.payload.before).toBeFalsy();
     expect(record.emitter).toBe('ms-event-db');
-    expect(record.targetServices).toContain('social');
+    expect(record.targetServices).toContain(Streams.SOCIAL_INTERACTIONS);
   });
 
   it('should create an event_queue record when a requirement is updated', async () => {

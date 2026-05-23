@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- refacto ServiceType --> STREAMS
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.1.0
+  - @volontariapp/outbox@0.9.0
+  - @volontariapp/shared@0.5.0
+  - @volontariapp/messaging@2.2.1
+
 ## 1.2.3
 
 ### Patch Changes

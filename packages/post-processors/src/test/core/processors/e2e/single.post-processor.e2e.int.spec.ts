@@ -17,7 +17,7 @@ import {
   OutboxStatus,
 } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
-import type { ServiceType } from '@volontariapp/shared';
+import type { Streams } from '@volontariapp/shared';
 import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-source.js';
 import { testRedisOptions } from '../../../redis-config.js';
 import { E2ESinglePostProcessor, pushDbEvent, waitFor } from '../../../utils/index.js';
@@ -63,7 +63,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     const eventId = '00000000-0000-0000-0000-000000000001';
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
 
     await processor.start();
@@ -97,7 +97,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     const eventId = '00000000-0000-0000-0000-000000000002';
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
 
     processor.processError = new Error('Transient database error');
@@ -142,7 +142,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     const eventId = '00000000-0000-0000-0000-000000000003';
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
 
     processor.processError = new Error('Persistent failure');
@@ -182,7 +182,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     const eventId = '00000000-0000-0000-0000-000000000004';
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
 
     // Get the pushed stream message id
@@ -230,10 +230,10 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     // Push two events
     await pushDbEvent(repository, redis, testLogger, eventIdFail, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
     await pushDbEvent(repository, redis, testLogger, eventIdOk, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
 
     // First event will fail
@@ -280,10 +280,10 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     // Push two failed events, and then one more event
     await pushDbEvent(repository, redis, testLogger, eventId1, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
     await pushDbEvent(repository, redis, testLogger, eventId2, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
 
     processor.processError = new Error('CB failure trigger');
@@ -299,7 +299,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     const eventId3 = '00000000-0000-0000-0000-000000000009';
     // Push another event while CB is open
     await pushDbEvent(repository, redis, testLogger, eventId3, 'event.changed', [
-      'single-service' as ServiceType,
+      'single-service' as Streams,
     ]);
 
     // Give it a brief moment and verify it's still OPEN and hasn't processed the 3rd event
@@ -326,7 +326,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     const eventId = '00000000-0000-0000-0000-000000000010';
     // Push an event targeting "other-service"
     await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-      'other-service' as ServiceType,
+      'other-service' as Streams,
     ]);
 
     await processor.start();
@@ -365,7 +365,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     for (let i = 1; i <= 10; i++) {
       const eventId = `00000000-0000-0000-0000-0000000000${(10 + i).toString()}`;
       await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
-        'single-service' as ServiceType,
+        'single-service' as Streams,
       ]);
     }
 

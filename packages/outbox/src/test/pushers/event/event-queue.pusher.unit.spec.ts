@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, jest } from '@jest/globals';
 import { makeRedisMock, makePipelineMock } from '../../utils/helpers/shared/redis-mock.helper.js';
 import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event/event-queue-event.helper.js';
-import { ServiceType } from '@volontariapp/shared';
+import { Streams } from '@volontariapp/shared';
 import { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
 
 describe('EventQueuePusher (Unit)', () => {
@@ -32,9 +32,9 @@ describe('EventQueuePusher (Unit)', () => {
       const entity = makeEventQueueEvent({
         id: '1',
         type: 'test.event',
-        emitter: ServiceType.SOCIAL,
+        emitter: Streams.SOCIAL_INTERACTIONS,
         emitterId: '00000000-0000-0000-0000-000000000000',
-        targetServices: [ServiceType.POST, ServiceType.USER],
+        targetServices: [Streams.SOCIAL_POSTS, Streams.USER_USERS],
       });
 
       const mockPipeline = makePipelineMock();
@@ -51,7 +51,7 @@ describe('EventQueuePusher (Unit)', () => {
       expect(pipelineSpy).toHaveBeenCalled();
       expect(xaddSpy).toHaveBeenCalledTimes(2);
       expect(xaddSpy).toHaveBeenCalledWith(
-        'stream:post',
+        'stream:social:posts',
         'MAXLEN',
         '~',
         10000,
@@ -76,7 +76,7 @@ describe('EventQueuePusher (Unit)', () => {
         expect.any(String),
       );
       expect(xaddSpy).toHaveBeenCalledWith(
-        'stream:user',
+        'stream:user:users',
         'MAXLEN',
         '~',
         10000,
@@ -105,7 +105,7 @@ describe('EventQueuePusher (Unit)', () => {
 
     it('should throw and log error if pipeline fails', async () => {
       // Arrange
-      const entity = makeEventQueueEvent({ id: '1', targetServices: [ServiceType.POST] });
+      const entity = makeEventQueueEvent({ id: '1', targetServices: [Streams.SOCIAL_POSTS] });
       const error = new Error('Redis error');
 
       const mockPipeline = makePipelineMock();
@@ -128,8 +128,8 @@ describe('EventQueuePusher (Unit)', () => {
     it('should push multiple events in a single pipeline', async () => {
       // Arrange
       const entities = [
-        makeEventQueueEvent({ id: '1', targetServices: [ServiceType.POST] }),
-        makeEventQueueEvent({ id: '2', targetServices: [ServiceType.USER] }),
+        makeEventQueueEvent({ id: '1', targetServices: [Streams.SOCIAL_POSTS] }),
+        makeEventQueueEvent({ id: '2', targetServices: [Streams.USER_USERS] }),
       ];
 
       const mockPipeline = makePipelineMock();
@@ -149,7 +149,7 @@ describe('EventQueuePusher (Unit)', () => {
 
     it('should throw and log error if pipeline fails during bulk push', async () => {
       // Arrange
-      const entities = [makeEventQueueEvent({ id: '1', targetServices: [ServiceType.POST] })];
+      const entities = [makeEventQueueEvent({ id: '1', targetServices: [Streams.SOCIAL_POSTS] })];
       const error = new Error('Bulk Redis error');
 
       const mockPipeline = makePipelineMock();
@@ -169,9 +169,9 @@ describe('EventQueuePusher (Unit)', () => {
       const entities = [
         makeEventQueueEvent({
           id: '1',
-          targetServices: [ServiceType.POST, ServiceType.USER, ServiceType.SOCIAL],
+          targetServices: [Streams.SOCIAL_POSTS, Streams.USER_USERS, Streams.SOCIAL_INTERACTIONS],
         }),
-        makeEventQueueEvent({ id: '2', targetServices: [ServiceType.EVENT] }),
+        makeEventQueueEvent({ id: '2', targetServices: [Streams.EVENT_EVENTS] }),
       ];
 
       const mockPipeline = makePipelineMock();
@@ -201,7 +201,7 @@ describe('EventQueuePusher (Unit)', () => {
         emitter: 'ms-user',
         version: 2,
         traceId: 'trace-abc',
-        targetServices: [ServiceType.POST],
+        targetServices: [Streams.SOCIAL_POSTS],
         payload: { after: { userId: '42' } },
         createdAt: now,
       });
@@ -254,7 +254,7 @@ describe('EventQueuePusher (Unit)', () => {
       // Arrange
       const entity = makeEventQueueEvent({
         id: 'evt-no-trace',
-        targetServices: [ServiceType.USER],
+        targetServices: [Streams.USER_USERS],
         traceId: undefined,
       });
 
@@ -302,13 +302,13 @@ describe('EventQueuePusher (Unit)', () => {
       // Arrange
       const entity = makeEventQueueEvent({
         id: '1',
-        targetServices: [ServiceType.POST, ServiceType.USER],
+        targetServices: [Streams.SOCIAL_POSTS, Streams.USER_USERS],
       });
 
       const partialError = new Error('MAXLEN overflow');
       const mockPipeline = makePipelineMock();
       mockPipeline.exec.mockResolvedValue([
-        [null, 'stream:post-id'],
+        [null, 'stream:social:posts-id'],
         [partialError, null],
       ]);
       pipelineSpy.mockReturnValue(mockPipeline);

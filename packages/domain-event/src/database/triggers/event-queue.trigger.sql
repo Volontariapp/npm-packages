@@ -53,7 +53,7 @@ BEGIN
         emitter_name,
         v_emitter_id,
         payload_data,
-        ARRAY['social'],
+        ARRAY['social:interactions'],
         1,
         'PENDING',
         0,
