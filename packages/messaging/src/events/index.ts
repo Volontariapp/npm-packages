@@ -18,6 +18,8 @@ import type {
 
 import { CommonEventMessagingType } from './common/payloads.js';
 import type { EventChangedPayload, IJobAuditPayload } from './common/payloads.js';
+import type { IEventCreatedWebsocketPayload } from './ws/payloads.js';
+import { WebsocketEventMessagingType } from './ws/payloads.js';
 
 export interface EventRegistry {
   // Event
@@ -39,6 +41,9 @@ export interface EventRegistry {
   [SocialEventMessagingType.SOCIAL_USER_CHANGED]: EventChangedPayload<ISocialUserPayload>;
   [SocialEventMessagingType.SOCIAL_POST_CHANGED]: EventChangedPayload<ISocialPostPayload>;
   [SocialEventMessagingType.SOCIAL_EVENT_CHANGED]: EventChangedPayload<ISocialEventPayload>;
+
+  // WS
+  [WebsocketEventMessagingType.EVENT_CREATED]: EventChangedPayload<IEventCreatedWebsocketPayload>;
 }
 
 export const EventMessagingType = {
@@ -46,6 +51,7 @@ export const EventMessagingType = {
   ...UserEventMessagingType,
   ...SocialEventMessagingType,
   ...CommonEventMessagingType,
+  ...WebsocketEventMessagingType,
 } as const;
 
 export type EventMessagingType = (typeof EventMessagingType)[keyof typeof EventMessagingType];

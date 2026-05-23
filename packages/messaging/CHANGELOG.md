@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+### Minor Changes
+
+- adding WS on event messaging
+
 ## 2.1.1
 
 ### Patch Changes
