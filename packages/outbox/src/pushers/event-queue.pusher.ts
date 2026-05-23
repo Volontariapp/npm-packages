@@ -21,12 +21,13 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
   }
 
   private formatMessage<K extends string, P>(entity: EventQueueEntity<K, P>): string {
-    const { id, type, emitter, traceId, version, payload, createdAt } = entity;
+    const { id, type, emitter, emitterId, traceId, version, payload, createdAt } = entity;
 
     const message: RedisEventMessage<P> = {
       id,
       type,
       emitter,
+      emitterId,
       traceId,
       version,
       payload: {
@@ -45,6 +46,7 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
       id: entity.id,
       type: entity.type,
       emitter: entity.emitter,
+      emitterId: entity.emitterId,
       traceId: entity.traceId ?? '',
       version: entity.version.toString(),
       createdAt: entity.createdAt.toISOString(),
@@ -79,6 +81,8 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
         fields.type,
         'emitter',
         fields.emitter,
+        'emitterId',
+        fields.emitterId,
         'traceId',
         fields.traceId,
         'version',

@@ -31,6 +31,7 @@ export const initializeTestDb = async () => {
     const queryRunner = testDataSource.createQueryRunner();
     await queryRunner.dropTable('job_audit', true);
     await queryRunner.dropTable('jobs_outbox', true);
+    await queryRunner.dropTable('event_queue', true);
     await queryRunner.dropTable('migrations', true);
     await queryRunner.release();
     await testDataSource.runMigrations();

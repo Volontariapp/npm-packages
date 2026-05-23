@@ -65,7 +65,11 @@ describe('JobsOutboxPusher (Unit)', () => {
       );
       expect(addSpy).toHaveBeenCalledWith(
         'test.job',
-        { payload: { data: 'test' }, emitter: 'database-tests' },
+        {
+          payload: { data: 'test' },
+          emitter: 'database-tests',
+          emitterId: '00000000-0000-0000-0000-000000000000',
+        },
         { jobId: '1' },
       );
     });
@@ -87,7 +91,11 @@ describe('JobsOutboxPusher (Unit)', () => {
       // Assert
       expect(addSpy).toHaveBeenCalledWith(
         'test.job',
-        { payload: { data: 'test' }, emitter: 'database-tests' },
+        {
+          payload: { data: 'test' },
+          emitter: 'database-tests',
+          emitterId: '00000000-0000-0000-0000-000000000000',
+        },
         expect.objectContaining({
           delay: expect.any(Number),
           jobId: '1',

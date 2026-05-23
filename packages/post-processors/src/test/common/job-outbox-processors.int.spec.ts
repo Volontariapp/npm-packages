@@ -137,6 +137,8 @@ describe('JobOutbox PostProcessors Integration', () => {
         emitter: 'test-emitter',
         target: 'test-target',
         status: OutboxStatus.PENDING,
+        emitterId: randomUUID(),
+        traceId: randomUUID(),
         attempts: 0,
         payload: { action: 'test', data: {} },
         scheduledAt: new Date(),

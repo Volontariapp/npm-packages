@@ -133,6 +133,7 @@ export class JobOutboxRunnerHarness {
       id: `warmup-${target}`,
       type: 'warmup.job',
       emitter: 'test-harness',
+      emitterId: '00000000-0000-0000-0000-000000000000',
       target,
       payload: {},
       status: OutboxStatus.PENDING,
