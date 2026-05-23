@@ -24,6 +24,9 @@ export class OutboxModel<T extends OutboxType = OutboxType>
   @Column({ type: 'varchar', length: 100 })
   emitter!: string;
 
+  @Column({ type: 'uuid' })
+  emitterId!: string;
+
   @Column({ type: 'uuid', nullable: true })
   traceId?: string;
 }

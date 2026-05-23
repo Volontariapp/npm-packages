@@ -15,6 +15,11 @@ import { JobsOutboxAndEventQueueWithTraceId1776974876099 } from './migrations/17
 import { UpdateOutboxModels1777630647718 } from './migrations/1777630647718-UpdateOutboxModels.js';
 import { SetupEventTriggers1776786226146 } from './migrations/1776786226146-SetupEventTriggers.js';
 import { AddTargetServicesToEventQueue1777985367963 } from './migrations/1777985367963-AddTargetServicesToEventQueue.js';
+import { MakeOrganizerIdMandatoryAndAddEmitterId1779542033290 } from './migrations/1779542033290-MakeOrganizerIdMandatoryAndAddEmitterId.js';
+import { AddJobAuditStatusTrigger1779115100001 } from './migrations/1779115100001-AddJobAuditStatusTrigger.js';
+import { AddJobAudit1779114963391 } from './migrations/1779114963391-AddJobAudit.js';
+import { AddEmitterToJobAudit1779353596425 } from './migrations/1779353596425-AddEmitterToJobAudit.js';
+import { FixEventQueueStatusDefault1779360000000 } from './migrations/1779360000000-FixEventQueueStatusDefault.js';
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -31,10 +36,15 @@ export const testDataSource = new DataSource({
     AddEventOrganizerAndMakeRequirementCreatorNullable1776104180000,
     UpdateTagSchemaAndAddEventLocalisation1776110000000,
     JobsOutboxAndEventQueue1776786226145,
+    SetupEventTriggers1776786226146,
     JobsOutboxAndEventQueueWithTraceId1776974876099,
     UpdateOutboxModels1777630647718,
-    SetupEventTriggers1776786226146,
     AddTargetServicesToEventQueue1777985367963,
+    AddJobAudit1779114963391,
+    AddJobAuditStatusTrigger1779115100001,
+    AddEmitterToJobAudit1779353596425,
+    FixEventQueueStatusDefault1779360000000,
+    MakeOrganizerIdMandatoryAndAddEmitterId1779542033290,
   ],
   synchronize: false,
   logging: false,

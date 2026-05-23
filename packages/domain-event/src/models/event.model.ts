@@ -77,8 +77,8 @@ export class EventModel {
   @JoinTable({ name: 'event_requirements' })
   requirements?: RequirementModel[];
 
-  @Column({ type: 'uuid', nullable: true })
-  organizerId?: string;
+  @Column({ type: 'uuid' })
+  organizerId!: string;
 
   @Column({ type: 'varchar', length: 255, default: '' })
   localisationName!: string;

@@ -6,6 +6,7 @@ export const makeEventQueueEvent = (
   return Object.assign(new EventQueueEntity(), {
     type: 'event.entity.updated',
     emitter: 'database-tests',
+    emitterId: '00000000-0000-0000-0000-000000000000',
     version: 1,
     payload: {
       after: { id: 'entity-1', state: 'created' },

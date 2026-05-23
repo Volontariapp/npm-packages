@@ -1,10 +1,17 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- adding emitter id on outbox-entity
+
 ## 2.0.0
 
 ### Major Changes
 
 - fix: update job audit emitter to be required
+
 ## 1.17.1
 
 ### Patch Changes
