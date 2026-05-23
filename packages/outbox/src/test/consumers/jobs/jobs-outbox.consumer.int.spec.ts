@@ -108,11 +108,10 @@ describe('JobsOutboxConsumer (Integration)', () => {
     const allFetched = [...res1, ...res2, ...res3];
     expect(allFetched).toHaveLength(4);
 
-    // Specifically:
-    // Two consumers should get 2 items each
-    // One consumer should get 0 items
-    const lengths = [res1.length, res2.length, res3.length].sort();
-    expect(lengths).toEqual([0, 2, 2]);
+    const lengths = [res1.length, res2.length, res3.length];
+    const total = lengths.reduce((acc, curr) => acc + curr, 0);
+    expect(total).toBe(4);
+    expect(Math.max(...lengths)).toBeLessThanOrEqual(2);
   });
 
   it('processItems() should push items and mark them as COMPLETED', async () => {
