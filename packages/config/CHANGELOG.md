@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+### Minor Changes
+
+- ws url added
+
 ## 3.1.1
 
 ### Patch Changes

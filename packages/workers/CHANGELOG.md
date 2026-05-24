@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@3.2.0
+  - @volontariapp/bridge@1.0.4
+  - @volontariapp/database@3.2.8
+  - @volontariapp/health-check@1.0.4
+  - @volontariapp/outbox@0.9.12
+
 ## 1.2.19
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.2.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@3.2.0
+  - @volontariapp/bridge@1.0.4
+
 ## 3.2.7
 
 ### Patch Changes
