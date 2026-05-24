@@ -18,7 +18,7 @@ export interface IEventPayload {
   state: EventState;
   awardedImpactScore: number;
   maxParticipants: number;
-  organizerId?: string;
+  organizerId: string;
   localisationName: string;
   createdAt: Date;
   updatedAt: Date;

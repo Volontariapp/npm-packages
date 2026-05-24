@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.2
+
+### Patch Changes
+
+- organizateur id mendatory
+
 ## 2.5.1
 
 ### Patch Changes
