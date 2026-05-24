@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.6.0
+
+### Minor Changes
+
+- mimgrations added -> new flow
+
 ## 2.5.12
 
 ### Patch Changes

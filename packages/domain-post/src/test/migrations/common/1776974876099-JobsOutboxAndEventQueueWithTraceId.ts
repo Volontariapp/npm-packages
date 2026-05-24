@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class JobsOutboxAndEventQueueWithTraceId1776975278062 implements MigrationInterface {
-  name = 'JobsOutboxAndEventQueueWithTraceId1776975278062';
+export class JobsOutboxAndEventQueueWithTraceId1776974876099 implements MigrationInterface {
+  name = 'JobsOutboxAndEventQueueWithTraceId1776974876099';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "event_queue" ADD "traceId" uuid`);
