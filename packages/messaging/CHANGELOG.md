@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.0
+
+### Minor Changes
+
+- trigger SQL on creation data
+
 ## 2.3.1
 
 ### Patch Changes

@@ -6,3 +6,5 @@ export * from './models/index.js';
 export * from './repositories/index.js';
 export * from './services/index.js';
 export * from './value-objects/index.js';
+
+export * from './database/triggers/index.js';

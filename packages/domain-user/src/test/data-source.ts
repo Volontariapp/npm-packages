@@ -1,4 +1,4 @@
-import type { Repository } from '@volontariapp/database';
+import { EventQueueModel, type Repository } from '@volontariapp/database';
 import { DataSource } from 'typeorm';
 import { UserModel } from '../models/user.model.js';
 import { BadgeModel } from '../models/badge.model.js';
@@ -37,7 +37,7 @@ export const testDataSource = new DataSource({
   username: 'user',
   password: 'password',
   database: 'ms_user',
-  entities: [UserModel, BadgeModel, UserBadgeModel],
+  entities: [UserModel, BadgeModel, UserBadgeModel, EventQueueModel],
   migrations: await loadMigrations(),
   synchronize: false,
   logging: false,
@@ -61,5 +61,7 @@ export const closeTestDb = async (): Promise<void> => {
 };
 
 export const truncateAll = async (): Promise<void> => {
-  await testDataSource.query('TRUNCATE TABLE users, badges, user_badges RESTART IDENTITY CASCADE');
+  await testDataSource.query(
+    'TRUNCATE TABLE users, badges, user_badges, event_queue RESTART IDENTITY CASCADE',
+  );
 };
