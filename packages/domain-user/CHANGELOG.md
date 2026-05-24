@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.5.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.2
+  - @volontariapp/auth@3.2.8
+  - @volontariapp/database@3.2.1
+
 ## 2.5.11
 
 ### Patch Changes

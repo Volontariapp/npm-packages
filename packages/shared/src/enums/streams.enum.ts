@@ -1,4 +1,6 @@
 export enum UserStream {
+  USER_JOB_OUTBOX_SUCCESS = 'user:job:outbox:success',
+  USER_JOB_OUTBOX_FAILURE = 'user:job:outbox:failure',
   USER_USERS = 'user:users',
   USER_AUTHORIZATIONS = 'user:authorizations',
   USER_BADGES = 'user:badges',
@@ -6,14 +8,21 @@ export enum UserStream {
 }
 
 export enum EventStream {
+  EVENT_JOB_OUTBOX_SUCCESS = 'event:job:outbox:success',
+  EVENT_JOB_OUTBOX_FAILURE = 'event:job:outbox:failure',
   EVENT_EVENTS = 'event:events',
   EVENT_TAGS = 'event:tags',
   EVENT_REQUIREMENTS = 'event:requirements',
 }
 
-export enum PostStream {}
+export enum PostStream {
+  POST_JOB_OUTBOX_SUCCESS = 'post:job:outbox:success',
+  POST_JOB_OUTBOX_FAILURE = 'post:job:outbox:failure',
+}
 
 export enum SocialStream {
+  SOCIAL_JOB_OUTBOX_SUCCESS = 'social:job:outbox:success',
+  SOCIAL_JOB_OUTBOX_FAILURE = 'social:job:outbox:failure',
   SOCIAL_POSTS = 'social:posts',
   SOCIAL_INTERACTIONS = 'social:interactions',
   SOCIAL_PARTICIPATIONS = 'social:participations',
@@ -26,18 +35,12 @@ export enum WebsocketStream {
   WS_USER = 'ws:user',
 }
 
-export enum CommonStream {
-  JOB_OUTBOX_SUCCESS = 'job:outbox:success',
-  JOB_OUTBOX_FAILURE = 'job:outbox:failure',
-}
-
 export const Streams = {
   ...UserStream,
   ...EventStream,
   ...PostStream,
   ...SocialStream,
   ...WebsocketStream,
-  ...CommonStream,
 } as const;
 
 export type Streams = UserStream | EventStream | PostStream | SocialStream | WebsocketStream;
