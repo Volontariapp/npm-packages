@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+### Minor Changes
+
+- mimgrations added -> new flow
+
 ## 3.1.4
 
 ### Patch Changes
