@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/outbox@0.9.4
+
 ## 1.2.11
 
 ### Patch Changes

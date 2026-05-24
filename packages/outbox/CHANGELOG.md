@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.4
+
+### Patch Changes
+
+- edit type of event_queue repository -> generic
+
 ## 0.9.3
 
 ### Patch Changes
