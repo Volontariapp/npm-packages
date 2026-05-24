@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class JobsOutboxAndEventQueue1776785940565 implements MigrationInterface {
-  name = 'JobsOutboxAndEventQueue1776785940565';
+export class JobsOutboxAndEventQueue1776786226145 implements MigrationInterface {
+  name = 'JobsOutboxAndEventQueue1776786226145';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

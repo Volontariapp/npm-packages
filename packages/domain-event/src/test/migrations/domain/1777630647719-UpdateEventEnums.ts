@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class UpdateOutboxModels1777630647718 implements MigrationInterface {
-  name = 'UpdateOutboxModels1777630647718';
+export class UpdateEventEnums1777630647719 implements MigrationInterface {
+  name = 'UpdateEventEnums1777630647719';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -26,13 +26,9 @@ export class UpdateOutboxModels1777630647718 implements MigrationInterface {
     );
     await queryRunner.query(`ALTER TABLE "events" ALTER COLUMN "state" SET DEFAULT '1'`);
     await queryRunner.query(`DROP TYPE "public"."events_state_enum_old"`);
-    await queryRunner.query(`ALTER TABLE "event_queue" ALTER COLUMN "updated_at" DROP NOT NULL`);
-    await queryRunner.query(`ALTER TABLE "jobs_outbox" ALTER COLUMN "updated_at" DROP NOT NULL`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "jobs_outbox" ALTER COLUMN "updated_at" SET NOT NULL`);
-    await queryRunner.query(`ALTER TABLE "event_queue" ALTER COLUMN "updated_at" SET NOT NULL`);
     await queryRunner.query(
       `CREATE TYPE "public"."events_state_enum_old" AS ENUM('EVENT_STATE_UNSPECIFIED', 'EVENT_STATE_DRAFT', 'EVENT_STATE_PUBLISHED', 'EVENT_STATE_CANCELLED', 'UNRECOGNIZED')`,
     );
