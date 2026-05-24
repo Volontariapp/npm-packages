@@ -33,6 +33,7 @@ export enum SocialStream {
 
 export enum WebsocketStream {
   WS_USER = 'ws:user',
+  WS_EVENT = 'ws:event',
 }
 
 export const Streams = {

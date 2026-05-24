@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.7.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.3
+  - @volontariapp/auth@3.2.9
+  - @volontariapp/database@3.2.7
+  - @volontariapp/messaging@2.5.3
+
 ## 2.7.3
 
 ### Patch Changes
