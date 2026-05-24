@@ -1,4 +1,5 @@
-import { EventMessagingType, type EventRegistry, type StreamEvent } from '@volontariapp/messaging';
+import type { IEventPayload } from '@volontariapp/messaging';
+import { EventMessagingType, type StreamEvent } from '@volontariapp/messaging';
 import { EventType, EventState } from '@volontariapp/contracts';
 import type { Redis } from 'ioredis';
 import type { EventQueueModel } from '@volontariapp/database';
@@ -42,7 +43,7 @@ export function makeTestDbEvent(
   } as Partial<EventQueueModel>);
 }
 
-export function makeTestEvent(id: string): StreamEvent<EventRegistry['event.changed']> {
+export function makeTestEvent(id: string): StreamEvent<IEventPayload> {
   return {
     id,
     type: EventMessagingType.EVENT_CHANGED,
@@ -51,24 +52,22 @@ export function makeTestEvent(id: string): StreamEvent<EventRegistry['event.chan
     version: 1,
     payload: {
       after: {
-        before: null,
-        after: {
-          id,
-          name: 'Test Event Name',
-          description: 'Test Event Description',
-          startAt: new Date('2026-05-19T10:00:00.000Z'),
-          endAt: new Date('2026-05-19T12:00:00.000Z'),
-          type: EventType.EVENT_TYPE_SOCIAL,
-          state: EventState.EVENT_STATE_DRAFT,
-          awardedImpactScore: 10,
-          maxParticipants: 10,
-          organizerId: 'org-id',
-          localisationName: 'Paris',
-          createdAt: new Date('2026-05-19T08:00:00.000Z'),
-          updatedAt: new Date('2026-05-19T08:00:00.000Z'),
-        },
-      },
+        id,
+        name: 'Test Event Name',
+        description: 'Test Event Description',
+        startAt: new Date('2026-05-19T10:00:00.000Z'),
+        endAt: new Date('2026-05-19T12:00:00.000Z'),
+        type: EventType.EVENT_TYPE_SOCIAL,
+        state: EventState.EVENT_STATE_DRAFT,
+        awardedImpactScore: 10,
+        maxParticipants: 10,
+        organizerId: 'org-id',
+        localisationName: 'Paris',
+        createdAt: new Date('2026-05-19T08:00:00.000Z'),
+        updatedAt: new Date('2026-05-19T08:00:00.000Z'),
+      } as IEventPayload,
     },
+
     createdAt: new Date('2026-05-19T08:00:00.000Z').toISOString(),
   };
 }

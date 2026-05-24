@@ -1,8 +1,9 @@
+import type { EventRegistry, JobRegistry } from '@volontariapp/messaging';
 import type { JsonObject } from './json.type.js';
 
-export interface EventPayloadRegistry {}
+export interface EventPayloadRegistry extends EventRegistry {}
 
-export interface JobPayloadRegistry {}
+export interface JobPayloadRegistry extends JobRegistry {}
 
 export type EventPayload<K extends string> = K extends keyof EventPayloadRegistry
   ? EventPayloadRegistry[K]

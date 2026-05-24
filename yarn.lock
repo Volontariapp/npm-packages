@@ -4127,6 +4127,7 @@ __metadata:
     "@volontariapp/config": "workspace:*"
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/logger": "workspace:*"
+    "@volontariapp/messaging": "workspace:*"
     "@volontariapp/shared": "workspace:*"
     "@volontariapp/testing": "workspace:*"
     bullmq: "npm:^5.76.5"
@@ -4369,7 +4370,7 @@ __metadata:
   resolution: "@volontariapp/messaging@workspace:packages/messaging"
   dependencies:
     "@volontariapp/contracts": "workspace:*"
-    "@volontariapp/database": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
     "@volontariapp/testing": "workspace:*"
     typescript: "npm:5.7.3"
   languageName: unknown
