@@ -18,7 +18,7 @@ import type {
 
 import { CommonEventMessagingType } from './common/payloads.js';
 import type { IJobAuditPayload } from './common/payloads.js';
-import type { IEventCreatedWebsocketPayload } from './ws/payloads.js';
+import type { IEventCreatedWebsocketPayload, IUserCreatedWebsocketPayload } from './ws/payloads.js';
 import { WebsocketEventMessagingType } from './ws/payloads.js';
 
 export interface EventRegistry {
@@ -45,6 +45,7 @@ export interface EventRegistry {
 
   // WS
   [WebsocketEventMessagingType.WS_EVENT_CREATED]: IEventCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_USER_CREATED]: IUserCreatedWebsocketPayload;
 }
 
 export const EventMessagingType = {

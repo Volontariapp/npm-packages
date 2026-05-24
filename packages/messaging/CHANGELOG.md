@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.1
+
+### Patch Changes
+
+- feat(messaging): new event added
+
 ## 2.5.0
 
 ### Minor Changes
