@@ -5,7 +5,30 @@ import { BadgeModel } from '../models/badge.model.js';
 import { UserBadgeModel } from '../models/user-badge.model.js';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { readdirSync } from 'fs';
 import { registerUserMappings } from '../models/mapper.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const loadMigrations = async (): Promise<Array<() => void>> => {
+  const migrations: Array<() => void> = [];
+  const addDir = async (dirName: string) => {
+    const dirPath = join(__dirname, 'migrations', dirName);
+    const files = readdirSync(dirPath).filter((f) => f.endsWith('.ts') || f.endsWith('.js'));
+    for (const file of files) {
+      const mod = (await import(join(dirPath, file))) as Record<string, unknown>;
+      for (const key of Object.keys(mod)) {
+        if (typeof mod[key] === 'function') {
+          migrations.push(mod[key] as () => void);
+        }
+      }
+    }
+  };
+  await addDir('common');
+  await addDir('domain');
+  return migrations;
+};
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -15,7 +38,7 @@ export const testDataSource = new DataSource({
   password: 'password',
   database: 'ms_user',
   entities: [UserModel, BadgeModel, UserBadgeModel],
-  migrations: [join(dirname(fileURLToPath(import.meta.url)), 'migrations', '**', '*.{ts,js}')],
+  migrations: await loadMigrations(),
   synchronize: false,
   logging: false,
 });
