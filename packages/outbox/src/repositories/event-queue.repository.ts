@@ -3,12 +3,13 @@ import {
   EventQueueEntity,
   EventQueueModel,
   type Repository,
+  type EventType,
 } from '@volontariapp/database';
 import type { DataSource } from 'typeorm';
 
-export class EventQueueRepository extends BaseRepository<
+export class EventQueueRepository<K extends EventType = EventType> extends BaseRepository<
   EventQueueModel,
-  EventQueueEntity,
+  EventQueueEntity<K>,
   string
 > {
   constructor(dataSourceOrRepository: DataSource | Repository<EventQueueModel>) {
