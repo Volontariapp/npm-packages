@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.6.2
+
+### Patch Changes
+
+- fix: trigger SQL create user
+
 ## 2.6.1
 
 ### Patch Changes

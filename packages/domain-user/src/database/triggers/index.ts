@@ -1,14 +1,39 @@
-import { existsSync, readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+export const USERS_TRIGGER = `
+DROP TRIGGER IF EXISTS users_created_event_queue_trigger ON users;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+CREATE OR REPLACE FUNCTION create_user_created_event_queue_record()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        INSERT INTO event_queue (
+            type,
+            emitter,
+            "emitterId",
+            payload,
+            target_services,
+            version,
+            status,
+            attempts,
+            updated_at,
+            created_at
+        ) VALUES (
+            'user.created',
+            'ms-user',
+            NEW.id,
+            jsonb_build_object('id', NEW.id, 'role', NEW.role),
+            ARRAY['social:user'],
+            1,
+            'PENDING',
+            0,
+            now(),
+            now()
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-const sqlDir = existsSync(join(__dirname, 'users.trigger.sql'))
-  ? __dirname
-  : join(__dirname, '../../../src/database/triggers');
-
-const readSqlFile = (filename: string) => readFileSync(join(sqlDir, filename), 'utf8');
-
-export const USERS_TRIGGER = readSqlFile('users.trigger.sql');
+CREATE TRIGGER users_created_event_queue_trigger
+AFTER INSERT ON users
+FOR EACH ROW EXECUTE FUNCTION create_user_created_event_queue_record();
+`;
