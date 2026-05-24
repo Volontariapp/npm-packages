@@ -61,8 +61,10 @@ describe('Users Trigger (Integration)', () => {
     expect(event.emitter).toBe('ms-user');
     expect(event.emitterId).toBe(result.id);
     expect(event.payload).toEqual({
-      id: result.id,
-      role: UserRoles.VOLUNTEER,
+      after: {
+        id: result.id,
+        role: UserRoles.VOLUNTEER,
+      },
     });
     // NOTE: postgres returns snake_case columns if we don't alias them or use typeorm, and here we use raw query
     expect((event as unknown as { target_services: Streams[] }).target_services).toEqual([

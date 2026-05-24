@@ -1,4 +1,4 @@
-import type { ServiceType } from '@volontariapp/shared';
+import type { Streams } from '@volontariapp/shared';
 
 /**
  * Interface representing the structure of an event pushed to Redis Streams.
@@ -43,6 +43,6 @@ export type StreamEvent<P = unknown> = RedisEventMessage<P>;
  * Returns the Redis Stream name for a given service domain.
  * @param service The service domain (e.g., 'social', 'user')
  */
-export function getEventStreamName(service: ServiceType | string): string {
+export function getEventStreamName(service: Streams | string): string {
   return `stream:${service}`;
 }

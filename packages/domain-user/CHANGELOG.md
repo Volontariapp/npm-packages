@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.7.0
+
+### Minor Changes
+
+- fix: trigger SQL create user + fix getRedisStreamFunction
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.0
+  - @volontariapp/database@3.2.3
+
 ## 2.6.2
 
 ### Patch Changes

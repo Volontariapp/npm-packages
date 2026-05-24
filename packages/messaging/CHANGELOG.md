@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.0
+
+### Minor Changes
+
+- fix: trigger SQL create user + fix getRedisStreamFunction
+
 ## 2.4.0
 
 ### Minor Changes
