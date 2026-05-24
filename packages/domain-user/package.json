@@ -46,6 +46,7 @@
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
+    "@volontariapp/messaging": "workspace:*",
     "@volontariapp/shared": "workspace:*"
   },
   "devDependencies": {

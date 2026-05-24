@@ -3,6 +3,7 @@ import type { UserRoles } from '@volontariapp/shared';
 export enum UserEventMessagingType {
   USER_CHANGED = 'user.changed',
   BADGE_CHANGED = 'badge.changed',
+  USER_CREATED = 'user.created',
 }
 
 export interface IBadgePayload {
@@ -24,4 +25,9 @@ export interface IUserPayload {
   totalImpactScore: number;
   badges: IBadgePayload[];
   passwordHash?: string;
+}
+
+export interface IUserCreatedPayload {
+  id: string;
+  role: UserRoles;
 }

@@ -70,7 +70,7 @@ describe('SQL Triggers (Integration)', () => {
     const record = records[0];
     expect((record.payload.after as IEventPayload).name).toBe('Trigger Test Event');
     expect(record.payload.before).toBeFalsy();
-    expect(record.emitter).toBe('ms-event-db');
+    expect(record.emitter).toBe('ms-event');
     expect(record.targetServices).toContain(Streams.SOCIAL_INTERACTIONS);
   });
 
@@ -91,7 +91,7 @@ describe('SQL Triggers (Integration)', () => {
     if (updateRecord) {
       expect((updateRecord.payload.before as IRequirementPayload).currentQuantity).toBe(0);
       expect((updateRecord.payload.after as IRequirementPayload).currentQuantity).toBe(5);
-      expect(updateRecord.emitter).toBe('ms-event-db');
+      expect(updateRecord.emitter).toBe('ms-event');
       expect(updateRecord.emitterId).toBe('11111111-1111-1111-1111-111111111111');
     }
   });
@@ -130,6 +130,6 @@ describe('SQL Triggers (Integration)', () => {
     const record = records[0];
     expect((record.payload.after as IEventTagLinkedPayload).eventsId).toBe(event.id);
     expect((record.payload.after as IEventTagLinkedPayload).tagsId).toBe(tag.id);
-    expect(record.emitter).toBe('ms-event-db');
+    expect(record.emitter).toBe('ms-event');
   });
 });
