@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1
+
+### Patch Changes
+
+- new stream for job_outbox
+
 ## 0.5.0
 
 ### Minor Changes

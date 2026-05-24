@@ -17,33 +17,33 @@ import type {
 } from './social/payloads.js';
 
 import { CommonEventMessagingType } from './common/payloads.js';
-import type { EventChangedPayload, IJobAuditPayload } from './common/payloads.js';
+import type { IJobAuditPayload } from './common/payloads.js';
 import type { IEventCreatedWebsocketPayload } from './ws/payloads.js';
 import { WebsocketEventMessagingType } from './ws/payloads.js';
 
 export interface EventRegistry {
   // Event
-  [EventEventMessagingType.EVENT_CHANGED]: EventChangedPayload<IEventPayload>;
-  [EventEventMessagingType.EVENT_CREATED]: EventChangedPayload<IEventPayload>;
-  [EventEventMessagingType.REQUIREMENT_CHANGED]: EventChangedPayload<IRequirementPayload>;
-  [EventEventMessagingType.TAG_CHANGED]: EventChangedPayload<ITagPayload>;
-  [EventEventMessagingType.EVENT_TAG_LINKED]: EventChangedPayload<IEventTagLinkedPayload>;
+  [EventEventMessagingType.EVENT_CHANGED]: IEventPayload;
+  [EventEventMessagingType.EVENT_CREATED]: IEventPayload;
+  [EventEventMessagingType.REQUIREMENT_CHANGED]: IRequirementPayload;
+  [EventEventMessagingType.TAG_CHANGED]: ITagPayload;
+  [EventEventMessagingType.EVENT_TAG_LINKED]: IEventTagLinkedPayload;
 
   // Common
-  [CommonEventMessagingType.JOB_OUTBOX_SUCCESS]: EventChangedPayload<IJobAuditPayload>;
-  [CommonEventMessagingType.JOB_OUTBOX_FAILED]: EventChangedPayload<IJobAuditPayload>;
+  [CommonEventMessagingType.JOB_OUTBOX_SUCCESS]: IJobAuditPayload;
+  [CommonEventMessagingType.JOB_OUTBOX_FAILED]: IJobAuditPayload;
 
   // User
-  [UserEventMessagingType.USER_CHANGED]: EventChangedPayload<IUserPayload>;
-  [UserEventMessagingType.BADGE_CHANGED]: EventChangedPayload<IBadgePayload>;
+  [UserEventMessagingType.USER_CHANGED]: IUserPayload;
+  [UserEventMessagingType.BADGE_CHANGED]: IBadgePayload;
 
   // Social
-  [SocialEventMessagingType.SOCIAL_USER_CHANGED]: EventChangedPayload<ISocialUserPayload>;
-  [SocialEventMessagingType.SOCIAL_POST_CHANGED]: EventChangedPayload<ISocialPostPayload>;
-  [SocialEventMessagingType.SOCIAL_EVENT_CHANGED]: EventChangedPayload<ISocialEventPayload>;
+  [SocialEventMessagingType.SOCIAL_USER_CHANGED]: ISocialUserPayload;
+  [SocialEventMessagingType.SOCIAL_POST_CHANGED]: ISocialPostPayload;
+  [SocialEventMessagingType.SOCIAL_EVENT_CHANGED]: ISocialEventPayload;
 
   // WS
-  [WebsocketEventMessagingType.WS_EVENT_CREATED]: EventChangedPayload<IEventCreatedWebsocketPayload>;
+  [WebsocketEventMessagingType.WS_EVENT_CREATED]: IEventCreatedWebsocketPayload;
 }
 
 export const EventMessagingType = {

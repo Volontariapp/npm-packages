@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/messaging",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -38,6 +38,6 @@
   },
   "dependencies": {
     "@volontariapp/contracts": "workspace:*",
-    "@volontariapp/database": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
   }
 }

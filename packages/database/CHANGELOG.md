@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.2.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.1
+- messaging -> extended event registry & job registry with messaging registry
+- Updated dependencies []:
+  - @volontariapp/messaging@2.3.0
+
 ## 3.1.0
 
 ### Minor Changes

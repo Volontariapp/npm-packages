@@ -26,12 +26,18 @@ export enum WebsocketStream {
   WS_USER = 'ws:user',
 }
 
+export enum CommonStream {
+  JOB_OUTBOX_SUCCESS = 'job:outbox:success',
+  JOB_OUTBOX_FAILURE = 'job:outbox:failure',
+}
+
 export const Streams = {
   ...UserStream,
   ...EventStream,
   ...PostStream,
   ...SocialStream,
   ...WebsocketStream,
+  ...CommonStream,
 } as const;
 
 export type Streams = UserStream | EventStream | PostStream | SocialStream | WebsocketStream;

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.0
+
+### Minor Changes
+
+- messaging -> extended event registry & job registry with messaging registry
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.1
+- new stream for job_outbox
+
 ## 2.2.3
 
 ### Patch Changes
