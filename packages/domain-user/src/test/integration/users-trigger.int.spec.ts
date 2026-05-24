@@ -62,9 +62,12 @@ describe('Users Trigger (Integration)', () => {
     expect(event.emitterId).toBe(result.id);
     expect(event.payload).toEqual({
       id: result.id,
-      role: 'user',
+      role: UserRoles.VOLUNTEER,
     });
-    expect(event.targetServices).toEqual([Streams.SOCIAL_USER]);
+    // NOTE: postgres returns snake_case columns if we don't alias them or use typeorm, and here we use raw query
+    expect((event as unknown as { target_services: Streams[] }).target_services).toEqual([
+      Streams.SOCIAL_USER,
+    ]);
     expect(event.status).toBe('PENDING');
   });
 });
