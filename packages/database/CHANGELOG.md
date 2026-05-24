@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.5
+
+### Patch Changes
+
+- feat(database): static creation of event
+
 ## 3.2.4
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.2.5
+
 ## 2.7.1
 
 ### Patch Changes
