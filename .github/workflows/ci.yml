@@ -10,7 +10,7 @@ on:
 
 jobs:
   run-pipeline:
-    uses: Volontariapp/ci-tools/.github/workflows/npm-packages/pipeline.yml@main
+    uses: Volontariapp/ci-tools/.github/workflows/npm-packages-pipeline.yml@main
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

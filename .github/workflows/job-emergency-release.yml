@@ -10,7 +10,7 @@ on:
 
 jobs:
   emergency-release:
-    uses: Volontariapp/ci-tools/.github/workflows/npm-packages/emergency-release.yml@main
+    uses: Volontariapp/ci-tools/.github/workflows/npm-packages-emergency-release.yml@main
     with:
       dry_run: ${{ github.event.inputs.dry_run == 'true' }}
     secrets:
