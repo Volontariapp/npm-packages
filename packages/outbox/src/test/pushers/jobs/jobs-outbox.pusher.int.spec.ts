@@ -46,7 +46,11 @@ describe('JobsOutboxPusher (Integration)', () => {
 
       expect(job).toBeDefined();
       expect(job?.name).toBe('test.job');
-      expect(job?.data).toEqual({ foo: 'bar' });
+      expect(job?.data).toEqual({
+        payload: { foo: 'bar' },
+        emitter: 'database-tests',
+        emitterId: '00000000-0000-0000-0000-000000000000',
+      });
     } finally {
       await inspectorQueue.close();
     }

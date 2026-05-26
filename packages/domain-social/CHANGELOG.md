@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- mimgrations added -> new flow
+
+## 0.4.1
+
+### Patch Changes
+
+- bump migration
+
+## 0.4.0
+
+### Minor Changes
+
+- bump migration
+
+## 0.3.14
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/bridge-nest@0.3.14
+  - @volontariapp/errors-nest@0.11.2
+  - @volontariapp/contracts@4.0.11
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+
 ## 0.3.13
 
 ### Patch Changes

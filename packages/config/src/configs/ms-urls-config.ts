@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsDefined, IsNotEmpty } from 'class-validator';
 
 export class MSURLsConfig {
   @IsDefined()
@@ -13,7 +13,11 @@ export class MSURLsConfig {
   @IsNotEmpty()
   msEventUrl!: string;
 
-  @IsOptional()
+  @IsDefined()
   @IsNotEmpty()
   msSocialUrl!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  msWsUrl!: string;
 }

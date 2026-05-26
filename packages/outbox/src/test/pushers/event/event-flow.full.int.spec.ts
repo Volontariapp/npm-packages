@@ -13,7 +13,7 @@ import { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
 import { TestEventQueueRepository } from '../../utils/repositories/event-queue-test.repository.js';
 import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import { clearTestRedis, testRedisOptions } from '../../redis-config.js';
-import { ServiceType } from '@volontariapp/shared';
+import { Streams } from '@volontariapp/shared';
 
 describe('Event Full Flow (Integration)', () => {
   let modelRepository: Repository<EventQueueModel>;
@@ -52,11 +52,12 @@ describe('Event Full Flow (Integration)', () => {
         id: eventId,
         type: 'user.created',
         emitter: 'ms-user',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         status: OutboxStatus.PENDING,
         payload: { after: { userId: 'u-42' } },
         version: 1,
         attempts: 0,
-        targetServices: [ServiceType.POST, ServiceType.SOCIAL],
+        targetServices: [Streams.SOCIAL_POSTS, Streams.SOCIAL_INTERACTIONS],
         createdAt: new Date(),
         updatedAt: new Date(),
       } as Partial<EventQueueModel>),
@@ -79,8 +80,8 @@ describe('Event Full Flow (Integration)', () => {
     expect(dbAfterProcess.status).toBe(OutboxStatus.COMPLETED);
 
     // Assert — Redis stream integrity
-    const postStream = await redis.xrange('stream:post', '-', '+');
-    const socialStream = await redis.xrange('stream:social', '-', '+');
+    const postStream = await redis.xrange('stream:social:posts', '-', '+');
+    const socialStream = await redis.xrange('stream:social:interactions', '-', '+');
 
     expect(postStream).toHaveLength(1);
     expect(socialStream).toHaveLength(1);
@@ -101,12 +102,13 @@ describe('Event Full Flow (Integration)', () => {
   it('should push 100 events in bulk and verify total stream entries across services', async () => {
     // Arrange
     const count = 100;
-    const services = [ServiceType.POST, ServiceType.USER, ServiceType.SOCIAL];
+    const services = [Streams.SOCIAL_POSTS, Streams.USER_USERS, Streams.SOCIAL_INTERACTIONS];
     const models = Array.from({ length: count }).map((_, i) =>
       modelRepository.create({
         id: `00000000-0000-0000-0000-${String(i).padStart(12, '0')}`,
         type: 'stress.event',
         emitter: 'ms-stress',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         status: OutboxStatus.PENDING,
         payload: { after: { index: i } },
         version: 1,
@@ -145,11 +147,12 @@ describe('Event Full Flow (Integration)', () => {
         id: goodId,
         type: 'user.created',
         emitter: 'ms-user',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         status: OutboxStatus.PROCESSING,
         payload: { after: { userId: 'u-1' } },
         version: 1,
         attempts: 0,
-        targetServices: [ServiceType.POST],
+        targetServices: [Streams.SOCIAL_POSTS],
         createdAt: new Date(),
         updatedAt: new Date(),
       } as Partial<EventQueueModel>),
@@ -157,11 +160,12 @@ describe('Event Full Flow (Integration)', () => {
         id: badId,
         type: 'user.created',
         emitter: 'ms-user',
+        emitterId: '00000000-0000-0000-0000-000000000000',
         status: OutboxStatus.PROCESSING,
         payload: { after: { userId: 'u-2' } },
         version: 1,
         attempts: 0,
-        targetServices: [ServiceType.POST],
+        targetServices: [Streams.SOCIAL_POSTS],
         createdAt: new Date(),
         updatedAt: new Date(),
       } as Partial<EventQueueModel>),
@@ -192,7 +196,7 @@ describe('Event Full Flow (Integration)', () => {
     expect(badDb.status).toBe(OutboxStatus.FAILED);
 
     // Assert — only the good entity's event landed in Redis
-    const postStream = await redis.xrange('stream:post', '-', '+');
+    const postStream = await redis.xrange('stream:social:posts', '-', '+');
     expect(postStream).toHaveLength(1);
 
     const [, fields] = postStream[0];

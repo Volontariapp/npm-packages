@@ -8,7 +8,9 @@
   "microServices": {
     "msPostUrl": "http://localhost:5002",
     "msUserUrl": "http://localhost:5001",
-    "msEventUrl": "http://localhost:5003"
+    "msEventUrl": "http://localhost:5003",
+    "msSocialUrl": "http://localhost:5004",
+    "msWsUrl": "http://localhost:5005"
   },
   "db": {
     "host": "localhost",

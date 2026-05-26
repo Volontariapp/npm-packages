@@ -3,7 +3,7 @@ import { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
 import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js';
 import { makeEventQueueEvent } from '../../utils/helpers/event/event-queue-event.helper.js';
 import { clearTestRedis, testRedisOptions } from '../../redis-config.js';
-import { ServiceType } from '@volontariapp/shared';
+import { Streams } from '@volontariapp/shared';
 import { Redis } from 'ioredis';
 
 describe('EventQueuePusher (Integration)', () => {
@@ -34,8 +34,9 @@ describe('EventQueuePusher (Integration)', () => {
     const event = makeEventQueueEvent({
       id: 'evt-1',
       type: 'user.created',
-      emitter: ServiceType.USER,
-      targetServices: [ServiceType.POST, ServiceType.SOCIAL],
+      emitter: Streams.USER_USERS,
+      emitterId: '00000000-0000-0000-0000-000000000000',
+      targetServices: [Streams.SOCIAL_POSTS, Streams.SOCIAL_INTERACTIONS],
       payload: { after: { userId: '123' } },
     });
 
@@ -43,8 +44,8 @@ describe('EventQueuePusher (Integration)', () => {
     await pusher.pushElement(event);
 
     // Assert
-    const postStream = await redis.xrange('stream:post', '-', '+');
-    const socialStream = await redis.xrange('stream:social', '-', '+');
+    const postStream = await redis.xrange('stream:social:posts', '-', '+');
+    const socialStream = await redis.xrange('stream:social:interactions', '-', '+');
 
     expect(postStream).toHaveLength(1);
     expect(socialStream).toHaveLength(1);
@@ -62,7 +63,12 @@ describe('EventQueuePusher (Integration)', () => {
     it('should handle 500 events pushed in bulk across multiple services', async () => {
       // Arrange
       const count = 500;
-      const services = [ServiceType.POST, ServiceType.USER, ServiceType.SOCIAL, ServiceType.EVENT];
+      const services = [
+        Streams.SOCIAL_POSTS,
+        Streams.USER_USERS,
+        Streams.SOCIAL_INTERACTIONS,
+        Streams.EVENT_EVENTS,
+      ];
       const events = Array.from({ length: count }).map((_, i) =>
         makeEventQueueEvent({
           id: `stress-${i.toString()}`,
@@ -84,12 +90,12 @@ describe('EventQueuePusher (Integration)', () => {
   describe('Resilience Tests', () => {
     it('should recover after a temporary Redis failure', async () => {
       // Arrange
-      const event1 = makeEventQueueEvent({ id: 'evt-1', targetServices: [ServiceType.POST] });
-      const event2 = makeEventQueueEvent({ id: 'evt-2', targetServices: [ServiceType.POST] });
+      const event1 = makeEventQueueEvent({ id: 'evt-1', targetServices: [Streams.SOCIAL_POSTS] });
+      const event2 = makeEventQueueEvent({ id: 'evt-2', targetServices: [Streams.SOCIAL_POSTS] });
 
       // 1. Act: Normal push
       await pusher.pushElement(event1);
-      expect(await redis.xlen('stream:post')).toBe(1);
+      expect(await redis.xlen('stream:social:posts')).toBe(1);
 
       // 2. Act: Simulate failure via spy
       const loggerErrorSpy = jest.spyOn(loggerMock, 'error');
@@ -105,7 +111,7 @@ describe('EventQueuePusher (Integration)', () => {
       await pusher.pushElement(event2);
 
       // Assert: Recovery successful
-      expect(await redis.xlen('stream:post')).toBe(2);
+      expect(await redis.xlen('stream:social:posts')).toBe(2);
     });
   });
 });

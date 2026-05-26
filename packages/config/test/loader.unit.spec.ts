@@ -32,7 +32,13 @@ describe('Config Loader Unit Tests', () => {
 
   const validLogger = { level: 'info', format: LoggerFormat.JSON };
 
-  const validMicroservices = { msUserUrl: 'u', msPostUrl: 'p', msEventUrl: 'e' };
+  const validMicroservices = {
+    msUserUrl: 'u',
+    msPostUrl: 'p',
+    msEventUrl: 'e',
+    msSocialUrl: 's',
+    msWsUrl: 'w',
+  };
 
   beforeEach(() => {
     dirPath = fs.mkdtempSync(path.join(os.tmpdir(), 'config-loader-test-'));

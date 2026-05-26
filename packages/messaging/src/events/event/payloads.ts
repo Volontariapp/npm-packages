@@ -1,7 +1,9 @@
 import type { EventType as ContractEventType, EventState } from '@volontariapp/contracts';
 
-export enum EventMessagingType {
+export enum EventEventMessagingType {
   EVENT_CHANGED = 'event.changed',
+  EVENT_CREATED = 'event.created',
+  EVENT_DELETED = 'event.deleted',
   REQUIREMENT_CHANGED = 'requirement.changed',
   TAG_CHANGED = 'tag.changed',
   EVENT_TAG_LINKED = 'event.tag_linked',
@@ -17,7 +19,7 @@ export interface IEventPayload {
   state: EventState;
   awardedImpactScore: number;
   maxParticipants: number;
-  organizerId?: string;
+  organizerId: string;
   localisationName: string;
   createdAt: Date;
   updatedAt: Date;
@@ -43,9 +45,4 @@ export interface ITagPayload {
 export interface IEventTagLinkedPayload {
   eventsId: string;
   tagsId: string;
-}
-
-export interface EventChangedPayload<T> {
-  before: T | null;
-  after: T | null;
 }

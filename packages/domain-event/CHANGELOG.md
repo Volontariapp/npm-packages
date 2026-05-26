@@ -1,5 +1,180 @@
 # Changelog
 
+## 3.3.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.4
+  - @volontariapp/database@3.2.9
+  - @volontariapp/outbox@0.9.13
+- trigger SQL on event create
+
+## 3.2.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.2.8
+
+## 3.2.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.3
+  - @volontariapp/database@3.2.7
+  - @volontariapp/messaging@2.5.3
+
+## 3.2.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.2
+  - @volontariapp/database@3.2.6
+
+## 3.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.2.5
+
+## 3.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.1
+  - @volontariapp/database@3.2.4
+
+## 3.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.0
+  - @volontariapp/database@3.2.3
+
+## 3.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.4.0
+  - @volontariapp/database@3.2.2
+
+## 3.2.0
+
+### Minor Changes
+
+- mimgrations added -> new flow
+
+## 3.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.2
+  - @volontariapp/database@3.2.1
+  - @volontariapp/messaging@2.3.1
+
+## 3.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.2.2
+  - @volontariapp/messaging@2.3.0
+  - @volontariapp/shared@0.5.1
+
+## 3.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.2.3
+
+## 3.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.2.2
+
+## 3.1.0
+
+### Minor Changes
+
+- refacto ServiceType --> STREAMS
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.1.0
+  - @volontariapp/shared@0.5.0
+  - @volontariapp/messaging@2.2.1
+
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.2.0
+
+## 3.0.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.0.0
+  - @volontariapp/messaging@2.1.1
+
+## 2.8.0
+
+### Minor Changes
+
+- adding transactionnal create event
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.1.0
+
+## 2.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.0.0
+
+## 2.7.1
+
+### Patch Changes
+
+- bump migration
+
+## 2.7.0
+
+### Minor Changes
+
+- bump migration
+
+## 2.6.11
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.11.2
+  - @volontariapp/contracts@4.0.11
+  - @volontariapp/messaging@1.2.3
+  - @volontariapp/database@1.17.1
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+
 ## 2.6.10
 
 ### Patch Changes

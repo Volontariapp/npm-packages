@@ -6,7 +6,9 @@
   "microServices": {
     "msPostUrl": "http://ms-post:5002",
     "msUserUrl": "http://ms-user:5001",
-    "msEventUrl": "http://ms-event:5003"
+    "msEventUrl": "http://ms-event:5003",
+    "msSocialUrl": "http://ms-social:5004",
+    "msWsUrl": "http://ms-ws:5005"
   },
   "db": {
     "host": "localhost",

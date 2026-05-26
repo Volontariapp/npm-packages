@@ -7,6 +7,7 @@ export const makeExtendedOutboxEvent = (
   return Object.assign(new ExtendedOutboxEntity(), {
     type: 'extended.created',
     emitter: 'database-tests',
+    emitterId: '00000000-0000-0000-0000-000000000000',
     status: OutboxStatus.PENDING,
     attempts: 0,
     createdAt: new Date(Date.now() - 60_000),

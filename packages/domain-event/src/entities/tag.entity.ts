@@ -3,4 +3,5 @@ export class TagEntity {
   name!: string;
   slug!: string;
   balise!: string;
+  updatedBy?: string = undefined;
 }

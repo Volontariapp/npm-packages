@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.5.3
+
+### Patch Changes
+
+- new stream ws user
+
+## 0.5.2
+
+### Patch Changes
+
+- adding outbox stream on each ms
+
+## 0.5.1
+
+### Patch Changes
+
+- new stream for job_outbox
+
+## 0.5.0
+
+### Minor Changes
+
+- refacto ServiceType --> STREAMS
+
+## 0.4.1
+
+### Patch Changes
+
+- license package
+
 ## 0.4.0
 
 ### Minor Changes

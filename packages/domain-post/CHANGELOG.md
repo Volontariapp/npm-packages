@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.3.0
+
+### Minor Changes
+
+- mimgrations added -> new flow
+
+## 2.2.5
+
+### Patch Changes
+
+- bump migration
+
+## 2.2.4
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.5
+
 ## 2.2.3
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-user",
-  "version": "2.5.5",
+  "version": "2.7.6",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
   "description": "Domain user definitions and contracts for Volontariapp",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -46,6 +46,7 @@
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
+    "@volontariapp/messaging": "workspace:*",
     "@volontariapp/shared": "workspace:*"
   },
   "devDependencies": {

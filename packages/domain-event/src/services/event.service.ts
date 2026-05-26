@@ -63,7 +63,7 @@ export class EventService {
         data.tags = await this.validateTags(data.tags);
       }
 
-      return await this.eventRepository.create(data);
+      return await this.eventRepository.createWithEventCreated(data);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
 
@@ -143,9 +143,11 @@ export class EventService {
 
   async delete(id: string): Promise<void> {
     try {
-      await this.findById(id);
       this.logger.log(`Deleting event: ${id}`);
-      await this.eventRepository.delete(id);
+      const deleted = await this.eventRepository.deleteWithEventDeleted(id);
+      if (!deleted) {
+        throw EVENT_NOT_FOUND(id);
+      }
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;

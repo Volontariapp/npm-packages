@@ -6,6 +6,7 @@ export const makeJobsOutboxEvent = (
   return Object.assign(new JobsOutboxEntity(), {
     type: 'jobs.process',
     emitter: 'database-tests',
+    emitterId: '00000000-0000-0000-0000-000000000000',
     target: 'queue:default',
     payload: { action: 'process-user', data: { userId: 'u-1' } },
     status: OutboxStatus.PENDING,

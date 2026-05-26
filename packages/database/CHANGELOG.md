@@ -1,5 +1,116 @@
 # Changelog
 
+## 3.2.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.4
+
+## 3.2.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@3.2.0
+  - @volontariapp/bridge@1.0.4
+
+## 3.2.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.3
+  - @volontariapp/messaging@2.5.3
+
+## 3.2.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.2
+
+## 3.2.5
+
+### Patch Changes
+
+- feat(database): static creation of event
+
+## 3.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.1
+
+## 3.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.0
+
+## 3.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.4.0
+
+## 3.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.2
+  - @volontariapp/messaging@2.3.1
+
+## 3.2.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.1
+- messaging -> extended event registry & job registry with messaging registry
+- Updated dependencies []:
+  - @volontariapp/messaging@2.3.0
+
+## 3.1.0
+
+### Minor Changes
+
+- refacto ServiceType --> STREAMS
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.0
+
+## 3.0.0
+
+### Major Changes
+
+- adding emitter id on outbox-entity
+
+## 2.0.0
+
+### Major Changes
+
+- fix: update job audit emitter to be required
+
+## 1.17.1
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/bridge@1.0.3
+  - @volontariapp/config@3.1.1
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+  - @volontariapp/shared@0.4.1
+
 ## 1.17.0
 
 ### Minor Changes

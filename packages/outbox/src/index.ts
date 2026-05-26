@@ -9,3 +9,5 @@ export * from './dispatchers/jobs-outbox.dispatcher.js';
 
 export * from './pushers/event-queue.pusher.js';
 export * from './pushers/jobs-outbox.pusher.js';
+
+export * from './repositories/index.js';

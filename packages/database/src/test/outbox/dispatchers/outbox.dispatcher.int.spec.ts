@@ -16,7 +16,7 @@ describe('OutboxDispatcher (Integration)', () => {
 
   beforeAll(() => {
     repository = new TestOutboxRepository(testDataSource.getRepository(OutboxModel));
-    dispatcher = new OutboxDispatcher(loggerMock as never, repository);
+    dispatcher = new OutboxDispatcher(loggerMock, repository);
   });
 
   it('markAsProcessing() should update status in database', async () => {
@@ -25,6 +25,7 @@ describe('OutboxDispatcher (Integration)', () => {
     model.id = '00000000-0000-0000-0000-000000000001';
     model.type = 'test';
     model.emitter = 'test';
+    model.emitterId = '00000000-0000-0000-0000-000000000000';
     model.status = OutboxStatus.PENDING;
     model.updatedAt = new Date();
     await repo.save(model);
@@ -42,6 +43,7 @@ describe('OutboxDispatcher (Integration)', () => {
     model.id = '00000000-0000-0000-0000-000000000002';
     model.type = 'test';
     model.emitter = 'test';
+    model.emitterId = '00000000-0000-0000-0000-000000000000';
     model.status = OutboxStatus.PROCESSING;
     model.updatedAt = new Date();
     await repo.save(model);
@@ -62,6 +64,7 @@ describe('OutboxDispatcher (Integration)', () => {
     model.id = '00000000-0000-0000-0000-000000000003';
     model.type = 'test';
     model.emitter = 'test';
+    model.emitterId = '00000000-0000-0000-0000-000000000000';
     model.status = OutboxStatus.PROCESSING;
     model.updatedAt = new Date();
     await repo.save(model);

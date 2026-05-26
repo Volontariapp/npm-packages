@@ -1,5 +1,121 @@
 # Changelog
 
+## 2.5.4
+
+### Patch Changes
+
+- new event on messaging
+
+## 2.5.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.3
+
+## 2.5.2
+
+### Patch Changes
+
+- organizateur id mendatory
+
+## 2.5.1
+
+### Patch Changes
+
+- feat(messaging): new event added
+
+## 2.5.0
+
+### Minor Changes
+
+- fix: trigger SQL create user + fix getRedisStreamFunction
+
+## 2.4.0
+
+### Minor Changes
+
+- trigger SQL on creation data
+
+## 2.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.2
+
+## 2.3.0
+
+### Minor Changes
+
+- messaging -> extended event registry & job registry with messaging registry
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.1
+- new stream for job_outbox
+
+## 2.2.3
+
+### Patch Changes
+
+- renaming WS event
+
+## 2.2.2
+
+### Patch Changes
+
+- export WS Service
+
+## 2.2.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.1.0
+
+## 2.2.0
+
+### Minor Changes
+
+- adding WS on event messaging
+
+## 2.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.0.0
+
+## 2.1.0
+
+### Minor Changes
+
+- adding transactionnal create event
+
+## 2.0.0
+
+### Major Changes
+
+- setup event type
+
+## 1.3.0
+
+### Minor Changes
+
+- feat: add job envelope type
+- fix: update job audit emitter to be required
+- Updated dependencies []:
+  - @volontariapp/database@2.0.0
+
+## 1.2.3
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.0.11
+  - @volontariapp/database@1.17.1
+
 ## 1.2.2
 
 ### Patch Changes

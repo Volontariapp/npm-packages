@@ -63,7 +63,15 @@ describe('JobsOutboxPusher (Unit)', () => {
         'test-service',
         expect.objectContaining({ connection: redisMock }),
       );
-      expect(addSpy).toHaveBeenCalledWith('test.job', { data: 'test' }, { jobId: '1' });
+      expect(addSpy).toHaveBeenCalledWith(
+        'test.job',
+        {
+          payload: { data: 'test' },
+          emitter: 'database-tests',
+          emitterId: '00000000-0000-0000-0000-000000000000',
+        },
+        { jobId: '1' },
+      );
     });
 
     it('should include delay if scheduledAt is in the future', async () => {
@@ -83,7 +91,11 @@ describe('JobsOutboxPusher (Unit)', () => {
       // Assert
       expect(addSpy).toHaveBeenCalledWith(
         'test.job',
-        { data: 'test' },
+        {
+          payload: { data: 'test' },
+          emitter: 'database-tests',
+          emitterId: '00000000-0000-0000-0000-000000000000',
+        },
         expect.objectContaining({
           delay: expect.any(Number),
           jobId: '1',

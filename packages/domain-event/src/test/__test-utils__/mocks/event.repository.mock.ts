@@ -6,7 +6,9 @@ export const createEventRepositoryMock = (): jest.Mocked<IEventRepository> =>
     findAll: jest.fn(),
     findById: jest.fn(),
     create: jest.fn(),
+    createWithEventCreated: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    deleteWithEventDeleted: jest.fn(),
     search: jest.fn(),
   }) as unknown as jest.Mocked<IEventRepository>;

@@ -6,4 +6,5 @@ export class RequirementEntity {
   currentQuantity!: number;
   isSystem!: boolean;
   createdBy?: string;
+  updatedBy?: string = undefined;
 }

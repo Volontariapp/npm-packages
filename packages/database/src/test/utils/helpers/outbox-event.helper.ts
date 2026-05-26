@@ -9,6 +9,7 @@ export const makeOutboxEvent = <TEvent extends OutboxModel = OutboxModel>(
   const event = factory();
   event.type = 'user.created';
   event.emitter = 'database-tests';
+  event.emitterId = '00000000-0000-0000-0000-000000000000';
   event.updatedAt = new Date();
   return Object.assign(event, overrides);
 };

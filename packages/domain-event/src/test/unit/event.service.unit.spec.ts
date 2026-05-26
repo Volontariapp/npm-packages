@@ -105,14 +105,14 @@ describe('EventService (Unit)', () => {
       // Arrange
       const input = EventFactory.buildInput();
       const created = EventFactory.build({ ...input });
-      mockRepository.create.mockResolvedValue(created);
+      mockRepository.createWithEventCreated.mockResolvedValue(created);
 
       // Act
       const result = await service.create(input);
 
       // Assert
       expect(result).toEqual(created);
-      expect(mockRepository.create).toHaveBeenCalledWith(input);
+      expect(mockRepository.createWithEventCreated).toHaveBeenCalledWith(input);
       expect(mockTagService.findByIds).not.toHaveBeenCalled();
     });
 
@@ -123,7 +123,7 @@ describe('EventService (Unit)', () => {
       const input = EventFactory.buildInput({ tags: [tag1, tag2] });
       const created = EventFactory.build({ ...input, tags: [tag1, tag2] });
       mockTagService.findByIds.mockResolvedValue([tag1, tag2]);
-      mockRepository.create.mockResolvedValue(created);
+      mockRepository.createWithEventCreated.mockResolvedValue(created);
 
       // Act
       const result = await service.create(input);
@@ -142,7 +142,7 @@ describe('EventService (Unit)', () => {
       await expect(service.create(input)).rejects.toMatchObject({
         code: 'INVALID_DATE_PARAMETER',
       });
-      expect(mockRepository.create).not.toHaveBeenCalled();
+      expect(mockRepository.createWithEventCreated).not.toHaveBeenCalled();
     });
 
     it('should throw INVALID_DATE_PARAMETERS when startAt is after endAt', async () => {
@@ -170,14 +170,14 @@ describe('EventService (Unit)', () => {
         code: 'NOT_FOUND',
         message: expect.stringContaining('tag-missing'),
       });
-      expect(mockRepository.create).not.toHaveBeenCalled();
+      expect(mockRepository.createWithEventCreated).not.toHaveBeenCalled();
     });
 
     it('should throw EVENT_ALREADY_EXISTS on unique constraint violation (code 23505)', async () => {
       // Arrange
       const input = EventFactory.buildInput({ name: 'Duplicate Event' });
       const dbError = { code: '23505', message: 'Unique violation' };
-      mockRepository.create.mockRejectedValue(dbError);
+      mockRepository.createWithEventCreated.mockRejectedValue(dbError);
 
       // Act + Assert
       await expect(service.create(input)).rejects.toMatchObject({
@@ -189,7 +189,7 @@ describe('EventService (Unit)', () => {
     it('should throw DATABASE_ERROR on generic repository failure', async () => {
       // Arrange
       const input = EventFactory.buildInput();
-      mockRepository.create.mockRejectedValue(new Error('Insert failed'));
+      mockRepository.createWithEventCreated.mockRejectedValue(new Error('Insert failed'));
 
       // Act + Assert
       await expect(service.create(input)).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
@@ -386,35 +386,27 @@ describe('EventService (Unit)', () => {
   describe('delete()', () => {
     it('should find and delete the event successfully', async () => {
       // Arrange
-      const event = EventFactory.build({ id: 'evt-1' });
-      const findByIdSpy = jest.spyOn(service, 'findById').mockResolvedValue(event);
-      mockRepository.delete.mockResolvedValue(true);
-
-      // Spy — ensuring delete is called with the correct id
-      const deleteSpy = jest.spyOn(mockRepository, 'delete');
+      mockRepository.deleteWithEventDeleted.mockResolvedValue(true);
 
       // Act
       await service.delete('evt-1');
 
       // Assert
-      expect(findByIdSpy).toHaveBeenCalledWith('evt-1');
-      expect(deleteSpy).toHaveBeenCalledWith('evt-1');
+      expect(mockRepository.deleteWithEventDeleted).toHaveBeenCalledWith('evt-1');
     });
 
     it('should throw EVENT_NOT_FOUND when the event does not exist', async () => {
       // Arrange
-      jest.spyOn(service, 'findById').mockRejectedValue({ code: 'NOT_FOUND', isBaseError: true });
+      mockRepository.deleteWithEventDeleted.mockResolvedValue(false);
 
       // Act + Assert
       await expect(service.delete('missing')).rejects.toMatchObject({ code: 'NOT_FOUND' });
-      expect(mockRepository.delete).not.toHaveBeenCalled();
+      expect(mockRepository.deleteWithEventDeleted).toHaveBeenCalledWith('missing');
     });
 
     it('should throw DATABASE_ERROR when repository.delete throws', async () => {
       // Arrange
-      const event = EventFactory.build({ id: 'evt-1' });
-      jest.spyOn(service, 'findById').mockResolvedValue(event);
-      mockRepository.delete.mockRejectedValue(new Error('Delete failed'));
+      mockRepository.deleteWithEventDeleted.mockRejectedValue(new Error('Delete failed'));
 
       // Act + Assert
       await expect(service.delete('evt-1')).rejects.toMatchObject({ code: 'DATABASE_ERROR' });

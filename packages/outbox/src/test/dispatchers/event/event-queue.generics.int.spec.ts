@@ -39,6 +39,7 @@ describe('EventQueue Generics (Integration)', () => {
     event.id = '00000000-0000-0000-0000-000000000001';
     event.type = EventType.FAKE;
     event.emitter = 'test';
+    event.emitterId = '00000000-0000-0000-0000-000000000000';
     event.status = OutboxStatus.PENDING;
     event.version = 1;
     event.payload = {

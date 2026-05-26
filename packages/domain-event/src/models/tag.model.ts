@@ -15,6 +15,9 @@ export class TagModel {
   @Column({ type: 'varchar', length: 100 })
   balise!: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  updatedBy?: string = undefined;
+
   @ManyToMany(() => EventModel, (event) => event.tags)
   events?: EventModel[];
 }

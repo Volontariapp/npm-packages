@@ -1,5 +1,147 @@
 # Changelog
 
+## 2.7.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.4
+  - @volontariapp/database@3.2.9
+
+## 2.7.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.2.8
+
+## 2.7.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.3
+  - @volontariapp/auth@3.2.9
+  - @volontariapp/database@3.2.7
+  - @volontariapp/messaging@2.5.3
+
+## 2.7.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.2
+  - @volontariapp/database@3.2.6
+
+## 2.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.2.5
+
+## 2.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.1
+  - @volontariapp/database@3.2.4
+
+## 2.7.0
+
+### Minor Changes
+
+- fix: trigger SQL create user + fix getRedisStreamFunction
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.0
+  - @volontariapp/database@3.2.3
+
+## 2.6.2
+
+### Patch Changes
+
+- fix: trigger SQL create user
+
+## 2.6.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.4.0
+  - @volontariapp/database@3.2.2
+
+## 2.6.0
+
+### Minor Changes
+
+- mimgrations added -> new flow
+
+## 2.5.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.5.2
+  - @volontariapp/auth@3.2.8
+  - @volontariapp/database@3.2.1
+
+## 2.5.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/auth@3.2.7
+  - @volontariapp/database@3.2.0
+  - @volontariapp/shared@0.5.1
+
+## 2.5.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.1.0
+  - @volontariapp/shared@0.5.0
+  - @volontariapp/auth@3.2.6
+
+## 2.5.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.0.0
+
+## 2.5.8
+
+### Patch Changes
+
+- bump migration
+
+## 2.5.7
+
+### Patch Changes
+
+- migration jobs_outbox
+
+## 2.5.6
+
+### Patch Changes
+
+- license package
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.11.2
+  - @volontariapp/contracts@4.0.11
+  - @volontariapp/database@1.17.1
+  - @volontariapp/crypto@0.3.8
+  - @volontariapp/errors@0.5.2
+  - @volontariapp/logger@0.2.5
+  - @volontariapp/shared@0.4.1
+  - @volontariapp/auth@3.2.5
+
 ## 2.5.5
 
 ### Patch Changes

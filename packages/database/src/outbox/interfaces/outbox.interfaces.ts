@@ -8,6 +8,7 @@ export interface IOutboxEntity<T extends OutboxType> {
   lastError?: string;
   type: T;
   emitter: string;
+  emitterId: string;
   updatedAt?: Date;
   createdAt: Date;
   traceId?: string;
@@ -19,6 +20,7 @@ export interface IOutboxModel<T extends OutboxType> {
   lastError?: string;
   type: T;
   emitter: string;
+  emitterId: string;
   updatedAt?: Date;
   createdAt: Date;
   traceId?: string;
