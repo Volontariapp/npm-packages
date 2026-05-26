@@ -34,6 +34,10 @@ export interface ListUsersWebResponse extends Omit<ListUsersResponse, 'users'> {
   users: UserWeb[];
 }
 
+export interface GetUsersByIdsWebResponse extends Omit<ListUsersResponse, 'users'> {
+  users: UserWeb[];
+}
+
 // Self-service
 export interface GetUserWebResponse extends UserWebResponse {}
 

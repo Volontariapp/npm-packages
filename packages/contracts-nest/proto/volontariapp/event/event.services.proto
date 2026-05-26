@@ -16,6 +16,7 @@ service EventCommandService {
 
 service EventQueryService {
   rpc GetEvent (GetEventQuery) returns (GetEventResponse) {}
+  rpc GetEventsByIds (GetEventsByIdsQuery) returns (GetEventsByIdsResponse) {}
   rpc SearchEvents (SearchEventsQuery) returns (SearchEventsResponse) {}
   rpc ListRequirements (ListRequirementsQuery) returns (ListRequirementsResponse) {}
 }

@@ -15,6 +15,10 @@ message ListUsersQuery {
   volontariapp.common.PaginationRequest pagination = 1;
 }
 
+message GetUsersByIdsQuery {
+  repeated string ids = 1;
+}
+
 message GetBadgeQuery {
   string badge_id = 1;
 }

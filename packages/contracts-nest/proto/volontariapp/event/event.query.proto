@@ -18,6 +18,10 @@ message SearchEventsQuery {
   string organizer_id = 6;
 }
 
+message GetEventsByIdsQuery {
+  repeated string ids = 1;
+}
+
 message ListRequirementsQuery {
   string event_id = 1;
 }

@@ -19,6 +19,11 @@ export interface ListEventsWebResponse {
   pagination: PaginationResponse;
 }
 
+export interface GetEventsByIdsWebResponse {
+  events: EventDTO[];
+  totalCount: number;
+}
+
 export interface TagWebResponse {
   tag: Tag;
 }
