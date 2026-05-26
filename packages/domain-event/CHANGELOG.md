@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- trigger SQL on event create
+
 ## 3.2.7
 
 ### Patch Changes

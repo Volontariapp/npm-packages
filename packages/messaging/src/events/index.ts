@@ -25,6 +25,7 @@ export interface EventRegistry {
   // Event
   [EventEventMessagingType.EVENT_CHANGED]: IEventPayload;
   [EventEventMessagingType.EVENT_CREATED]: IEventPayload;
+  [EventEventMessagingType.EVENT_DELETED]: IEventPayload;
   [EventEventMessagingType.REQUIREMENT_CHANGED]: IRequirementPayload;
   [EventEventMessagingType.TAG_CHANGED]: ITagPayload;
   [EventEventMessagingType.EVENT_TAG_LINKED]: IEventTagLinkedPayload;
@@ -46,6 +47,7 @@ export interface EventRegistry {
   // WS
   [WebsocketEventMessagingType.WS_EVENT_CREATED]: IEventCreatedWebsocketPayload;
   [WebsocketEventMessagingType.WS_USER_CREATED]: IUserCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_EVENT_DELETED]: IUserCreatedWebsocketPayload;
 }
 
 export const EventMessagingType = {
