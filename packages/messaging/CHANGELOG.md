@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.4
+
+### Patch Changes
+
+- new event on messaging
+
 ## 2.5.3
 
 ### Patch Changes

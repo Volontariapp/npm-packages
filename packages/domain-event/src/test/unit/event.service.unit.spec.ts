@@ -386,35 +386,27 @@ describe('EventService (Unit)', () => {
   describe('delete()', () => {
     it('should find and delete the event successfully', async () => {
       // Arrange
-      const event = EventFactory.build({ id: 'evt-1' });
-      const findByIdSpy = jest.spyOn(service, 'findById').mockResolvedValue(event);
-      mockRepository.delete.mockResolvedValue(true);
-
-      // Spy — ensuring delete is called with the correct id
-      const deleteSpy = jest.spyOn(mockRepository, 'delete');
+      mockRepository.deleteWithEventDeleted.mockResolvedValue(true);
 
       // Act
       await service.delete('evt-1');
 
       // Assert
-      expect(findByIdSpy).toHaveBeenCalledWith('evt-1');
-      expect(deleteSpy).toHaveBeenCalledWith('evt-1');
+      expect(mockRepository.deleteWithEventDeleted).toHaveBeenCalledWith('evt-1');
     });
 
     it('should throw EVENT_NOT_FOUND when the event does not exist', async () => {
       // Arrange
-      jest.spyOn(service, 'findById').mockRejectedValue({ code: 'NOT_FOUND', isBaseError: true });
+      mockRepository.deleteWithEventDeleted.mockResolvedValue(false);
 
       // Act + Assert
       await expect(service.delete('missing')).rejects.toMatchObject({ code: 'NOT_FOUND' });
-      expect(mockRepository.delete).not.toHaveBeenCalled();
+      expect(mockRepository.deleteWithEventDeleted).toHaveBeenCalledWith('missing');
     });
 
     it('should throw DATABASE_ERROR when repository.delete throws', async () => {
       // Arrange
-      const event = EventFactory.build({ id: 'evt-1' });
-      jest.spyOn(service, 'findById').mockResolvedValue(event);
-      mockRepository.delete.mockRejectedValue(new Error('Delete failed'));
+      mockRepository.deleteWithEventDeleted.mockRejectedValue(new Error('Delete failed'));
 
       // Act + Assert
       await expect(service.delete('evt-1')).rejects.toMatchObject({ code: 'DATABASE_ERROR' });

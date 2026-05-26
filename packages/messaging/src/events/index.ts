@@ -7,7 +7,12 @@ import type {
 } from './event/payloads.js';
 
 import { UserEventMessagingType } from './user/payloads.js';
-import type { IUserPayload, IBadgePayload, IUserCreatedPayload } from './user/payloads.js';
+import type {
+  IUserPayload,
+  IBadgePayload,
+  IUserCreatedPayload,
+  IUserDeleledPayload,
+} from './user/payloads.js';
 
 import { SocialEventMessagingType } from './social/payloads.js';
 import type {
@@ -38,6 +43,7 @@ export interface EventRegistry {
   [UserEventMessagingType.USER_CHANGED]: IUserPayload;
   [UserEventMessagingType.BADGE_CHANGED]: IBadgePayload;
   [UserEventMessagingType.USER_CREATED]: IUserCreatedPayload;
+  [UserEventMessagingType.USER_DELETED]: IUserDeleledPayload;
 
   // Social
   [SocialEventMessagingType.SOCIAL_USER_CHANGED]: ISocialUserPayload;

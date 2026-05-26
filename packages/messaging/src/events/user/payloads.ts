@@ -32,3 +32,8 @@ export interface IUserCreatedPayload {
   id: string;
   role: UserRoles;
 }
+
+export interface IUserDeleledPayload {
+  id: string;
+  role: UserRoles;
+}
