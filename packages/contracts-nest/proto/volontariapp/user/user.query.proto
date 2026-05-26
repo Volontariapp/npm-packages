@@ -26,3 +26,11 @@ message ListBadgesQuery {
 message GetBadgeBySlugQuery {
   string slug = 1;
 }
+
+message GetMyFollowsProfilesQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message GetMyFollowersProfilesQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
