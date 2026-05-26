@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.12
+
+### Patch Changes
+
+- This PR performs a full regeneration of all proto files and TypeScript types for both pure @volontariapp/contracts and NestJS @volontariapp/contracts-nest packages.
+
 ## 4.0.11
 
 ### Patch Changes
