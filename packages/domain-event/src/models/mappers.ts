@@ -1,4 +1,10 @@
-import { databaseMapper } from '@volontariapp/database';
+import {
+  databaseMapper,
+  EventQueueModel,
+  EventQueueEntity,
+  JobsOutboxModel,
+  JobsOutboxEntity,
+} from '@volontariapp/database';
 import { EventModel, type PointGeoJSON } from './event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { TagModel } from './tag.model.js';
@@ -10,6 +16,8 @@ import { EventLocation } from '../value-objects/event-location.value-object.js';
 export function registerEventMappings() {
   databaseMapper.registerBidirectional(TagEntity, TagModel);
   databaseMapper.registerBidirectional(RequirementEntity, RequirementModel);
+  databaseMapper.registerBidirectional(EventQueueEntity, EventQueueModel);
+  databaseMapper.registerBidirectional(JobsOutboxEntity, JobsOutboxModel);
 
   databaseMapper.registerBidirectional(EventEntity, EventModel, {
     exclude: ['location'],
