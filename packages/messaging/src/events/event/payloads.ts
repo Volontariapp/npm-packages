@@ -3,6 +3,7 @@ import type { EventType as ContractEventType, EventState } from '@volontariapp/c
 export enum EventEventMessagingType {
   EVENT_CHANGED = 'event.changed',
   EVENT_CREATED = 'event.created',
+  EVENT_DELETED = 'event.deleted',
   REQUIREMENT_CHANGED = 'requirement.changed',
   TAG_CHANGED = 'tag.changed',
   EVENT_TAG_LINKED = 'event.tag_linked',

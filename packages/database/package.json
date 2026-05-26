@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/database",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "publishConfig": {
     "access": "public",
     "provenance": true

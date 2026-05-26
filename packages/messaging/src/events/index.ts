@@ -7,7 +7,12 @@ import type {
 } from './event/payloads.js';
 
 import { UserEventMessagingType } from './user/payloads.js';
-import type { IUserPayload, IBadgePayload, IUserCreatedPayload } from './user/payloads.js';
+import type {
+  IUserPayload,
+  IBadgePayload,
+  IUserCreatedPayload,
+  IUserDeleledPayload,
+} from './user/payloads.js';
 
 import { SocialEventMessagingType } from './social/payloads.js';
 import type {
@@ -25,6 +30,7 @@ export interface EventRegistry {
   // Event
   [EventEventMessagingType.EVENT_CHANGED]: IEventPayload;
   [EventEventMessagingType.EVENT_CREATED]: IEventPayload;
+  [EventEventMessagingType.EVENT_DELETED]: IEventPayload;
   [EventEventMessagingType.REQUIREMENT_CHANGED]: IRequirementPayload;
   [EventEventMessagingType.TAG_CHANGED]: ITagPayload;
   [EventEventMessagingType.EVENT_TAG_LINKED]: IEventTagLinkedPayload;
@@ -37,6 +43,7 @@ export interface EventRegistry {
   [UserEventMessagingType.USER_CHANGED]: IUserPayload;
   [UserEventMessagingType.BADGE_CHANGED]: IBadgePayload;
   [UserEventMessagingType.USER_CREATED]: IUserCreatedPayload;
+  [UserEventMessagingType.USER_DELETED]: IUserDeleledPayload;
 
   // Social
   [SocialEventMessagingType.SOCIAL_USER_CHANGED]: ISocialUserPayload;
@@ -46,6 +53,7 @@ export interface EventRegistry {
   // WS
   [WebsocketEventMessagingType.WS_EVENT_CREATED]: IEventCreatedWebsocketPayload;
   [WebsocketEventMessagingType.WS_USER_CREATED]: IUserCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_EVENT_DELETED]: IUserCreatedWebsocketPayload;
 }
 
 export const EventMessagingType = {

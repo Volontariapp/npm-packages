@@ -7,5 +7,6 @@ export interface IEventRepository {
   createWithEventCreated(event: Partial<EventEntity>): Promise<EventEntity>;
   update(id: string, data: Partial<EventEntity>): Promise<EventEntity | null>;
   delete(id: string): Promise<boolean>;
+  deleteWithEventDeleted(id: string): Promise<boolean>;
   search(searchTerm: string): Promise<EventEntity[]>;
 }

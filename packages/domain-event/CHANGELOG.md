@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.3.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.5.4
+  - @volontariapp/database@3.2.9
+  - @volontariapp/outbox@0.9.13
+- trigger SQL on event create
+
 ## 3.2.7
 
 ### Patch Changes
