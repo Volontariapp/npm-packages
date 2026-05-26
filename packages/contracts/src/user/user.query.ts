@@ -18,6 +18,10 @@ export interface ListUsersQuery {
   pagination: PaginationRequest | undefined;
 }
 
+export interface GetUsersByIdsQuery {
+  ids: string[];
+}
+
 export interface GetBadgeQuery {
   badgeId: string;
 }

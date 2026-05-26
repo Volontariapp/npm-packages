@@ -26,6 +26,11 @@ export interface ListUsersResponse {
   pagination: PaginationResponse | undefined;
 }
 
+export interface GetUsersByIdsResponse {
+  users: User[];
+  pagination: PaginationResponse | undefined;
+}
+
 export interface GetMyFollowsProfilesResponse {
   users: User[];
   pagination: PaginationResponse | undefined;

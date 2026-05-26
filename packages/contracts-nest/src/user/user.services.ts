@@ -29,6 +29,7 @@ import {
   GetMyFollowersProfilesQuery,
   GetMyFollowsProfilesQuery,
   GetUserQuery,
+  GetUsersByIdsQuery,
   ListBadgesQuery,
   ListUsersQuery,
 } from "./user.query.js";
@@ -44,6 +45,7 @@ import {
   GetBadgeBySlugResponse,
   GetMyFollowersProfilesResponse,
   GetMyFollowsProfilesResponse,
+  GetUsersByIdsResponse,
   IncrementImpactScoreResponse,
   ListBadgesResponse,
   ListUsersResponse,
@@ -58,6 +60,8 @@ import {
 
 export interface UserServiceClient {
   getUser(request: GetUserQuery): Observable<UserResponse>;
+
+  getUsersByIds(request: GetUsersByIdsQuery): Observable<GetUsersByIdsResponse>;
 
   listUsers(request: ListUsersQuery): Observable<ListUsersResponse>;
 
@@ -90,6 +94,10 @@ export interface UserServiceClient {
 
 export interface UserServiceController {
   getUser(request: GetUserQuery): Promise<UserResponse> | Observable<UserResponse> | UserResponse;
+
+  getUsersByIds(
+    request: GetUsersByIdsQuery,
+  ): Promise<GetUsersByIdsResponse> | Observable<GetUsersByIdsResponse> | GetUsersByIdsResponse;
 
   listUsers(request: ListUsersQuery): Promise<ListUsersResponse> | Observable<ListUsersResponse> | ListUsersResponse;
 
@@ -149,6 +157,7 @@ export function UserServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
       "getUser",
+      "getUsersByIds",
       "listUsers",
       "signUp",
       "updateUser",

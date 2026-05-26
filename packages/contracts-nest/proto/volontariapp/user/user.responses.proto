@@ -23,6 +23,11 @@ message ListUsersResponse {
   volontariapp.common.PaginationResponse pagination = 2;
 }
 
+message GetUsersByIdsResponse {
+  repeated User users = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
 message GetMyFollowsProfilesResponse {
   repeated User users = 1;
   volontariapp.common.PaginationResponse pagination = 2;
