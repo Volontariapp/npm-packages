@@ -20,6 +20,8 @@ service UserService {
   rpc IncrementImpactScore (IncrementImpactScoreCommand) returns (IncrementImpactScoreResponse) {}
   rpc AddBadgeToUser (AddBadgeToUserCommand) returns (AddBadgeToUserResponse) {}
   rpc RemoveBadgeFromUser (RemoveBadgeFromUserCommand) returns (RemoveBadgeFromUserResponse) {}
+  rpc GetMyFollowsProfiles (GetMyFollowsProfilesQuery) returns (GetMyFollowsProfilesResponse) {}
+  rpc GetMyFollowersProfiles (GetMyFollowersProfilesQuery) returns (GetMyFollowersProfilesResponse) {}
 }
 
 service BadgeService {
