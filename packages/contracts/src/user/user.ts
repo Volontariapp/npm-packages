@@ -5,7 +5,7 @@
 // source: volontariapp/user/user.proto
 
 /* eslint-disable */
-import { Timestamp } from "../google/protobuf/timestamp.js";
+import { Timestamp } from '../google/protobuf/timestamp.js';
 
 export interface OrganisationInfo {
   rna: string;
@@ -26,6 +26,16 @@ export interface User {
   pseudo: string;
   bio?: string | undefined;
   role: string;
+  logoPath?: string | undefined;
+  totalImpactScore: number;
+  organisationInfo?: OrganisationInfo | undefined;
+  badges: Badge[];
+}
+
+export interface UserPublic {
+  id: string;
+  pseudo: string;
+  bio?: string | undefined;
   logoPath?: string | undefined;
   totalImpactScore: number;
   organisationInfo?: OrganisationInfo | undefined;

@@ -21,6 +21,9 @@ import {
   GetEventQuery,
   GetEventsByIdsQuery,
   GetTagsQuery,
+  GetUserCreatedEventsQuery,
+  GetUserParticipatedEventsQuery,
+  GetUserWishedEventsQuery,
   ListRequirementsQuery,
   SearchEventsQuery,
 } from "./event.query.js";
@@ -33,6 +36,9 @@ import {
   GetEventResponse,
   GetEventsByIdsResponse,
   GetTagsResponse,
+  GetUserCreatedEventsResponse,
+  GetUserParticipatedEventsResponse,
+  GetUserWishedEventsResponse,
   ListRequirementsResponse,
   ManageRequirementsResponse,
   SearchEventsResponse,
@@ -105,6 +111,12 @@ export interface EventQueryServiceClient {
   searchEvents(request: SearchEventsQuery): Observable<SearchEventsResponse>;
 
   listRequirements(request: ListRequirementsQuery): Observable<ListRequirementsResponse>;
+
+  getUserCreatedEvents(request: GetUserCreatedEventsQuery): Observable<GetUserCreatedEventsResponse>;
+
+  getUserParticipatedEvents(request: GetUserParticipatedEventsQuery): Observable<GetUserParticipatedEventsResponse>;
+
+  getUserWishedEvents(request: GetUserWishedEventsQuery): Observable<GetUserWishedEventsResponse>;
 }
 
 export interface EventQueryServiceController {
@@ -121,11 +133,34 @@ export interface EventQueryServiceController {
   listRequirements(
     request: ListRequirementsQuery,
   ): Promise<ListRequirementsResponse> | Observable<ListRequirementsResponse> | ListRequirementsResponse;
+
+  getUserCreatedEvents(
+    request: GetUserCreatedEventsQuery,
+  ): Promise<GetUserCreatedEventsResponse> | Observable<GetUserCreatedEventsResponse> | GetUserCreatedEventsResponse;
+
+  getUserParticipatedEvents(
+    request: GetUserParticipatedEventsQuery,
+  ):
+    | Promise<GetUserParticipatedEventsResponse>
+    | Observable<GetUserParticipatedEventsResponse>
+    | GetUserParticipatedEventsResponse;
+
+  getUserWishedEvents(
+    request: GetUserWishedEventsQuery,
+  ): Promise<GetUserWishedEventsResponse> | Observable<GetUserWishedEventsResponse> | GetUserWishedEventsResponse;
 }
 
 export function EventQueryServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getEvent", "getEventsByIds", "searchEvents", "listRequirements"];
+    const grpcMethods: string[] = [
+      "getEvent",
+      "getEventsByIds",
+      "searchEvents",
+      "listRequirements",
+      "getUserCreatedEvents",
+      "getUserParticipatedEvents",
+      "getUserWishedEvents",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("EventQueryService", method)(constructor.prototype[method], method, descriptor);

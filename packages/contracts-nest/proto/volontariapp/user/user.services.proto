@@ -23,6 +23,8 @@ service UserService {
   rpc RemoveBadgeFromUser (RemoveBadgeFromUserCommand) returns (RemoveBadgeFromUserResponse) {}
   rpc GetMyFollowsProfiles (GetMyFollowsProfilesQuery) returns (GetMyFollowsProfilesResponse) {}
   rpc GetMyFollowersProfiles (GetMyFollowersProfilesQuery) returns (GetMyFollowersProfilesResponse) {}
+  rpc GetEventParticipantsProfiles (GetEventParticipantsProfilesQuery) returns (GetEventParticipantsProfilesResponse) {}
+  rpc GetPostLikersProfiles (GetPostLikersProfilesQuery) returns (GetPostLikersProfilesResponse) {}
 }
 
 service BadgeService {

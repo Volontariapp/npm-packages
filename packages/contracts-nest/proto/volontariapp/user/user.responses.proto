@@ -38,6 +38,16 @@ message GetMyFollowersProfilesResponse {
   volontariapp.common.PaginationResponse pagination = 2;
 }
 
+message GetEventParticipantsProfilesResponse {
+  repeated UserPublic users = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message GetPostLikersProfilesResponse {
+  repeated UserPublic users = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
 message UpdateUserResponse {
 }
 

@@ -31,3 +31,13 @@ export interface User {
   organisationInfo?: OrganisationInfo | undefined;
   badges: Badge[];
 }
+
+export interface UserPublic {
+  id: string;
+  pseudo: string;
+  bio?: string | undefined;
+  logoPath?: string | undefined;
+  totalImpactScore: number;
+  organisationInfo?: OrganisationInfo | undefined;
+  badges: Badge[];
+}
