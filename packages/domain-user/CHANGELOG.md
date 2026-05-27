@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.8.0
+
+### Minor Changes
+
+- fallback job + event WS
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.6.0
+  - @volontariapp/shared@0.6.0
+  - @volontariapp/auth@3.3.0
+  - @volontariapp/database@3.2.13
+
 ## 2.7.10
 
 ### Patch Changes

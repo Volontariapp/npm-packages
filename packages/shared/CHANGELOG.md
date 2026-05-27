@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- fallback job + event WS
+
 ## 0.5.3
 
 ### Patch Changes
