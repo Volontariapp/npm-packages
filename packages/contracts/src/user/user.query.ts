@@ -41,3 +41,13 @@ export interface GetMyFollowsProfilesQuery {
 export interface GetMyFollowersProfilesQuery {
   pagination: PaginationRequest | undefined;
 }
+
+export interface GetEventParticipantsProfilesQuery {
+  eventId: string;
+  pagination: PaginationRequest | undefined;
+}
+
+export interface GetPostLikersProfilesQuery {
+  postId: string;
+  pagination: PaginationRequest | undefined;
+}

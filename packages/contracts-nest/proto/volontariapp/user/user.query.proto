@@ -38,3 +38,13 @@ message GetMyFollowsProfilesQuery {
 message GetMyFollowersProfilesQuery {
   volontariapp.common.PaginationRequest pagination = 1;
 }
+
+message GetEventParticipantsProfilesQuery {
+  string event_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message GetPostLikersProfilesQuery {
+  string post_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}

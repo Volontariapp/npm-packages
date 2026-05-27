@@ -26,8 +26,10 @@ import {
   AdminGetUserQuery,
   GetBadgeBySlugQuery,
   GetBadgeQuery,
+  GetEventParticipantsProfilesQuery,
   GetMyFollowersProfilesQuery,
   GetMyFollowsProfilesQuery,
+  GetPostLikersProfilesQuery,
   GetUserQuery,
   GetUsersByIdsQuery,
   ListBadgesQuery,
@@ -43,8 +45,10 @@ import {
   DeleteBadgeResponse,
   DeleteUserResponse,
   GetBadgeBySlugResponse,
+  GetEventParticipantsProfilesResponse,
   GetMyFollowersProfilesResponse,
   GetMyFollowsProfilesResponse,
+  GetPostLikersProfilesResponse,
   GetUsersByIdsResponse,
   IncrementImpactScoreResponse,
   ListBadgesResponse,
@@ -90,6 +94,12 @@ export interface UserServiceClient {
   getMyFollowsProfiles(request: GetMyFollowsProfilesQuery): Observable<GetMyFollowsProfilesResponse>;
 
   getMyFollowersProfiles(request: GetMyFollowersProfilesQuery): Observable<GetMyFollowersProfilesResponse>;
+
+  getEventParticipantsProfiles(
+    request: GetEventParticipantsProfilesQuery,
+  ): Observable<GetEventParticipantsProfilesResponse>;
+
+  getPostLikersProfiles(request: GetPostLikersProfilesQuery): Observable<GetPostLikersProfilesResponse>;
 }
 
 export interface UserServiceController {
@@ -151,6 +161,17 @@ export interface UserServiceController {
     | Promise<GetMyFollowersProfilesResponse>
     | Observable<GetMyFollowersProfilesResponse>
     | GetMyFollowersProfilesResponse;
+
+  getEventParticipantsProfiles(
+    request: GetEventParticipantsProfilesQuery,
+  ):
+    | Promise<GetEventParticipantsProfilesResponse>
+    | Observable<GetEventParticipantsProfilesResponse>
+    | GetEventParticipantsProfilesResponse;
+
+  getPostLikersProfiles(
+    request: GetPostLikersProfilesQuery,
+  ): Promise<GetPostLikersProfilesResponse> | Observable<GetPostLikersProfilesResponse> | GetPostLikersProfilesResponse;
 }
 
 export function UserServiceControllerMethods() {
@@ -172,6 +193,8 @@ export function UserServiceControllerMethods() {
       "removeBadgeFromUser",
       "getMyFollowsProfiles",
       "getMyFollowersProfiles",
+      "getEventParticipantsProfiles",
+      "getPostLikersProfiles",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

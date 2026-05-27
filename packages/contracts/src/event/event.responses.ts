@@ -43,6 +43,21 @@ export interface GetEventsByIdsResponse {
   totalCount: number;
 }
 
+export interface GetUserCreatedEventsResponse {
+  events: Event[];
+  totalCount: number;
+}
+
+export interface GetUserParticipatedEventsResponse {
+  events: Event[];
+  totalCount: number;
+}
+
+export interface GetUserWishedEventsResponse {
+  events: Event[];
+  totalCount: number;
+}
+
 export interface ListRequirementsResponse {
   requirements: Requirement[];
 }

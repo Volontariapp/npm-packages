@@ -3,6 +3,7 @@ syntax = "proto3";
 package volontariapp.event;
 
 import "volontariapp/common/geo.proto";
+import "volontariapp/common/pagination.proto";
 import "volontariapp/event/event.proto";
 
 message GetEventQuery {
@@ -28,4 +29,16 @@ message ListRequirementsQuery {
 
 message GetTagsQuery {
   repeated string slugs = 1;
+}
+
+message GetUserCreatedEventsQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message GetUserParticipatedEventsQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
+}
+
+message GetUserWishedEventsQuery {
+  volontariapp.common.PaginationRequest pagination = 1;
 }

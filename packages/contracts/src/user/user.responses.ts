@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { PaginationResponse } from "../common/pagination.js";
-import { Badge, User } from "./user.js";
+import { Badge, User, UserPublic } from "./user.js";
 
 export interface UserResponse {
   user: User | undefined;
@@ -38,6 +38,16 @@ export interface GetMyFollowsProfilesResponse {
 
 export interface GetMyFollowersProfilesResponse {
   users: User[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface GetEventParticipantsProfilesResponse {
+  users: UserPublic[];
+  pagination: PaginationResponse | undefined;
+}
+
+export interface GetPostLikersProfilesResponse {
+  users: UserPublic[];
   pagination: PaginationResponse | undefined;
 }
 

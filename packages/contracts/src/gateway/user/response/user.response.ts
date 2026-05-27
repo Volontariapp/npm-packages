@@ -15,14 +15,22 @@ import type {
   AddBadgeToUserResponse,
   RemoveBadgeFromUserResponse,
   ListBadgesResponse,
+  GetMyFollowsProfilesResponse,
+  GetMyFollowersProfilesResponse,
+  GetEventParticipantsProfilesResponse,
+  GetPostLikersProfilesResponse,
 } from '../../../user/user.responses.js';
-import type { User, Badge } from '../../../user/user.js';
+import type { User, Badge, UserPublic } from '../../../user/user.js';
 
 export interface BadgeWeb extends Omit<Badge, 'awardedAt'> {
   awardedAt?: Date;
 }
 
 export interface UserWeb extends Omit<User, 'badges'> {
+  badges: BadgeWeb[];
+}
+
+export interface UserPublicWeb extends Omit<UserPublic, 'badges'> {
   badges: BadgeWeb[];
 }
 
@@ -36,6 +44,26 @@ export interface ListUsersWebResponse extends Omit<ListUsersResponse, 'users'> {
 
 export interface GetUsersByIdsWebResponse extends Omit<ListUsersResponse, 'users'> {
   users: UserWeb[];
+}
+
+export interface GetMyFollowsProfilesWebResponse
+  extends Omit<GetMyFollowsProfilesResponse, 'users'> {
+  users: UserWeb[];
+}
+
+export interface GetMyFollowersProfilesWebResponse
+  extends Omit<GetMyFollowersProfilesResponse, 'users'> {
+  users: UserWeb[];
+}
+
+export interface GetEventParticipantsProfilesWebResponse
+  extends Omit<GetEventParticipantsProfilesResponse, 'users'> {
+  users: UserPublicWeb[];
+}
+
+export interface GetPostLikersProfilesWebResponse
+  extends Omit<GetPostLikersProfilesResponse, 'users'> {
+  users: UserPublicWeb[];
 }
 
 // Self-service

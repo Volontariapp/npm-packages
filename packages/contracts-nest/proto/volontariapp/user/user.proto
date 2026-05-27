@@ -28,3 +28,13 @@ message User {
   optional OrganisationInfo organisation_info = 8;
   repeated Badge badges = 9;
 }
+
+message UserPublic {
+  string id = 1;
+  string pseudo = 2;
+  optional string bio = 3;
+  optional string logo_path = 4;
+  int32 total_impact_score = 5;
+  optional OrganisationInfo organisation_info = 6;
+  repeated Badge badges = 7;
+}

@@ -19,6 +19,9 @@ service EventQueryService {
   rpc GetEventsByIds (GetEventsByIdsQuery) returns (GetEventsByIdsResponse) {}
   rpc SearchEvents (SearchEventsQuery) returns (SearchEventsResponse) {}
   rpc ListRequirements (ListRequirementsQuery) returns (ListRequirementsResponse) {}
+  rpc GetUserCreatedEvents (GetUserCreatedEventsQuery) returns (GetUserCreatedEventsResponse) {}
+  rpc GetUserParticipatedEvents (GetUserParticipatedEventsQuery) returns (GetUserParticipatedEventsResponse) {}
+  rpc GetUserWishedEvents (GetUserWishedEventsQuery) returns (GetUserWishedEventsResponse) {}
 }
 
 service TagCommandService {

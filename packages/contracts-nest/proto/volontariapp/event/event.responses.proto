@@ -40,6 +40,21 @@ message GetEventsByIdsResponse {
   int32 total_count = 2;
 }
 
+message GetUserCreatedEventsResponse {
+  repeated Event events = 1;
+  int32 total_count = 2;
+}
+
+message GetUserParticipatedEventsResponse {
+  repeated Event events = 1;
+  int32 total_count = 2;
+}
+
+message GetUserWishedEventsResponse {
+  repeated Event events = 1;
+  int32 total_count = 2;
+}
+
 message ListRequirementsResponse {
   repeated Requirement requirements = 1;
 }

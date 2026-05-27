@@ -24,6 +24,21 @@ export interface GetEventsByIdsWebResponse {
   totalCount: number;
 }
 
+export interface GetUserCreatedEventsWebResponse {
+  events: EventDTO[];
+  totalCount: number;
+}
+
+export interface GetUserParticipatedEventsWebResponse {
+  events: EventDTO[];
+  totalCount: number;
+}
+
+export interface GetUserWishedEventsWebResponse {
+  events: EventDTO[];
+  totalCount: number;
+}
+
 export interface TagWebResponse {
   tag: Tag;
 }

@@ -6,6 +6,7 @@
 
 /* eslint-disable */
 import { GeoCircle } from "../common/geo.js";
+import { PaginationRequest } from "../common/pagination.js";
 import { EventType } from "./event.js";
 
 export interface GetEventQuery {
@@ -31,4 +32,16 @@ export interface ListRequirementsQuery {
 
 export interface GetTagsQuery {
   slugs: string[];
+}
+
+export interface GetUserCreatedEventsQuery {
+  pagination: PaginationRequest | undefined;
+}
+
+export interface GetUserParticipatedEventsQuery {
+  pagination: PaginationRequest | undefined;
+}
+
+export interface GetUserWishedEventsQuery {
+  pagination: PaginationRequest | undefined;
 }
