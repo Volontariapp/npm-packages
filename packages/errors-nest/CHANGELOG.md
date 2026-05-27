@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0
+
+### Minor Changes
+
+- add FALLBACK_ACTIVATED error
+
 ## 0.11.2
 
 ### Patch Changes
