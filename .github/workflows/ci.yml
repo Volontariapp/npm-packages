@@ -8,6 +8,11 @@ on:
     types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
 jobs:
   run-pipeline:
     uses: Volontariapp/ci-tools/.github/workflows/npm-packages-pipeline.yml@main
