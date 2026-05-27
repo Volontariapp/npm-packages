@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@2.0.0
+
 ## 0.3.14
 
 ### Patch Changes
