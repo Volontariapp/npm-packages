@@ -8,6 +8,10 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   emergency-release:
     uses: Volontariapp/ci-tools/.github/workflows/npm-packages-emergency-release.yml@main
