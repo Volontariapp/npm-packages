@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.7.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/auth@3.2.10
+
 ## 2.7.9
 
 ### Patch Changes

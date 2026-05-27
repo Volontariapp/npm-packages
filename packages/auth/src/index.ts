@@ -16,4 +16,5 @@ export * from './decorators/current-user.decorator.js';
 export * from './decorators/roles.decorator.js';
 export * from './decorators/public.decorator.js';
 export * from './decorators/refresh-token.decorator.js';
+export * from './decorators/internal-token.decorator.js';
 export * from './interceptors/grpc-internal.interceptor.js';
