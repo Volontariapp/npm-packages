@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.6.0
+
+### Minor Changes
+
+- fallback job + event WS
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.6.0
+
 ## 2.5.7
 
 ### Patch Changes

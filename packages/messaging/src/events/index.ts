@@ -23,7 +23,25 @@ import type {
 
 import { CommonEventMessagingType } from './common/payloads.js';
 import type { IJobAuditPayload } from './common/payloads.js';
-import type { IEventCreatedWebsocketPayload, IUserCreatedWebsocketPayload } from './ws/payloads.js';
+import type {
+  IEventCreatedWebsocketPayload,
+  IEventUpdatedWebsocketPayload,
+  IEventDeletedWebsocketPayload,
+  IEventStateChangedWebsocketPayload,
+  IEventRequirementsManagedWebsocketPayload,
+  IUserCreatedWebsocketPayload,
+  IUserUpdatedWebsocketPayload,
+  IUserDeletedWebsocketPayload,
+  IUserBadgeAddedWebsocketPayload,
+  IUserBadgeRemovedWebsocketPayload,
+  IUserImpactScoreIncrementedWebsocketPayload,
+  ITagCreatedWebsocketPayload,
+  ITagUpdatedWebsocketPayload,
+  ITagDeletedWebsocketPayload,
+  IBadgeCreatedWebsocketPayload,
+  IBadgeUpdatedWebsocketPayload,
+  IBadgeDeletedWebsocketPayload,
+} from './ws/payloads.js';
 import { WebsocketEventMessagingType } from './ws/payloads.js';
 
 export interface EventRegistry {
@@ -52,8 +70,25 @@ export interface EventRegistry {
 
   // WS
   [WebsocketEventMessagingType.WS_EVENT_CREATED]: IEventCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_EVENT_UPDATED]: IEventUpdatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_EVENT_DELETED]: IEventDeletedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_EVENT_STATE_CHANGED]: IEventStateChangedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_EVENT_REQUIREMENTS_MANAGED]: IEventRequirementsManagedWebsocketPayload;
+
   [WebsocketEventMessagingType.WS_USER_CREATED]: IUserCreatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_EVENT_DELETED]: IUserCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_USER_UPDATED]: IUserUpdatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_USER_DELETED]: IUserDeletedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_USER_BADGE_ADDED]: IUserBadgeAddedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_USER_BADGE_REMOVED]: IUserBadgeRemovedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_USER_IMPACT_SCORE_INCREMENTED]: IUserImpactScoreIncrementedWebsocketPayload;
+
+  [WebsocketEventMessagingType.WS_TAG_CREATED]: ITagCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_TAG_UPDATED]: ITagUpdatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_TAG_DELETED]: ITagDeletedWebsocketPayload;
+
+  [WebsocketEventMessagingType.WS_BADGE_CREATED]: IBadgeCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_BADGE_UPDATED]: IBadgeUpdatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_BADGE_DELETED]: IBadgeDeletedWebsocketPayload;
 }
 
 export const EventMessagingType = {
@@ -72,4 +107,5 @@ export * from './social/payloads.js';
 export * from './post/payloads.js';
 export * from './common/payloads.js';
 export * from './ws/payloads.js';
+
 export * from './utils.js';
