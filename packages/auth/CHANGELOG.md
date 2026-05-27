@@ -1,16 +1,5 @@
 # Changelog
 
-## 3.3.0
-
-### Minor Changes
-
-- fallback job + event WS
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @volontariapp/shared@0.6.0
-
 ## 3.2.10
 
 ### Patch Changes
