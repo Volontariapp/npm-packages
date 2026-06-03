@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- patch outbox + new function on domain social for batch creation
+
 ## 3.2.13
 
 ### Patch Changes
