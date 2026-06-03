@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import type { Redis } from 'ioredis';
+import type { Redis, ChainableCommander } from 'ioredis';
 import { createMock } from '@volontariapp/testing';
 import os from 'node:os';
 import v8 from 'node:v8';
@@ -23,6 +23,11 @@ describe('BatchPostProcessor — Unit', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     redisMock = createMock<Redis>();
+    const pipelineMock = createMock<ChainableCommander>();
+    pipelineMock.del.mockReturnThis();
+    pipelineMock.zrem.mockReturnThis();
+    pipelineMock.exec.mockResolvedValue([]);
+    redisMock.pipeline.mockReturnValue(pipelineMock);
     callMock = mockRedisCall(redisMock);
 
     processor = new TestBatchPostProcessor(redisMock, {
@@ -71,17 +76,12 @@ describe('BatchPostProcessor — Unit', () => {
       ]);
 
       const xackCalls = callMock.mock.calls.filter((c) => c[0] === 'XACK');
-      expect(xackCalls).toHaveLength(2);
+      expect(xackCalls).toHaveLength(1);
       expect(xackCalls[0]).toEqual([
         'XACK',
         TestMessagingStream.TEST_STREAM,
         TestMessagingGroup.TEST_GROUP,
         '1-0',
-      ]);
-      expect(xackCalls[1]).toEqual([
-        'XACK',
-        TestMessagingStream.TEST_STREAM,
-        TestMessagingGroup.TEST_GROUP,
         '2-0',
       ]);
     });

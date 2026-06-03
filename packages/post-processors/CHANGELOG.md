@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+### Major Changes
+
+- improve batching events
+
 ## 1.3.18
 
 ### Patch Changes
