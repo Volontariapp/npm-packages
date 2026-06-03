@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- patch outbox + new function on domain social for batch creation
+
 ## 0.5.3
 
 ### Patch Changes

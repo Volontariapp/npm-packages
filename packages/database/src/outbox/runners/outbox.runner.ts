@@ -55,11 +55,10 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
   private async runLoop(signal: AbortSignal): Promise<void> {
     try {
       while (!signal.aborted) {
-        await this.runCycle();
-
-        // Wait for the next interval or until aborted
-        // setTimeout will throw AbortError if signal is aborted during or before the wait
-        await setTimeout(this.config.batchIntervalMs, undefined, { signal });
+        const processedItems = await this.runCycle();
+        if (processedItems === 0) {
+          await setTimeout(this.config.batchIntervalMs, undefined, { signal });
+        }
       }
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'AbortError') {
@@ -72,14 +71,16 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     }
   }
 
-  async runCycle(): Promise<void> {
+  async runCycle(): Promise<number> {
     try {
       const items = await this.consumer.fetchPendingItems();
       if (items.length > 0) {
         await this.consumer.processItems(items);
       }
+      return items.length;
     } catch (error) {
       this.logger.error('Error during outbox run cycle', { error });
+      return 0;
     }
   }
 

@@ -42,6 +42,18 @@ export class ParticipationService {
     }
   }
 
+  async createEventsBatch(events: { eventId: string; organizerId: string }[]): Promise<void> {
+    if (events.length === 0) return;
+    try {
+      this.logger.log(`Creating social events batch: ${String(events.length)} events`);
+      await this.repository.createEventsBatch(events);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to create social events batch`, error as Error);
+      throw DATABASE_ERROR('creating social events batch', (error as Error).message);
+    }
+  }
+
   async deleteEvent(eventId: EventId): Promise<void> {
     const event = SocialEventMapper.toEntity(eventId);
     try {

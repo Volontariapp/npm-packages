@@ -16,3 +16,4 @@ coverage/
 !.vscode/launch.json
 !.vscode/extensions.json
 .gitnexus
+.DS*

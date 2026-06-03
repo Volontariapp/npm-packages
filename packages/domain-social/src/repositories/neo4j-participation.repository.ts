@@ -45,6 +45,17 @@ export class Neo4jParticipationRepository
     return result !== null;
   }
 
+  async createEventsBatch(events: { eventId: string; organizerId: string }[]): Promise<void> {
+    await this.write(
+      `UNWIND $events AS batch
+       MERGE (e:SocialEvent {eventId: batch.eventId})
+       WITH e, batch
+       MATCH (u:SocialUser {userId: batch.organizerId})
+       MERGE (u)-[:CREATED]->(e)`,
+      { events },
+    );
+  }
+
   async createUserEvent(user: SocialUserEntity, event: SocialEventEntity): Promise<void> {
     const userModel = SocialUserMapper.toModel(user);
     const eventModel = SocialEventMapper.toModel(event);
