@@ -155,6 +155,25 @@ export class RetryHelper {
   }
 
   /**
+   * Removes all retry metadata for multiple messages using a pipeline.
+   */
+  async clearRetryDataMany(redis: Redis, groupName: string, messageIds: string[]): Promise<void> {
+    if (messageIds.length === 0) return;
+    const queueKey = this.getRetryQueueKey(groupName);
+    const pipeline = redis.pipeline();
+
+    for (const messageId of messageIds) {
+      const key = this.getRetryKey(groupName, messageId);
+      pipeline.del(`${key}:attempt`);
+      pipeline.del(`${key}:lastError`);
+      pipeline.del(key);
+      pipeline.zrem(queueKey, messageId);
+    }
+
+    await pipeline.exec();
+  }
+
+  /**
    * Sends a failed message to the dead-letter queue.
    */
   async sendToDlq(

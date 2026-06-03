@@ -73,6 +73,31 @@ describe('RetryHelper — Integration', () => {
     expect(finalMeta).toBeNull();
   });
 
+  it('should clear retry metadata for multiple messages simultaneously using a real Redis pipeline', async () => {
+    const groupName = 'test-group-batch';
+    const messageId1 = '10-0';
+    const messageId2 = '11-0';
+    const err = new Error('Connection timeout');
+
+    await helper.recordRetry(redis, groupName, messageId1, err);
+    await helper.recordRetry(redis, groupName, messageId2, err);
+
+    await helper.enqueueForRetry(redis, groupName, messageId1, 1);
+    await helper.enqueueForRetry(redis, groupName, messageId2, 1);
+
+    expect(await helper.getRetryMetadata(redis, groupName, messageId1)).not.toBeNull();
+    expect(await helper.getRetryMetadata(redis, groupName, messageId2)).not.toBeNull();
+
+    await helper.clearRetryDataMany(redis, groupName, [messageId1, messageId2]);
+
+    expect(await helper.getRetryMetadata(redis, groupName, messageId1)).toBeNull();
+    expect(await helper.getRetryMetadata(redis, groupName, messageId2)).toBeNull();
+
+    // Check sorted set queue
+    const ready = await helper.getReadyForRetry(redis, groupName);
+    expect(ready).toHaveLength(0);
+  });
+
   it('should manage retry queue and fetch ready messages using real Redis sorted sets', async () => {
     const groupName = 'test-group';
     const messageId1 = '1-0';

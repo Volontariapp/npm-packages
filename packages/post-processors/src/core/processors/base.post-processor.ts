@@ -213,6 +213,20 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   }
 
   /**
+   * Acknowledges multiple messages in the consumer group.
+   */
+  protected async acknowledgeMany(messageIds: string[]): Promise<void> {
+    if (messageIds.length === 0) return;
+    try {
+      await this.redis.call('XACK', this.options.streamName, this.options.groupName, ...messageIds);
+      this.logger.info('Acknowledged messages', { count: messageIds.length, messageIds });
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      this.logger.error('Failed to acknowledge messages', { messageIds, error });
+    }
+  }
+
+  /**
    * Ensures the consumer group exists in Redis.
    */
   private async ensureConsumerGroup(): Promise<void> {

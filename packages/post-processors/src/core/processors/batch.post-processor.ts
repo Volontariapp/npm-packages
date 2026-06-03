@@ -121,10 +121,21 @@ export abstract class BatchPostProcessor<
       this.circuitBreaker.recordSuccess();
 
       // Successfully processed - clear retry data and acknowledge all
-      for (const item of items) {
-        await this.retryHelper.clearRetryData(this.redis, this.options.groupName, item.messageId);
-        await this.acknowledge(item.messageId);
-      }
+      const messageIds = items.map((item) => item.messageId);
+
+      const startRetry = Date.now();
+      await this.retryHelper.clearRetryDataMany(this.redis, this.options.groupName, messageIds);
+      const endRetry = Date.now();
+      this.logger.info(`[Monitoring] clearRetryDataMany took ${String(endRetry - startRetry)}ms`, {
+        count: messageIds.length,
+      });
+
+      const startAck = Date.now();
+      await this.acknowledgeMany(messageIds);
+      const endAck = Date.now();
+      this.logger.info(`[Monitoring] acknowledgeMany took ${String(endAck - startAck)}ms`, {
+        count: messageIds.length,
+      });
       this.logger.info('Successfully processed batch of events', { count: items.length });
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
