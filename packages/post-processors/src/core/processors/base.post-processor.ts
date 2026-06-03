@@ -20,6 +20,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   protected readonly options: NormalizedPostProcessorOptions;
   protected readonly retryHelper: RetryHelper;
   protected readonly circuitBreaker: CircuitBreaker;
+  protected readonly blockingRedis: Redis;
   private isRunning = false;
   private readPending = true;
   private claimTimeout: NodeJS.Timeout | null = null;
@@ -73,6 +74,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
       this.options.circuitBreaker as Required<CircuitBreakerConfig>,
     );
     this.currentBatchSize = this.options.batchSize;
+    this.blockingRedis = redis.duplicate();
   }
   /**
    * Starts the post-processor consumption loop and periodic claim task.
@@ -162,6 +164,12 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
         this.logger.error('Failed to stop post-processor', { error: err });
       }
       this.loopPromise = null;
+    }
+
+    try {
+      this.blockingRedis.disconnect();
+    } catch (err) {
+      this.logger.error('Failed to disconnect blocking Redis', { error: err });
     }
 
     this.logger.info('Post-processor stopped');
@@ -284,7 +292,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
       this.readPending = false;
     }
 
-    const rawResult = (await this.redis.call(
+    const rawResult = (await this.blockingRedis.call(
       'XREADGROUP',
       ...args,
     )) as RedisStreamRawResponse | null;
