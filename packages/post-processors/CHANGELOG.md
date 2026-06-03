@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- unlock redis
+
 ## 2.0.0
 
 ### Major Changes

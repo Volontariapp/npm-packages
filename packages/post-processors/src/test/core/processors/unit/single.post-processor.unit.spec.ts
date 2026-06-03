@@ -23,6 +23,7 @@ describe('SinglePostProcessor — Unit', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     redisMock = createMock<Redis>();
+    redisMock.duplicate.mockReturnValue(redisMock);
     callMock = mockRedisCall(redisMock);
 
     processor = new TestPostProcessor(redisMock, {

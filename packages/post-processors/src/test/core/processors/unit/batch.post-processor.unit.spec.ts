@@ -23,6 +23,7 @@ describe('BatchPostProcessor — Unit', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     redisMock = createMock<Redis>();
+    redisMock.duplicate.mockReturnValue(redisMock);
     const pipelineMock = createMock<ChainableCommander>();
     pipelineMock.del.mockReturnThis();
     pipelineMock.zrem.mockReturnThis();
