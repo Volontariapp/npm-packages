@@ -21,6 +21,7 @@ describe('CircuitBreaker Integration', () => {
 
   beforeEach(() => {
     redisMock = createMock<Redis>();
+    redisMock.duplicate.mockReturnValue(redisMock);
     callMock = mockRedisCall(redisMock);
 
     processor = new TestPostProcessor(redisMock, {

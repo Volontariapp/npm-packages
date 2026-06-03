@@ -96,6 +96,7 @@ export interface TestProcessorSetup {
 
 export function setupTestProcessor(): TestProcessorSetup {
   const redisMock = createMock<Redis>();
+  redisMock.duplicate.mockReturnValue(redisMock);
   const callMock = mockRedisCall(redisMock);
 
   const processor = new TestPostProcessor(redisMock, {
