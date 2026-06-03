@@ -88,7 +88,7 @@ describe('OutboxRunner (Unit)', () => {
 
   describe('loop execution', () => {
     it('should execute multiple cycles until stopped', async () => {
-      const runCycleSpy = jest.spyOn(runner, 'runCycle').mockResolvedValue();
+      const runCycleSpy = jest.spyOn(runner, 'runCycle').mockResolvedValue(0);
 
       runner.start();
 
