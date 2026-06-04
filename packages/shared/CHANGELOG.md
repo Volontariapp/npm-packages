@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### Minor Changes
+
+- new eventLocation type
+
 ## 0.6.0
 
 ### Minor Changes

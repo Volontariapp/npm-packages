@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.13.0
+  - @volontariapp/messaging@2.7.0
+  - @volontariapp/auth@3.3.1
+  - @volontariapp/database@3.3.1
+
 ## 2.8.1
 
 ### Patch Changes

@@ -18,3 +18,9 @@ export const INVALID_LOCATION = (details: string) =>
 
 export const INVALID_EVENT_STATE_TRANSITION = (from: string, to: string) =>
   new BadRequestError(`Cannot transition event from ${from} to ${to}`, 'INVALID_STATE_TRANSITION');
+
+export const GEOCODING_FAILED = (provider: string, status: string | number) =>
+  new BadRequestError(
+    `${provider} Geocoding failed with status: ${String(status)}`,
+    'GEOCODING_FAILED',
+  );

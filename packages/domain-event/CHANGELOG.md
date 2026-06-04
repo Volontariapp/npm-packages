@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.4.0
+
+### Minor Changes
+
+- geolocode event
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors-nest@0.13.0
+  - @volontariapp/messaging@2.7.0
+  - @volontariapp/database@3.3.1
+  - @volontariapp/outbox@0.9.19
+
 ## 3.3.6
 
 ### Patch Changes

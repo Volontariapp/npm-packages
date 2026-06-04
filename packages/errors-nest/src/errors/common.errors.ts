@@ -12,3 +12,10 @@ export const FALLBACK_ACTIVATED = (jobType: string, originalError: string) =>
     'FALLBACK_ACTIVATED',
     { jobType, originalError },
   );
+
+export const INVALID_PARAMETER = (parameterName: string, details?: string) =>
+  new BadRequestError(
+    `Invalid parameter '${parameterName}'${details !== undefined && details !== '' ? `: ${details}` : ''}`,
+    'INVALID_PARAMETER',
+    { parameterName },
+  );

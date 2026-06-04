@@ -25,11 +25,17 @@ export enum EventsJobType {
   FALLBACK_CREATE_TAG = 'events.fallback_create_tag',
   FALLBACK_UPDATE_TAG = 'events.fallback_update_tag',
   FALLBACK_DELETE_TAG = 'events.fallback_delete_tag',
+  GEOCODE_EVENT = 'events.geocode_event',
 }
 
 export interface IPublishEventPayload {
   eventId: string;
   creatorId: string;
+}
+
+export interface IGeocodeEventPayload {
+  eventId: string;
+  localisationName: string;
 }
 
 export interface IEventFallbackJobPayload<T> {
