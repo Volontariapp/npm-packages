@@ -1,13 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
-import { BaseRepository, ILike, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
-import { EventQueueRepository } from '@volontariapp/outbox';
+import {
+  BaseRepository,
+  ILike,
+  EventQueueEntity,
+  EventQueueModel,
+  JobsOutboxEntity,
+  JobsOutboxModel,
+} from '@volontariapp/database';
+import { EventQueueRepository, JobsOutboxRepository } from '@volontariapp/outbox';
 import { EventModel } from '../models/event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { Streams } from '@volontariapp/shared';
 import { IEventRepository } from './interfaces/event.repository.js';
-import { EventEventMessagingType, IEventPayload } from '@volontariapp/messaging';
+import {
+  EventEventMessagingType,
+  IEventPayload,
+  EventsJobType,
+  EventsQueue,
+} from '@volontariapp/messaging';
+import { EventType, EventState } from '@volontariapp/contracts';
 
 @Injectable()
 export class PostgresEventRepository
@@ -52,7 +65,7 @@ export class PostgresEventRepository
       > = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_CREATED>({
         type: EventEventMessagingType.EVENT_CREATED,
         emitter: 'ms-event',
-        emitterId: savedEventEntity.organizerId ?? '',
+        emitterId: savedEventEntity.organizerId,
         payload: savedEventEntity as IEventPayload,
         targetServices: [Streams.SOCIAL_INTERACTIONS],
       });
@@ -61,6 +74,38 @@ export class PostgresEventRepository
         queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
       );
       await eventQueueRepo.create(eventQueueEntity);
+
+      return savedEventEntity;
+    });
+  }
+
+  async createWithGeocodeJob(data: Partial<EventEntity>): Promise<EventEntity> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const modelData = this.toModel(data);
+      const eventModel = queryRunner.manager.create(this.modelClass, modelData);
+      const savedEventModel = await queryRunner.manager.save(this.modelClass, eventModel);
+      const savedEventEntity = this.toEntity(savedEventModel);
+
+      if (
+        savedEventEntity.localisationName &&
+        savedEventEntity.localisationName.trim().length > 0
+      ) {
+        const geocodeJobEntity = JobsOutboxEntity.createJob<EventsJobType.GEOCODE_EVENT>({
+          type: EventsJobType.GEOCODE_EVENT,
+          emitter: 'ms-event',
+          emitterId: savedEventEntity.organizerId,
+          target: EventsQueue.EVENTS,
+          payload: {
+            eventId: savedEventEntity.id,
+            localisationName: savedEventEntity.localisationName,
+          },
+        });
+
+        const jobsOutboxRepo = new JobsOutboxRepository<EventsJobType.GEOCODE_EVENT>(
+          queryRunner.manager.getRepository<JobsOutboxModel>(JobsOutboxModel),
+        );
+        await jobsOutboxRepo.create(geocodeJobEntity);
+      }
 
       return savedEventEntity;
     });
@@ -79,7 +124,7 @@ export class PostgresEventRepository
       > = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_DELETED>({
         type: EventEventMessagingType.EVENT_DELETED,
         emitter: 'ms-event',
-        emitterId: entity.organizerId ?? '',
+        emitterId: entity.organizerId,
         payload: entity as IEventPayload,
         targetServices: [Streams.SOCIAL_INTERACTIONS],
       });
@@ -91,5 +136,33 @@ export class PostgresEventRepository
 
       return true;
     });
+  }
+
+  async findAroundMe(
+    lat: number,
+    lng: number,
+    radiusInMeters: number,
+    type?: EventType,
+    state?: EventState,
+  ): Promise<EventEntity[]> {
+    const origin = `ST_SetSRID(ST_MakePoint(${String(lng)}, ${String(lat)}), 4326)`;
+
+    const query = this.repository.createQueryBuilder('event');
+
+    if (type !== undefined) {
+      query.andWhere('event.type = :type', { type });
+    }
+
+    if (state !== undefined) {
+      query.andWhere('event.state = :state', { state });
+    }
+
+    query.andWhere(`ST_DWithin(event.location::geography, ${origin}::geography, :radius)`);
+    query.setParameter('radius', radiusInMeters);
+
+    query.orderBy(`ST_Distance(event.location::geography, ${origin}::geography)`, 'ASC');
+
+    const eventModels = await query.getMany();
+    return eventModels.map((model) => this.toEntity(model));
   }
 }

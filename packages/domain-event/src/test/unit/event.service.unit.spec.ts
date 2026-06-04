@@ -6,16 +6,19 @@ import { EventFactory } from '../__test-utils__/factories/event.factory.js';
 import { TagFactory } from '../__test-utils__/factories/tag.factory.js';
 import { createEventRepositoryMock } from '../__test-utils__/mocks/event.repository.mock.js';
 import { createTagServiceMock } from '../__test-utils__/mocks/tag.service.mock.js';
+import { createGeocodingServiceMock } from '../__test-utils__/mocks/geocoding.service.mock.js';
 
 describe('EventService (Unit)', () => {
   let service: EventService;
   let mockRepository: jest.Mocked<IEventRepository>;
   let mockTagService: ReturnType<typeof createTagServiceMock>;
+  let mockGeocodingService: ReturnType<typeof createGeocodingServiceMock>;
 
   beforeEach(() => {
     mockRepository = createEventRepositoryMock();
     mockTagService = createTagServiceMock();
-    service = new EventService(mockRepository, mockTagService);
+    mockGeocodingService = createGeocodingServiceMock();
+    service = new EventService(mockRepository, mockTagService, mockGeocodingService);
   });
 
   // ─── findById ─────────────────────────────────────────────────────────────
@@ -105,6 +108,7 @@ describe('EventService (Unit)', () => {
       // Arrange
       const input = EventFactory.buildInput();
       const created = EventFactory.build({ ...input });
+      mockGeocodingService.geocode.mockResolvedValue({ lat: 48.8566, lng: 2.3522 });
       mockRepository.createWithEventCreated.mockResolvedValue(created);
 
       // Act
@@ -122,6 +126,7 @@ describe('EventService (Unit)', () => {
       const tag2 = TagFactory.build({ id: 'tag-2' });
       const input = EventFactory.buildInput({ tags: [tag1, tag2] });
       const created = EventFactory.build({ ...input, tags: [tag1, tag2] });
+      mockGeocodingService.geocode.mockResolvedValue({ lat: 48.8566, lng: 2.3522 });
       mockTagService.findByIds.mockResolvedValue([tag1, tag2]);
       mockRepository.createWithEventCreated.mockResolvedValue(created);
 
@@ -177,6 +182,7 @@ describe('EventService (Unit)', () => {
       // Arrange
       const input = EventFactory.buildInput({ name: 'Duplicate Event' });
       const dbError = { code: '23505', message: 'Unique violation' };
+      mockGeocodingService.geocode.mockResolvedValue({ lat: 48.8566, lng: 2.3522 });
       mockRepository.createWithEventCreated.mockRejectedValue(dbError);
 
       // Act + Assert
@@ -189,6 +195,7 @@ describe('EventService (Unit)', () => {
     it('should throw DATABASE_ERROR on generic repository failure', async () => {
       // Arrange
       const input = EventFactory.buildInput();
+      mockGeocodingService.geocode.mockResolvedValue({ lat: 48.8566, lng: 2.3522 });
       mockRepository.createWithEventCreated.mockRejectedValue(new Error('Insert failed'));
 
       // Act + Assert
