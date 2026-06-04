@@ -1,14 +1,14 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { PostgresEventRepository } from '../../repositories/postgres-event.repository.js';
 import type { EventModel } from '../../models/event.model.js';
-import type { Repository, SelectQueryBuilder } from 'typeorm';
+import type { SelectQueryBuilder } from 'typeorm';
 import { EventType, EventState } from '@volontariapp/contracts';
 import type { EventEntity } from '../../entities/event.entity.js';
 import { createMock } from '@volontariapp/testing';
 
 describe('PostgresEventRepository (Unit)', () => {
   let repository: PostgresEventRepository;
-  let typeOrmRepositoryMock: jest.Mocked<Repository<EventModel>>;
+  let typeOrmRepositoryMock: jest.Mocked<ConstructorParameters<typeof PostgresEventRepository>[0]>;
   let queryBuilderMock: jest.Mocked<SelectQueryBuilder<EventModel>>;
 
   beforeEach(() => {
@@ -18,8 +18,10 @@ describe('PostgresEventRepository (Unit)', () => {
     queryBuilderMock.orderBy.mockReturnThis();
     queryBuilderMock.getMany.mockResolvedValue([]);
 
-    typeOrmRepositoryMock = createMock<Repository<EventModel>>();
-    typeOrmRepositoryMock.createQueryBuilder.mockReturnValue(queryBuilderMock);
+    typeOrmRepositoryMock = createMock<ConstructorParameters<typeof PostgresEventRepository>[0]>();
+    typeOrmRepositoryMock.createQueryBuilder.mockReturnValue(
+      queryBuilderMock as unknown as ReturnType<typeof typeOrmRepositoryMock.createQueryBuilder>,
+    );
 
     repository = new PostgresEventRepository(typeOrmRepositoryMock);
   });

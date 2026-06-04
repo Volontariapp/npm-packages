@@ -1,4 +1,5 @@
 import type { EventType as ContractEventType, EventState } from '@volontariapp/contracts';
+import type { EventLocation } from '@volontariapp/shared';
 
 export enum EventEventMessagingType {
   EVENT_CHANGED = 'event.changed',
@@ -21,6 +22,7 @@ export interface IEventPayload {
   maxParticipants: number;
   organizerId: string;
   localisationName: string;
+  eventLocation: EventLocation;
   createdAt: Date;
   updatedAt: Date;
 }

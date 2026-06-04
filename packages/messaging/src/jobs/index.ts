@@ -32,6 +32,7 @@ import type {
   IFallbackCreateTagJobPayload,
   IFallbackUpdateTagJobPayload,
   IFallbackDeleteTagJobPayload,
+  IGeocodeEventPayload,
 } from './event/payloads.js';
 import { PostJobType } from './post/payloads.js';
 import type { IPublishPostPayload } from './post/payloads.js';
@@ -75,6 +76,7 @@ export interface JobRegistry {
   [JobMessagingType.FALLBACK_CREATE_TAG]: IFallbackCreateTagJobPayload;
   [JobMessagingType.FALLBACK_UPDATE_TAG]: IFallbackUpdateTagJobPayload;
   [JobMessagingType.FALLBACK_DELETE_TAG]: IFallbackDeleteTagJobPayload;
+  [JobMessagingType.GEOCODE_EVENT]: IGeocodeEventPayload;
 }
 
 export * from './user/payloads.js';

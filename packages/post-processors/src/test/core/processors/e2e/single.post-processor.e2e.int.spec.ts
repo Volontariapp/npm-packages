@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import {
   describe,
   it,
@@ -37,7 +38,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
   });
 
   afterAll(async () => {
-    await redis.quit().catch(() => undefined);
+    if (redis) await redis.quit().catch(() => undefined);
     await closeTestDb().catch(() => undefined);
   });
 
@@ -48,7 +49,9 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
   });
 
   afterEach(async () => {
-    await processor.stop();
+    if (processor) {
+      await processor.stop();
+    }
   });
 
   it('should process a pending event end-to-end from Postgres outbox table', async () => {
@@ -350,6 +353,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
       claimIntervalMs: 100,
       claimMinIdleTimeMs: 100,
       blockMs: 50,
+      batchSize: 2,
     });
 
     processor = new E2ESinglePostProcessor(redis, {
@@ -359,6 +363,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
       claimIntervalMs: 100,
       claimMinIdleTimeMs: 100,
       blockMs: 50,
+      batchSize: 2,
     });
 
     // Push 10 events

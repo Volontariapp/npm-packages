@@ -59,6 +59,26 @@ export class PostgresEventRepository
       const savedEventModel = await queryRunner.manager.save(this.modelClass, eventModel);
       const savedEventEntity = this.toEntity(savedEventModel);
 
+      const payload: IEventPayload = {
+        id: savedEventEntity.id,
+        name: savedEventEntity.name,
+        description: savedEventEntity.description,
+        startAt: savedEventEntity.startAt,
+        endAt: savedEventEntity.endAt,
+        type: savedEventEntity.type,
+        state: savedEventEntity.state,
+        awardedImpactScore: savedEventEntity.awardedImpactScore,
+        maxParticipants: savedEventEntity.maxParticipants,
+        organizerId: savedEventEntity.organizerId,
+        localisationName: savedEventEntity.localisationName,
+        eventLocation: {
+          lat: savedEventEntity.location.latitude,
+          long: savedEventEntity.location.longitude,
+        },
+        createdAt: savedEventEntity.createdAt,
+        updatedAt: savedEventEntity.updatedAt,
+      };
+
       const eventQueueEntity: EventQueueEntity<
         EventEventMessagingType.EVENT_CREATED,
         IEventPayload
@@ -66,7 +86,7 @@ export class PostgresEventRepository
         type: EventEventMessagingType.EVENT_CREATED,
         emitter: 'ms-event',
         emitterId: savedEventEntity.organizerId,
-        payload: savedEventEntity as IEventPayload,
+        payload,
         targetServices: [Streams.SOCIAL_INTERACTIONS],
       });
 
@@ -118,6 +138,26 @@ export class PostgresEventRepository
 
       await queryRunner.manager.delete(this.modelClass, id);
 
+      const payload: IEventPayload = {
+        id: entity.id,
+        name: entity.name,
+        description: entity.description,
+        startAt: entity.startAt,
+        endAt: entity.endAt,
+        type: entity.type,
+        state: entity.state,
+        awardedImpactScore: entity.awardedImpactScore,
+        maxParticipants: entity.maxParticipants,
+        organizerId: entity.organizerId,
+        localisationName: entity.localisationName,
+        eventLocation: {
+          lat: entity.location.latitude,
+          long: entity.location.longitude,
+        },
+        createdAt: entity.createdAt,
+        updatedAt: entity.updatedAt,
+      };
+
       const eventQueueEntity: EventQueueEntity<
         EventEventMessagingType.EVENT_DELETED,
         IEventPayload
@@ -125,7 +165,7 @@ export class PostgresEventRepository
         type: EventEventMessagingType.EVENT_DELETED,
         emitter: 'ms-event',
         emitterId: entity.organizerId,
-        payload: entity as IEventPayload,
+        payload,
         targetServices: [Streams.SOCIAL_INTERACTIONS],
       });
 
