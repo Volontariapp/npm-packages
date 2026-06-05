@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/workers",
-  "version": "1.2.27",
+  "version": "1.2.28",
   "publishConfig": {
     "access": "public",
     "provenance": true
