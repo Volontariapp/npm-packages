@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.1.0
+  - @volontariapp/messaging@2.7.1
+  - @volontariapp/database@3.3.2
+
+## 3.0.0
+
+### Major Changes
+
+- Finished domain-post package
+
 ## 2.3.0
 
 ### Minor Changes

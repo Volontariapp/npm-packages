@@ -59,7 +59,7 @@
   "dependencies": {
     "@volontariapp/bridge": "workspace:^",
     "@volontariapp/errors": "workspace:^",
-    "@volontariapp/errors-nest": "workspace:^",
+    "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "ioredis": "^5.10.1",
     "neo4j-driver": "^6.0.1",

@@ -1,5 +1,5 @@
 import type { CreatePostCommand, UpdatePostCommand } from '../../../post/post.command.js';
-import type { ListPostsQuery } from '../../../post/post.query.js';
+import type { GetPostQuery, ListPostsQuery } from '../../../post/post.query.js';
 
 /**
  * Public request to create a community post.
@@ -16,3 +16,8 @@ export interface UpdatePostRequest extends Partial<Omit<UpdatePostCommand, 'id'>
  * Public request to list posts with pagination and filters.
  */
 export interface ListPostsRequest extends Partial<ListPostsQuery> {}
+
+/**
+ * Public request to get a post from id.
+ */
+export interface GetPostRequest extends GetPostQuery {}

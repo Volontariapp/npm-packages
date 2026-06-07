@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.1.0
+
+### Minor Changes
+
+- added GetPostRequest in post contract library
+
 ## 4.0.14
 
 ### Patch Changes
