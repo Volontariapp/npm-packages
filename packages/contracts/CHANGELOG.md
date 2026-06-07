@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.2.2
+
+### Patch Changes
+
+- rename: comment request
+
+## 4.2.1
+
+### Patch Changes
+
+- fix: add comment request
+
 ## 4.2.0
 
 ### Minor Changes
