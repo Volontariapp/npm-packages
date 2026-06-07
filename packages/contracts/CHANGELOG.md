@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.0
+
+### Minor Changes
+
+- feat: add comments schemas and pagination to posts
+
 ## 4.1.1
 
 ### Patch Changes

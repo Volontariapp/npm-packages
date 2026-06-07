@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+import type { PaginatedResult } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
-import {
-  DATABASE_ERROR,
-  POST_ALREADY_EXISTS,
-  POST_NOT_FOUND,
-} from '@volontariapp/errors-nest';
+import { DATABASE_ERROR, POST_ALREADY_EXISTS, POST_NOT_FOUND } from '@volontariapp/errors-nest';
 import { isDatabaseDriverError, isBaseError } from '@volontariapp/errors';
 import type { IPostRepository } from '../repositories/index.js';
 import { PostgresPostRepository } from '../repositories/index.js';
@@ -53,6 +50,21 @@ export class PostService {
       const err = error as Error;
       this.logger.error('Failed to fetch posts', err);
       throw DATABASE_ERROR('fetching all posts', err.message);
+    }
+  }
+
+  async listPosts(
+    page: number,
+    limit: number,
+    authorId?: string,
+  ): Promise<PaginatedResult<PostEntity>> {
+    try {
+      return await this.postRepository.listPaginated(page, limit, authorId);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to list posts with pagination`, err);
+      throw DATABASE_ERROR(`listing posts with pagination`, err.message);
     }
   }
 
