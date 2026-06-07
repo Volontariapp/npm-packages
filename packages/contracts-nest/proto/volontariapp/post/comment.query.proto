@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package volontariapp.post;
+
+import "volontariapp/common/pagination.proto";
+
+message ListCommentsQuery {
+  string post_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package volontariapp.post;
+
+import "volontariapp/common/pagination.proto";
+import "volontariapp/post/comment.proto";
+
+message CreateCommentResponse {
+  Comment comment = 1;
+}
+
+message ListCommentsResponse {
+  repeated Comment comments = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message DeleteCommentResponse {
+  bool success = 1;
+}

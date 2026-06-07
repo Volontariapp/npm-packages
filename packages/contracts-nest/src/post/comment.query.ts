@@ -2,16 +2,12 @@
 // versions:
 //   protoc-gen-ts_proto  v2.11.8
 //   protoc               unknown
-// source: volontariapp/post/post.query.proto
+// source: volontariapp/post/comment.query.proto
 
 /* eslint-disable */
 import { PaginationRequest } from "../common/pagination.js";
 
-export interface GetPostQuery {
-  id: string;
-}
-
-export interface ListPostsQuery {
+export interface ListCommentsQuery {
+  postId: string;
   pagination: PaginationRequest | undefined;
-  authorId?: string | undefined;
 }
