@@ -57,14 +57,18 @@ describe('PostgresPostRepository (Integration)', () => {
       for (const post of posts) {
         await repository.create(post);
       }
-      await repository.create(PostFactory.build({ authorId: '00000000-0000-0000-0000-000000000002' }));
+      await repository.create(
+        PostFactory.build({ authorId: '00000000-0000-0000-0000-000000000002' }),
+      );
 
       // Act
       const result = await repository.findByAuthorId(authorId);
 
       // Assert
       expect(result).toHaveLength(3);
-      result.forEach(p => { expect(p.authorId).toBe(authorId); });
+      result.forEach((p) => {
+        expect(p.authorId).toBe(authorId);
+      });
     });
 
     it('should return an empty array if author has no posts', async () => {
@@ -89,7 +93,7 @@ describe('PostgresPostRepository (Integration)', () => {
 
       // Assert
       expect(result).toHaveLength(2);
-      const titles = result.map(p => p.title);
+      const titles = result.map((p) => p.title);
       expect(titles).toContain('Post 1');
       expect(titles).toContain('Post 2');
     });
@@ -113,6 +117,16 @@ describe('PostgresPostRepository (Integration)', () => {
       expect(found).toBeDefined();
       expect(found?.title).toBe('Persisted Post');
     });
+
+    it('should throw an error when creating a post with a duplicate title', async () => {
+      // Arrange
+      const post1 = PostFactory.build({ title: 'Unique Title' });
+      const post2 = PostFactory.build({ title: 'Unique Title' });
+      await repository.create(post1);
+
+      // Act & Assert
+      await expect(repository.create(post2)).rejects.toThrow();
+    });
   });
 
   // ─── update ───────────────────────────────────────────────────────────────
@@ -135,7 +149,9 @@ describe('PostgresPostRepository (Integration)', () => {
 
     it('should return null when updating a non-existent post', async () => {
       // Act
-      const result = await repository.update('00000000-0000-0000-0000-000000000000', { title: 'New' });
+      const result = await repository.update('00000000-0000-0000-0000-000000000000', {
+        title: 'New',
+      });
 
       // Assert
       expect(result).toBeNull();
@@ -181,7 +197,7 @@ describe('PostgresPostRepository (Integration)', () => {
 
       // Assert
       expect(result).toHaveLength(2);
-      const titles = result.map(p => p.title.toUpperCase());
+      const titles = result.map((p) => p.title.toUpperCase());
       expect(titles).toContain('HELLO WORLD');
       expect(titles).toContain('HELLO GALAXY');
     });
@@ -224,6 +240,52 @@ describe('PostgresPostRepository (Integration)', () => {
       const result = await repository.deleteByAuthorId('00000000-0000-0000-0000-000000000123');
       // Assert
       expect(result).toBe(0);
+    });
+  });
+  // ─── listPaginated ────────────────────────────────────────────────────────
+
+  describe('listPaginated()', () => {
+    it('should paginate posts correctly', async () => {
+      // Arrange
+      for (let i = 0; i < 15; i++) {
+        await repository.create(PostFactory.build({ title: `Paginated Post ${String(i)}` }));
+      }
+
+      // Act
+      const resultPage1 = await repository.listPaginated(1, 10);
+      const resultPage2 = await repository.listPaginated(2, 10);
+
+      // Assert
+      expect(resultPage1.data).toHaveLength(10);
+      expect(resultPage1.total).toBe(15);
+      expect(resultPage1.page).toBe(1);
+      expect(resultPage1.limit).toBe(10);
+      expect(resultPage1.totalPages).toBe(2);
+      expect(resultPage1.hasNextPage).toBe(true);
+
+      expect(resultPage2.data).toHaveLength(5);
+      expect(resultPage2.page).toBe(2);
+      expect(resultPage2.hasNextPage).toBe(false);
+    });
+
+    it('should filter paginated posts by authorId', async () => {
+      // Arrange
+      const authorId = '00000000-0000-0000-0000-000000000088';
+      await repository.create(PostFactory.build({ title: 'A', authorId }));
+      await repository.create(PostFactory.build({ title: 'B', authorId }));
+      await repository.create(
+        PostFactory.build({ title: 'C', authorId: '00000000-0000-0000-0000-000000000099' }),
+      );
+
+      // Act
+      const result = await repository.listPaginated(1, 10, authorId);
+
+      // Assert
+      expect(result.data).toHaveLength(2);
+      expect(result.total).toBe(2);
+      result.data.forEach((p) => {
+        expect(p.authorId).toBe(authorId);
+      });
     });
   });
 });

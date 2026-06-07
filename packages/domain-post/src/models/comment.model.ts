@@ -4,20 +4,23 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 
-@Entity('posts')
-export class PostModel {
+@Entity('comments')
+export class CommentModel {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index()
+  @Column({ type: 'uuid' })
+  postId!: string;
+
+  @Index()
   @Column({ type: 'uuid' })
   authorId!: string;
 
-  @Column({ type: 'varchar', length: 255, unique: true })
-  title!: string;
-
-  @Column({ type: 'varchar', length: 500 })
+  @Column({ type: 'varchar', length: 1000 })
   content!: string;
 
   @CreateDateColumn()

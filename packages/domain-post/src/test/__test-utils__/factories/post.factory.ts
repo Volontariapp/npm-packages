@@ -6,7 +6,7 @@ export class PostFactory {
     const post = new PostEntity();
     post.id = overrides.id ?? randomUUID();
     post.authorId = overrides.authorId ?? randomUUID();
-    post.title = overrides.title ?? 'Test Title';
+    post.title = overrides.title ?? `Test Title ${randomUUID()}`;
     post.content = overrides.content ?? 'Test Content';
     post.createdAt = overrides.createdAt ?? new Date();
     post.updatedAt = overrides.updatedAt ?? new Date();

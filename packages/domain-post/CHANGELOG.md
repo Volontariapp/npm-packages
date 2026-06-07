@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- feat: add comments schemas and pagination to posts
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.2.0
+  - @volontariapp/messaging@2.7.3
+  - @volontariapp/database@3.3.4
+
 ## 3.0.2
 
 ### Patch Changes

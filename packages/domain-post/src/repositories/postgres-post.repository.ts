@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
-import { BaseRepository, ILike } from '@volontariapp/database';
+import { BaseRepository, ILike, PaginatedResult } from '@volontariapp/database';
 import { PostModel } from '../models/index.js';
 import { PostEntity } from '../entities/index.js';
 import { IPostRepository } from './interfaces/index.js';
@@ -41,6 +41,15 @@ export class PostgresPostRepository
 
   async search(searchTerm: string): Promise<PostEntity[]> {
     return super.find({ where: { title: ILike(`%${searchTerm}%`) } });
+  }
+
+  async listPaginated(
+    page: number,
+    limit: number,
+    authorId?: string,
+  ): Promise<PaginatedResult<PostEntity>> {
+    const where = authorId ? { authorId } : undefined;
+    return super.paginate({ page, limit }, { where });
   }
 
   async deleteByAuthorId(authorId: string): Promise<number> {
