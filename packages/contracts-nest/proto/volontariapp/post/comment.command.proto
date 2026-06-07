@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package volontariapp.post;
+
+message CreateCommentCommand {
+  string post_id = 1;
+  string content = 2;
+}
+
+message DeleteCommentCommand {
+  string id = 1;
+  string post_id = 2;
+}

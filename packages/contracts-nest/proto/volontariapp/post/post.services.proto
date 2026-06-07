@@ -5,6 +5,9 @@ package volontariapp.post;
 import "volontariapp/post/post.query.proto";
 import "volontariapp/post/post.command.proto";
 import "volontariapp/post/post.responses.proto";
+import "volontariapp/post/comment.query.proto";
+import "volontariapp/post/comment.command.proto";
+import "volontariapp/post/comment.responses.proto";
 
 
 
@@ -16,4 +19,8 @@ service PostService {
   rpc UpdatePost (UpdatePostCommand) returns (UpdatePostResponse) {}
   rpc DeletePost (DeletePostCommand) returns (DeletePostResponse) {}
   rpc DeleteMyPosts (DeleteMyPostsCommand) returns (DeleteMyPostsResponse) {}
+
+  rpc CreateComment (CreateCommentCommand) returns (CreateCommentResponse) {}
+  rpc DeleteComment (DeleteCommentCommand) returns (DeleteCommentResponse) {}
+  rpc ListComments (ListCommentsQuery) returns (ListCommentsResponse) {}
 }

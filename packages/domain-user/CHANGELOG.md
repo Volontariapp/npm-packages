@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.8.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.1.1
+  - @volontariapp/messaging@2.7.2
+  - @volontariapp/database@3.3.3
+
 ## 2.8.3
 
 ### Patch Changes

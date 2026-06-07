@@ -2,15 +2,15 @@
 // versions:
 //   protoc-gen-ts_proto  v2.11.8
 //   protoc               unknown
-// source: volontariapp/post/post.proto
+// source: volontariapp/post/comment.proto
 
 /* eslint-disable */
 import { Timestamp } from "../google/protobuf/timestamp.js";
 
-export interface Post {
+export interface Comment {
   id: string;
+  postId: string;
   authorId: string;
-  title: string;
   content: string;
   createdAt: Timestamp | undefined;
   updatedAt: Timestamp | undefined;

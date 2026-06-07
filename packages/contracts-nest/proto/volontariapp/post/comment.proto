@@ -2,13 +2,12 @@ syntax = "proto3";
 
 package volontariapp.post;
 
-
 import "google/protobuf/timestamp.proto";
 
-message Post {
+message Comment {
   string id = 1;
-  string author_id = 2;
-  string title = 3;
+  string post_id = 2;
+  string author_id = 3;
   string content = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
