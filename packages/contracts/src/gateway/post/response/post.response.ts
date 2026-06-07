@@ -1,12 +1,20 @@
-import type { Post } from '../../../post/post.js';
 import type { CreatePostResponse, AdminCreatePostResponse } from '../../../post/post.responses.js';
 
+export interface PostWeb {
+  id: string;
+  authorId: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface PostWebResponse {
-  post: Post;
+  post: PostWeb;
 }
 
 export interface ListPostsWebResponse {
-  posts: Post[];
+  posts: PostWeb[];
   totalCount: number;
 }
 
