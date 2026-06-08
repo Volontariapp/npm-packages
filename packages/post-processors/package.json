@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/post-processors",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "publishConfig": {
     "access": "public",
     "provenance": true

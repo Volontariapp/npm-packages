@@ -116,6 +116,10 @@ message GetEventRelatedToPostQuery {
   string post_id = 1;
 }
 
+message GetEventsRelatedToPostsQuery {
+  repeated string post_ids = 1;
+}
+
 message GetEventPostsQuery {
   string event_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;

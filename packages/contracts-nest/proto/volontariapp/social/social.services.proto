@@ -100,5 +100,6 @@ service EventPostLinkCommandService {
 
 service EventPostLinkQueryService {
   rpc GetEventRelatedToPost(GetEventRelatedToPostQuery) returns (GetEventRelatedToPostResponse);
+  rpc GetEventsRelatedToPosts(GetEventsRelatedToPostsQuery) returns (GetEventsRelatedToPostsResponse);
   rpc GetEventPosts(GetEventPostsQuery) returns (GetEventPostsResponse);
 }

@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- [`b913c22`](https://github.com/Volontariapp/npm-packages/commit/b913c228ed92b72f2eb45bb7cba7a5c024cabf96) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - Add saga_status to Event, Post, and Comment models with updating capabilities.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.2.4
+  - @volontariapp/messaging@2.7.8
+  - @volontariapp/database@3.3.9
+  - @volontariapp/outbox@0.9.27
+
 ## 3.2.0
 
 ### Minor Changes
