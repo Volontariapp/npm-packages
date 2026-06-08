@@ -145,6 +145,15 @@ message UnlinkPostFromEventResponse {}
 message GetEventRelatedToPostResponse {
   string event_id = 1;
 }
+
+message EventPostLink {
+  string post_id = 1;
+  string event_id = 2;
+}
+
+message GetEventsRelatedToPostsResponse {
+  repeated EventPostLink links = 1;
+}
 message GetEventPostsResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;

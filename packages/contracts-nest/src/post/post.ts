@@ -14,4 +14,5 @@ export interface Post {
   content: string;
   createdAt: Timestamp | undefined;
   updatedAt: Timestamp | undefined;
+  eventId?: string | undefined;
 }
