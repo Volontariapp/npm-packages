@@ -5,15 +5,16 @@ import { DATABASE_ERROR, POST_NOT_FOUND } from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
 import type { ICommentRepository, IPostRepository } from '../repositories/index.js';
 import { CommentEntity } from '../entities/index.js';
+import { PostgresCommentRepository, PostgresPostRepository } from '../repositories/index.js';
 
 @Injectable()
 export class CommentService {
   private readonly logger = new Logger({ context: CommentService.name });
 
   constructor(
-    @Inject('ICommentRepository')
+    @Inject(PostgresCommentRepository)
     private readonly commentRepository: ICommentRepository,
-    @Inject('IPostRepository')
+    @Inject(PostgresPostRepository)
     private readonly postRepository: IPostRepository,
   ) {}
 

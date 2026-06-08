@@ -12,10 +12,7 @@ import { PostEntity } from '../entities/index.js';
 export class PostService {
   private readonly logger = new Logger({ context: PostService.name });
 
-  constructor(
-    @Inject(PostgresPostRepository)
-    private readonly postRepository: IPostRepository,
-  ) {}
+  constructor(@Inject(PostgresPostRepository) private readonly postRepository: IPostRepository) {}
 
   async findById(id: string): Promise<PostEntity> {
     try {
