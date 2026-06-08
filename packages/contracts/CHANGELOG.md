@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.3
+
+### Patch Changes
+
+- [`44e7a08`](https://github.com/Volontariapp/npm-packages/commit/44e7a0874947115ea18c2274c7f76d52df560ced) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - change date post
+
 ## 4.2.2
 
 ### Patch Changes

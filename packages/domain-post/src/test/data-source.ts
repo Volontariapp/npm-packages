@@ -3,12 +3,33 @@ import { DataSource } from 'typeorm';
 import { PostModel, CommentModel } from '../models/index.js';
 import { registerPostMappings } from '../models/mapper.js';
 
-import { InitialPostSchema1776000000000 } from './migrations/1776000000000-InitialPostSchema.js';
-import { JobsOutboxAndEventQueue1776785940565 } from './migrations/1776785940565-JobsOutboxAndEventQueue.js';
-import { JobsOutboxAndEventQueueWithTraceId1776975278062 } from './migrations/1776975278062-JobsOutboxAndEventQueueWithTraceId.js';
-import { UpdateOutboxModels1777630651338 } from './migrations/1777630651338-UpdateOutboxModels.js';
-import { AddUniqueConstraintToPostTitle1776000000001 } from './migrations/1776000000001-AddUniqueConstraintToPostTitle.js';
-import { InitialCommentSchema1780000000000 } from './migrations/1780000000000-InitialCommentSchema.js';
+import { EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
+
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { readdirSync } from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const loadMigrations = async (): Promise<Array<() => void>> => {
+  const migrations: Array<() => void> = [];
+  const addDir = async (dirName: string) => {
+    const dirPath = join(__dirname, 'migrations', dirName);
+    const files = readdirSync(dirPath).filter((f) => f.endsWith('.ts') || f.endsWith('.js'));
+    for (const file of files) {
+      const mod = (await import(join(dirPath, file))) as Record<string, unknown>;
+      for (const key of Object.keys(mod)) {
+        if (typeof mod[key] === 'function') {
+          migrations.push(mod[key] as () => void);
+        }
+      }
+    }
+  };
+  await addDir('domain');
+  await addDir('common');
+  return migrations;
+};
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -17,15 +38,8 @@ export const testDataSource = new DataSource({
   username: 'user',
   password: 'password',
   database: 'ms_post',
-  entities: [PostModel, CommentModel],
-  migrations: [
-    InitialPostSchema1776000000000,
-    JobsOutboxAndEventQueue1776785940565,
-    JobsOutboxAndEventQueueWithTraceId1776975278062,
-    UpdateOutboxModels1777630651338,
-    AddUniqueConstraintToPostTitle1776000000001,
-    InitialCommentSchema1780000000000,
-  ],
+  entities: [PostModel, CommentModel, EventQueueModel, JobsOutboxModel],
+  migrations: await loadMigrations(),
   synchronize: false,
   logging: false,
 });
@@ -50,5 +64,7 @@ export const closeTestDb = async (): Promise<void> => {
 };
 
 export const truncateAll = async (): Promise<void> => {
-  await testDataSource.query('TRUNCATE TABLE posts, comments RESTART IDENTITY CASCADE');
+  await testDataSource.query(
+    'TRUNCATE TABLE posts, comments, event_queue, jobs_outbox RESTART IDENTITY CASCADE',
+  );
 };

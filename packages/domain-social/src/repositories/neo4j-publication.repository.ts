@@ -28,11 +28,32 @@ export class Neo4jPublicationRepository
     });
   }
 
+  async createPostNodes(entities: SocialPostEntity[]): Promise<void> {
+    if (entities.length === 0) return;
+    const postIds = entities.map((entity) => SocialPostMapper.toModel(entity).id.value);
+    await this.write(
+      `UNWIND $postIds AS postId
+       MERGE (p:SocialPost {postId: postId})`,
+      { postIds },
+    );
+  }
+
   async deletePostNode(entity: SocialPostEntity): Promise<void> {
     const model = SocialPostMapper.toModel(entity);
     await this.write('MATCH (p:SocialPost {postId: $postId}) DETACH DELETE p', {
       postId: model.id.value,
     });
+  }
+
+  async deletePostNodes(entities: SocialPostEntity[]): Promise<void> {
+    if (entities.length === 0) return;
+    const postIds = entities.map((entity) => SocialPostMapper.toModel(entity).id.value);
+    await this.write(
+      `UNWIND $postIds AS postId
+       MATCH (p:SocialPost {postId: postId})
+       DETACH DELETE p`,
+      { postIds },
+    );
   }
 
   async postExists(entity: SocialPostEntity): Promise<boolean> {

@@ -21,6 +21,9 @@ import type {
   ISocialEventPayload,
 } from './social/payloads.js';
 
+import { PostEventMessagingType } from './post/payloads.js';
+import type { IPostCreatedPayload, IPostDeletedPayload } from './post/payloads.js';
+
 import { CommonEventMessagingType } from './common/payloads.js';
 import type { IJobAuditPayload } from './common/payloads.js';
 import type {
@@ -68,6 +71,10 @@ export interface EventRegistry {
   [SocialEventMessagingType.SOCIAL_POST_CHANGED]: ISocialPostPayload;
   [SocialEventMessagingType.SOCIAL_EVENT_CHANGED]: ISocialEventPayload;
 
+  // Post
+  [PostEventMessagingType.POST_CREATED]: IPostCreatedPayload;
+  [PostEventMessagingType.POST_DELETED]: IPostDeletedPayload;
+
   // WS
   [WebsocketEventMessagingType.WS_EVENT_CREATED]: IEventCreatedWebsocketPayload;
   [WebsocketEventMessagingType.WS_EVENT_UPDATED]: IEventUpdatedWebsocketPayload;
@@ -95,6 +102,7 @@ export const EventMessagingType = {
   ...EventEventMessagingType,
   ...UserEventMessagingType,
   ...SocialEventMessagingType,
+  ...PostEventMessagingType,
   ...CommonEventMessagingType,
   ...WebsocketEventMessagingType,
 } as const;

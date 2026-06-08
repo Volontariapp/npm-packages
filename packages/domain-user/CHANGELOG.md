@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.8.6
+
+### Patch Changes
+
+- Updated dependencies [[`44e7a08`](https://github.com/Volontariapp/npm-packages/commit/44e7a0874947115ea18c2274c7f76d52df560ced)]:
+  - @volontariapp/messaging@2.7.4
+  - @volontariapp/shared@0.6.2
+  - @volontariapp/contracts@4.2.3
+  - @volontariapp/database@3.3.5
+  - @volontariapp/auth@3.3.2
+
 ## 2.8.5
 
 ### Patch Changes

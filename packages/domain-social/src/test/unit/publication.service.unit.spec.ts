@@ -72,6 +72,36 @@ describe('PublicationService (Unit)', () => {
     });
   });
 
+  describe('createPosts()', () => {
+    it('should call repository.createPostNodes with the entities', async () => {
+      const postId1 = PostIdFactory.build('post-1');
+      const postId2 = PostIdFactory.build('post-2');
+      const postEntity1 = SocialPostFactory.build({ postId: 'post-1' });
+      const postEntity2 = SocialPostFactory.build({ postId: 'post-2' });
+
+      const createPostNodesSpy = jest
+        .spyOn(mockRepository, 'createPostNodes')
+        .mockResolvedValue(undefined);
+
+      await service.createPosts([postId1, postId2]);
+
+      expect(createPostNodesSpy).toHaveBeenCalledWith([postEntity1, postEntity2]);
+    });
+
+    it('should do nothing if array is empty', async () => {
+      const createPostNodesSpy = jest.spyOn(mockRepository, 'createPostNodes');
+      await service.createPosts([]);
+      expect(createPostNodesSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest.spyOn(mockRepository, 'createPostNodes').mockRejectedValue(new Error('Write failed'));
+      await expect(service.createPosts([PostIdFactory.build('post-1')])).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
+
   // ─── deletePost ───────────────────────────────────────────────────────────
 
   describe('deletePost()', () => {
@@ -102,6 +132,36 @@ describe('PublicationService (Unit)', () => {
       jest.spyOn(mockRepository, 'deletePostNode').mockRejectedValue(new Error('Delete failed'));
 
       await expect(service.deletePost(PostIdFactory.build('post-1'))).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
+
+  describe('deletePosts()', () => {
+    it('should call repository.deletePostNodes with the entities', async () => {
+      const postId1 = PostIdFactory.build('post-1');
+      const postId2 = PostIdFactory.build('post-2');
+      const postEntity1 = SocialPostFactory.build({ postId: 'post-1' });
+      const postEntity2 = SocialPostFactory.build({ postId: 'post-2' });
+
+      const deletePostNodesSpy = jest
+        .spyOn(mockRepository, 'deletePostNodes')
+        .mockResolvedValue(undefined);
+
+      await service.deletePosts([postId1, postId2]);
+
+      expect(deletePostNodesSpy).toHaveBeenCalledWith([postEntity1, postEntity2]);
+    });
+
+    it('should do nothing if array is empty', async () => {
+      const deletePostNodesSpy = jest.spyOn(mockRepository, 'deletePostNodes');
+      await service.deletePosts([]);
+      expect(deletePostNodesSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest.spyOn(mockRepository, 'deletePostNodes').mockRejectedValue(new Error('Delete failed'));
+      await expect(service.deletePosts([PostIdFactory.build('post-1')])).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
       });
     });

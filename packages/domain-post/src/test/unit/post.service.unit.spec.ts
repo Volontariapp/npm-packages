@@ -69,7 +69,9 @@ describe('PostService (Unit)', () => {
     it('should return all posts for an author', async () => {
       // Arrange
       const posts = PostFactory.buildMany(2, { authorId: 'author-1' });
-      const findByAuthorIdSpy = jest.spyOn(mockRepository, 'findByAuthorId').mockResolvedValue(posts);
+      const findByAuthorIdSpy = jest
+        .spyOn(mockRepository, 'findByAuthorId')
+        .mockResolvedValue(posts);
 
       // Act
       const result = await service.findByAuthorId('author-1');
@@ -135,7 +137,9 @@ describe('PostService (Unit)', () => {
       // Arrange
       const postData = { title: 'New Post', authorId: 'author-1' };
       const createdPost = PostFactory.build(postData);
-      const createSpy = jest.spyOn(mockRepository, 'create').mockResolvedValue(createdPost);
+      const createSpy = jest
+        .spyOn(mockRepository, 'createWithPostCreated')
+        .mockResolvedValue(createdPost);
 
       // Act
       const result = await service.create(postData);
@@ -149,7 +153,7 @@ describe('PostService (Unit)', () => {
       // Arrange
       const postData = { title: 'Duplicate' };
       const dbError = Object.assign(new Error('Duplicate'), { code: '23505' });
-      jest.spyOn(mockRepository, 'create').mockRejectedValue(dbError);
+      jest.spyOn(mockRepository, 'createWithPostCreated').mockRejectedValue(dbError);
 
       // Act & Assert
       await expect(service.create(postData)).rejects.toMatchObject({
@@ -159,7 +163,9 @@ describe('PostService (Unit)', () => {
 
     it('should throw DATABASE_ERROR on other repository failures', async () => {
       // Arrange
-      jest.spyOn(mockRepository, 'create').mockRejectedValue(new Error('Connection error'));
+      jest
+        .spyOn(mockRepository, 'createWithPostCreated')
+        .mockRejectedValue(new Error('Connection error'));
 
       // Act & Assert
       await expect(service.create({})).rejects.toMatchObject({
@@ -212,21 +218,18 @@ describe('PostService (Unit)', () => {
   describe('delete()', () => {
     it('should delete the post if it exists', async () => {
       // Arrange
-      const post = PostFactory.build({ id: 'post-1' });
-      const findByIdSpy = jest.spyOn(mockRepository, 'findById').mockResolvedValue(post);
-      const deleteSpy = jest.spyOn(mockRepository, 'delete').mockResolvedValue(true);
+      const deleteSpy = jest.spyOn(mockRepository, 'deleteWithPostDeleted').mockResolvedValue(true);
 
       // Act
       await service.delete('post-1');
 
       // Assert
-      expect(findByIdSpy).toHaveBeenCalledWith('post-1');
       expect(deleteSpy).toHaveBeenCalledWith('post-1');
     });
 
     it('should throw POST_NOT_FOUND if post to delete does not exist', async () => {
       // Arrange
-      jest.spyOn(mockRepository, 'findById').mockResolvedValue(null);
+      jest.spyOn(mockRepository, 'deleteWithPostDeleted').mockResolvedValue(false);
 
       // Act & Assert
       await expect(service.delete('unknown')).rejects.toMatchObject({
@@ -236,8 +239,7 @@ describe('PostService (Unit)', () => {
 
     it('should throw DATABASE_ERROR if repository.delete fails', async () => {
       // Arrange
-      jest.spyOn(mockRepository, 'findById').mockResolvedValue(PostFactory.build());
-      jest.spyOn(mockRepository, 'delete').mockRejectedValue(new Error('Fail'));
+      jest.spyOn(mockRepository, 'deleteWithPostDeleted').mockRejectedValue(new Error('Fail'));
 
       // Act & Assert
       await expect(service.delete('post-1')).rejects.toMatchObject({
@@ -251,7 +253,9 @@ describe('PostService (Unit)', () => {
   describe('deleteByAuthorId()', () => {
     it('should return count of deleted posts', async () => {
       // Arrange
-      const deleteByAuthorIdSpy = jest.spyOn(mockRepository, 'deleteByAuthorId').mockResolvedValue(5);
+      const deleteByAuthorIdSpy = jest
+        .spyOn(mockRepository, 'deleteByAuthorId')
+        .mockResolvedValue(5);
 
       // Act
       const result = await service.deleteByAuthorId('author-1');

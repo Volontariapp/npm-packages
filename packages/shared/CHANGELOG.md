@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.2
+
+### Patch Changes
+
+- post payload added
+
 ## 0.6.1
 
 ### Minor Changes

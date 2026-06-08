@@ -1,7 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
-import { BaseRepository, ILike, PaginatedResult } from '@volontariapp/database';
+import {
+  BaseRepository,
+  ILike,
+  PaginatedResult,
+  EventQueueEntity,
+  EventQueueModel,
+} from '@volontariapp/database';
+import { EventQueueRepository } from '@volontariapp/outbox';
+import { Streams } from '@volontariapp/shared';
+import {
+  PostEventMessagingType,
+  IPostCreatedPayload,
+  IPostDeletedPayload,
+} from '@volontariapp/messaging';
 import { PostModel } from '../models/index.js';
 import { PostEntity } from '../entities/index.js';
 import { IPostRepository } from './interfaces/index.js';
@@ -55,5 +68,61 @@ export class PostgresPostRepository
   async deleteByAuthorId(authorId: string): Promise<number> {
     const result = await super.deleteWhere({ authorId });
     return result.affected ?? 0;
+  }
+
+  async createWithPostCreated(data: Partial<PostEntity>): Promise<PostEntity> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const modelData = this.toModel(data);
+      const postModel = queryRunner.manager.create(this.modelClass, modelData);
+      const savedPostModel = await queryRunner.manager.save(this.modelClass, postModel);
+      const savedPostEntity = this.toEntity(savedPostModel);
+
+      const payload: IPostCreatedPayload = {
+        id: savedPostEntity.id,
+      };
+
+      const eventQueueEntity = EventQueueEntity.createEvent<PostEventMessagingType.POST_CREATED>({
+        type: PostEventMessagingType.POST_CREATED,
+        emitter: 'ms-post',
+        emitterId: savedPostEntity.authorId,
+        payload,
+        targetServices: [Streams.POST_CREATED],
+      });
+
+      const eventQueueRepo = new EventQueueRepository<PostEventMessagingType.POST_CREATED>(
+        queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
+      );
+      await eventQueueRepo.create(eventQueueEntity);
+
+      return savedPostEntity;
+    });
+  }
+
+  async deleteWithPostDeleted(id: string): Promise<boolean> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const entity = await this.findById(id);
+      if (!entity) return false;
+
+      await queryRunner.manager.delete(this.modelClass, id);
+
+      const payload: IPostDeletedPayload = {
+        id: entity.id,
+      };
+
+      const eventQueueEntity = EventQueueEntity.createEvent<PostEventMessagingType.POST_DELETED>({
+        type: PostEventMessagingType.POST_DELETED,
+        emitter: 'ms-post',
+        emitterId: entity.authorId,
+        payload,
+        targetServices: [Streams.POST_DELETED],
+      });
+
+      const eventQueueRepo = new EventQueueRepository<PostEventMessagingType.POST_DELETED>(
+        queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
+      );
+      await eventQueueRepo.create(eventQueueEntity);
+
+      return true;
+    });
   }
 }

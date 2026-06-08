@@ -1,6 +1,6 @@
 import type { EventPayload } from '../types/payload.registry.js';
 import { OutboxModel } from './outbox.model.js';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 import type { EventType } from '../types/event.type.js';
 import { Streams } from '@volontariapp/shared';
 
@@ -8,6 +8,10 @@ import { Streams } from '@volontariapp/shared';
 export class EventQueueModel<K extends EventType = EventType> extends OutboxModel<K> {
   @Column({ type: 'integer' })
   version!: number;
+
+  @Index()
+  @Column({ name: 'correlation_id', type: 'uuid', default: () => 'uuid_generate_v4()' })
+  correlationId!: string;
 
   @Column({ name: 'target_services', type: 'varchar', array: true, default: [] })
   targetServices: Streams[] = [];

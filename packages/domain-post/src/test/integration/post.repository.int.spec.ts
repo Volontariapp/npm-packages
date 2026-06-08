@@ -3,14 +3,19 @@ import { PostgresPostRepository } from '../../repositories/postgres-post.reposit
 import { PostModel } from '../../models/post.model.js';
 import { PostFactory } from '../__test-utils__/factories/post.factory.js';
 import { initializeTestDb, closeTestDb, truncateAll, getTestRepository } from '../data-source.js';
+import { EventQueueModel } from '@volontariapp/database';
+import { PostEventMessagingType } from '@volontariapp/messaging';
+import type { Repository } from '@volontariapp/database';
 
 describe('PostgresPostRepository (Integration)', () => {
   let repository: PostgresPostRepository;
+  let eventQueueRepo: Repository<EventQueueModel>;
 
   beforeAll(async () => {
     await initializeTestDb();
     const typeOrmRepo = getTestRepository(PostModel);
     repository = new PostgresPostRepository(typeOrmRepo);
+    eventQueueRepo = getTestRepository(EventQueueModel);
   });
 
   afterAll(async () => {
@@ -129,6 +134,41 @@ describe('PostgresPostRepository (Integration)', () => {
     });
   });
 
+  describe('createWithPostCreated()', () => {
+    it('should persist a new post and emit POST_CREATED event', async () => {
+      // Arrange
+      const postData = PostFactory.build({ title: 'Event Post' });
+
+      // Act
+      const result = await repository.createWithPostCreated(postData);
+
+      // Assert
+      expect(result.id).toBeDefined();
+      expect(result.title).toBe('Event Post');
+
+      const events = await eventQueueRepo.find({
+        where: { type: PostEventMessagingType.POST_CREATED },
+      });
+      expect(events).toHaveLength(1);
+      expect(events[0].payload).toEqual({ after: { id: result.id } });
+      expect(events[0].emitterId).toEqual(result.authorId);
+    });
+
+    it('should abort transaction and not emit event if creation fails due to constraint violation', async () => {
+      // Arrange
+      const post1 = PostFactory.build({ title: 'Conflict Title' });
+      const post2 = PostFactory.build({ title: 'Conflict Title' });
+      await repository.create(post1);
+
+      // Act & Assert
+      await expect(repository.createWithPostCreated(post2)).rejects.toThrow();
+
+      // Ensure no events were pushed (transaction rollback)
+      const events = await eventQueueRepo.find();
+      expect(events).toHaveLength(0);
+    });
+  });
+
   // ─── update ───────────────────────────────────────────────────────────────
 
   describe('update()', () => {
@@ -180,6 +220,40 @@ describe('PostgresPostRepository (Integration)', () => {
 
       // Assert
       expect(result).toBe(false);
+    });
+  });
+
+  describe('deleteWithPostDeleted()', () => {
+    it('should delete a post and emit POST_DELETED event', async () => {
+      // Arrange
+      const post = await repository.create(PostFactory.build());
+
+      // Act
+      const result = await repository.deleteWithPostDeleted(post.id);
+
+      // Assert
+      expect(result).toBe(true);
+      const found = await repository.findById(post.id);
+      expect(found).toBeNull();
+
+      const events = await eventQueueRepo.find({
+        where: { type: PostEventMessagingType.POST_DELETED },
+      });
+      expect(events).toHaveLength(1);
+      expect(events[0].payload).toEqual({ after: { id: post.id } });
+      expect(events[0].emitterId).toEqual(post.authorId);
+    });
+
+    it('should return false and not emit event if post does not exist', async () => {
+      // Act
+      const result = await repository.deleteWithPostDeleted('00000000-0000-0000-0000-000000000000');
+
+      // Assert
+      expect(result).toBe(false);
+
+      // Ensure no events were pushed
+      const events = await eventQueueRepo.find();
+      expect(events).toHaveLength(0);
     });
   });
 

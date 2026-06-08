@@ -72,7 +72,7 @@ export class PostService {
     try {
       this.logger.log(`Creating post: ${String(data.title)}`);
 
-      return await this.postRepository.create(data);
+      return await this.postRepository.createWithPostCreated(data);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
 
@@ -108,9 +108,11 @@ export class PostService {
 
   async delete(id: string): Promise<void> {
     try {
-      await this.findById(id);
       this.logger.log(`Deleting post: ${id}`);
-      await this.postRepository.delete(id);
+      const deleted = await this.postRepository.deleteWithPostDeleted(id);
+      if (!deleted) {
+        throw POST_NOT_FOUND(id);
+      }
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;

@@ -63,6 +63,19 @@ describe('Neo4jPublicationRepository (Integration)', () => {
     });
   });
 
+  describe('createPostNodes()', () => {
+    it('should create multiple SocialPost nodes', async () => {
+      await repository.createPostNodes([POST_1, POST_2]);
+
+      expect(await repository.postExists(POST_1)).toBe(true);
+      expect(await repository.postExists(POST_2)).toBe(true);
+    });
+
+    it('should handle empty array gracefully', async () => {
+      await expect(repository.createPostNodes([])).resolves.toBeUndefined();
+    });
+  });
+
   describe('deletePostNode()', () => {
     it('should delete the post node', async () => {
       await repository.createPostNode(POST_1);
@@ -73,6 +86,20 @@ describe('Neo4jPublicationRepository (Integration)', () => {
 
     it('should be a no-op when the node does not exist', async () => {
       await expect(repository.deletePostNode(GHOST_POST)).resolves.toBeUndefined();
+    });
+  });
+
+  describe('deletePostNodes()', () => {
+    it('should delete multiple SocialPost nodes', async () => {
+      await repository.createPostNodes([POST_1, POST_2]);
+      await repository.deletePostNodes([POST_1, POST_2]);
+
+      expect(await repository.postExists(POST_1)).toBe(false);
+      expect(await repository.postExists(POST_2)).toBe(false);
+    });
+
+    it('should handle empty array gracefully', async () => {
+      await expect(repository.deletePostNodes([])).resolves.toBeUndefined();
     });
   });
 
