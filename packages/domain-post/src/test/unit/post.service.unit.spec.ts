@@ -1,5 +1,6 @@
 import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { PostService } from '../../services/post.service.js';
+import { SagaStatus } from '@volontariapp/shared';
 import type { IPostRepository } from '../../repositories/interfaces/post.repository.js';
 import { createPostRepositoryMock } from '../__test-utils__/mocks/post.repository.mock.js';
 import { PostFactory } from '../__test-utils__/factories/post.factory.js';
@@ -209,6 +210,43 @@ describe('PostService (Unit)', () => {
       // Act & Assert
       await expect(service.update('post-1', { title: 'Exists' })).rejects.toMatchObject({
         code: 'CONFLICT',
+      });
+    });
+  });
+
+  // ─── updateSaga ───────────────────────────────────────────────────────────
+
+  describe('updateSaga()', () => {
+    it('should update the saga status and return the post', async () => {
+      // Arrange
+      const post = PostFactory.build({ id: 'post-1' });
+      const updateSpy = jest.spyOn(mockRepository, 'update').mockResolvedValue(post);
+
+      // Act
+      const result = await service.updateSaga('post-1', SagaStatus.DONE);
+
+      // Assert
+      expect(result).toEqual(post);
+      expect(updateSpy).toHaveBeenCalledWith('post-1', { saga_status: SagaStatus.DONE });
+    });
+
+    it('should throw POST_NOT_FOUND when repository.update returns null', async () => {
+      // Arrange
+      jest.spyOn(mockRepository, 'update').mockResolvedValue(null);
+
+      // Act + Assert
+      await expect(service.updateSaga('unknown', SagaStatus.DONE)).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      // Arrange
+      jest.spyOn(mockRepository, 'update').mockRejectedValue(new Error('Fail'));
+
+      // Act + Assert
+      await expect(service.updateSaga('post-1', SagaStatus.DONE)).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
       });
     });
   });

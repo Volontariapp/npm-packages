@@ -6,8 +6,10 @@ import {
   JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { EventType, EventState } from '@volontariapp/contracts';
+import { SagaStatus } from '@volontariapp/shared';
 import { TagModel } from './tag.model.js';
 import { RequirementModel } from './requirement.model.js';
 
@@ -62,6 +64,14 @@ export class EventModel {
     },
   })
   state!: EventState;
+
+  @Column({
+    type: 'enum',
+    enum: SagaStatus,
+    default: SagaStatus.PENDING,
+  })
+  @Index()
+  saga_status!: SagaStatus;
 
   @Column({ type: 'int', default: 0 })
   awardedImpactScore!: number;

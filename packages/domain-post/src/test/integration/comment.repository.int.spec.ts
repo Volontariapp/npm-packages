@@ -95,6 +95,27 @@ describe('PostgresCommentRepository (Integration)', () => {
     });
   });
 
+  describe('update()', () => {
+    it('should update and return the comment', async () => {
+      const post = PostFactory.build();
+      await postRepository.create(post);
+
+      const comment = CommentFactory.build({ postId: post.id });
+      await commentRepository.create(comment);
+
+      const updated = await commentRepository.update(comment.id, { content: 'Updated content' });
+      expect(updated).not.toBeNull();
+      expect(updated?.content).toBe('Updated content');
+    });
+
+    it('should return null when updating a non-existent comment', async () => {
+      const result = await commentRepository.update('00000000-0000-0000-0000-000000000000', {
+        content: 'Ghost',
+      });
+      expect(result).toBeNull();
+    });
+  });
+
   describe('delete()', () => {
     it('should return false when deleting non-existent comment', async () => {
       const result = await commentRepository.delete('00000000-0000-0000-0000-000000000000');

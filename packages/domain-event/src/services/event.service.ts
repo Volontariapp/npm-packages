@@ -10,6 +10,7 @@ import {
 } from '@volontariapp/errors-nest';
 import { isDatabaseDriverError, isBaseError } from '@volontariapp/errors';
 import { EventState } from '@volontariapp/contracts';
+import { SagaStatus } from '@volontariapp/shared';
 import type { IEventRepository } from '../repositories/interfaces/event.repository.js';
 import { PostgresEventRepository } from '../repositories/postgres-event.repository.js';
 import { EventEntity } from '../entities/event.entity.js';
@@ -126,6 +127,22 @@ export class EventService {
       const err = error as Error;
       this.logger.error(`Failed to update event: ${id}`, err);
       throw DATABASE_ERROR(`updating event: ${id}`, err.message);
+    }
+  }
+
+  async updateSaga(id: string, status: SagaStatus): Promise<EventEntity> {
+    try {
+      this.logger.log(`Updating event saga status: ${id} -> ${status}`);
+      const updated = await this.eventRepository.update(id, { saga_status: status });
+      if (!updated) {
+        throw EVENT_NOT_FOUND(id);
+      }
+      return updated;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to update event saga status: ${id}`, err);
+      throw DATABASE_ERROR(`updating event saga status: ${id}`, err.message);
     }
   }
 

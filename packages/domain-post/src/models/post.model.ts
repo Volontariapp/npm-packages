@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
+import { SagaStatus } from '@volontariapp/shared';
 
 @Entity('posts')
 export class PostModel {
@@ -25,4 +27,12 @@ export class PostModel {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @Column({
+    type: 'enum',
+    enum: SagaStatus,
+    default: SagaStatus.PENDING,
+  })
+  @Index()
+  saga_status!: SagaStatus;
 }

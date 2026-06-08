@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.2.0
+
+### Minor Changes
+
+- saga status added
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.3.8
+  - @volontariapp/messaging@2.7.7
+  - @volontariapp/outbox@0.9.26
+
 ## 3.1.5
 
 ### Patch Changes

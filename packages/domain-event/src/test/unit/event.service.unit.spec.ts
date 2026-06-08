@@ -1,5 +1,6 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { EventState } from '@volontariapp/contracts';
+import { SagaStatus } from '@volontariapp/shared';
 import { EventService } from '../../services/event.service.js';
 import type { IEventRepository } from '../../repositories/interfaces/event.repository.js';
 import { EventFactory } from '../__test-utils__/factories/event.factory.js';
@@ -385,6 +386,43 @@ describe('EventService (Unit)', () => {
       await expect(
         service.changeState('evt-1', EventState.EVENT_STATE_PUBLISHED),
       ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
+  // ─── updateSaga ───────────────────────────────────────────────────────────
+
+  describe('updateSaga()', () => {
+    it('should update the saga status and return the event', async () => {
+      // Arrange
+      const event = EventFactory.build({ id: 'evt-1' });
+      mockRepository.update.mockResolvedValue(event);
+
+      // Act
+      const result = await service.updateSaga('evt-1', SagaStatus.DONE);
+
+      // Assert
+      expect(result).toEqual(event);
+      expect(mockRepository.update).toHaveBeenCalledWith('evt-1', { saga_status: SagaStatus.DONE });
+    });
+
+    it('should throw EVENT_NOT_FOUND when repository.update returns null', async () => {
+      // Arrange
+      mockRepository.update.mockResolvedValue(null);
+
+      // Act + Assert
+      await expect(service.updateSaga('missing', SagaStatus.DONE)).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      // Arrange
+      mockRepository.update.mockRejectedValue(new Error('DB failure'));
+
+      // Act + Assert
+      await expect(service.updateSaga('evt-1', SagaStatus.DONE)).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
     });
   });
 

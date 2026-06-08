@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- saga status added
+
 ## 0.6.4
 
 ### Patch Changes

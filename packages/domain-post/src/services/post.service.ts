@@ -4,6 +4,7 @@ import { Logger } from '@volontariapp/logger';
 import { DATABASE_ERROR, POST_ALREADY_EXISTS, POST_NOT_FOUND } from '@volontariapp/errors-nest';
 import { isDatabaseDriverError, isBaseError } from '@volontariapp/errors';
 import type { IPostRepository } from '../repositories/index.js';
+import { SagaStatus } from '@volontariapp/shared';
 import { PostgresPostRepository } from '../repositories/index.js';
 
 import { PostEntity } from '../entities/index.js';
@@ -100,6 +101,22 @@ export class PostService {
       const err = error as Error;
       this.logger.error(`Failed to update post: ${id}`, err);
       throw DATABASE_ERROR(`updating post: ${id}`, err.message);
+    }
+  }
+
+  async updateSaga(id: string, status: SagaStatus): Promise<PostEntity> {
+    try {
+      this.logger.log(`Updating post saga status: ${id} -> ${status}`);
+      const updated = await this.postRepository.update(id, { saga_status: status });
+      if (!updated) {
+        throw POST_NOT_FOUND(id);
+      }
+      return updated;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to update post saga status: ${id}`, err);
+      throw DATABASE_ERROR(`updating post saga status: ${id}`, err.message);
     }
   }
 

@@ -1,4 +1,5 @@
 import type { EventType, EventState } from '@volontariapp/contracts';
+import type { SagaStatus } from '@volontariapp/shared';
 import type { EventLocation } from '../value-objects/event-location.value-object.js';
 import type { RequirementEntity } from './requirement.entity.js';
 import type { TagEntity } from './tag.entity.js';
@@ -13,6 +14,7 @@ export class EventEntity {
   localisationName!: string;
   type!: EventType;
   state!: EventState;
+  saga_status!: SagaStatus;
   awardedImpactScore!: number;
   maxParticipants!: number;
   currentParticipants!: number;

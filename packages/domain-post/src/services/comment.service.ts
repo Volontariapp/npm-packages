@@ -6,6 +6,7 @@ import { isBaseError } from '@volontariapp/errors';
 import type { ICommentRepository, IPostRepository } from '../repositories/index.js';
 import { CommentEntity } from '../entities/index.js';
 import { PostgresCommentRepository, PostgresPostRepository } from '../repositories/index.js';
+import type { SagaStatus } from '@volontariapp/shared';
 
 @Injectable()
 export class CommentService {
@@ -57,6 +58,25 @@ export class CommentService {
       const err = error as Error;
       this.logger.error('Failed to create comment', err);
       throw DATABASE_ERROR('creating comment', err.message);
+    }
+  }
+
+  async updateSaga(id: string, status: SagaStatus): Promise<CommentEntity> {
+    try {
+      this.logger.log(`Updating comment saga status for comment ${id} to ${status}`);
+      const updated = await this.commentRepository.update(id, { saga_status: status });
+      if (!updated) {
+        throw DATABASE_ERROR(
+          'updating comment saga status',
+          'Comment not found after update attempt',
+        );
+      }
+      return updated;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to update comment saga status ${id}`, err);
+      throw DATABASE_ERROR('updating comment saga status', err.message);
     }
   }
 

@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
+import { SagaStatus } from '@volontariapp/shared';
 
 @Entity('comments')
 export class CommentModel {
@@ -22,6 +23,14 @@ export class CommentModel {
 
   @Column({ type: 'varchar', length: 1000 })
   content!: string;
+
+  @Index()
+  @Column({
+    type: 'enum',
+    enum: SagaStatus,
+    default: SagaStatus.PENDING,
+  })
+  saga_status!: SagaStatus;
 
   @CreateDateColumn()
   createdAt!: Date;
