@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- new functions on domain social for batch creation
+
 ## 0.6.5
 
 ### Patch Changes

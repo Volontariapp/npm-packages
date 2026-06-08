@@ -136,6 +136,25 @@ describe('Neo4jPublicationRepository (Integration)', () => {
     });
   });
 
+  describe('createOwnerships()', () => {
+    it('should create multiple OWN relationships', async () => {
+      await repository.createPostNodes([POST_1, POST_2]);
+      await repository.createOwnerships([
+        { user: USER_A, post: POST_1 },
+        { user: USER_A, post: POST_2 },
+      ]);
+
+      const posts = await repository.getUserPosts(USER_A, PAGINATION);
+      expect(posts.ids).toHaveLength(2);
+      expect(posts.ids).toContain('post-1');
+      expect(posts.ids).toContain('post-2');
+    });
+
+    it('should handle empty array gracefully', async () => {
+      await expect(repository.createOwnerships([])).resolves.toBeUndefined();
+    });
+  });
+
   describe('deleteOwnership()', () => {
     it('should remove the OWN relationship', async () => {
       await repository.createPostNode(POST_1);
@@ -148,6 +167,27 @@ describe('Neo4jPublicationRepository (Integration)', () => {
 
     it('should be a no-op when the relationship does not exist', async () => {
       await expect(repository.deleteOwnership(USER_A, GHOST_POST)).resolves.toBeUndefined();
+    });
+  });
+
+  describe('deleteOwnerships()', () => {
+    it('should remove multiple OWN relationships', async () => {
+      await repository.createPostNodes([POST_1, POST_2]);
+      await repository.createOwnerships([
+        { user: USER_A, post: POST_1 },
+        { user: USER_A, post: POST_2 },
+      ]);
+      await repository.deleteOwnerships([
+        { user: USER_A, post: POST_1 },
+        { user: USER_A, post: POST_2 },
+      ]);
+
+      const posts = await repository.getUserPosts(USER_A, PAGINATION);
+      expect(posts.ids).toHaveLength(0);
+    });
+
+    it('should handle empty array gracefully', async () => {
+      await expect(repository.deleteOwnerships([])).resolves.toBeUndefined();
     });
   });
 
