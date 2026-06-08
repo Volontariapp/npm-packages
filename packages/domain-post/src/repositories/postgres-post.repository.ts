@@ -100,7 +100,8 @@ export class PostgresPostRepository
 
   async deleteWithPostDeleted(id: string): Promise<boolean> {
     return this.executeInTransaction(async (queryRunner) => {
-      const entity = await this.findById(id);
+      const model = await queryRunner.manager.findOne(this.modelClass, { where: { id } });
+      const entity = model ? this.toEntity(model) : null;
       if (!entity) return false;
 
       await queryRunner.manager.delete(this.modelClass, id);
