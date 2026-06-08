@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.7.6
+
+### Patch Changes
+
+- websockets post payload feedback + failed cases
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.6.4
+
+## 2.7.5
+
+### Patch Changes
+
+- websockets post payload
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.6.3
+
 ## 2.7.4
 
 ### Patch Changes

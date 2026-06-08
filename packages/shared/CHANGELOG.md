@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.4
+
+### Patch Changes
+
+- websockets post payload feedback + failed cases
+
+## 0.6.3
+
+### Patch Changes
+
+- websockets post payload
+
 ## 0.6.2
 
 ### Patch Changes

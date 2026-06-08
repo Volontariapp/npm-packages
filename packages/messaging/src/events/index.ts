@@ -44,6 +44,10 @@ import type {
   IBadgeCreatedWebsocketPayload,
   IBadgeUpdatedWebsocketPayload,
   IBadgeDeletedWebsocketPayload,
+  IPostCreatedWebsocketPayload,
+  IPostDeletedWebsocketPayload,
+  IPostCreationFailedWebsocketPayload,
+  IPostDeletionFailedWebsocketPayload,
 } from './ws/payloads.js';
 import { WebsocketEventMessagingType } from './ws/payloads.js';
 
@@ -96,6 +100,11 @@ export interface EventRegistry {
   [WebsocketEventMessagingType.WS_BADGE_CREATED]: IBadgeCreatedWebsocketPayload;
   [WebsocketEventMessagingType.WS_BADGE_UPDATED]: IBadgeUpdatedWebsocketPayload;
   [WebsocketEventMessagingType.WS_BADGE_DELETED]: IBadgeDeletedWebsocketPayload;
+
+  [WebsocketEventMessagingType.WS_POST_CREATED]: IPostCreatedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_POST_DELETED]: IPostDeletedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_POST_CREATION_FAILED]: IPostCreationFailedWebsocketPayload;
+  [WebsocketEventMessagingType.WS_POST_DELETION_FAILED]: IPostDeletionFailedWebsocketPayload;
 }
 
 export const EventMessagingType = {

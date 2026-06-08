@@ -38,6 +38,8 @@ export enum WebsocketStream {
   WS_EVENT = 'ws:event',
   WS_TAG = 'ws:tag',
   WS_BADGE = 'ws:badge',
+  WS_POST_CREATED_FEEDBACK = 'ws:post-created-feedback',
+  WS_POST_DELETED_FEEDBACK = 'ws:post-deleted-feedback',
 }
 
 export const Streams = {

@@ -1,4 +1,5 @@
 import type { IEventPayload, ITagPayload } from '../event/payloads.js';
+import type { IPostCreatedPayload, IPostDeletedPayload } from '../index.js';
 import type { IUserPayload, IBadgePayload, IUserCreatedPayload } from '../user/payloads.js';
 
 export enum WebsocketEventMessagingType {
@@ -22,6 +23,11 @@ export enum WebsocketEventMessagingType {
   WS_BADGE_CREATED = 'ws.badge.created',
   WS_BADGE_UPDATED = 'ws.badge.updated',
   WS_BADGE_DELETED = 'ws.badge.deleted',
+
+  WS_POST_CREATED = 'ws.post.created',
+  WS_POST_DELETED = 'ws.post.deleted',
+  WS_POST_CREATION_FAILED = 'ws.post.creation_failed',
+  WS_POST_DELETION_FAILED = 'ws.post.deletion_failed',
 }
 
 export interface IEventCreatedWebsocketPayload extends IEventPayload {}
@@ -44,3 +50,8 @@ export interface ITagDeletedWebsocketPayload extends ITagPayload {}
 export interface IBadgeCreatedWebsocketPayload extends IBadgePayload {}
 export interface IBadgeUpdatedWebsocketPayload extends IBadgePayload {}
 export interface IBadgeDeletedWebsocketPayload extends IBadgePayload {}
+
+export interface IPostCreatedWebsocketPayload extends IPostCreatedPayload {}
+export interface IPostDeletedWebsocketPayload extends IPostDeletedPayload {}
+export interface IPostCreationFailedWebsocketPayload extends IPostCreatedWebsocketPayload {}
+export interface IPostDeletionFailedWebsocketPayload extends IPostDeletedWebsocketPayload {}
