@@ -8,8 +8,10 @@ export const createPublicationRepositoryMock = (): jest.Mocked<IPublicationRepos
     deletePostNode: jest.fn(),
     deletePostNodes: jest.fn(),
     postExists: jest.fn(),
-    createOwnership: jest.fn(),
-    deleteOwnership: jest.fn(),
+    createOwnership: jest.fn<IPublicationRepository['createOwnership']>(),
+    createOwnerships: jest.fn<IPublicationRepository['createOwnerships']>(),
+    deleteOwnership: jest.fn<IPublicationRepository['deleteOwnership']>(),
+    deleteOwnerships: jest.fn<IPublicationRepository['deleteOwnerships']>(),
     getUserPosts: jest.fn(),
     getFeed: jest.fn(),
   }) as unknown as jest.Mocked<IPublicationRepository>;

@@ -77,6 +77,23 @@ export class Neo4jPublicationRepository
     );
   }
 
+  async createOwnerships(
+    pairs: { user: SocialUserEntity; post: SocialPostEntity }[],
+  ): Promise<void> {
+    if (pairs.length === 0) return;
+    const batch = pairs.map((pair) => ({
+      userId: SocialUserMapper.toModel(pair.user).id.value,
+      postId: SocialPostMapper.toModel(pair.post).id.value,
+    }));
+    await this.write(
+      `UNWIND $batch AS pair
+       MATCH (u:SocialUser {userId: pair.userId})
+       MATCH (p:SocialPost {postId: pair.postId})
+       MERGE (u)-[:OWN]->(p)`,
+      { batch },
+    );
+  }
+
   async deleteOwnership(userEntity: SocialUserEntity, postEntity: SocialPostEntity): Promise<void> {
     const userModel = SocialUserMapper.toModel(userEntity);
     const postModel = SocialPostMapper.toModel(postEntity);
@@ -84,6 +101,22 @@ export class Neo4jPublicationRepository
       `MATCH (:SocialUser {userId: $userId})-[r:OWN]->(:SocialPost {postId: $postId})
        DELETE r`,
       { userId: userModel.id.value, postId: postModel.id.value },
+    );
+  }
+
+  async deleteOwnerships(
+    pairs: { user: SocialUserEntity; post: SocialPostEntity }[],
+  ): Promise<void> {
+    if (pairs.length === 0) return;
+    const batch = pairs.map((pair) => ({
+      userId: SocialUserMapper.toModel(pair.user).id.value,
+      postId: SocialPostMapper.toModel(pair.post).id.value,
+    }));
+    await this.write(
+      `UNWIND $batch AS pair
+       MATCH (:SocialUser {userId: pair.userId})-[r:OWN]->(:SocialPost {postId: pair.postId})
+       DELETE r`,
+      { batch },
     );
   }
 

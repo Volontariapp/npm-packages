@@ -113,6 +113,22 @@ export class PublicationService {
     }
   }
 
+  async ownPosts(pairs: { userId: UserId; postId: PostId }[]): Promise<void> {
+    if (pairs.length === 0) return;
+    const mappedPairs = pairs.map((pair) => ({
+      user: SocialUserMapper.toEntity(pair.userId),
+      post: SocialPostMapper.toEntity(pair.postId),
+    }));
+    try {
+      this.logger.log(`Creating ${String(pairs.length)} ownership relationships`);
+      await this.repository.createOwnerships(mappedPairs);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to create ${String(pairs.length)} ownerships`, error as Error);
+      throw DATABASE_ERROR('creating post ownerships', (error as Error).message);
+    }
+  }
+
   async disownPost(userId: UserId, postId: PostId): Promise<void> {
     const user = SocialUserMapper.toEntity(userId);
     const post = SocialPostMapper.toEntity(postId);
@@ -126,6 +142,22 @@ export class PublicationService {
         error as Error,
       );
       throw DATABASE_ERROR('deleting post ownership', (error as Error).message);
+    }
+  }
+
+  async disownPosts(pairs: { userId: UserId; postId: PostId }[]): Promise<void> {
+    if (pairs.length === 0) return;
+    const mappedPairs = pairs.map((pair) => ({
+      user: SocialUserMapper.toEntity(pair.userId),
+      post: SocialPostMapper.toEntity(pair.postId),
+    }));
+    try {
+      this.logger.log(`Deleting ${String(pairs.length)} ownership relationships`);
+      await this.repository.deleteOwnerships(mappedPairs);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to delete ${String(pairs.length)} ownerships`, error as Error);
+      throw DATABASE_ERROR('deleting post ownerships', (error as Error).message);
     }
   }
 

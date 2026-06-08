@@ -10,7 +10,9 @@ export interface IPublicationRepository {
   deletePostNodes(posts: SocialPostEntity[]): Promise<void>;
   postExists(post: SocialPostEntity): Promise<boolean>;
   createOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
+  createOwnerships(pairs: { user: SocialUserEntity; post: SocialPostEntity }[]): Promise<void>;
   deleteOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
+  deleteOwnerships(pairs: { user: SocialUserEntity; post: SocialPostEntity }[]): Promise<void>;
   getUserPosts(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getFeed(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
 }

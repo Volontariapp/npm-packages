@@ -222,6 +222,45 @@ describe('PublicationService (Unit)', () => {
     });
   });
 
+  describe('ownPosts()', () => {
+    it('should call repository.createOwnerships with correct entities', async () => {
+      const pair1 = { userId: UserIdFactory.build('u1'), postId: PostIdFactory.build('p1') };
+      const pair2 = { userId: UserIdFactory.build('u2'), postId: PostIdFactory.build('p2') };
+      const expected1 = {
+        user: SocialUserFactory.build({ userId: 'u1' }),
+        post: SocialPostFactory.build({ postId: 'p1' }),
+      };
+      const expected2 = {
+        user: SocialUserFactory.build({ userId: 'u2' }),
+        post: SocialPostFactory.build({ postId: 'p2' }),
+      };
+
+      const createOwnershipsSpy = jest
+        .spyOn(mockRepository, 'createOwnerships')
+        .mockResolvedValue(undefined);
+
+      await service.ownPosts([pair1, pair2]);
+
+      expect(createOwnershipsSpy).toHaveBeenCalledWith([expected1, expected2]);
+    });
+
+    it('should do nothing if array is empty', async () => {
+      const createOwnershipsSpy = jest.spyOn(mockRepository, 'createOwnerships');
+      await service.ownPosts([]);
+      expect(createOwnershipsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest.spyOn(mockRepository, 'createOwnerships').mockRejectedValue(new Error('Merge failed'));
+
+      await expect(
+        service.ownPosts([
+          { userId: UserIdFactory.build('u1'), postId: PostIdFactory.build('p1') },
+        ]),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
   // ─── disownPost ───────────────────────────────────────────────────────────
 
   describe('disownPost()', () => {
@@ -242,6 +281,45 @@ describe('PublicationService (Unit)', () => {
 
       await expect(
         service.disownPost(UserIdFactory.build('user-1'), PostIdFactory.build('post-1')),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
+  describe('disownPosts()', () => {
+    it('should call repository.deleteOwnerships with correct entities', async () => {
+      const pair1 = { userId: UserIdFactory.build('u1'), postId: PostIdFactory.build('p1') };
+      const pair2 = { userId: UserIdFactory.build('u2'), postId: PostIdFactory.build('p2') };
+      const expected1 = {
+        user: SocialUserFactory.build({ userId: 'u1' }),
+        post: SocialPostFactory.build({ postId: 'p1' }),
+      };
+      const expected2 = {
+        user: SocialUserFactory.build({ userId: 'u2' }),
+        post: SocialPostFactory.build({ postId: 'p2' }),
+      };
+
+      const deleteOwnershipsSpy = jest
+        .spyOn(mockRepository, 'deleteOwnerships')
+        .mockResolvedValue(undefined);
+
+      await service.disownPosts([pair1, pair2]);
+
+      expect(deleteOwnershipsSpy).toHaveBeenCalledWith([expected1, expected2]);
+    });
+
+    it('should do nothing if array is empty', async () => {
+      const deleteOwnershipsSpy = jest.spyOn(mockRepository, 'deleteOwnerships');
+      await service.disownPosts([]);
+      expect(deleteOwnershipsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest.spyOn(mockRepository, 'deleteOwnerships').mockRejectedValue(new Error('Delete failed'));
+
+      await expect(
+        service.disownPosts([
+          { userId: UserIdFactory.build('u1'), postId: PostIdFactory.build('p1') },
+        ]),
       ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
     });
   });
