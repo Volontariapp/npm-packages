@@ -11,6 +11,9 @@ export interface IPublicationRepository {
   postExists(post: SocialPostEntity): Promise<boolean>;
   createOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
   createOwnerships(pairs: { user: SocialUserEntity; post: SocialPostEntity }[]): Promise<void>;
+  createAndLinkPosts(
+    pairs: { userId: string; postId: string; eventId?: string }[],
+  ): Promise<{ invalidEventIds: { postId: string; eventId: string }[] }>;
   deleteOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
   deleteOwnerships(pairs: { user: SocialUserEntity; post: SocialPostEntity }[]): Promise<void>;
   getUserPosts(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;

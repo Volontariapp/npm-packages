@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
+import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import { Neo4jSocialUserRepository } from '../../repositories/neo4j-social-user.repository.js';
 import { Neo4jPublicationRepository } from '../../repositories/neo4j-publication.repository.js';
 import { Neo4jRelationshipRepository } from '../../repositories/neo4j-relationship.repository.js';
+import { Neo4jEventPostLinkRepository } from '../../repositories/neo4j-event-post-link.repository.js';
 import { initTestNeo4j, closeTestNeo4j, getTestProvider, clearGraph } from '../neo4j-driver.js';
 import { SocialUserFactory } from '../__test-utils__/factories/social-user.factory.js';
 import { SocialPostFactory } from '../__test-utils__/factories/social-post.factory.js';
@@ -24,16 +26,19 @@ const GHOST_POST = SocialPostFactory.build({ postId: 'ghost-post' });
 const PAGINATION = PaginationFactory.build();
 
 describe('Neo4jPublicationRepository (Integration)', () => {
+  let provider: NestNeo4jProvider;
   let userRepository: Neo4jSocialUserRepository;
   let relationshipRepository: Neo4jRelationshipRepository;
   let repository: Neo4jPublicationRepository;
+  let eventLinkRepository: Neo4jEventPostLinkRepository;
 
   beforeAll(async () => {
     await initTestNeo4j();
-    const provider = getTestProvider();
+    provider = getTestProvider();
     userRepository = new Neo4jSocialUserRepository(provider);
     relationshipRepository = new Neo4jRelationshipRepository(provider);
     repository = new Neo4jPublicationRepository(provider);
+    eventLinkRepository = new Neo4jEventPostLinkRepository(provider);
   });
 
   afterAll(async () => {
@@ -44,6 +49,55 @@ describe('Neo4jPublicationRepository (Integration)', () => {
     await clearGraph();
     await userRepository.createNode(USER_A);
     await userRepository.createNode(USER_B);
+  });
+
+  // ─── createAndLinkPosts ───────────────────────────────────────────────────
+
+  describe('createAndLinkPosts()', () => {
+    it('should create posts, link ownership and conditionally link event', async () => {
+      const result = await repository.createAndLinkPosts([
+        { userId: USER_A.userId, postId: POST_1.postId, eventId: 'event-1' },
+        { userId: USER_B.userId, postId: POST_2.postId },
+      ]);
+
+      expect(result.invalidEventIds).toHaveLength(1);
+      expect(result.invalidEventIds[0].eventId).toBe('event-1'); // 'event-1' node doesn't exist yet!
+
+      // Verify posts were created and owned
+      const userAPosts = await repository.getUserPosts(USER_A, PAGINATION);
+      expect(userAPosts.ids).toContain('post-1');
+
+      const userBPosts = await repository.getUserPosts(USER_B, PAGINATION);
+      expect(userBPosts.ids).toContain('post-2');
+
+      // Verify event link for POST_1 was NOT created because event doesn't exist
+      const post1EventId = await eventLinkRepository.getEventRelatedToPost(POST_1);
+      expect(post1EventId).toBeNull();
+    });
+
+    it('should link event correctly if it exists', async () => {
+      // First create the event bypassing the protected write
+      const session = provider.getDriver().session();
+      try {
+        await session.run(`MERGE (e:SocialEvent {eventId: 'event-2'})`);
+      } finally {
+        await session.close();
+      }
+
+      const result = await repository.createAndLinkPosts([
+        { userId: USER_A.userId, postId: POST_3.postId, eventId: 'event-2' },
+      ]);
+
+      expect(result.invalidEventIds).toHaveLength(0);
+
+      const post3EventId = await eventLinkRepository.getEventRelatedToPost(POST_3);
+      expect(post3EventId).toBe('event-2');
+    });
+
+    it('should handle an empty array gracefully', async () => {
+      const result = await repository.createAndLinkPosts([]);
+      expect(result.invalidEventIds).toHaveLength(0);
+    });
   });
 
   // ─── createPostNode / deletePostNode / postExists ─────────────────────────

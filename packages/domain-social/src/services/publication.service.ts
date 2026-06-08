@@ -12,7 +12,7 @@ import type { PaginatedIdsVO } from '../value-objects/paginated-ids.vo.js';
 
 import { SocialUserMapper } from '../mappers/social-user.mapper.js';
 import { SocialPostMapper } from '../mappers/social-post.mapper.js';
-import { UserId, PostId } from '../value-objects/ids.vo.js';
+import { UserId, PostId, EventId } from '../value-objects/ids.vo.js';
 import { PaginationVO } from '../value-objects/pagination.vo.js';
 
 @Injectable()
@@ -126,6 +126,25 @@ export class PublicationService {
       if (isBaseError(error)) throw error;
       this.logger.error(`Failed to create ${String(pairs.length)} ownerships`, error as Error);
       throw DATABASE_ERROR('creating post ownerships', (error as Error).message);
+    }
+  }
+
+  async createAndLinkPosts(
+    pairs: { userId: UserId; postId: PostId; eventId?: EventId }[],
+  ): Promise<{ invalidEventIds: { postId: string; eventId: string }[] }> {
+    if (pairs.length === 0) return { invalidEventIds: [] };
+    const mappedPairs = pairs.map((pair) => ({
+      userId: pair.userId.value,
+      postId: pair.postId.value,
+      eventId: pair.eventId?.value,
+    }));
+    try {
+      this.logger.log(`Creating and linking ${String(pairs.length)} posts in graph`);
+      return await this.repository.createAndLinkPosts(mappedPairs);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to create and link ${String(pairs.length)} posts`, error as Error);
+      throw DATABASE_ERROR('creating and linking posts', (error as Error).message);
     }
   }
 

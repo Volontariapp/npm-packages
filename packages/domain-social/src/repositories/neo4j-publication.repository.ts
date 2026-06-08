@@ -94,6 +94,53 @@ export class Neo4jPublicationRepository
     );
   }
 
+  async createAndLinkPosts(
+    pairs: { userId: string; postId: string; eventId?: string }[],
+  ): Promise<{ invalidEventIds: { postId: string; eventId: string }[] }> {
+    if (pairs.length === 0) return { invalidEventIds: [] };
+    const batch = pairs.map((pair) => ({
+      userId: pair.userId,
+      postId: pair.postId,
+      eventId: pair.eventId ?? null,
+    }));
+
+    const session = this.provider.getDriver().session();
+    const invalidEventIds: { postId: string; eventId: string }[] = [];
+
+    try {
+      const result = await session.run(
+        `UNWIND $batch AS item
+         MERGE (p:SocialPost {postId: item.postId})
+         WITH p, item
+         MATCH (u:SocialUser {userId: item.userId})
+         MERGE (u)-[:OWN]->(p)
+         WITH p, item
+         OPTIONAL MATCH (e:SocialEvent {eventId: item.eventId})
+         FOREACH (ignored IN CASE WHEN e IS NOT NULL THEN [1] ELSE [] END |
+           MERGE (p)-[:LINK_TO_EVENT]->(e)
+         )
+         RETURN item.postId AS postId, item.eventId AS eventId, e IS NOT NULL AS eventFound`,
+        { batch },
+      );
+
+      for (const record of result.records) {
+        const eventId = record.get('eventId') as string | null;
+        const eventFound = record.get('eventFound') as boolean;
+
+        if (eventId !== null && !eventFound) {
+          invalidEventIds.push({
+            postId: record.get('postId') as string,
+            eventId,
+          });
+        }
+      }
+    } finally {
+      await session.close();
+    }
+
+    return { invalidEventIds };
+  }
+
   async deleteOwnership(userEntity: SocialUserEntity, postEntity: SocialPostEntity): Promise<void> {
     const userModel = SocialUserMapper.toModel(userEntity);
     const postModel = SocialPostMapper.toModel(postEntity);

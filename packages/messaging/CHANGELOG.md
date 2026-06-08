@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.8.0
+
+### Minor Changes
+
+- post added event on creation
+
+## 2.7.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.2.5
+
 ## 2.7.8
 
 ### Patch Changes

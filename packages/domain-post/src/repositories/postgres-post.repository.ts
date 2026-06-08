@@ -81,6 +81,10 @@ export class PostgresPostRepository
         id: savedPostEntity.id,
       };
 
+      if (savedPostEntity.eventId) {
+        payload.eventId = savedPostEntity.eventId;
+      }
+
       const eventQueueEntity = EventQueueEntity.createEvent<PostEventMessagingType.POST_CREATED>({
         type: PostEventMessagingType.POST_CREATED,
         emitter: 'ms-post',

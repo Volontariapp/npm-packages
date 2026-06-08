@@ -7,3 +7,4 @@ export * from './tag.request.js';
 export * from './change-event-state.request.js';
 export * from './get-event.request.js';
 export * from './get-tags.request.js';
+export * from './user-events.request.js';

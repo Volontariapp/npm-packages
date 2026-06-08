@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.5
+
+### Patch Changes
+
+- new api contract missing type + event post
+
 ## 4.2.4
 
 ### Patch Changes

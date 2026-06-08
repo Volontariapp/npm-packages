@@ -5,6 +5,7 @@ export enum PostEventMessagingType {
 
 export interface IPostCreatedPayload {
   id: string;
+  eventId?: string;
 }
 
 export interface IPostDeletedPayload {

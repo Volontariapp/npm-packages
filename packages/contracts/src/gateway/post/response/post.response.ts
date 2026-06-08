@@ -1,4 +1,5 @@
 import type { CreatePostResponse, AdminCreatePostResponse } from '../../../post/post.responses.js';
+import type { EventDTO } from '../../event/response/event.response.js';
 
 export interface PostWeb {
   id: string;
@@ -7,6 +8,7 @@ export interface PostWeb {
   content: string;
   createdAt: Date;
   updatedAt: Date;
+  event?: EventDTO;
 }
 
 export interface PostWebResponse {

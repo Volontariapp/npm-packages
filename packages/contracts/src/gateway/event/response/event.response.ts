@@ -55,3 +55,15 @@ export interface ActionSuccessWebResponse {
   success: boolean;
   message?: string;
 }
+
+export interface EventIdWebResponse {
+  id: string;
+}
+
+export interface IdsListWebResponse {
+  ids: string[];
+}
+
+export interface ExistsWebResponse {
+  exists: boolean;
+}
