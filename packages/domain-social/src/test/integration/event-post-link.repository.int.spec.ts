@@ -124,6 +124,33 @@ describe('Neo4jEventPostLinkRepository (Integration)', () => {
     });
   });
 
+  // ─── getEventsRelatedToPosts ──────────────────────────────────────────────
+
+  describe('getEventsRelatedToPosts()', () => {
+    it('should return multiple event ids linked to the given posts', async () => {
+      await repository.linkPostToEvent(POST_1, EVENT_1);
+      await repository.linkPostToEvent(POST_2, EVENT_2);
+
+      const result = await repository.getEventsRelatedToPosts([POST_1, POST_2]);
+
+      expect(result).toHaveLength(2);
+      expect(result).toContainEqual({ postId: 'post-1', eventId: 'event-1' });
+      expect(result).toContainEqual({ postId: 'post-2', eventId: 'event-2' });
+    });
+
+    it('should return an empty array if posts have no events', async () => {
+      const result = await repository.getEventsRelatedToPosts([POST_3, GHOST_POST]);
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should return an empty array if empty input', async () => {
+      const result = await repository.getEventsRelatedToPosts([]);
+
+      expect(result).toHaveLength(0);
+    });
+  });
+
   // ─── getEventPosts ────────────────────────────────────────────────────────
 
   describe('getEventPosts()', () => {

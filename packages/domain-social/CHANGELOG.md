@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Patch Changes
+
+- add get event related to posts batch function
+
 ## 0.7.1
 
 ### Patch Changes

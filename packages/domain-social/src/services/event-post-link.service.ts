@@ -62,6 +62,19 @@ export class EventPostLinkService {
     }
   }
 
+  async getEventsRelatedToPosts(postIds: PostId[]): Promise<{ postId: string; eventId: string }[]> {
+    if (postIds.length === 0) return [];
+
+    const posts = postIds.map((id) => SocialPostMapper.toEntity(id));
+    try {
+      return await this.repository.getEventsRelatedToPosts(posts);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to get events for ${String(postIds.length)} posts`, error as Error);
+      throw DATABASE_ERROR('fetching events related to posts', (error as Error).message);
+    }
+  }
+
   async getEventPosts(eventId: EventId, pagination: PaginationVO): Promise<PaginatedIdsVO> {
     const event = SocialEventMapper.toEntity(eventId);
     try {

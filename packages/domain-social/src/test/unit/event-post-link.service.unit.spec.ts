@@ -121,6 +121,55 @@ describe('EventPostLinkService (Unit)', () => {
     });
   });
 
+  // ─── getEventsRelatedToPosts ──────────────────────────────────────────────
+
+  describe('getEventsRelatedToPosts()', () => {
+    it('should return multiple event ids when links exist', async () => {
+      const getEventsRelatedToPostsSpy = jest
+        .spyOn(mockRepository, 'getEventsRelatedToPosts')
+        .mockResolvedValue([
+          { postId: 'post-1', eventId: 'event-1' },
+          { postId: 'post-2', eventId: 'event-2' },
+        ]);
+
+      const result = await service.getEventsRelatedToPosts([
+        PostIdFactory.build('post-1'),
+        PostIdFactory.build('post-2'),
+      ]);
+
+      expect(result).toHaveLength(2);
+      expect(result).toContainEqual({ postId: 'post-1', eventId: 'event-1' });
+      expect(result).toContainEqual({ postId: 'post-2', eventId: 'event-2' });
+      expect(getEventsRelatedToPostsSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return empty array if no links exist', async () => {
+      jest.spyOn(mockRepository, 'getEventsRelatedToPosts').mockResolvedValue([]);
+
+      const result = await service.getEventsRelatedToPosts([PostIdFactory.build('post-1')]);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should return empty array immediately if given empty input', async () => {
+      const getEventsRelatedToPostsSpy = jest.spyOn(mockRepository, 'getEventsRelatedToPosts');
+      const result = await service.getEventsRelatedToPosts([]);
+
+      expect(result).toEqual([]);
+      expect(getEventsRelatedToPostsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      jest
+        .spyOn(mockRepository, 'getEventsRelatedToPosts')
+        .mockRejectedValue(new Error('Query failed'));
+
+      await expect(
+        service.getEventsRelatedToPosts([PostIdFactory.build('post-1')]),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
   // ─── getEventPosts ────────────────────────────────────────────────────────
 
   describe('getEventPosts()', () => {

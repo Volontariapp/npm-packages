@@ -7,5 +7,8 @@ export interface IEventPostLinkRepository {
   linkPostToEvent(post: SocialPostEntity, event: SocialEventEntity): Promise<void>;
   unlinkPostFromEvent(post: SocialPostEntity, event: SocialEventEntity): Promise<void>;
   getEventRelatedToPost(post: SocialPostEntity): Promise<string | null>;
+  getEventsRelatedToPosts(
+    posts: SocialPostEntity[],
+  ): Promise<{ postId: string; eventId: string }[]>;
   getEventPosts(event: SocialEventEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
 }

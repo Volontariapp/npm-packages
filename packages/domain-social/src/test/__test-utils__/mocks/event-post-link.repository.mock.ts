@@ -6,5 +6,6 @@ export const createEventPostLinkRepositoryMock = (): jest.Mocked<IEventPostLinkR
     linkPostToEvent: jest.fn(),
     unlinkPostFromEvent: jest.fn(),
     getEventRelatedToPost: jest.fn(),
+    getEventsRelatedToPosts: jest.fn(),
     getEventPosts: jest.fn(),
   }) as unknown as jest.Mocked<IEventPostLinkRepository>;

@@ -58,6 +58,25 @@ export class Neo4jEventPostLinkRepository
     );
   }
 
+  async getEventsRelatedToPosts(
+    postEntities: SocialPostEntity[],
+  ): Promise<{ postId: string; eventId: string }[]> {
+    if (postEntities.length === 0) return [];
+
+    const postIds = postEntities.map((p) => SocialPostMapper.toModel(p).id.value);
+
+    return this.read(
+      `MATCH (p:SocialPost)-[:LINK_TO_EVENT]->(e:SocialEvent)
+       WHERE p.postId IN $postIds
+       RETURN p.postId AS postId, e.eventId AS eventId`,
+      { postIds },
+      (r) => ({
+        postId: r.get('postId') as string,
+        eventId: r.get('eventId') as string,
+      }),
+    );
+  }
+
   async getEventPosts(
     eventEntity: SocialEventEntity,
     pagination: PaginationVO,

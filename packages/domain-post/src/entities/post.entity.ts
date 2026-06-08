@@ -8,4 +8,5 @@ export class PostEntity {
   content!: string;
   createdAt!: Date;
   updatedAt!: Date;
+  eventId?: string;
 }
