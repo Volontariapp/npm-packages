@@ -39,6 +39,22 @@ export class PublicationService {
     }
   }
 
+  async createPosts(postIds: PostId[]): Promise<void> {
+    if (postIds.length === 0) return;
+    const posts = postIds.map((postId) => SocialPostMapper.toEntity(postId));
+    try {
+      this.logger.log(`Creating social post nodes: ${postIds.map((p) => p.value).join(', ')}`);
+      await this.repository.createPostNodes(posts);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to create ${postIds.map((p) => p.value).join(', ')} social post nodes`,
+        error as Error,
+      );
+      throw DATABASE_ERROR('creating social post nodes', (error as Error).message);
+    }
+  }
+
   async deletePost(postId: PostId): Promise<void> {
     const post = SocialPostMapper.toEntity(postId);
     try {
@@ -51,6 +67,22 @@ export class PublicationService {
       if (isBaseError(error)) throw error;
       this.logger.error(`Failed to delete social post node: ${postId.value}`, error as Error);
       throw DATABASE_ERROR('deleting social post node', (error as Error).message);
+    }
+  }
+
+  async deletePosts(postIds: PostId[]): Promise<void> {
+    if (postIds.length === 0) return;
+    const posts = postIds.map((postId) => SocialPostMapper.toEntity(postId));
+    try {
+      this.logger.log(`Deleting social post nodes: ${postIds.map((p) => p.value).join(', ')}`);
+      await this.repository.deletePostNodes(posts);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to delete social post nodes: ${postIds.map((p) => p.value).join(', ')}`,
+        error as Error,
+      );
+      throw DATABASE_ERROR('deleting social post nodes', (error as Error).message);
     }
   }
 

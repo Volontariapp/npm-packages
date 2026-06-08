@@ -48,6 +48,7 @@ describe('EventQueueRepository Integration', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       targetServices: [Streams.EVENT_EVENTS],
+      correlationId: randomUUID(),
     } as EventQueueModel);
     await rawRepo.save(event);
 
@@ -75,6 +76,7 @@ describe('EventQueueRepository Integration', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       targetServices: [Streams.EVENT_EVENTS],
+      correlationId: randomUUID(),
     } as EventQueueModel);
     await rawRepo.save(event);
 

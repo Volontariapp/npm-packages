@@ -4,7 +4,9 @@ import type { IPublicationRepository } from '../../../repositories/interfaces/pu
 export const createPublicationRepositoryMock = (): jest.Mocked<IPublicationRepository> =>
   ({
     createPostNode: jest.fn(),
+    createPostNodes: jest.fn(),
     deletePostNode: jest.fn(),
+    deletePostNodes: jest.fn(),
     postExists: jest.fn(),
     createOwnership: jest.fn(),
     deleteOwnership: jest.fn(),

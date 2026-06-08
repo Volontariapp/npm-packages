@@ -5,7 +5,9 @@ import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 export interface IPublicationRepository {
   createPostNode(post: SocialPostEntity): Promise<void>;
+  createPostNodes(posts: SocialPostEntity[]): Promise<void>;
   deletePostNode(post: SocialPostEntity): Promise<void>;
+  deletePostNodes(posts: SocialPostEntity[]): Promise<void>;
   postExists(post: SocialPostEntity): Promise<boolean>;
   createOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;
   deleteOwnership(user: SocialUserEntity, post: SocialPostEntity): Promise<void>;

@@ -1,4 +1,5 @@
 import { OutboxStatus, EventQueueEntity } from '@volontariapp/database';
+import { randomUUID } from 'crypto';
 
 export const makeEventQueueEvent = (
   overrides: Partial<EventQueueEntity> = {},
@@ -13,6 +14,7 @@ export const makeEventQueueEvent = (
     },
     status: OutboxStatus.PENDING,
     attempts: 0,
+    correlationId: randomUUID(),
     targetServices: [],
     createdAt: new Date(Date.now() - 60_000),
     updatedAt: new Date(),

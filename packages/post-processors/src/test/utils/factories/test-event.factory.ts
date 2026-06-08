@@ -6,6 +6,7 @@ import type { EventQueueModel } from '@volontariapp/database';
 import { OutboxStatus } from '@volontariapp/database';
 import type { Repository } from 'typeorm';
 import type { Streams } from '@volontariapp/shared';
+import { randomUUID } from 'node:crypto';
 
 export function makeTestDbEvent(
   repository: Repository<EventQueueModel>,
@@ -49,6 +50,7 @@ export function makeTestEvent(id: string): StreamEvent<IEventPayload> {
     type: EventMessagingType.EVENT_CHANGED,
     emitter: 'test-emitter',
     emitterId: '00000000-0000-0000-0000-000000000000',
+    correlationId: randomUUID(),
     version: 1,
     payload: {
       after: {

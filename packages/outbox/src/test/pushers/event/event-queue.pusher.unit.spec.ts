@@ -64,6 +64,8 @@ describe('EventQueuePusher (Unit)', () => {
         entity.emitter,
         'emitterId',
         entity.emitterId,
+        'correlationId',
+        entity.correlationId,
         'traceId',
         entity.traceId ?? '',
         'version',
@@ -89,6 +91,8 @@ describe('EventQueuePusher (Unit)', () => {
         entity.emitter,
         'emitterId',
         entity.emitterId,
+        'correlationId',
+        entity.correlationId,
         'traceId',
         entity.traceId ?? '',
         'version',
@@ -230,6 +234,8 @@ describe('EventQueuePusher (Unit)', () => {
       expect(xaddArgs).toContain('ms-user');
       expect(xaddArgs).toContain('emitterId');
       expect(xaddArgs).toContain('00000000-0000-0000-0000-000000000000');
+      expect(xaddArgs).toContain('correlationId');
+      expect(xaddArgs).toContain(entity.correlationId);
       expect(xaddArgs).toContain('traceId');
       expect(xaddArgs).toContain('trace-abc');
       expect(xaddArgs).toContain('version');
@@ -244,6 +250,7 @@ describe('EventQueuePusher (Unit)', () => {
       expect(parsed.id).toBe('evt-serial-1');
       expect(parsed.type).toBe('user.created');
       expect(parsed.emitter).toBe('ms-user');
+      expect(parsed.correlationId).toBe(entity.correlationId);
       expect(parsed.traceId).toBe('trace-abc');
       expect(parsed.version).toBe(2);
       expect(parsed.createdAt).toBe('2025-01-01T12:00:00.000Z');

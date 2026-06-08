@@ -11,6 +11,8 @@ export class EventQueueEntity<
 > extends OutboxEntity<K> {
   version!: number;
 
+  correlationId!: string;
+
   targetServices: Streams[] = [];
 
   payload!: {
@@ -25,6 +27,7 @@ export class EventQueueEntity<
     emitter: string;
     emitterId: string;
     traceId?: string;
+    correlationId?: string;
     payload: EventPayload<K>;
     targetServices: Streams[];
   }): EventQueueEntity<K> {
@@ -34,6 +37,7 @@ export class EventQueueEntity<
     entity.emitter = props.emitter;
     entity.emitterId = props.emitterId;
     entity.traceId = props.traceId;
+    entity.correlationId = props.correlationId ?? randomUUID();
     entity.payload = { after: props.payload };
     entity.targetServices = props.targetServices;
     entity.status = OutboxStatus.PENDING;

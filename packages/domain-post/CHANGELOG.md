@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`44e7a08`](https://github.com/Volontariapp/npm-packages/commit/44e7a0874947115ea18c2274c7f76d52df560ced)]:
+  - @volontariapp/messaging@2.7.4
+  - @volontariapp/contracts@4.2.3
+  - @volontariapp/database@3.3.5
+
 ## 3.1.0
 
 ### Minor Changes

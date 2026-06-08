@@ -18,6 +18,8 @@ export enum EventStream {
 export enum PostStream {
   POST_JOB_OUTBOX_SUCCESS = 'post:job:outbox:success',
   POST_JOB_OUTBOX_FAILURE = 'post:job:outbox:failure',
+  POST_CREATED = 'post-created',
+  POST_DELETED = 'post-deleted',
 }
 
 export enum SocialStream {
