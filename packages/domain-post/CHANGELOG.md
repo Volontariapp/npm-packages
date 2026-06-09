@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.2
+
+### Patch Changes
+
+- patch event id insertion
+
 ## 3.5.1
 
 ### Patch Changes
