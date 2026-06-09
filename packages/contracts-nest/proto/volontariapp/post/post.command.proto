@@ -7,12 +7,14 @@ import "volontariapp/post/post.proto";
 message CreatePostCommand {
   string title = 1;
   string content = 2;
+  optional string event_id = 3;
 }
 
 message AdminCreatePostCommand {
   string author_id = 1;
   string title = 2;
   string content = 3;
+  optional string event_id = 4;
 }
 
 message UpdatePostCommand {
