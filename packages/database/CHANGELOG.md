@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.8.1
+
 ## 3.3.11
 
 ### Patch Changes

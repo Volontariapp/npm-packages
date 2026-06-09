@@ -10,12 +10,14 @@ import { Post } from "./post.js";
 export interface CreatePostCommand {
   title: string;
   content: string;
+  eventId?: string | undefined;
 }
 
 export interface AdminCreatePostCommand {
   authorId: string;
   title: string;
   content: string;
+  eventId?: string | undefined;
 }
 
 export interface UpdatePostCommand {
