@@ -91,6 +91,5 @@ export * from './user/payloads.js';
 export * from './social/payloads.js';
 export * from './post/payloads.js';
 export * from './common/payloads.js';
-export * from './ws/payloads.js';
 
 export * from './utils.js';

@@ -1,10 +1,8 @@
 export enum UserStream {
   USER_JOB_OUTBOX_SUCCESS = 'user:job:outbox:success',
   USER_JOB_OUTBOX_FAILURE = 'user:job:outbox:failure',
-  USER_USERS = 'user:users',
-  USER_AUTHORIZATIONS = 'user:authorizations',
-  USER_BADGES = 'user:badges',
-  USER_NOTIFICATIONS = 'user:notifications',
+  USER_CREATED = 'user:created',
+  USER_DELETED = 'user:deleted',
 }
 
 export enum EventStream {
@@ -36,10 +34,8 @@ export enum SocialStream {
 }
 
 export enum WebsocketStream {
-  WS_USER = 'ws:user',
-  WS_EVENT = 'ws:event',
-  WS_TAG = 'ws:tag',
-  WS_BADGE = 'ws:badge',
+  WS_USER_CREATED_FEEDBACK = 'ws:user-created-feedback',
+  WS_USER_DELETED_FEEDBACK = 'ws:user-deleted-feedback',
   WS_POST_CREATED_FEEDBACK = 'ws:post-created-feedback',
   WS_POST_DELETED_FEEDBACK = 'ws:post-deleted-feedback',
   WS_EVENT_CREATED_FEEDBACK = 'ws:event-created-feedback',
