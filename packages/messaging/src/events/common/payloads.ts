@@ -23,3 +23,13 @@ export interface IJobAuditPayload {
   created_at: string;
   updated_at: string | null;
 }
+
+export interface IEventIdPayload {
+  eventId: string;
+}
+export interface IPostIdPayload {
+  postId: string;
+}
+export interface IUserIdPayload {
+  userId: string;
+}

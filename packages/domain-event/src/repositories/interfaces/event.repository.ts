@@ -6,7 +6,6 @@ export interface IEventRepository {
   findAll(relations?: string[]): Promise<EventEntity[]>;
   create(event: Partial<EventEntity>): Promise<EventEntity>;
   createWithEventCreated(event: Partial<EventEntity>): Promise<EventEntity>;
-  createWithGeocodeJob(event: Partial<EventEntity>): Promise<EventEntity>;
   update(id: string, data: Partial<EventEntity>): Promise<EventEntity | null>;
   delete(id: string): Promise<boolean>;
   deleteWithEventDeleted(id: string): Promise<boolean>;

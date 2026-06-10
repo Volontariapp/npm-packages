@@ -22,6 +22,7 @@ import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-sou
 import { testRedisOptions } from '../../../redis-config.js';
 import { E2EBatchPostProcessor, pushDbEvents, waitFor } from '../../../utils/index.js';
 import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enum.js';
+import { EventMessagingType } from '@volontariapp/messaging';
 
 describe('BatchPostProcessor E2E Integration Flow', () => {
   let redis: Redis;
@@ -68,7 +69,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       '00000000-0000-0000-0000-000000000103',
     ];
 
-    const events = eventIds.map((id) => ({ id, type: 'event.changed' }));
+    const events = eventIds.map((id) => ({ id, type: EventMessagingType.EVENT_CREATED }));
     await pushDbEvents(repository, redis, testLogger, events, ['batch-service' as Streams]);
 
     await processor.start();
@@ -109,7 +110,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       repository,
       redis,
       testLogger,
-      [{ id: eventId, type: 'event.changed' }],
+      [{ id: eventId, type: EventMessagingType.EVENT_CREATED }],
       ['batch-service' as Streams],
     );
 
@@ -167,7 +168,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       repository,
       redis,
       testLogger,
-      eventIds.map((id) => ({ id, type: 'event.changed' })),
+      eventIds.map((id) => ({ id, type: EventMessagingType.EVENT_CREATED })),
       ['batch-service' as Streams],
     );
 
@@ -205,7 +206,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       repository,
       redis,
       testLogger,
-      [{ id: eventId, type: 'event.changed' }],
+      [{ id: eventId, type: EventMessagingType.EVENT_CREATED }],
       ['batch-service' as Streams],
     );
 
@@ -260,7 +261,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       repository,
       redis,
       testLogger,
-      [{ id: eventIds[0], type: 'event.changed' }],
+      [{ id: eventIds[0], type: EventMessagingType.EVENT_CREATED }],
       ['batch-service' as Streams],
     );
 
@@ -278,7 +279,7 @@ describe('BatchPostProcessor E2E Integration Flow', () => {
       repository,
       redis,
       testLogger,
-      [{ id: eventId3, type: 'event.changed' }],
+      [{ id: eventId3, type: EventMessagingType.EVENT_CREATED }],
       ['batch-service' as Streams],
     );
 

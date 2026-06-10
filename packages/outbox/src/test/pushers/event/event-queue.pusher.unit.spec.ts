@@ -4,6 +4,7 @@ import { makeLoggerMock } from '../../utils/helpers/shared/logger-mock.helper.js
 import { makeEventQueueEvent } from '../../utils/helpers/event/event-queue-event.helper.js';
 import { Streams } from '@volontariapp/shared';
 import { EventQueuePusher } from '../../../pushers/event-queue.pusher.js';
+import { getEventStreamName } from '@volontariapp/messaging';
 
 describe('EventQueuePusher (Unit)', () => {
   let pusher: EventQueuePusher;
@@ -34,7 +35,7 @@ describe('EventQueuePusher (Unit)', () => {
         type: 'test.event',
         emitter: Streams.SOCIAL_INTERACTIONS,
         emitterId: '00000000-0000-0000-0000-000000000000',
-        targetServices: [Streams.SOCIAL_POSTS, Streams.USER_USERS],
+        targetServices: [Streams.SOCIAL_POSTS, Streams.USER_CREATED],
       });
 
       const mockPipeline = makePipelineMock();
@@ -78,7 +79,7 @@ describe('EventQueuePusher (Unit)', () => {
         expect.any(String),
       );
       expect(xaddSpy).toHaveBeenCalledWith(
-        'stream:user:users',
+        getEventStreamName(Streams.USER_CREATED),
         'MAXLEN',
         '~',
         10000,
@@ -133,7 +134,7 @@ describe('EventQueuePusher (Unit)', () => {
       // Arrange
       const entities = [
         makeEventQueueEvent({ id: '1', targetServices: [Streams.SOCIAL_POSTS] }),
-        makeEventQueueEvent({ id: '2', targetServices: [Streams.USER_USERS] }),
+        makeEventQueueEvent({ id: '2', targetServices: [Streams.USER_CREATED] }),
       ];
 
       const mockPipeline = makePipelineMock();
@@ -173,9 +174,9 @@ describe('EventQueuePusher (Unit)', () => {
       const entities = [
         makeEventQueueEvent({
           id: '1',
-          targetServices: [Streams.SOCIAL_POSTS, Streams.USER_USERS, Streams.SOCIAL_INTERACTIONS],
+          targetServices: [Streams.SOCIAL_POSTS, Streams.USER_CREATED, Streams.SOCIAL_INTERACTIONS],
         }),
-        makeEventQueueEvent({ id: '2', targetServices: [Streams.EVENT_EVENTS] }),
+        makeEventQueueEvent({ id: '2', targetServices: [Streams.EVENT_CREATED] }),
       ];
 
       const mockPipeline = makePipelineMock();
@@ -261,7 +262,7 @@ describe('EventQueuePusher (Unit)', () => {
       // Arrange
       const entity = makeEventQueueEvent({
         id: 'evt-no-trace',
-        targetServices: [Streams.USER_USERS],
+        targetServices: [Streams.USER_CREATED],
         traceId: undefined,
       });
 
@@ -309,7 +310,7 @@ describe('EventQueuePusher (Unit)', () => {
       // Arrange
       const entity = makeEventQueueEvent({
         id: '1',
-        targetServices: [Streams.SOCIAL_POSTS, Streams.USER_USERS],
+        targetServices: [Streams.SOCIAL_POSTS, Streams.USER_CREATED],
       });
 
       const partialError = new Error('MAXLEN overflow');

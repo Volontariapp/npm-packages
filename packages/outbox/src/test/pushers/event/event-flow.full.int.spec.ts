@@ -102,7 +102,7 @@ describe('Event Full Flow (Integration)', () => {
   it('should push 100 events in bulk and verify total stream entries across services', async () => {
     // Arrange
     const count = 100;
-    const services = [Streams.SOCIAL_POSTS, Streams.USER_USERS, Streams.SOCIAL_INTERACTIONS];
+    const services = [Streams.SOCIAL_POSTS, Streams.USER_CREATED, Streams.SOCIAL_INTERACTIONS];
     const models = Array.from({ length: count }).map((_, i) =>
       modelRepository.create({
         id: `00000000-0000-0000-0000-${String(i).padStart(12, '0')}`,

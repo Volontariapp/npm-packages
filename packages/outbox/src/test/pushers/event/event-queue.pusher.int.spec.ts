@@ -34,7 +34,7 @@ describe('EventQueuePusher (Integration)', () => {
     const event = makeEventQueueEvent({
       id: 'evt-1',
       type: 'user.created',
-      emitter: Streams.USER_USERS,
+      emitter: Streams.USER_CREATED,
       emitterId: '00000000-0000-0000-0000-000000000000',
       targetServices: [Streams.SOCIAL_POSTS, Streams.SOCIAL_INTERACTIONS],
       payload: { after: { userId: '123' } },
@@ -65,9 +65,9 @@ describe('EventQueuePusher (Integration)', () => {
       const count = 500;
       const services = [
         Streams.SOCIAL_POSTS,
-        Streams.USER_USERS,
+        Streams.USER_CREATED,
         Streams.SOCIAL_INTERACTIONS,
-        Streams.EVENT_EVENTS,
+        Streams.EVENT_CREATED,
       ];
       const events = Array.from({ length: count }).map((_, i) =>
         makeEventQueueEvent({

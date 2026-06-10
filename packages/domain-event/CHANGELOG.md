@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.6.4
+
+### Patch Changes
+
+- geolocalisation removed on event creation
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.8.2
+  - @volontariapp/outbox@0.9.31
+  - @volontariapp/shared@0.7.1
+  - @volontariapp/database@3.3.13
+
 ## 3.6.3
 
 ### Patch Changes
