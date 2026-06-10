@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1
+
+### Patch Changes
+
+- geolocalisation removed on event creation
+
 ## 0.7.0
 
 ### Minor Changes

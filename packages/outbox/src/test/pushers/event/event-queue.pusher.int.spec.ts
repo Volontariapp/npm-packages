@@ -67,7 +67,7 @@ describe('EventQueuePusher (Integration)', () => {
         Streams.SOCIAL_POSTS,
         Streams.USER_USERS,
         Streams.SOCIAL_INTERACTIONS,
-        Streams.EVENT_EVENTS,
+        Streams.EVENT_CREATED,
       ];
       const events = Array.from({ length: count }).map((_, i) =>
         makeEventQueueEvent({

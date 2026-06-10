@@ -12,6 +12,7 @@ import {
   startOutboxLoop,
   waitFor,
 } from '../../../utils/index.js';
+import { EventMessagingType } from '@volontariapp/messaging';
 
 describe('Multiple Post-Processors E2E Integration Flow', () => {
   let redis: Redis;
@@ -76,7 +77,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
     // Push 5 events targeted to both services
     for (let i = 1; i <= 5; i++) {
       const eventId = `00000000-0000-0000-0000-00000000000${String(i)}`;
-      await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+      await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
         'shared-service' as Streams,
       ]);
     }
@@ -135,7 +136,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
     // Push 12 events
     for (let i = 1; i <= 12; i++) {
       const eventId = `00000000-0000-0000-0000-0000000000${(10 + i).toString()}`;
-      await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+      await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
         'shared-service' as Streams,
       ]);
     }
@@ -190,7 +191,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
 
     // Push 1 event
     const eventId = '00000000-0000-0000-0000-000000000030';
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'shared-service' as Streams,
     ]);
 
@@ -253,7 +254,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
 
     // Push 1 event
     const eventId = '00000000-0000-0000-0000-000000000040';
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'shared-service' as Streams,
     ]);
 
@@ -309,7 +310,7 @@ describe('Multiple Post-Processors E2E Integration Flow', () => {
 
     // Push 1 event targeting service-a and service-b
     const eventId = '00000000-0000-0000-0000-000000000050';
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'service-a' as Streams,
       'service-b' as Streams,
     ]);

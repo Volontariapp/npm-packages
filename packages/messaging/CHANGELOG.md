@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.8.2
+
+### Patch Changes
+
+- geolocalisation removed on event creation
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.7.1
+
 ## 2.8.1
 
 ### Patch Changes

@@ -1,24 +1,32 @@
 import { EventEventMessagingType } from './event/payloads.js';
 import type {
-  IEventPayload,
-  IRequirementPayload,
-  ITagPayload,
-  IEventTagLinkedPayload,
+  IEventGeocodedPayload,
+  IEventGeocodingFailedPayload,
+  IEventCreationSuccessfullPayload,
+  IEventCreationFailedPayload,
+  IEventDeletionSuccessfullPayload,
+  IEventDeletionFailedPayload,
+  IEventCreatedPayload,
+  IEventDeletedPayload,
 } from './event/payloads.js';
 
 import { UserEventMessagingType } from './user/payloads.js';
-import type {
-  IUserPayload,
-  IBadgePayload,
-  IUserCreatedPayload,
-  IUserDeleledPayload,
-} from './user/payloads.js';
+import type { IUserCreatedPayload, IUserDeleledPayload } from './user/payloads.js';
 
 import { SocialEventMessagingType } from './social/payloads.js';
 import type {
-  ISocialUserPayload,
-  ISocialPostPayload,
-  ISocialEventPayload,
+  IEventSocialCreatedPayload,
+  IEventSocialCreationFailedPayload,
+  IEventSocialDeletedPayload,
+  IEventSocialDeletionFailedPayload,
+  IPostSocialCreatedPayload,
+  IPostSocialCreationFailedPayload,
+  IPostSocialDeletedPayload,
+  IPostSocialDeletionFailedPayload,
+  IUserSocialCreatedPayload,
+  IUserSocialCreationFailedPayload,
+  IUserSocialDeletedPayload,
+  IUserSocialDeletionFailedPayload,
 } from './social/payloads.js';
 
 import { PostEventMessagingType } from './post/payloads.js';
@@ -26,85 +34,46 @@ import type { IPostCreatedPayload, IPostDeletedPayload } from './post/payloads.j
 
 import { CommonEventMessagingType } from './common/payloads.js';
 import type { IJobAuditPayload } from './common/payloads.js';
-import type {
-  IEventCreatedWebsocketPayload,
-  IEventUpdatedWebsocketPayload,
-  IEventDeletedWebsocketPayload,
-  IEventStateChangedWebsocketPayload,
-  IEventRequirementsManagedWebsocketPayload,
-  IUserCreatedWebsocketPayload,
-  IUserUpdatedWebsocketPayload,
-  IUserDeletedWebsocketPayload,
-  IUserBadgeAddedWebsocketPayload,
-  IUserBadgeRemovedWebsocketPayload,
-  IUserImpactScoreIncrementedWebsocketPayload,
-  ITagCreatedWebsocketPayload,
-  ITagUpdatedWebsocketPayload,
-  ITagDeletedWebsocketPayload,
-  IBadgeCreatedWebsocketPayload,
-  IBadgeUpdatedWebsocketPayload,
-  IBadgeDeletedWebsocketPayload,
-  IPostCreatedWebsocketPayload,
-  IPostDeletedWebsocketPayload,
-  IPostCreationFailedWebsocketPayload,
-  IPostDeletionFailedWebsocketPayload,
-} from './ws/payloads.js';
-import { WebsocketEventMessagingType } from './ws/payloads.js';
 
 export interface EventRegistry {
   // Event
-  [EventEventMessagingType.EVENT_CHANGED]: IEventPayload;
-  [EventEventMessagingType.EVENT_CREATED]: IEventPayload;
-  [EventEventMessagingType.EVENT_DELETED]: IEventPayload;
-  [EventEventMessagingType.REQUIREMENT_CHANGED]: IRequirementPayload;
-  [EventEventMessagingType.TAG_CHANGED]: ITagPayload;
-  [EventEventMessagingType.EVENT_TAG_LINKED]: IEventTagLinkedPayload;
+  [EventEventMessagingType.EVENT_CREATED]: IEventCreatedPayload;
+  [EventEventMessagingType.EVENT_CREATION_SUCCESSFULL]: IEventCreationSuccessfullPayload;
+  [EventEventMessagingType.EVENT_CREATION_FAILED]: IEventCreationFailedPayload;
+  [EventEventMessagingType.EVENT_DELETED]: IEventDeletedPayload;
+  [EventEventMessagingType.EVENT_DELETION_FAILED]: IEventDeletionFailedPayload;
+  [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: IEventDeletionSuccessfullPayload;
+
+  [EventEventMessagingType.EVENT_GEOCODED]: IEventGeocodedPayload;
+  [EventEventMessagingType.EVENT_GEOCODING_FAILED]: IEventGeocodingFailedPayload;
 
   // Common
   [CommonEventMessagingType.JOB_OUTBOX_SUCCESS]: IJobAuditPayload;
   [CommonEventMessagingType.JOB_OUTBOX_FAILED]: IJobAuditPayload;
 
   // User
-  [UserEventMessagingType.USER_CHANGED]: IUserPayload;
-  [UserEventMessagingType.BADGE_CHANGED]: IBadgePayload;
   [UserEventMessagingType.USER_CREATED]: IUserCreatedPayload;
   [UserEventMessagingType.USER_DELETED]: IUserDeleledPayload;
 
   // Social
-  [SocialEventMessagingType.SOCIAL_USER_CHANGED]: ISocialUserPayload;
-  [SocialEventMessagingType.SOCIAL_POST_CHANGED]: ISocialPostPayload;
-  [SocialEventMessagingType.SOCIAL_EVENT_CHANGED]: ISocialEventPayload;
+  [SocialEventMessagingType.EVENT_SOCIAL_CREATED]: IEventSocialCreatedPayload;
+  [SocialEventMessagingType.EVENT_SOCIAL_CREATION_FAILED]: IEventSocialCreationFailedPayload;
+  [SocialEventMessagingType.EVENT_SOCIAL_DELETED]: IEventSocialDeletedPayload;
+  [SocialEventMessagingType.EVENT_SOCIAL_DELETION_FAILED]: IEventSocialDeletionFailedPayload;
+  [SocialEventMessagingType.POST_SOCIAL_CREATED]: IPostSocialCreatedPayload;
+  [SocialEventMessagingType.POST_SOCIAL_CREATION_FAILED]: IPostSocialCreationFailedPayload;
+  [SocialEventMessagingType.POST_SOCIAL_DELETED]: IPostSocialDeletedPayload;
+  [SocialEventMessagingType.POST_SOCIAL_DELETION_FAILED]: IPostSocialDeletionFailedPayload;
+  [SocialEventMessagingType.USER_SOCIAL_CREATED]: IUserSocialCreatedPayload;
+  [SocialEventMessagingType.USER_SOCIAL_CREATION_FAILED]: IUserSocialCreationFailedPayload;
+  [SocialEventMessagingType.USER_SOCIAL_DELETED]: IUserSocialDeletedPayload;
+  [SocialEventMessagingType.USER_SOCIAL_DELETION_FAILED]: IUserSocialDeletionFailedPayload;
 
   // Post
   [PostEventMessagingType.POST_CREATED]: IPostCreatedPayload;
   [PostEventMessagingType.POST_DELETED]: IPostDeletedPayload;
 
   // WS
-  [WebsocketEventMessagingType.WS_EVENT_CREATED]: IEventCreatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_EVENT_UPDATED]: IEventUpdatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_EVENT_DELETED]: IEventDeletedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_EVENT_STATE_CHANGED]: IEventStateChangedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_EVENT_REQUIREMENTS_MANAGED]: IEventRequirementsManagedWebsocketPayload;
-
-  [WebsocketEventMessagingType.WS_USER_CREATED]: IUserCreatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_USER_UPDATED]: IUserUpdatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_USER_DELETED]: IUserDeletedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_USER_BADGE_ADDED]: IUserBadgeAddedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_USER_BADGE_REMOVED]: IUserBadgeRemovedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_USER_IMPACT_SCORE_INCREMENTED]: IUserImpactScoreIncrementedWebsocketPayload;
-
-  [WebsocketEventMessagingType.WS_TAG_CREATED]: ITagCreatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_TAG_UPDATED]: ITagUpdatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_TAG_DELETED]: ITagDeletedWebsocketPayload;
-
-  [WebsocketEventMessagingType.WS_BADGE_CREATED]: IBadgeCreatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_BADGE_UPDATED]: IBadgeUpdatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_BADGE_DELETED]: IBadgeDeletedWebsocketPayload;
-
-  [WebsocketEventMessagingType.WS_POST_CREATED]: IPostCreatedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_POST_DELETED]: IPostDeletedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_POST_CREATION_FAILED]: IPostCreationFailedWebsocketPayload;
-  [WebsocketEventMessagingType.WS_POST_DELETION_FAILED]: IPostDeletionFailedWebsocketPayload;
 }
 
 export const EventMessagingType = {
@@ -113,7 +82,6 @@ export const EventMessagingType = {
   ...SocialEventMessagingType,
   ...PostEventMessagingType,
   ...CommonEventMessagingType,
-  ...WebsocketEventMessagingType,
 } as const;
 
 export type EventMessagingType = (typeof EventMessagingType)[keyof typeof EventMessagingType];

@@ -15,8 +15,6 @@ import type { IEventRepository } from '../repositories/interfaces/event.reposito
 import { PostgresEventRepository } from '../repositories/postgres-event.repository.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { TagService } from './tag.service.js';
-import { GeocodingService } from './geocoding/geocoding.service.js';
-import { EventLocation } from '../value-objects/event-location.value-object.js';
 import { TagEntity } from '../entities/tag.entity.js';
 import { FindAroundMeVO } from '../value-objects/find-around-me.value-object.js';
 
@@ -28,7 +26,6 @@ export class EventService {
     @Inject(PostgresEventRepository)
     private readonly eventRepository: IEventRepository,
     private readonly tagService: TagService,
-    private readonly geocodingService: GeocodingService,
   ) {}
 
   async findById(id: string): Promise<EventEntity> {
@@ -68,21 +65,7 @@ export class EventService {
         data.tags = await this.validateTags(data.tags);
       }
 
-      let geoResult = null;
-      if (data.localisationName && data.localisationName.trim().length > 0) {
-        geoResult = await this.geocodingService.geocode(data.localisationName);
-      }
-
-      if (geoResult) {
-        this.logger.log(`Geocoding successful for event ${String(data.name)}`);
-        data.location = new EventLocation(geoResult.lat, geoResult.lng);
-        return await this.eventRepository.createWithEventCreated(data);
-      } else if (data.localisationName) {
-        this.logger.warn(`Geocoding failed for event ${String(data.name)}, deferring to worker`);
-        return await this.eventRepository.createWithGeocodeJob(data);
-      } else {
-        return await this.eventRepository.createWithEventCreated(data);
-      }
+      return await this.eventRepository.createWithEventCreated(data);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
 

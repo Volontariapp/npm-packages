@@ -1,8 +1,6 @@
 import type { UserRoles } from '@volontariapp/shared';
 
 export enum UserEventMessagingType {
-  USER_CHANGED = 'user.changed',
-  BADGE_CHANGED = 'badge.changed',
   USER_CREATED = 'user.created',
   USER_DELETED = 'user.deleted',
 }

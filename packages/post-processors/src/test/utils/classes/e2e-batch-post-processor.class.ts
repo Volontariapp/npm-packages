@@ -3,9 +3,9 @@ import type { BatchEventItem } from '../../../interfaces/index.js';
 import { EventMessagingType } from '@volontariapp/messaging';
 
 export class E2EBatchPostProcessor extends BatchPostProcessor<
-  typeof EventMessagingType.EVENT_CHANGED
+  typeof EventMessagingType.EVENT_CREATED
 > {
-  public processedBatches: BatchEventItem<typeof EventMessagingType.EVENT_CHANGED>[][] = [];
+  public processedBatches: BatchEventItem<typeof EventMessagingType.EVENT_CREATED>[][] = [];
   public processError: Error | null = null;
   public failEventIds: Set<string> = new Set();
   public processDelayMs = 0;
@@ -15,7 +15,7 @@ export class E2EBatchPostProcessor extends BatchPostProcessor<
   }
 
   protected override async processEvents(
-    events: BatchEventItem<typeof EventMessagingType.EVENT_CHANGED>[],
+    events: BatchEventItem<typeof EventMessagingType.EVENT_CREATED>[],
   ): Promise<void> {
     if (this.processDelayMs > 0) {
       await new Promise((resolve) => setTimeout(resolve, this.processDelayMs));
@@ -34,7 +34,7 @@ export class E2EBatchPostProcessor extends BatchPostProcessor<
   }
 
   public override shouldProcess(eventType: string): boolean {
-    return eventType === (EventMessagingType.EVENT_CHANGED as string);
+    return eventType === (EventMessagingType.EVENT_CREATED as string);
   }
 
   public override async acknowledge(messageId: string): Promise<void> {

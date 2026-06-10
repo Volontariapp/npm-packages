@@ -150,7 +150,7 @@ describe('PostgresPostRepository (Integration)', () => {
         where: { type: PostEventMessagingType.POST_CREATED },
       });
       expect(events).toHaveLength(1);
-      expect(events[0].payload).toEqual({ after: { id: result.id } });
+      expect(events[0].payload).toEqual({ after: { postId: result.id } });
       expect(events[0].emitterId).toEqual(result.authorId);
     });
 
@@ -240,7 +240,7 @@ describe('PostgresPostRepository (Integration)', () => {
         where: { type: PostEventMessagingType.POST_DELETED },
       });
       expect(events).toHaveLength(1);
-      expect(events[0].payload).toEqual({ after: { id: post.id } });
+      expect(events[0].payload).toEqual({ after: { postId: post.id } });
       expect(events[0].emitterId).toEqual(post.authorId);
     });
 

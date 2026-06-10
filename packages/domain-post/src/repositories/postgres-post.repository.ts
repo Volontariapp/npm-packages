@@ -78,7 +78,7 @@ export class PostgresPostRepository
       const savedPostEntity = this.toEntity(savedPostModel);
 
       const payload: IPostCreatedPayload = {
-        id: savedPostEntity.id,
+        postId: savedPostEntity.id,
       };
 
       if (data.eventId) {
@@ -111,7 +111,7 @@ export class PostgresPostRepository
       await queryRunner.manager.delete(this.modelClass, id);
 
       const payload: IPostDeletedPayload = {
-        id: entity.id,
+        postId: entity.id,
       };
 
       const eventQueueEntity = EventQueueEntity.createEvent<PostEventMessagingType.POST_DELETED>({

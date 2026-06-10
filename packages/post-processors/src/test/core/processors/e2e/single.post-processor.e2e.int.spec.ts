@@ -23,6 +23,7 @@ import { testDataSource, initializeTestDb, closeTestDb } from '../../../data-sou
 import { testRedisOptions } from '../../../redis-config.js';
 import { E2ESinglePostProcessor, pushDbEvent, waitFor } from '../../../utils/index.js';
 import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enum.js';
+import { EventMessagingType } from '@volontariapp/messaging';
 
 describe('SinglePostProcessor E2E Integration Flow', () => {
   let redis: Redis;
@@ -65,7 +66,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     });
 
     const eventId = '00000000-0000-0000-0000-000000000001';
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
 
@@ -74,7 +75,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     await waitFor(() => processor.processedEvents.length === 1, 3000);
 
     expect(processor.processedEvents[0].event.id).toBe(eventId);
-    expect(processor.processedEvents[0].event.type).toBe('event.changed');
+    expect(processor.processedEvents[0].event.type).toBe(EventMessagingType.EVENT_CREATED);
 
     // Verify it was marked as COMPLETED in the outbox database
     const dbItem = await repository.findOneByOrFail({ id: eventId });
@@ -99,7 +100,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     });
 
     const eventId = '00000000-0000-0000-0000-000000000002';
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
 
@@ -144,7 +145,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     });
 
     const eventId = '00000000-0000-0000-0000-000000000003';
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
 
@@ -184,7 +185,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     });
 
     const eventId = '00000000-0000-0000-0000-000000000004';
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
 
@@ -232,10 +233,15 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     const eventIdOk = '00000000-0000-0000-0000-000000000006';
 
     // Push two events
-    await pushDbEvent(repository, redis, testLogger, eventIdFail, 'event.changed', [
-      'single-service' as Streams,
-    ]);
-    await pushDbEvent(repository, redis, testLogger, eventIdOk, 'event.changed', [
+    await pushDbEvent(
+      repository,
+      redis,
+      testLogger,
+      eventIdFail,
+      EventMessagingType.EVENT_CREATED,
+      ['single-service' as Streams],
+    );
+    await pushDbEvent(repository, redis, testLogger, eventIdOk, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
 
@@ -282,10 +288,10 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     const eventId2 = '00000000-0000-0000-0000-000000000008';
 
     // Push two failed events, and then one more event
-    await pushDbEvent(repository, redis, testLogger, eventId1, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId1, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
-    await pushDbEvent(repository, redis, testLogger, eventId2, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId2, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
 
@@ -301,7 +307,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     const eventId3 = '00000000-0000-0000-0000-000000000009';
     // Push another event while CB is open
-    await pushDbEvent(repository, redis, testLogger, eventId3, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId3, EventMessagingType.EVENT_CREATED, [
       'single-service' as Streams,
     ]);
 
@@ -328,7 +334,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
 
     const eventId = '00000000-0000-0000-0000-000000000010';
     // Push an event targeting "other-service"
-    await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+    await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
       'other-service' as Streams,
     ]);
 
@@ -369,7 +375,7 @@ describe('SinglePostProcessor E2E Integration Flow', () => {
     // Push 10 events
     for (let i = 1; i <= 10; i++) {
       const eventId = `00000000-0000-0000-0000-0000000000${(10 + i).toString()}`;
-      await pushDbEvent(repository, redis, testLogger, eventId, 'event.changed', [
+      await pushDbEvent(repository, redis, testLogger, eventId, EventMessagingType.EVENT_CREATED, [
         'single-service' as Streams,
       ]);
     }

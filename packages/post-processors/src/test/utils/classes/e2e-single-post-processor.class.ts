@@ -1,11 +1,11 @@
 import { SinglePostProcessor } from '../../../core/processors/single.post-processor.js';
-import type { StreamEvent, IEventPayload } from '@volontariapp/messaging';
+import type { IEventCreatedPayload, StreamEvent } from '@volontariapp/messaging';
 import { EventMessagingType } from '@volontariapp/messaging';
 
 export class E2ESinglePostProcessor extends SinglePostProcessor<
-  typeof EventMessagingType.EVENT_CHANGED
+  typeof EventMessagingType.EVENT_CREATED
 > {
-  public processedEvents: { event: StreamEvent<IEventPayload>; messageId: string }[] = [];
+  public processedEvents: { event: StreamEvent<IEventCreatedPayload>; messageId: string }[] = [];
   public processError: Error | null = null;
   public failEventIds: Set<string> = new Set();
 
@@ -14,7 +14,7 @@ export class E2ESinglePostProcessor extends SinglePostProcessor<
   }
 
   protected override async processEvent(
-    event: StreamEvent<IEventPayload>,
+    event: StreamEvent<IEventCreatedPayload>,
     messageId: string,
   ): Promise<void> {
     if (this.failEventIds.has(event.id) && this.processError) {
@@ -28,7 +28,7 @@ export class E2ESinglePostProcessor extends SinglePostProcessor<
   }
 
   public override shouldProcess(eventType: string): boolean {
-    return eventType === (EventMessagingType.EVENT_CHANGED as string);
+    return eventType === (EventMessagingType.EVENT_CREATED as string);
   }
 
   public override async acknowledge(messageId: string): Promise<void> {

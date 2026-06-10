@@ -175,7 +175,7 @@ describe('EventQueuePusher (Unit)', () => {
           id: '1',
           targetServices: [Streams.SOCIAL_POSTS, Streams.USER_USERS, Streams.SOCIAL_INTERACTIONS],
         }),
-        makeEventQueueEvent({ id: '2', targetServices: [Streams.EVENT_EVENTS] }),
+        makeEventQueueEvent({ id: '2', targetServices: [Streams.EVENT_CREATED] }),
       ];
 
       const mockPipeline = makePipelineMock();

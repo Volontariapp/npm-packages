@@ -105,7 +105,7 @@ describe('SinglePostProcessor — Unit', () => {
       await new Promise((resolve) => setTimeout(resolve, 60));
 
       expect(processSpy).toHaveBeenCalledTimes(1);
-      expect(shouldProcessSpy).toHaveBeenCalledWith(EventMessagingType.EVENT_CHANGED);
+      expect(shouldProcessSpy).toHaveBeenCalledWith(EventMessagingType.EVENT_CREATED);
       expect(acknowledgeSpy).toHaveBeenCalledWith(TestEventId.MSG_PENDING);
 
       const xreadgroupCalls = callMock.mock.calls.filter((c) => c[0] === 'XREADGROUP');

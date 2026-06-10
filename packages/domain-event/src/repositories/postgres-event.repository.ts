@@ -1,24 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
-import {
-  BaseRepository,
-  ILike,
-  EventQueueEntity,
-  EventQueueModel,
-  JobsOutboxEntity,
-  JobsOutboxModel,
-} from '@volontariapp/database';
-import { EventQueueRepository, JobsOutboxRepository } from '@volontariapp/outbox';
+import { BaseRepository, ILike, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
+import { EventQueueRepository } from '@volontariapp/outbox';
 import { EventModel } from '../models/event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { Streams } from '@volontariapp/shared';
 import { IEventRepository } from './interfaces/event.repository.js';
 import {
   EventEventMessagingType,
-  IEventPayload,
-  EventsJobType,
-  EventsQueue,
+  IEventCreatedPayload,
+  IEventDeletedPayload,
 } from '@volontariapp/messaging';
 import { EventType, EventState } from '@volontariapp/contracts';
 
@@ -59,73 +51,26 @@ export class PostgresEventRepository
       const savedEventModel = await queryRunner.manager.save(this.modelClass, eventModel);
       const savedEventEntity = this.toEntity(savedEventModel);
 
-      const payload: IEventPayload = {
-        id: savedEventEntity.id,
-        name: savedEventEntity.name,
-        description: savedEventEntity.description,
-        startAt: savedEventEntity.startAt,
-        endAt: savedEventEntity.endAt,
-        type: savedEventEntity.type,
-        state: savedEventEntity.state,
-        awardedImpactScore: savedEventEntity.awardedImpactScore,
-        maxParticipants: savedEventEntity.maxParticipants,
-        organizerId: savedEventEntity.organizerId,
+      const payload: IEventCreatedPayload = {
+        eventId: savedEventEntity.id,
         localisationName: savedEventEntity.localisationName,
-        eventLocation: {
-          lat: savedEventEntity.location.latitude,
-          long: savedEventEntity.location.longitude,
-        },
-        createdAt: savedEventEntity.createdAt,
-        updatedAt: savedEventEntity.updatedAt,
       };
 
       const eventQueueEntity: EventQueueEntity<
         EventEventMessagingType.EVENT_CREATED,
-        IEventPayload
+        IEventCreatedPayload
       > = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_CREATED>({
         type: EventEventMessagingType.EVENT_CREATED,
         emitter: 'ms-event',
         emitterId: savedEventEntity.organizerId,
         payload,
-        targetServices: [Streams.SOCIAL_INTERACTIONS],
+        targetServices: [Streams.EVENT_CREATED],
       });
 
       const eventQueueRepo = new EventQueueRepository<EventEventMessagingType.EVENT_CREATED>(
         queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
       );
       await eventQueueRepo.create(eventQueueEntity);
-
-      return savedEventEntity;
-    });
-  }
-
-  async createWithGeocodeJob(data: Partial<EventEntity>): Promise<EventEntity> {
-    return this.executeInTransaction(async (queryRunner) => {
-      const modelData = this.toModel(data);
-      const eventModel = queryRunner.manager.create(this.modelClass, modelData);
-      const savedEventModel = await queryRunner.manager.save(this.modelClass, eventModel);
-      const savedEventEntity = this.toEntity(savedEventModel);
-
-      if (
-        savedEventEntity.localisationName &&
-        savedEventEntity.localisationName.trim().length > 0
-      ) {
-        const geocodeJobEntity = JobsOutboxEntity.createJob<EventsJobType.GEOCODE_EVENT>({
-          type: EventsJobType.GEOCODE_EVENT,
-          emitter: 'ms-event',
-          emitterId: savedEventEntity.organizerId,
-          target: EventsQueue.EVENTS,
-          payload: {
-            eventId: savedEventEntity.id,
-            localisationName: savedEventEntity.localisationName,
-          },
-        });
-
-        const jobsOutboxRepo = new JobsOutboxRepository<EventsJobType.GEOCODE_EVENT>(
-          queryRunner.manager.getRepository<JobsOutboxModel>(JobsOutboxModel),
-        );
-        await jobsOutboxRepo.create(geocodeJobEntity);
-      }
 
       return savedEventEntity;
     });
@@ -139,35 +84,19 @@ export class PostgresEventRepository
 
       await queryRunner.manager.delete(this.modelClass, id);
 
-      const payload: IEventPayload = {
-        id: entity.id,
-        name: entity.name,
-        description: entity.description,
-        startAt: entity.startAt,
-        endAt: entity.endAt,
-        type: entity.type,
-        state: entity.state,
-        awardedImpactScore: entity.awardedImpactScore,
-        maxParticipants: entity.maxParticipants,
-        organizerId: entity.organizerId,
-        localisationName: entity.localisationName,
-        eventLocation: {
-          lat: entity.location.latitude,
-          long: entity.location.longitude,
-        },
-        createdAt: entity.createdAt,
-        updatedAt: entity.updatedAt,
+      const payload: IEventDeletedPayload = {
+        eventId: entity.id,
       };
 
       const eventQueueEntity: EventQueueEntity<
         EventEventMessagingType.EVENT_DELETED,
-        IEventPayload
+        IEventDeletedPayload
       > = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_DELETED>({
         type: EventEventMessagingType.EVENT_DELETED,
         emitter: 'ms-event',
         emitterId: entity.organizerId,
         payload,
-        targetServices: [Streams.SOCIAL_INTERACTIONS],
+        targetServices: [Streams.EVENT_DELETED],
       });
 
       const eventQueueRepo = new EventQueueRepository<EventEventMessagingType.EVENT_DELETED>(
