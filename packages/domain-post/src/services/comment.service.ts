@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { PaginatedResult } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
 import { DATABASE_ERROR, POST_NOT_FOUND } from '@volontariapp/errors-nest';
-import { isBaseError } from '@volontariapp/errors';
+import { isBaseError, ForbiddenError } from '@volontariapp/errors';
 import type { ICommentRepository, IPostRepository } from '../repositories/index.js';
 import { CommentEntity } from '../entities/index.js';
 import { PostgresCommentRepository, PostgresPostRepository } from '../repositories/index.js';
-import type { SagaStatus } from '@volontariapp/shared';
+import { SagaStatus, UserRoles } from '@volontariapp/shared';
 
 @Injectable()
 export class CommentService {
@@ -80,11 +80,20 @@ export class CommentService {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, actorId?: string, actorRole?: UserRoles): Promise<boolean> {
     try {
       this.logger.log(`Deleting comment ${id}`);
+
+      if (actorId && actorRole !== UserRoles.ADMIN) {
+        const comment = await this.findById(id);
+        if (comment && comment.authorId !== actorId) {
+          throw new ForbiddenError('You are not the author of this comment');
+        }
+      }
+
       return await this.commentRepository.delete(id);
     } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
       const err = error as Error;
       this.logger.error(`Failed to delete comment ${id}`, err);
       throw DATABASE_ERROR('deleting comment', err.message);

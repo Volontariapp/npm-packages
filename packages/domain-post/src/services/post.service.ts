@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { PaginatedResult } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
 import { DATABASE_ERROR, POST_ALREADY_EXISTS, POST_NOT_FOUND } from '@volontariapp/errors-nest';
-import { isDatabaseDriverError, isBaseError } from '@volontariapp/errors';
+import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariapp/errors';
 import type { IPostRepository } from '../repositories/index.js';
-import { SagaStatus } from '@volontariapp/shared';
+import { SagaStatus, UserRoles } from '@volontariapp/shared';
 import { PostgresPostRepository } from '../repositories/index.js';
 
 import { PostEntity } from '../entities/index.js';
@@ -84,8 +84,20 @@ export class PostService {
     }
   }
 
-  async update(id: string, data: Partial<PostEntity>): Promise<PostEntity> {
+  async update(
+    id: string,
+    data: Partial<PostEntity>,
+    actorId?: string,
+    actorRole?: UserRoles,
+  ): Promise<PostEntity> {
     try {
+      if (actorId && actorRole !== UserRoles.ADMIN) {
+        const post = await this.findById(id);
+        if (post.authorId !== actorId) {
+          throw new ForbiddenError('You are not the author of this post');
+        }
+      }
+
       const updated = await this.postRepository.update(id, data);
       if (!updated) {
         throw POST_NOT_FOUND(id);
@@ -120,9 +132,17 @@ export class PostService {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, actorId?: string, actorRole?: UserRoles): Promise<void> {
     try {
       this.logger.log(`Deleting post: ${id}`);
+
+      if (actorId && actorRole !== UserRoles.ADMIN) {
+        const post = await this.findById(id);
+        if (post.authorId !== actorId) {
+          throw new ForbiddenError('You are not the author of this post');
+        }
+      }
+
       const deleted = await this.postRepository.deleteWithPostDeleted(id);
       if (!deleted) {
         throw POST_NOT_FOUND(id);

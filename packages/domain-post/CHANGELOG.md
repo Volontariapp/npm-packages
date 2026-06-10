@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.6.2
+
+### Minor Changes
+
+- feat: add authorId filtering to list posts query.
+
+## 3.6.1
+
+### Minor Changes
+
+- Updated dependencies: @volontariapp/shared@0.1.3
+
+## 3.6.0
+
+### Minor Changes
+
+- Security: Enforce authorization checks for updating and deleting posts and comments.
+
 ## 3.5.3
 
 ### Patch Changes
