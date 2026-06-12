@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.9.0
+
+### Minor Changes
+
+- workers fallback generic type
+
 ## 2.8.2
 
 ### Patch Changes

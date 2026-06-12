@@ -8,6 +8,14 @@ import type {
   IEventDeletionFailedPayload,
   IEventCreatedPayload,
   IEventDeletedPayload,
+  IFallbackCreateEventPayload,
+  IFallbackUpdateEventPayload,
+  IFallbackDeleteEventPayload,
+  IFallbackChangeEventStatePayload,
+  IFallbackManageRequirementsPayload,
+  IFallbackCreateTagPayload,
+  IFallbackUpdateTagPayload,
+  IFallbackDeleteTagPayload,
 } from './event/payloads.js';
 
 import { UserEventMessagingType } from './user/payloads.js';
@@ -46,6 +54,16 @@ export interface EventRegistry {
 
   [EventEventMessagingType.EVENT_GEOCODED]: IEventGeocodedPayload;
   [EventEventMessagingType.EVENT_GEOCODING_FAILED]: IEventGeocodingFailedPayload;
+
+  // Event FallBack
+  [EventEventMessagingType.FALLBACK_CREATE_EVENT]: IFallbackCreateEventPayload;
+  [EventEventMessagingType.FALLBACK_UPDATE_EVENT]: IFallbackUpdateEventPayload;
+  [EventEventMessagingType.FALLBACK_DELETE_EVENT]: IFallbackDeleteEventPayload;
+  [EventEventMessagingType.FALLBACK_CHANGE_EVENT_STATE]: IFallbackChangeEventStatePayload;
+  [EventEventMessagingType.FALLBACK_MANAGE_REQUIREMENTS]: IFallbackManageRequirementsPayload;
+  [EventEventMessagingType.FALLBACK_CREATE_TAG]: IFallbackCreateTagPayload;
+  [EventEventMessagingType.FALLBACK_UPDATE_TAG]: IFallbackUpdateTagPayload;
+  [EventEventMessagingType.FALLBACK_DELETE_TAG]: IFallbackDeleteTagPayload;
 
   // Common
   [CommonEventMessagingType.JOB_OUTBOX_SUCCESS]: IJobAuditPayload;

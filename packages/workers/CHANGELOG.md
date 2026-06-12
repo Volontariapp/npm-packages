@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- workers fallback generic type
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.9.0
+  - @volontariapp/database@3.3.14
+  - @volontariapp/outbox@0.9.32
+
 ## 1.2.39
 
 ### Patch Changes

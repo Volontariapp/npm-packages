@@ -43,13 +43,13 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     await this.recordAuditStart(job, startedAt);
 
     try {
-      await this.processJob(job);
+      const result = await this.processJob(job);
       this.logger.info('Job completed', {
         jobId: job.id,
         type: job.name,
         workerId: this.workerId,
       });
-      await this.recordAuditSuccess(job);
+      await this.recordAuditSuccess(job, result);
     } catch (err) {
       const error = err instanceof Error || typeof err === 'string' ? err : new Error(String(err));
 
@@ -64,7 +64,7 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     }
   }
 
-  protected abstract processJob(job: Job<JobEnvelope<JobRegistry[K]>, void, K>): Promise<void>;
+  protected abstract processJob(job: Job<JobEnvelope<JobRegistry[K]>, void, K>): Promise<unknown>;
 
   private async getRedisClient(): Promise<RedisClient | null> {
     try {
@@ -175,7 +175,10 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     }
   }
 
-  private async recordAuditSuccess(job: Job<JobEnvelope<JobRegistry[K]>, void, K>): Promise<void> {
+  private async recordAuditSuccess(
+    job: Job<JobEnvelope<JobRegistry[K]>, void, K>,
+    result?: unknown,
+  ): Promise<void> {
     if (job.id) {
       await this.markJobAsCompletedInRedis(job.id);
     }
@@ -190,6 +193,7 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
         {
           status: JobAuditStatus.COMPLETED,
           finishedAt: new Date(),
+          resultPayload: result ? (result as Record<string, unknown>) : undefined,
         },
       );
     } catch (err) {

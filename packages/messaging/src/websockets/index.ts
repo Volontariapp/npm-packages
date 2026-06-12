@@ -3,6 +3,14 @@ import type {
   IEventDeletedWebsocketPayload,
   IEventCreationFailedWebsocketPayload,
   IEventDeletionFailedWebsocketPayload,
+  IFallbackCreateEventWebsocketPayload,
+  IFallbackUpdateEventWebsocketPayload,
+  IFallbackDeleteEventWebsocketPayload,
+  IFallbackChangeEventStateWebsocketPayload,
+  IFallbackManageRequirementsWebsocketPayload,
+  IFallbackCreateTagWebsocketPayload,
+  IFallbackUpdateTagWebsocketPayload,
+  IFallbackDeleteTagWebsocketPayload,
 } from './events/index.js';
 import { EventWebsocketMessagingType } from './events/index.js';
 import type {
@@ -30,6 +38,15 @@ export interface WebsocketEventRegistry {
   [EventWebsocketMessagingType.EVENT_DELETED]: IEventDeletedWebsocketPayload;
   [EventWebsocketMessagingType.EVENT_CREATION_FAILED]: IEventCreationFailedWebsocketPayload;
   [EventWebsocketMessagingType.EVENT_DELETION_FAILED]: IEventDeletionFailedWebsocketPayload;
+
+  [EventWebsocketMessagingType.FALLBACK_CREATE_EVENT]: IFallbackCreateEventWebsocketPayload;
+  [EventWebsocketMessagingType.FALLBACK_UPDATE_EVENT]: IFallbackUpdateEventWebsocketPayload;
+  [EventWebsocketMessagingType.FALLBACK_DELETE_EVENT]: IFallbackDeleteEventWebsocketPayload;
+  [EventWebsocketMessagingType.FALLBACK_CHANGE_EVENT_STATE]: IFallbackChangeEventStateWebsocketPayload;
+  [EventWebsocketMessagingType.FALLBACK_MANAGE_REQUIREMENTS]: IFallbackManageRequirementsWebsocketPayload;
+  [EventWebsocketMessagingType.FALLBACK_CREATE_TAG]: IFallbackCreateTagWebsocketPayload;
+  [EventWebsocketMessagingType.FALLBACK_UPDATE_TAG]: IFallbackUpdateTagWebsocketPayload;
+  [EventWebsocketMessagingType.FALLBACK_DELETE_TAG]: IFallbackDeleteTagWebsocketPayload;
 
   [UserWebsocketMessagingType.USER_CREATED]: IUserCreatedWebsocketPayload;
   [UserWebsocketMessagingType.USER_DELETED]: IUserDeletedWebsocketPayload;
