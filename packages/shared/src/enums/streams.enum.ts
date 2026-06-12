@@ -40,6 +40,9 @@ export enum WebsocketStream {
   WS_POST_DELETED_FEEDBACK = 'ws:post-deleted-feedback',
   WS_EVENT_CREATED_FEEDBACK = 'ws:event-created-feedback',
   WS_EVENT_DELETED_FEEDBACK = 'ws:event-deleted-feedback',
+
+  WS_JOBS_OUTBOX_SUCCESS = 'ws:jobs-outbox-success',
+  WS_JOBS_OUTBOX_FAILURE = 'ws:jobs-outbox-failure',
 }
 
 export const Streams = {

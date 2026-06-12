@@ -8,6 +8,12 @@ export interface EventChangedPayload<T> {
   after: T | null;
 }
 
+export interface IFeedbackEventPayload<TJobPayload> {
+  status: 'SUCCESS' | 'FAILED';
+  originalPayload: TJobPayload;
+  error?: string;
+}
+
 export interface IJobAuditPayload<TResult = Record<string, unknown>> {
   id: string;
   job_id: string;
