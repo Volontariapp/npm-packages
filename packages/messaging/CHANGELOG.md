@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.8.0
+
 ## 2.9.0
 
 ### Minor Changes

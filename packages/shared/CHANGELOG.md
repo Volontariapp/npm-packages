@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- new WS stream
+
 ## 0.7.1
 
 ### Patch Changes
