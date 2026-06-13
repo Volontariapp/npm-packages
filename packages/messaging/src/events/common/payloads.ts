@@ -8,7 +8,13 @@ export interface EventChangedPayload<T> {
   after: T | null;
 }
 
-export interface IJobAuditPayload {
+export interface IFeedbackEventPayload<TJobPayload> {
+  status: 'SUCCESS' | 'FAILED';
+  originalPayload: TJobPayload;
+  error?: string;
+}
+
+export interface IJobAuditPayload<TResult = Record<string, unknown>> {
   id: string;
   job_id: string;
   job_type: string;
@@ -17,7 +23,7 @@ export interface IJobAuditPayload {
   current_attempt: number;
   started_at: string | null;
   finished_at: string | null;
-  result_payload: Record<string, unknown> | null;
+  result_payload: TResult | null;
   error_message: string | null;
   error_stack: string | null;
   created_at: string;

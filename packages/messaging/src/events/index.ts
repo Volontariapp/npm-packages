@@ -33,7 +33,10 @@ import { PostEventMessagingType } from './post/payloads.js';
 import type { IPostCreatedPayload, IPostDeletedPayload } from './post/payloads.js';
 
 import { CommonEventMessagingType } from './common/payloads.js';
-import type { IJobAuditPayload } from './common/payloads.js';
+import type { IFeedbackEventPayload, IJobAuditPayload } from './common/payloads.js';
+
+import type { JobMessagingType } from '../jobs/index.js';
+import type { JobRegistry } from '../jobs/index.js';
 
 export interface EventRegistry {
   // Event
@@ -46,6 +49,32 @@ export interface EventRegistry {
 
   [EventEventMessagingType.EVENT_GEOCODED]: IEventGeocodedPayload;
   [EventEventMessagingType.EVENT_GEOCODING_FAILED]: IEventGeocodingFailedPayload;
+
+  // Event FallBack
+  [EventEventMessagingType.FALLBACK_CREATE_EVENT]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_CREATE_EVENT]
+  >;
+  [EventEventMessagingType.FALLBACK_UPDATE_EVENT]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_UPDATE_EVENT]
+  >;
+  [EventEventMessagingType.FALLBACK_DELETE_EVENT]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_DELETE_EVENT]
+  >;
+  [EventEventMessagingType.FALLBACK_CHANGE_EVENT_STATE]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_CHANGE_EVENT_STATE]
+  >;
+  [EventEventMessagingType.FALLBACK_MANAGE_REQUIREMENTS]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_MANAGE_REQUIREMENTS]
+  >;
+  [EventEventMessagingType.FALLBACK_CREATE_TAG]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_CREATE_TAG]
+  >;
+  [EventEventMessagingType.FALLBACK_UPDATE_TAG]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_UPDATE_TAG]
+  >;
+  [EventEventMessagingType.FALLBACK_DELETE_TAG]: IFeedbackEventPayload<
+    JobRegistry[typeof JobMessagingType.FALLBACK_DELETE_TAG]
+  >;
 
   // Common
   [CommonEventMessagingType.JOB_OUTBOX_SUCCESS]: IJobAuditPayload;
