@@ -25,7 +25,11 @@ export class JobOutboxFailedPostProcessor extends BatchPostProcessor<CommonEvent
   }
 
   protected override shouldProcess(eventType: CommonEventMessagingType | string): boolean {
-    return eventType === CommonEventMessagingType.JOB_OUTBOX_FAILED.toString();
+    const typeStr = eventType.toString();
+    return (
+      typeStr === CommonEventMessagingType.JOB_OUTBOX_FAILED.toString() ||
+      typeStr.endsWith(':job:outbox:failed')
+    );
   }
 
   protected async processEvents(

@@ -20,7 +20,11 @@ export class JobOutboxSuccessPostProcessor extends BatchPostProcessor<CommonEven
   }
 
   protected override shouldProcess(eventType: CommonEventMessagingType | string): boolean {
-    return eventType === CommonEventMessagingType.JOB_OUTBOX_SUCCESS.toString();
+    const typeStr = eventType.toString();
+    return (
+      typeStr === CommonEventMessagingType.JOB_OUTBOX_SUCCESS.toString() ||
+      typeStr.endsWith(':job:outbox:success')
+    );
   }
 
   protected async processEvents(
