@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- post-processors job outbox mode batch
+
 ## 3.0.15
 
 ### Patch Changes
