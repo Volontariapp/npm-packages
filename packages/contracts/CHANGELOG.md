@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.7
+
+### Patch Changes
+
+- Auto-generated proto typings update for both pure contracts and NestJS integration.
+
 ## 4.2.6
 
 ### Patch Changes

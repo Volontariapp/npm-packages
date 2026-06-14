@@ -12,6 +12,10 @@ export interface UserResponse {
   user: User | undefined;
 }
 
+export interface PublicUserResponse {
+  userPublic: UserPublic | undefined;
+}
+
 export interface AdminUserResponse {
   user: User | undefined;
 }

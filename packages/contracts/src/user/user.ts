@@ -5,7 +5,7 @@
 // source: volontariapp/user/user.proto
 
 /* eslint-disable */
-import { Timestamp } from '../google/protobuf/timestamp.js';
+import { Timestamp } from "../google/protobuf/timestamp.js";
 
 export interface OrganisationInfo {
   rna: string;
