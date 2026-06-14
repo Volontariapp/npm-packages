@@ -10,6 +10,10 @@ import { PaginationRequest } from "../common/pagination.js";
 export interface GetUserQuery {
 }
 
+export interface GetPublicUserQuery {
+  userId: string;
+}
+
 export interface AdminGetUserQuery {
   userId: string;
 }
