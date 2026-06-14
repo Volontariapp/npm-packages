@@ -8,6 +8,7 @@ import "volontariapp/user/user.responses.proto";
 
 service UserService {
   rpc GetUser (GetUserQuery) returns (UserResponse) {}
+  rpc GetPublicUser (GetPublicUserQuery) returns (PublicUserResponse) {}
   rpc GetUsersByIds (GetUsersByIdsQuery) returns (GetUsersByIdsResponse) {}
   rpc ListUsers (ListUsersQuery) returns (ListUsersResponse) {}
   rpc SignUp (SignUpCommand) returns (SignUpResponse) {}

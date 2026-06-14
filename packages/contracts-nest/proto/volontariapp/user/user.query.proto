@@ -7,6 +7,10 @@ import "volontariapp/common/pagination.proto";
 message GetUserQuery {
 }
 
+message GetPublicUserQuery {
+  string user_id = 1;
+}
+
 message AdminGetUserQuery {
   string user_id = 1;
 }
