@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.0
+
+### Minor Changes
+
+- added PublicUserWebResponse on package
+
 ## 4.2.8
 
 ### Patch Changes

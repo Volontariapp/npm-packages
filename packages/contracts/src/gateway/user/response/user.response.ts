@@ -38,6 +38,10 @@ export interface UserWebResponse {
   user: UserWeb | undefined;
 }
 
+export interface PublicUserWebResponse {
+  user: UserPublicWeb | undefined;
+}
+
 export interface ListUsersWebResponse extends Omit<ListUsersResponse, 'users'> {
   users: UserWeb[];
 }
