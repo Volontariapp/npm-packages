@@ -6,3 +6,4 @@ databaseMapper.registerBidirectional(GatherStateModel, GatherStateEntity);
 
 export * from './models/gather-state.model.js';
 export * from './entities/gather-state.entity.js';
+export * from './types/index.js';
