@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.1
+
+### Patch Changes
+
+- Add metadata column to GatherStateModel and GatherStateEntity to support Scatter-Gather context propagation.
+
 ## 3.4.0
 
 ### Minor Changes

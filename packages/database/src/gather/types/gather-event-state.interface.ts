@@ -1,6 +1,6 @@
 import { EventStatus } from './event-status.enum.js';
 
-export interface ExpectedEventState {
+export interface GatherEventState {
   eventType: string;
   status: EventStatus;
   updatedAt: string;
