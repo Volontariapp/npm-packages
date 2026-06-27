@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.0
+
+### Minor Changes
+
+- added new gather-state model for ws-service
+
 ## 3.3.18
 
 ### Patch Changes

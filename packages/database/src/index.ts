@@ -7,6 +7,7 @@ export * from './core/base.entity.js';
 
 export * from './outbox/index.js';
 export * from './workers/index.js';
+export * from './gather/index.js';
 
 export type { Repository, ObjectLiteral, FindOptionsWhere } from 'typeorm';
 export { ILike, Like, In } from 'typeorm';
