@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.8.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.10.0
+  - @volontariapp/database@3.4.3
+
 ## 2.8.22
 
 ### Patch Changes

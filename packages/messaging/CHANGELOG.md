@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.10.0
+
+### Minor Changes
+
+- Add event mappings for event creation and deletion success/failure in getWsEventForEvent.
+
 ## 2.9.5
 
 ### Patch Changes
