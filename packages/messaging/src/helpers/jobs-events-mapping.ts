@@ -23,9 +23,14 @@ export function getEventForJob(jobType: JobMessagingType | string): EventEventMe
   return event;
 }
 
-export const EVENT_TO_WS_EVENT_MAPPING: Partial<
-  Record<EventEventMessagingType, EventWebsocketMessagingType>
-> = {
+export const EVENT_TO_WS_EVENT_MAPPING = {
+  [EventEventMessagingType.EVENT_CREATED]: EventWebsocketMessagingType.EVENT_CREATED,
+  [EventEventMessagingType.EVENT_DELETED]: EventWebsocketMessagingType.EVENT_DELETED,
+  [EventEventMessagingType.EVENT_CREATION_SUCCESSFULL]: EventWebsocketMessagingType.EVENT_CREATED,
+  [EventEventMessagingType.EVENT_CREATION_FAILED]: EventWebsocketMessagingType.EVENT_CREATION_FAILED,
+  [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: EventWebsocketMessagingType.EVENT_DELETED,
+  [EventEventMessagingType.EVENT_DELETION_FAILED]: EventWebsocketMessagingType.EVENT_DELETION_FAILED,
+
   [EventEventMessagingType.FALLBACK_CREATE_EVENT]:
     EventWebsocketMessagingType.FALLBACK_CREATE_EVENT,
   [EventEventMessagingType.FALLBACK_UPDATE_EVENT]:
@@ -39,12 +44,14 @@ export const EVENT_TO_WS_EVENT_MAPPING: Partial<
   [EventEventMessagingType.FALLBACK_CREATE_TAG]: EventWebsocketMessagingType.FALLBACK_CREATE_TAG,
   [EventEventMessagingType.FALLBACK_UPDATE_TAG]: EventWebsocketMessagingType.FALLBACK_UPDATE_TAG,
   [EventEventMessagingType.FALLBACK_DELETE_TAG]: EventWebsocketMessagingType.FALLBACK_DELETE_TAG,
-};
+} as const;
+
+export type EventToWsEventMapping = typeof EVENT_TO_WS_EVENT_MAPPING;
 
 export function getWsEventForEvent(
   eventType: EventEventMessagingType | string,
 ): EventWebsocketMessagingType {
-  const wsEvent = EVENT_TO_WS_EVENT_MAPPING[eventType as EventEventMessagingType];
+  const wsEvent = EVENT_TO_WS_EVENT_MAPPING[eventType as keyof EventToWsEventMapping];
   if (!wsEvent) {
     throw new Error(`No ws event mapping found for event type: ${eventType}`);
   }
