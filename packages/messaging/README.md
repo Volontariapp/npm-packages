@@ -1,53 +1,53 @@
 # @volontariapp/messaging
 
-Universal messaging contracts and architecture for Volontariapp.
+Contrats de messagerie universels et architecture asynchrone pour Volontariapp.
 
-## 🏗 LOB (Local Outbox) Architecture
+## Architecture LOB (Local Outbox)
 
-The **LOB (Local Outbox)** pattern is used to ensure reliable message delivery between microservices while maintaining database consistency. It follows the **Change Data Capture (CDC)** approach.
+Le pattern **LOB (Local Outbox)** est utilisé pour garantir la livraison fiable des messages entre les microservices tout en préservant la cohérence de la base de données. Il suit l'approche **Change Data Capture (CDC)**.
 
-### 🔄 Data Flow
+### Flux de Données
 
-1.  **Database Change**: A transaction modifies data in a microservice's database (e.g., `ms-event`).
-2.  **SQL Trigger**: A native database trigger captures the change and inserts a record into the `event_queue` table.
-3.  **Outbox Table**: The `event_queue` (or `jobs_outbox`) table stores the event with its payload (`before`/`after`) and status (`PENDING`).
-4.  **Dispatcher**: A background worker polls the outbox table, sends the message to the broker (RabbitMQ/Kafka), and marks the record as `COMPLETED`.
+1. **Modification en Base** : Une transaction modifie des données dans la base de données d'un microservice (ex: `ms-event`).
+2. **Trigger SQL** : Un trigger natif en base capture le changement et insère un enregistrement dans la table `event_queue`.
+3. **Table Outbox** : La table `event_queue` (ou `jobs_outbox`) stocke l'événement avec sa charge utile (payload `before`/`after`) et son statut (`PENDING`).
+4. **Dispatcher** : Un worker en arrière-plan (Outbox Runner) scrute la table outbox, envoie le message au broker (Redis Streams/BullMQ), et marque l'enregistrement comme `COMPLETED`.
 
-### Package Structure
+### Structure du Package
 
-This package centralizes all message definitions to ensure type safety across the monorepo.
+Ce package centralise toutes les définitions de messages pour garantir la sécurité du typage à travers le monorepo.
 
-*   **`events/`**: Definitions for domain events triggered by database changes.
-*   **`jobs/`**: Definitions for asynchronous jobs (e.g., sending emails).
-*   **`EventRegistry`**: A central TypeScript registry mapping event types to their respective payloads.
+* **`events/`** : Définitions des événements métiers déclenchés par des changements en base de données.
+* **`jobs/`** : Définitions des tâches asynchrones (ex: envoi d'emails).
+* **`EventRegistry`** : Un registre TypeScript centralisé qui mappe les types d'événements à leurs charges utiles respectives.
 
-## 🛠 Usage
+## Utilisation
 
-### Event Structure
+### Structure d'un Événement
 
-All domain events follow a standard `EventChangedPayload` structure:
+Tous les événements métiers suivent une structure standard `EventChangedPayload` :
 
 ```typescript
 export interface EventChangedPayload<T> {
-  before: T | null; // State before the change (null on INSERT)
-  after: T | null;  // State after the change (null on DELETE)
+ before: T | null; // État avant le changement (null pour un INSERT)
+ after: T | null; // État après le changement (null pour un DELETE)
 }
 ```
 
-### Type Safety
+### Sécurité du Typage (Type Safety)
 
-Use the `EventRegistry` to get strict typing when consuming events:
+Utilisez l'`EventRegistry` pour obtenir un typage strict lors de la consommation des événements :
 
 ```typescript
 import { EventMessagingType, type EventRegistry } from '@volontariapp/messaging';
 
 type RequirementEvent = EventRegistry[EventMessagingType.REQUIREMENT_CHANGED];
-// RequirementEvent now has the correct payload structure (before/after ITagPayload)
+// RequirementEvent possède désormais la bonne structure de payload (before/after ITagPayload)
 ```
 
-## ➕ Adding a New Event
+## Ajouter un Nouvel Événement
 
-1.  Define the payload interface in `src/events/[domain]/payloads.ts`.
-2.  Add the event type to the `EventMessagingType` enum.
-3.  Register the mapping in the `EventRegistry` interface in `src/events/index.ts`.
-4.  Implement the SQL trigger in the corresponding microservice to populate the outbox.
+1. Définissez l'interface du payload dans `src/events/[domain]/payloads.ts`.
+2. Ajoutez le type d'événement à l'énumération `EventMessagingType`.
+3. Enregistrez le mapping dans l'interface `EventRegistry` dans `src/events/index.ts`.
+4. Implémentez le trigger SQL dans le microservice correspondant pour alimenter l'outbox.

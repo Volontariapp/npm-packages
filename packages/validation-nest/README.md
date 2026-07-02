@@ -1,26 +1,26 @@
 # @volontariapp/validation-nest
 
-A high-performance validation library for NestJS, specifically designed to handle the nuances of gRPC and Protocol Buffers communication.
+Une librairie de validation ultra-performante pour NestJS, spécialement conçue pour gérer les nuances de la communication gRPC et des Protocol Buffers.
 
-## Why this library?
+## Pourquoi cette librairie ?
 
-When using NestJS with gRPC (via `google.protobuf`), several serialization challenges arise that standard validation pipes don't handle out of the box:
+Lors de l'utilisation de NestJS avec gRPC (via `google.protobuf`), plusieurs défis de sérialisation apparaissent que les pipes de validation standards ne gèrent pas nativement :
 
-1.  **Int64 Complexity**: Large integers (like Timestamps) are often serialized as `string` to prevent precision loss in JavaScript, but your DTOs might expect `number`.
-2.  **Proto3 Default Values**: Proto3 initializes missing strings as `""`. This causes `@IsOptional()` or `@IsUUID()` validators to fail because the field is technically "present" but empty.
-3.  **Enum Mismatch**: gRPC often sends enum values as their string keys (e.g., `"EVENT_TYPE_SOCIAL"`) while TypeScript enums and logic expect the numeric index (e.g., `1`).
+1.  **Complexité Int64** : Les grands entiers (comme les Timestamps) sont souvent sérialisés sous forme de `string` pour éviter la perte de précision en JavaScript, mais vos DTOs s'attendent peut-être à des `number`.
+2.  **Valeurs par défaut Proto3** : Proto3 initialise les chaînes de caractères manquantes par `""`. Cela provoque l'échec des validateurs `@IsOptional()` ou `@IsUUID()` car le champ est techniquement "présent" mais vide.
+3.  **Incohérence des Enums** : gRPC envoie souvent les valeurs enum sous forme de chaînes de caractères (ex: `"EVENT_TYPE_SOCIAL"`) tandis que les énumérations TypeScript et la logique s'attendent à l'index numérique (ex: `1`).
 
-## Implementation
+## Implémentation
 
-The `GrpcValidationPipe` extends the standard NestJS `ValidationPipe` and adds a pre-processing step to normalize data before validation.
+Le `GrpcValidationPipe` étend le `ValidationPipe` standard de NestJS et ajoute une étape de pré-traitement pour normaliser les données avant validation.
 
-### Key Features
+### Fonctionnalités Clés
 
-- **Automatic Int64/Timestamp Casting**: Automatically converts `seconds` and `nanos` fields from `string` to `number`.
-- **Empty String Normalization**: Automatically converts `""` to `undefined`, allowing `@IsOptional()` to work correctly.
-- **Generic Enum Mapping**: Maps string enum keys to their corresponding numeric values via a configurable map.
-- **Strictly Typed**: Built with strict TypeScript support, ensuring no precision is lost and types are respected.
-- **Micro-Logger**: Built-in debug logging to trace incoming data and the processed result before validation hits your controllers.
+- **Casting automatique Int64/Timestamp** : Convertit automatiquement les champs `seconds` et `nanos` de `string` vers `number`.
+- **Normalisation des chaînes vides** : Convertit automatiquement `""` en `undefined`, permettant à `@IsOptional()` de fonctionner correctement.
+- **Mapping générique des Enums** : Mappe les clés d'énumérations en chaînes de caractères vers leurs valeurs numériques correspondantes via une carte (map) configurable.
+- **Typage Strict** : Construit avec un support TypeScript strict, garantissant qu'aucune précision n'est perdue et que les types sont respectés.
+- **Micro-Logger** : Journalisation de débogage intégrée pour tracer les données entrantes et le résultat traité avant que la validation n'atteigne vos contrôleurs.
 
 ## Installation
 
@@ -28,9 +28,9 @@ The `GrpcValidationPipe` extends the standard NestJS `ValidationPipe` and adds a
 yarn add @volontariapp/validation-nest
 ```
 
-## Usage
+## Utilisation
 
-Register the pipe in your `AppModule` or globally. Use `useFactory` to provide your specific enum mappings.
+Enregistrez le pipe dans votre `AppModule` ou de manière globale. Utilisez `useFactory` pour fournir vos mappages d'énumérations spécifiques.
 
 ```typescript
 import { APP_PIPE } from '@nestjs/core';
@@ -56,6 +56,6 @@ export class AppModule {}
 
 ## Options
 
-`GrpcValidationPipe` accepts all standard `ValidationPipeOptions` (NestJS) plus:
+`GrpcValidationPipe` accepte toutes les options standards du `ValidationPipeOptions` (NestJS) plus :
 
-- `enumMaps`: A key-value object where the key is the property name in your DTO and the value is the TypeScript Enum object.
+- `enumMaps` : Un objet clé-valeur où la clé est le nom de la propriété dans votre DTO et la valeur est l'objet Enum TypeScript.

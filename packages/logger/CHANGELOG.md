@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.7
+
+### Patch Changes
+
+- README bump
+
 ## 0.2.6
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 # @volontariapp/testing
 
-A collection of testing utilities for the Volontariapp monorepo.
+Une collection d'utilitaires de tests pour le monorepo Volontariapp.
 
 ## Installation
 
@@ -8,13 +8,13 @@ A collection of testing utilities for the Volontariapp monorepo.
 yarn add -D @volontariapp/testing
 ```
 
-## Features
+## Fonctionnalités
 
 ### Mocks
 
 #### `createMock<T>()`
 
-Creates a proxy-based mock for any interface or class. It automatically creates Jest mock functions for any property accessed.
+Crée un mock basé sur des Proxy pour n'importe quelle interface ou classe. Il crée automatiquement des fonctions mockées Jest pour chaque propriété accédée.
 
 ```typescript
 import { createMock } from '@volontariapp/testing';
@@ -29,7 +29,7 @@ mock.doSomething.mockResolvedValue(undefined);
 
 #### `createMockLogger<T>()`
 
-Creates a mocked version of the logger. You can pass a specific logger class to ensure full type compatibility.
+Crée une version mockée du logger. Vous pouvez passer une classe logger spécifique pour garantir une compatibilité totale des types.
 
 ```typescript
 import { createMockLogger } from '@volontariapp/testing';
@@ -42,11 +42,11 @@ expect(logger.info).toHaveBeenCalledWith('Test');
 
 #### `createMockEventEmitter()`
 
-Creates a mocked version of an EventEmitter.
+Crée une version mockée d'un EventEmitter.
 
 #### `createMockRequest(overrides?)` & `createMockResponse()`
 
-Utilities for HTTP testing.
+Utilitaires pour tester les requêtes HTTP.
 
 ```typescript
 import { createMockRequest, createMockResponse } from '@volontariapp/testing';
@@ -58,18 +58,18 @@ myController.handle(req, res);
 expect(res.status).toHaveBeenCalledWith(200);
 ```
 
-### Helpers
+### Utilitaires (Helpers)
 
 ...
 
-#### Time Helpers
+#### Aides au temps (Time Helpers)
 
-- `sleep(ms: number)`: Pause execution.
-- `waitFor(predicate: () => boolean, timeout?: number, interval?: number)`: Wait for a condition.
+- `sleep(ms: number)`: Met l'exécution en pause.
+- `waitFor(predicate: () => boolean, timeout?: number, interval?: number)`: Attend qu'une condition soit remplie.
 
-#### Random Helpers
+#### Aides à l'aléatoire (Random Helpers)
 
-- `randomUuid()`: Generate random UUID v4.
-- `randomString(length?: number, alphabet?: string)`: Generate random string.
-- `randomInt(min: number, max: number)`: Generate random integer.
-- `randomEmail(domain?: string)`: Generate random email.
+- `randomUuid()`: Génère un UUID v4 aléatoire.
+- `randomString(length?: number, alphabet?: string)`: Génère une chaîne aléatoire.
+- `randomInt(min: number, max: number)`: Génère un entier aléatoire.
+- `randomEmail(domain?: string)`: Génère un email aléatoire.

@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.8.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.3.3
+  - @volontariapp/messaging@2.10.2
+  - @volontariapp/logger@0.2.7
+  - @volontariapp/database@3.4.5
+  - @volontariapp/auth@3.3.9
+  - @volontariapp/crypto@0.3.10
+  - @volontariapp/errors@0.6.2
+  - @volontariapp/errors-nest@0.13.2
+
 ## 2.8.24
 
 ### Patch Changes

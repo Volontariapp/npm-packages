@@ -1,6 +1,6 @@
 # @volontariapp/logger
 
-A cross-platform logging utility that works seamlessly in NodeJS, NestJS, and React Native. It outputs beautifully structured JSON logs or colored plain text logs based on the execution environment.
+Un utilitaire de log cross-platform qui fonctionne parfaitement sur NodeJS, NestJS et React Native. Il génère des logs JSON structurés ou des logs texte colorés selon l'environnement d'exécution.
 
 ## Installation
 
@@ -8,13 +8,13 @@ A cross-platform logging utility that works seamlessly in NodeJS, NestJS, and Re
 npm install @volontariapp/logger
 ```
 
-## Setup & Configuration
+## Configuration & Mise en place
 
-This logger is highly versatile and supports different instantiation strategies depending on the platform you're targeting.
+Ce logger est très polyvalent et supporte différentes stratégies d'instanciation en fonction de la plateforme ciblée.
 
-### 1. NodeJS Project
+### 1. Projet NodeJS
 
-For a typical NodeJS application or script, you can instantiate the logger directly. We recommend using `text` format for local development and `json` format in production.
+Pour une application ou un script NodeJS classique, vous pouvez instancier le logger directement. Nous recommandons d'utiliser le format `text` pour le développement local et `json` en production.
 
 ```typescript
 import { Logger } from '@volontariapp/logger';
@@ -25,22 +25,22 @@ const logger = new Logger({
   minLevel: 'info', // 'debug' | 'info' | 'warn' | 'error' | 'fatal'
 });
 
-logger.info('Worker initialized successfully.');
-logger.error('Failed to sync data.', new Error('Connection timeout'));
+logger.info('Worker initialisé avec succès.');
+logger.error('Échec de synchronisation des données.', new Error('Connection timeout'));
 ```
 
-### 2. NestJS Project
+### 2. Projet NestJS
 
-The logger adheres to NestJS's `LoggerService` interface out of the box (`log`, `error`, `warn`, `debug`, `verbose`). You can use it as a custom application-wide logger as well as via dependency injection.
+Le logger respecte l'interface `LoggerService` de NestJS de manière native (`log`, `error`, `warn`, `debug`, `verbose`). Vous pouvez l'utiliser comme logger global de l'application ou via l'injection de dépendances.
 
-**Application Bootstrap** (`main.ts`):
+**Initialisation de l'Application** (`main.ts`) :
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@volontariapp/logger';
 
 async function bootstrap() {
-  // Use JSON formatting for structured logging in NestJS apps
+  // Utilise le format JSON pour des logs structurés dans les applications NestJS
   const appLogger = new Logger({ format: 'json', context: 'NestApplication' });
 
   const app = await NestFactory.create(AppModule, {
@@ -52,7 +52,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-**Dependency Injection Module** (`logger.module.ts`):
+**Module d'Injection de Dépendances** (`logger.module.ts`) :
 ```typescript
 import { Module, Global } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
@@ -72,34 +72,34 @@ const customLogger = new Logger({ format: 'json', context: 'RequestScope' });
 export class LoggerModule {}
 ```
 
-### 3. React Native Project
+### 3. Projet React Native
 
-In React Native, it is often easier to read text logs in Metro Bundler, rather than a full JSON object. You can instantiate it locally to your specific component or as a Singleton for the entire app.
+Sur React Native, il est souvent plus simple de lire des logs texte dans la console Metro Bundler plutôt qu'un objet JSON complet. Vous pouvez l'instancier localement pour un composant spécifique ou en Singleton pour toute l'application.
 
 ```typescript
 import { Logger } from '@volontariapp/logger';
 
 export const logger = new Logger({
   context: 'MobileApp',
-  format: 'text', // Recommended for reacting native metro bundler console
+  format: 'text', // Recommandé pour la console metro bundler de react native
   minLevel: 'debug',
 });
 
-// Inside a React Component
+// À l'intérieur d'un composant React
 export const HomeScreen = () => {
-  logger.debug('HomeScreen mounted', { timestamp: Date.now() });
+  logger.debug('HomeScreen monté', { timestamp: Date.now() });
 
   const handlePress = () => {
-    logger.info('Button pressed');
+    logger.info('Bouton cliqué');
   };
 
   return <Action handlePress={handlePress} />;
 };
 ```
 
-## Features
+## Fonctionnalités
 
-- **JSON & Text Output**: Switch formats based on the environment (`json` for Grafana/ELK, `text` for local development).
-- **Log Levels**: Standard levels (`debug`, `info`, `warn`, `error`, `fatal`).
-- **NestJS Compatible**: `log` and `verbose` wrappers ensure NestJS interface compatibility.
-- **Micro-metadata**: Pass specific metadata objects simply. `logger.info('User Login', { userId: 1 })`.
+- **Sortie JSON & Texte** : Changez de format selon l'environnement (`json` pour Grafana/ELK, `text` pour le dev local).
+- **Niveaux de Log** : Niveaux standards (`debug`, `info`, `warn`, `error`, `fatal`).
+- **Compatible NestJS** : Les méthodes `log` et `verbose` garantissent la compatibilité avec l'interface NestJS.
+- **Micro-metadata** : Passez facilement des objets de métadonnées. `logger.info('User Login', { userId: 1 })`.

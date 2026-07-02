@@ -1,12 +1,12 @@
-# Post-Processors Package
+# Package Post-Processors
 
-## Overview
+## Aperçu (Overview)
 
-The `post-processors` package provides a robust, scalable, and resilient foundation for processing events asynchronously using Redis Streams. It is designed to handle high-throughput event consumption with built-in fault tolerance, dynamic batching, circuit breaking, idempotency, and dead-letter queue (DLQ) management.
+Le package `post-processors` fournit une fondation robuste, scalable et résiliente pour le traitement asynchrone des événements via Redis Streams. Il est conçu pour gérer une consommation d'événements à haut débit avec une tolérance aux pannes intégrée, un traitement par lots dynamique (batching), un disjoncteur (circuit breaker), de l'idempotence et la gestion des files d'attente de lettres mortes (DLQ).
 
 ## Architecture
 
-The architecture is built around a base abstract class that manages the complex orchestration of Redis Streams, allowing developers to focus solely on the business logic of processing events (either one by one or in batches).
+L'architecture est construite autour d'une classe abstraite de base qui gère l'orchestration complexe des Redis Streams, permettant aux développeurs de se concentrer uniquement sur la logique métier du traitement des événements (un par un ou par lots).
 
 ```mermaid
 classDiagram
@@ -31,67 +31,67 @@ classDiagram
     BasePostProcessor <|-- BatchPostProcessor
 ```
 
-### Processing Types
+### Types de Traitement
 
-1. **SinglePostProcessor**: Processes events sequentially, one at a time. Ideal for operations that cannot be batched (e.g., sending individual emails) or when strict isolation between events is required.
-2. **BatchPostProcessor**: Accumulates a batch of events and processes them together. Highly recommended for I/O operations (like database inserts or bulk API calls) to maximize throughput and minimize latency.
+1. **SinglePostProcessor** : Traite les événements séquentiellement, un par un. Idéal pour les opérations qui ne peuvent pas être traitées par lots (ex: envoi d'emails individuels) ou lorsqu'une isolation stricte entre les événements est requise.
+2. **BatchPostProcessor** : Accumule un lot d'événements et les traite ensemble. Fortement recommandé pour les opérations I/O (comme les insertions en base de données ou les appels d'API en masse) afin de maximiser le débit et minimiser la latence.
 
-## Internal Mechanics and Loops
+## Mécanismes Internes et Boucles
 
-To guarantee that no event is lost or permanently stuck, the `BasePostProcessor` orchestrates four parallel background loops.
+Pour garantir qu'aucun événement ne soit perdu ou bloqué de façon permanente, le `BasePostProcessor` orchestre quatre boucles parallèles en arrière-plan.
 
 ```mermaid
 graph TD
     RedisStream[(Redis Stream)]
     
-    subgraph Loops [Post-Processor Background Loops]
+    subgraph Loops [Boucles des Post-Processors]
         RL[RunLoop]
         CL[ClaimLoop]
         Retry[RetryLoop]
         DLQSync[DlqSyncLoop]
     end
     
-    RL -->|Reads new/pending messages| RedisStream
-    CL -->|Finds idle pending & claims| RedisStream
-    Retry -->|Flags ready retries to RunLoop| RL
-    DLQSync -->|Cleans old DLQ entries| RedisStream
+    RL -->|Lit les messages nouveaux/en attente| RedisStream
+    CL -->|Trouve les messages en attente isolés et les réclame| RedisStream
+    Retry -->|Signale les retries prêts à la RunLoop| RL
+    DLQSync -->|Nettoie les vieilles entrées DLQ| RedisStream
 ```
 
-- **RunLoop**: The main consumption loop. It continuously polls the Redis stream for new messages using `XREADGROUP`. It dynamically adjusts the batch size based on system memory, CPU load, and processing latency.
-- **ClaimLoop**: A recovery mechanism. It scans the consumer group for messages that have been "pending" (assigned to a consumer) for too long. This happens if a consumer crashes before acknowledging a message. The loop claims these orphaned messages so they can be processed by a healthy consumer.
-- **RetryLoop**: Manages delayed retries. When processing fails, the message is scheduled for a retry with exponential backoff. This loop detects when the wait time is over and instructs the RunLoop to re-fetch the message.
-- **DlqSyncLoop**: Maintains the Dead Letter Queue (DLQ). Messages that exhaust all retry attempts are moved to the DLQ. This loop periodically cleans up expired DLQ entries based on the retention policy to prevent memory exhaustion in Redis.
+- **RunLoop** : La boucle de consommation principale. Elle interroge continuellement le flux Redis pour de nouveaux messages avec `XREADGROUP`. Elle ajuste dynamiquement la taille des lots en fonction de la mémoire système, de la charge CPU et de la latence de traitement.
+- **ClaimLoop** : Un mécanisme de récupération. Elle scanne le groupe de consommateurs à la recherche de messages qui sont restés "en attente" (assignés à un consommateur) trop longtemps. Cela se produit si un consommateur plante avant d'acquitter (ACK) un message. La boucle réclame ces messages orphelins pour qu'ils soient traités par un consommateur sain.
+- **RetryLoop** : Gère les nouvelles tentatives différées (retries). Lorsque le traitement échoue, le message est planifié pour une nouvelle tentative avec un backoff exponentiel. Cette boucle détecte quand le temps d'attente est écoulé et demande à la RunLoop de récupérer à nouveau le message.
+- **DlqSyncLoop** : Gère la Dead Letter Queue (DLQ). Les messages qui épuisent toutes leurs tentatives de retry sont déplacés vers la DLQ. Cette boucle nettoie périodiquement les entrées DLQ expirées selon la politique de rétention pour éviter l'épuisement de la mémoire dans Redis.
 
-## Fault Tolerance and Idempotency
+## Tolérance aux Pannes et Idempotence
 
-The package includes comprehensive mechanisms to handle failures gracefully.
+Le package inclut des mécanismes complets pour gérer gracieusement les défaillances.
 
-### Circuit Breaker Pattern
+### Pattern Circuit Breaker (Disjoncteur)
 
-In distributed systems, a post-processor often depends on external services (databases, third-party APIs, or other microservices). When these downstream services experience degradation or fail entirely, continuing to send requests can lead to cascading failures:
-1. **Resource Exhaustion**: The post-processor wastes CPU, memory, and network connections waiting for timeouts.
-2. **System Overload**: The struggling downstream service is hammered with traffic it cannot handle, preventing its recovery.
+Dans les systèmes distribués, un post-processor dépend souvent de services externes (bases de données, API tierces, autres microservices). Lorsque ces services en aval subissent une dégradation ou échouent totalement, continuer à envoyer des requêtes peut entraîner des défaillances en cascade :
+1. **Épuisement des Ressources** : Le post-processor gaspille du CPU, de la mémoire et des connexions réseau à attendre des timeouts.
+2. **Surcharge du Système** : Le service en difficulté est matraqué de trafic qu'il ne peut pas gérer, ce qui l'empêche de récupérer.
 
-To protect both the post-processor and the downstream systems, the `BasePostProcessor` implements the **Circuit Breaker pattern**. It monitors the success and failure rates of the event processing.
+Pour protéger à la fois le post-processor et les systèmes en aval, le `BasePostProcessor` implémente le pattern **Circuit Breaker**. Il surveille les taux de succès et d'échec du traitement des événements.
 
 ```mermaid
 stateDiagram-v2
     [*] --> Closed
     
-    Closed --> Open: Failure threshold reached
-    Open --> HalfOpen: Cooldown period elapsed
+    Closed --> Open: Seuil d'échec atteint
+    Open --> HalfOpen: Période de refroidissement écoulée
     
-    HalfOpen --> Closed: Success (Service recovered)
-    HalfOpen --> Open: Failure (Service still down)
+    HalfOpen --> Closed: Succès (Service rétabli)
+    HalfOpen --> Open: Échec (Service toujours hors ligne)
 ```
 
-#### How it works:
+#### Comment ça marche :
 
-- **Closed State (Normal Operation)**: The circuit is closed, allowing electricity (messages) to flow. The `RunLoop` fetches and processes events normally. The circuit breaker counts recent failures.
-- **Open State (Failure Detected)**: If the failure rate exceeds a predefined threshold within a specific time window, the circuit "trips" and opens. The `RunLoop` immediately suspends fetching new messages. This gives the failing downstream service time to recover without being overloaded.
-- **Half-Open State (Recovery Testing)**: After a predefined cooldown period, the circuit transitions to a half-open state. It allows a limited number of test messages to pass through. 
-  - If these test messages succeed, the circuit assumes the downstream service is healthy again and resets to the **Closed State**.
-  - If the test messages fail, the circuit immediately trips back to the **Open State** for another cooldown period.
+- **État Fermé (Fonctionnement Normal)** : Le circuit est fermé, permettant à l'électricité (messages) de circuler. La `RunLoop` récupère et traite les événements normalement. Le disjoncteur compte les échecs récents.
+- **État Ouvert (Défaillance Détectée)** : Si le taux d'échec dépasse un seuil prédéfini dans une fenêtre de temps spécifique, le circuit "saute" et s'ouvre. La `RunLoop` suspend immédiatement la récupération de nouveaux messages. Cela donne au service défaillant le temps de récupérer sans être surchargé.
+- **État Semi-Ouvert (Test de Récupération)** : Après une période de refroidissement (cooldown), le circuit passe dans un état semi-ouvert. Il laisse passer un nombre limité de messages de test.
+  - Si ces messages réussissent, le circuit suppose que le service en aval est de nouveau sain et repasse à l'**État Fermé**.
+  - Si les messages échouent, le circuit repasse immédiatement à l'**État Ouvert** pour une autre période de refroidissement.
 
 ```mermaid
 sequenceDiagram
@@ -117,16 +117,16 @@ sequenceDiagram
     end
 ```
 
-### Key Features
-- **Idempotency**: Utilizes Redis locks to ensure that even if a message is delivered multiple times (at-least-once delivery), it is only processed once.
-- **Circuit Breaker**: Halts consumption automatically if a high threshold of errors is reached, preventing cascading failures in downstream systems.
-- **Exponential Backoff**: Delays retries progressively to give failing downstream services time to recover.
+### Fonctionnalités Clés
+- **Idempotence** : Utilise des verrous Redis (locks) pour garantir que même si un message est livré plusieurs fois (at-least-once delivery), il n'est traité qu'une seule fois.
+- **Circuit Breaker** : Interrompt automatiquement la consommation si un seuil élevé d'erreurs est atteint, évitant les pannes en cascade.
+- **Backoff Exponentiel** : Décale progressivement les tentatives de retry pour laisser le temps aux services défaillants de récupérer.
 
-## Usage with NestJS
+## Utilisation avec NestJS
 
-Integrating a post-processor into a NestJS application involves creating a service that extends either `SinglePostProcessor` or `BatchPostProcessor` and managing its lifecycle.
+L'intégration d'un post-processor dans une application NestJS implique la création d'un service qui étend soit `SinglePostProcessor` soit `BatchPostProcessor` et la gestion de son cycle de vie.
 
-### 1. Create the Post-Processor Service
+### 1. Créer le Service Post-Processor
 
 ```typescript
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
@@ -188,17 +188,17 @@ export class UserAnalyticsPostProcessor extends SinglePostProcessor implements O
 
   protected async processEvent(event: StreamEvent<any>, messageId: string): Promise<void> {
     this.nestLogger.log(`Processing event ID: ${event.id}`);
-    // Implement business logic here
+    // Implémentez la logique métier ici
   }
 }
 ```
 
-### 2. Register in a Module
+### 2. Enregistrer dans un Module
 
 ```typescript
 import { Module } from '@nestjs/common';
 import { UserAnalyticsPostProcessor } from './user-analytics.post-processor';
-import { RedisModule } from './redis.module'; // Assume you have a module providing Redis
+import { RedisModule } from './redis.module'; // Suppose que vous avez un module fournissant Redis
 
 @Module({
   imports: [RedisModule],
@@ -207,4 +207,4 @@ import { RedisModule } from './redis.module'; // Assume you have a module provid
 export class AnalyticsModule {}
 ```
 
-By hooking into `OnModuleInit` and `OnModuleDestroy`, the NestJS application lifecycle will automatically start the background loops when the application boots and gracefully shut them down when it stops.
+En s'accrochant à `OnModuleInit` et `OnModuleDestroy`, le cycle de vie de l'application NestJS démarrera automatiquement les boucles en arrière-plan lorsque l'application démarre et les arrêtera proprement lors de son arrêt.
