@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.5
+
+### Patch Changes
+
+- README bump
+
+- Updated dependencies []:
+  - @volontariapp/config@3.2.1
+  - @volontariapp/errors@0.6.1
+  - @volontariapp/logger@0.2.6
+
 ## 1.0.4
 
 ### Patch Changes

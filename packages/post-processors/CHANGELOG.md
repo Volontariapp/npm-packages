@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.2.8
+
+### Patch Changes
+
+- README bump
+
+- Updated dependencies []:
+  - @volontariapp/database@3.4.4
+  - @volontariapp/health-check@1.0.5
+  - @volontariapp/logger@0.2.6
+  - @volontariapp/messaging@2.10.1
+  - @volontariapp/outbox@0.9.41
+  - @volontariapp/shared@0.8.1
+
 ## 3.2.7
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.3.9
+
+### Patch Changes
+
+- README bump
+
+- Updated dependencies []:
+  - @volontariapp/bridge@1.0.5
+  - @volontariapp/config@3.2.1
+  - @volontariapp/database@3.4.4
+  - @volontariapp/health-check@1.0.5
+  - @volontariapp/logger@0.2.6
+  - @volontariapp/messaging@2.10.1
+  - @volontariapp/outbox@0.9.41
+
 ## 1.3.8
 
 ### Patch Changes

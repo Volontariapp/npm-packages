@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- README bump
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.2.6
+
 ## 0.6.0
 
 ### Minor Changes

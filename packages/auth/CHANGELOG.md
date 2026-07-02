@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.3.8
+
+### Patch Changes
+
+- README bump
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.6.1
+  - @volontariapp/errors-nest@0.13.1
+  - @volontariapp/logger@0.2.6
+  - @volontariapp/shared@0.8.1
+
 ## 3.3.7
 
 ### Patch Changes
