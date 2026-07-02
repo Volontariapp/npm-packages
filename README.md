@@ -28,26 +28,26 @@ graph TD
     end
 
     subgraph "Volontariapp NPM Packages"
-        S[@volontariapp/shared]
+        S["@volontariapp/shared"]
         
         subgraph "Domaines Isolés (DDD)"
-            DE[@volontariapp/domain-event]
-            DU[@volontariapp/domain-user]
-            DP[@volontariapp/domain-post]
-            DS[@volontariapp/domain-social]
+            DE["@volontariapp/domain-event"]
+            DU["@volontariapp/domain-user"]
+            DP["@volontariapp/domain-post"]
+            DS["@volontariapp/domain-social"]
         end
         
         subgraph "Infrastructure Asynchrone"
-            OB[@volontariapp/outbox]
-            WKB[@volontariapp/workers]
-            MSG[@volontariapp/messaging]
+            OB["@volontariapp/outbox"]
+            WKB["@volontariapp/workers"]
+            MSG["@volontariapp/messaging"]
         end
         
         subgraph "Core & Utilitaires"
-            CFG[@volontariapp/config]
-            DB[@volontariapp/database]
-            ERR[@volontariapp/errors]
-            AUTH[@volontariapp/auth]
+            CFG["@volontariapp/config"]
+            DB["@volontariapp/database"]
+            ERR["@volontariapp/errors"]
+            AUTH["@volontariapp/auth"]
         end
     end
 
