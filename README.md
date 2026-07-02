@@ -16,50 +16,93 @@ En externalisant les domaines métiers et les mécanismes complexes (comme le pa
 
 ## Architecture Globale & Dépendances
 
-Ce diagramme illustre le flux de dépendance strict : l'infrastructure dépend du domaine, et les applicatifs dépendent des contrats et des utilitaires partagés.
+Afin de faciliter la lecture, les dépendances du monorepo sont réparties en 3 vues distinctes.
+
+### 1. Consommation des Domaines & Contrats Partagés
+Ce schéma illustre comment les composants applicatifs dépendent des contrats de base et de la logique métier pure (DDD).
 
 ```mermaid
-graph TD
-    subgraph "Applicatifs (Consumers)"
+graph LR
+    subgraph Applicatifs
         AGW[API Gateway]
         MS[Microservices]
-        WK[Workers / Post-Processors]
+        WORK[Workers]
+        PP[Post-Processors]
         RN[Frontend React Native]
     end
 
-    subgraph "Volontariapp NPM Packages"
+    subgraph Volontariapp Packages
         S["@volontariapp/shared"]
         
-        subgraph "Domaines Isolés (DDD)"
-            DE["@volontariapp/domain-event"]
-            DU["@volontariapp/domain-user"]
-            DP["@volontariapp/domain-post"]
-            DS["@volontariapp/domain-social"]
-        end
-        
-        subgraph "Infrastructure Asynchrone"
-            OB["@volontariapp/outbox"]
-            WKB["@volontariapp/workers"]
-            MSG["@volontariapp/messaging"]
-        end
-        
-        subgraph "Core & Utilitaires"
-            CFG["@volontariapp/config"]
-            DB["@volontariapp/database"]
-            ERR["@volontariapp/errors"]
-            AUTH["@volontariapp/auth"]
-        end
+        DOM["Domaines Isolés (@volontariapp/domain-*)"]
     end
 
-    MS --> DE
-    MS --> DU
-    WK --> DE
-    WK --> WKB
-    MS --> OB
-    OB --> MSG
+    MS --> DOM
+    WORK --> DOM
+    PP --> DOM
     RN --> S
     MS --> S
+    AGW --> S
+```
+
+### 2. Architecture Asynchrone (Outbox & Workers)
+Ce schéma détaille le circuit des messages asynchrones entre les bases de données et les brokers d'événements.
+
+```mermaid
+graph LR
+    subgraph Applicatifs
+        MS[Microservices]
+        WK[Workers]
+        PP[Post-Processors]
+    end
+
+    subgraph Packages Asynchrones
+        OB["outbox"]
+        WKB["workers"]
+        PPB["post-processors"]
+        MSG["messaging"]
+    end
+
+    MS --> OB
+    WK --> WKB
+    PP --> PPB
+    PP --> MSG
+    OB --> MSG
+    WK --> MSG
+```
+
+### 3. Core, Utilitaires Node.js & Écosystème NestJS
+Cette vue regroupe toutes les librairies agnostiques de bas niveau ainsi que les adaptateurs spécifiques au framework NestJS.
+
+```mermaid
+graph LR
+    subgraph Applicatifs
+        AGW[API Gateway]
+        MS[Microservices]
+    end
+
+    subgraph Core & Utilitaires
+        CFG["config"]
+        DB["database"]
+        AUTH["auth"]
+        LOG["logger"]
+    end
+    
+    subgraph Adaptateurs NestJS & Qualité
+        ERRN["errors-nest"]
+        CNTN["contracts-nest"]
+        VAL["validation-nest"]
+        BRN["bridge-nest"]
+        HC["health-check"]
+    end
+
+    MS --> DB
+    MS --> VAL
+    MS --> CFG
     AGW --> AUTH
+    MS --> ERRN
+    MS --> CNTN
+    AGW --> BRN
 ```
 
 ---
@@ -79,25 +122,32 @@ Ces packages encapsulent les règles métiers pures (Entités, Value Objects, Do
 Ces packages orchestrent le flux asynchrone pour garantir la cohérence des données (Problème de la double écriture).
 - [`@volontariapp/outbox`](packages/outbox/README.md) : L'implémentation robuste du Transactional Outbox Pattern (Dispatch, Polling, Pushing vers Redis).
 - [`@volontariapp/workers`](packages/workers/README.md) : Les classes de base pour consommer les jobs via BullMQ et maintenir la traçabilité SQL (Audit).
+- [`@volontariapp/post-processors`](packages/post-processors/README.md) : Traitements asynchrones réagissant aux événements métier finalisés.
 - [`@volontariapp/messaging`](packages/messaging/README.md) : Validation des payloads événementiels circulant dans le bus de messages.
 
 ### Core & Agnostiques (Pure Node.js)
 Ces librairies sont exécutables n'importe où, y compris dans des scripts légers sans dépendre de frameworks lourds.
 - [`@volontariapp/auth`](packages/auth/README.md) : Analyse et validation cryptographique JWT.
 - [`@volontariapp/config`](packages/config/README.md) : Validation des variables d'environnement (Fail Fast).
+- [`@volontariapp/crypto`](packages/crypto/README.md) : Utilitaires de chiffrement, hachage et sécurisation des données.
 - [`@volontariapp/database`](packages/database/README.md) : Centralisation des connexions TypeORM et utilitaires SQL.
+- [`@volontariapp/logger`](packages/logger/README.md) : Service de journalisation structuré et agnostique.
 - [`@volontariapp/shared`](packages/shared/README.md) : **Partagé avec le Frontend**. Contient les DTOs, Enums et contrats communs.
 
 ### Gestion d'Erreurs & Utilitaires NestJS
 - [`@volontariapp/errors`](packages/errors/README.md) : Standardisation absolue de `DomainError` et `InfrastructureError`.
 - [`@volontariapp/errors-nest`](packages/errors-nest/README.md) : Filtres globaux NestJS pour traduire les erreurs standard en codes HTTP.
+- [`@volontariapp/validation-nest`](packages/validation-nest/README.md) : Pipes et validateurs personnalisés pour les contrôleurs NestJS.
 - [`@volontariapp/contracts`](packages/contracts/README.md) : Typages générés à partir des définitions Protobuf (gRPC).
 - [`@volontariapp/contracts-nest`](packages/contracts-nest/README.md) : Wrappers pour instancier les clients gRPC dans NestJS.
+- [`@volontariapp/bridge`](packages/bridge/README.md) : Logique de communication transversale bas niveau.
+- [`@volontariapp/bridge-nest`](packages/bridge-nest/README.md) : Connecteurs Bridge injectables pour le framework NestJS.
 
 ### Qualité & Observabilité
 - [`@volontariapp/eslint-config`](packages/eslint-config/README.md) : Normes de qualité statique transverses.
 - [`@volontariapp/monitoring`](packages/monitoring/README.md) : Implémentation du Distributed Tracing via OpenTelemetry.
-- [`@volontariapp/health-check`](packages/health-check/README.md) : Standardisation des Liveness/Readiness probes.
+- [`@volontariapp/health-check`](packages/health-check/README.md) : Logique de sondes de vitalité pures.
+- [`@volontariapp/health-check-nest`](packages/health-check-nest/README.md) : Terminus et contrôleurs de vitalité pour NestJS.
 - [`@volontariapp/testing`](packages/testing/README.md) : Outils partagés pour simplifier les tests unitaires et E2E.
 
 ---
