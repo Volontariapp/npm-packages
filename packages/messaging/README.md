@@ -13,7 +13,7 @@ The **LOB (Local Outbox)** pattern is used to ensure reliable message delivery b
 3.  **Outbox Table**: The `event_queue` (or `jobs_outbox`) table stores the event with its payload (`before`/`after`) and status (`PENDING`).
 4.  **Dispatcher**: A background worker polls the outbox table, sends the message to the broker (RabbitMQ/Kafka), and marks the record as `COMPLETED`.
 
-### 📦 Package Structure
+### Package Structure
 
 This package centralizes all message definitions to ensure type safety across the monorepo.
 

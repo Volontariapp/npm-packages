@@ -2,7 +2,7 @@
 
 Central repository for all TypeScript interfaces, commands, and queries shared across the Volontariapp ecosystem.
 
-## 🚀 Purpose
+## Purpose
 
 This package is **isomorphic** and **front-end compatible**. It contains pure TypeScript definitions generated from the gRPC `.proto` files, making it suitable for:
 - **Web Applications** (React/Next.js)
@@ -10,13 +10,13 @@ This package is **isomorphic** and **front-end compatible**. It contains pure Ty
 - **Shared Logic** (Pure Node.js)
 - **Microservices** (DTOs and Interfaces)
 
-## 📦 Features
+## Features
 
 - **Pure TypeScript**: No dependencies on NestJS or other server-side frameworks.
 - **Auto-generated**: Always in sync with the `proto-registry`.
 - **Lightweight**: Optimized for bundling in browser/mobile environments.
 
-## 💻 Usage
+## Usage
 
 ```typescript
 import { User, CreateUserCommand } from '@volontariapp/contracts';

@@ -2,7 +2,7 @@
 
 NestJS-specific integration for Volontariapp gRPC contracts.
 
-## 🚀 Purpose
+## Purpose
 
 This package provides the integration layer for NestJS microservices. It contains:
 - **gRPC Helpers**: `getGrpcOptions` and configuration utilities.
@@ -14,7 +14,7 @@ This package provides the integration layer for NestJS microservices. It contain
 
 This package depends on `@nestjs/microservices` and `rxjs`. It is **not** compatible with front-end environments (React/React Native). For front-end usage, use `@volontariapp/contracts`.
 
-## 💻 Usage
+## Usage
 
 ### Microservice Setup
 ```typescript
