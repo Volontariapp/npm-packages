@@ -19,6 +19,9 @@ export * from './repositories/postgres-requirement.repository.js';
 export * from './services/index.js';
 
 export * from './value-objects/event-location.value-object.js';
+export * from './value-objects/find-around-me.value-object.js';
+export * from './value-objects/paginated-events.value-object.js';
+export * from './value-objects/search-advanced.value-object.js';
 
 export * from './database/triggers/index.js';
 

@@ -1,9 +1,9 @@
 # Changelog
 
-## 3.6.16
+## 3.7.0
 
 ### Patch Changes
-
+Event Searching V2
 - Updated dependencies []:
   - @volontariapp/contracts@4.3.4
   - @volontariapp/messaging@2.10.3

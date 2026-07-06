@@ -200,4 +200,82 @@ export class Neo4jParticipationRepository
       pagination,
     );
   }
+
+  async getRecommendedEventIds(
+    userId: string,
+    filters: {
+      excludeCreatedByMe?: boolean;
+      excludeBlockedUsers?: boolean;
+      excludeParticipatedByMe?: boolean;
+      excludeWishedByMe?: boolean;
+      onlyParticipatedByFriends?: boolean;
+      onlyWishedByFriends?: boolean;
+      onlyCreatedByFriends?: boolean;
+    },
+    pagination: PaginationVO,
+  ): Promise<PaginatedIdsVO> {
+    const conditions: string[] = [];
+
+    // The base match depends on whether we need to restrict to friends' events
+    let baseMatch = 'MATCH (e:SocialEvent)';
+    if (
+      filters.onlyParticipatedByFriends ||
+      filters.onlyWishedByFriends ||
+      filters.onlyCreatedByFriends
+    ) {
+      // Find friends first (following each other)
+      const relations = [];
+      if (filters.onlyParticipatedByFriends) relations.push('[:PARTICIPATE]');
+      if (filters.onlyWishedByFriends) relations.push('[:WISH_TO_PARTICIPATE]');
+      if (filters.onlyCreatedByFriends) relations.push('[:CREATED]');
+
+      const relString = relations.join('|');
+      baseMatch = `MATCH (u:SocialUser {userId: $userId})-[:FOLLOWS]->(friend:SocialUser)-[:FOLLOWS]->(u)
+                   MATCH (friend)-[${relString}]->(e:SocialEvent)`;
+    } else {
+      // Base case: we just consider all events
+      baseMatch = 'MATCH (e:SocialEvent)';
+    }
+
+    if (filters.excludeCreatedByMe) {
+      conditions.push('NOT EXISTS { MATCH (u)-[:CREATED]->(e) WHERE u.userId = $userId }');
+    }
+    if (filters.excludeParticipatedByMe) {
+      conditions.push('NOT EXISTS { MATCH (u)-[:PARTICIPATE]->(e) WHERE u.userId = $userId }');
+    }
+    if (filters.excludeWishedByMe) {
+      conditions.push(
+        'NOT EXISTS { MATCH (u)-[:WISH_TO_PARTICIPATE]->(e) WHERE u.userId = $userId }',
+      );
+    }
+    if (filters.excludeBlockedUsers) {
+      // Event creator is not blocked by me and hasn't blocked me
+      conditions.push(
+        'NOT EXISTS { MATCH (:SocialUser {userId: $userId})-[:BLOCKS]->(creator:SocialUser)-[:CREATED]->(e) }',
+      );
+      conditions.push(
+        'NOT EXISTS { MATCH (creator:SocialUser)-[:BLOCKS]->(:SocialUser {userId: $userId}) WHERE (creator)-[:CREATED]->(e) }',
+      );
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    // Using distinct to avoid returning duplicates if multiple friends participated
+    const matchQuery = `
+      ${baseMatch}
+      ${whereClause}
+      WITH DISTINCT e
+      RETURN e.eventId AS id
+      SKIP $skip LIMIT $limit
+    `;
+
+    const countQuery = `
+      ${baseMatch}
+      ${whereClause}
+      WITH DISTINCT e
+      RETURN count(e) AS total
+    `;
+
+    return this.readPaginated(matchQuery, countQuery, { userId }, pagination);
+  }
 }

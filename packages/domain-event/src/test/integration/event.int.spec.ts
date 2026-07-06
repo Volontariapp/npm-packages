@@ -18,6 +18,7 @@ import { EventLocation } from '../../value-objects/event-location.value-object.j
 import { EventFactory } from '../__test-utils__/factories/event.factory.js';
 import { TagFactory } from '../__test-utils__/factories/tag.factory.js';
 import { RequirementFactory } from '../__test-utils__/factories/requirement.factory.js';
+import { SearchAdvancedVO } from '../../index.js';
 
 describe('PostgresEventRepository (Integration)', () => {
   let eventRepository: PostgresEventRepository;
@@ -368,6 +369,140 @@ describe('PostgresEventRepository (Integration)', () => {
       // Assert
       expect(fetched?.location.latitude).toBeCloseTo(-23.5505, 2);
       expect(fetched?.location.longitude).toBeCloseTo(-46.6333, 2);
+    });
+  });
+
+  // ─── searchAdvanced ───────────────────────────────────────────────────────
+
+  describe('searchAdvanced()', () => {
+    it('should filter by multiple advanced criteria and respect onlyAvailable', async () => {
+      await eventRepository.create(
+        EventFactory.buildInput({
+          name: 'Tech Meetup',
+          type: EventType.EVENT_TYPE_SOCIAL,
+          state: EventState.EVENT_STATE_PUBLISHED,
+        }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({
+          name: 'Silent Party',
+          type: EventType.EVENT_TYPE_SOCIAL,
+          state: EventState.EVENT_STATE_DRAFT,
+        }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({
+          name: 'Eco Run',
+          type: EventType.EVENT_TYPE_ECOLOGY,
+          state: EventState.EVENT_STATE_PUBLISHED,
+        }),
+      );
+
+      const { SearchAdvancedVO } = await import(
+        '../../value-objects/search-advanced.value-object.js'
+      );
+      const params = new SearchAdvancedVO(
+        undefined,
+        [EventType.EVENT_TYPE_SOCIAL], // types
+        undefined, // tagSlugs
+        true, // onlyAvailable
+        undefined, // searchTerm
+        undefined, // organizerId
+        undefined, // ids
+        undefined, // excludedIds
+        undefined, // startDateFrom
+        undefined, // startDateTo
+        undefined, // statuses
+        1,
+        10,
+      );
+
+      const result = await eventRepository.searchAdvanced(params);
+
+      expect(result.events).toHaveLength(1);
+      expect(result.events[0].name).toBe('Tech Meetup');
+      expect(result.total).toBe(1);
+    });
+
+    it('should respect excludedIds and searchTerm', async () => {
+      const e1 = await eventRepository.create(
+        EventFactory.buildInput({ name: 'Beach Cleanup', state: EventState.EVENT_STATE_PUBLISHED }),
+      );
+      const e2 = await eventRepository.create(
+        EventFactory.buildInput({ name: 'City Cleanup', state: EventState.EVENT_STATE_PUBLISHED }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({
+          name: 'Forest Cleanup',
+          state: EventState.EVENT_STATE_PUBLISHED,
+        }),
+      );
+
+      const { SearchAdvancedVO } = await import(
+        '../../value-objects/search-advanced.value-object.js'
+      );
+      const params = new SearchAdvancedVO(
+        undefined,
+        undefined,
+        undefined,
+        false,
+        'Cleanup',
+        undefined,
+        undefined,
+        [e1.id, e2.id],
+        undefined,
+        undefined,
+        undefined,
+        1,
+        10,
+      );
+
+      const result = await eventRepository.searchAdvanced(params);
+
+      expect(result.events).toHaveLength(1);
+      expect(result.events[0].name).toBe('Forest Cleanup');
+      expect(result.total).toBe(1);
+    });
+
+    it('should filter correctly with dates and pagination', async () => {
+      await eventRepository.create(
+        EventFactory.buildInput({ name: 'Past Event', startAt: new Date('2023-01-01') }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({ name: 'Current Event 1', startAt: new Date('2023-06-01') }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({ name: 'Current Event 2', startAt: new Date('2023-07-01') }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({ name: 'Current Event 3', startAt: new Date('2023-08-01') }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({ name: 'Future Event', startAt: new Date('2024-01-01') }),
+      );
+
+      const params = new SearchAdvancedVO(
+        undefined,
+        undefined,
+        undefined,
+        false,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        new Date('2023-05-01'),
+        new Date('2023-12-31'),
+        undefined,
+        2,
+        2,
+      );
+
+      const result = await eventRepository.searchAdvanced(params);
+
+      expect(result.total).toBe(3); // 3 current events
+      expect(result.events).toHaveLength(1); // Since page 2 with limit 2 returns the 3rd event
+      expect(result.page).toBe(2);
+      expect(result.limit).toBe(2);
     });
   });
 });

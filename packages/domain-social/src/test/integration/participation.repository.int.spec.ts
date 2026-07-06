@@ -285,4 +285,108 @@ describe('Neo4jParticipationRepository (Integration)', () => {
       expect(result.ids).toHaveLength(0);
     });
   });
+  // ─── getRecommendedEventIds ───────────────────────────────────────────────
+
+  describe('getRecommendedEventIds()', () => {
+    it('should return all event ids when no filters are applied', async () => {
+      await repository.createEventNode(EVENT_1);
+
+      const result = await repository.getRecommendedEventIds('user-1', {}, PAGINATION);
+
+      expect(result.ids).toContain('event-1');
+    });
+
+    it('should respect excludeCreatedByMe filter', async () => {
+      await repository.createUserEvent(USER_A, EVENT_1);
+
+      const result = await repository.getRecommendedEventIds(
+        'user-a',
+        { excludeCreatedByMe: true },
+        PAGINATION,
+      );
+
+      expect(result.ids).not.toContain('event-1');
+    });
+
+    it('should respect excludeParticipatedByMe filter', async () => {
+      await repository.createParticipation(USER_A, EVENT_1);
+      await repository.createEventNode(EVENT_2);
+
+      const result = await repository.getRecommendedEventIds(
+        'user-a',
+        { excludeParticipatedByMe: true },
+        PAGINATION,
+      );
+
+      expect(result.ids).not.toContain('event-1');
+      expect(result.ids).toContain('event-2');
+    });
+
+    it('should respect excludeWishedByMe filter', async () => {
+      await repository.createWish(USER_A, EVENT_1);
+      await repository.createEventNode(EVENT_2);
+
+      const result = await repository.getRecommendedEventIds(
+        'user-a',
+        { excludeWishedByMe: true },
+        PAGINATION,
+      );
+
+      expect(result.ids).not.toContain('event-1');
+      expect(result.ids).toContain('event-2');
+    });
+
+    it('should respect excludeBlockedUsers filter', async () => {
+      // USER_B created EVENT_1
+      await repository.createUserEvent(USER_B, EVENT_1);
+      await repository.createEventNode(EVENT_2);
+      // USER_A blocks USER_B
+      const provider = getTestProvider();
+      const session = provider.getDriver().session();
+      await session.run(
+        'MATCH (a:SocialUser {userId: $u1}), (b:SocialUser {userId: $u2}) MERGE (a)-[:BLOCKS]->(b)',
+        { u1: 'user-a', u2: 'user-b' },
+      );
+      await session.close();
+
+      const result = await repository.getRecommendedEventIds(
+        'user-a',
+        { excludeBlockedUsers: true },
+        PAGINATION,
+      );
+
+      expect(result.ids).not.toContain('event-1');
+      expect(result.ids).toContain('event-2');
+    });
+
+    it('should combine multiple filters', async () => {
+      await repository.createParticipation(USER_A, EVENT_1);
+      await repository.createWish(USER_A, EVENT_2);
+      await repository.createUserEvent(USER_B, EVENT_NEW);
+      // USER_A blocks USER_B
+      const provider = getTestProvider();
+      const session = provider.getDriver().session();
+      await session.run(
+        'MATCH (a:SocialUser {userId: $u1}), (b:SocialUser {userId: $u2}) MERGE (a)-[:BLOCKS]->(b)',
+        { u1: 'user-a', u2: 'user-b' },
+      );
+      await session.close();
+
+      // There should be no recommended events left
+      const result = await repository.getRecommendedEventIds(
+        'user-a',
+        {
+          excludeParticipatedByMe: true,
+          excludeWishedByMe: true,
+          excludeBlockedUsers: true,
+        },
+        PAGINATION,
+      );
+
+      expect(result.ids).not.toContain('event-1');
+      expect(result.ids).not.toContain('event-2');
+      expect(result.ids).not.toContain('event-new');
+      expect(result.ids).toHaveLength(0);
+    });
+  });
 });

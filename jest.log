@@ -1,0 +1,826 @@
+(node:92503) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL src/test/unit/search-advanced.value-object.unit.spec.ts
+  ● SearchAdvancedVO › should throw if latitude is invalid
+
+    expect(received).toThrow(expected)
+
+    Expected constructor: CustomApiError
+    Received constructor: BadRequestError
+
+    Received message: "Invalid location: Latitude must be between -90 and 90"
+
+          15 |
+          16 | export const INVALID_LOCATION = (details: string) =>
+        > 17 |   new BadRequestError(`Invalid location: ${details}`, 'INVALID_EVENT_LOCATION');
+             |   ^
+          18 |
+          19 | export const INVALID_EVENT_STATE_TRANSITION = (from: string, to: string) =>
+          20 |   new BadRequestError(`Cannot transition event from ${from} to ${to}`, 'INVALID_STATE_TRANSITION');
+
+      at INVALID_LOCATION (../errors-nest/src/errors/event.errors.ts:17:3)
+      at SearchAdvancedVO.validate (src/value-objects/search-advanced.value-object.ts:26:15)
+      at new SearchAdvancedVO (src/value-objects/search-advanced.value-object.ts:20:10)
+      at src/test/unit/search-advanced.value-object.unit.spec.ts:36:18
+      at Object.<anonymous> (../../node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (../../node_modules/expect/build/index.js:2235:93)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:36:82)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:36:82)
+
+  ● SearchAdvancedVO › should throw if longitude is invalid
+
+    expect(received).toThrow(expected)
+
+    Expected constructor: CustomApiError
+    Received constructor: BadRequestError
+
+    Received message: "Invalid location: Longitude must be between -180 and 180"
+
+          15 |
+          16 | export const INVALID_LOCATION = (details: string) =>
+        > 17 |   new BadRequestError(`Invalid location: ${details}`, 'INVALID_EVENT_LOCATION');
+             |   ^
+          18 |
+          19 | export const INVALID_EVENT_STATE_TRANSITION = (from: string, to: string) =>
+          20 |   new BadRequestError(`Cannot transition event from ${from} to ${to}`, 'INVALID_STATE_TRANSITION');
+
+      at INVALID_LOCATION (../errors-nest/src/errors/event.errors.ts:17:3)
+      at SearchAdvancedVO.validate (src/value-objects/search-advanced.value-object.ts:29:15)
+      at new SearchAdvancedVO (src/value-objects/search-advanced.value-object.ts:20:10)
+      at src/test/unit/search-advanced.value-object.unit.spec.ts:42:18
+      at Object.<anonymous> (../../node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (../../node_modules/expect/build/index.js:2235:93)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:42:82)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:42:82)
+
+  ● SearchAdvancedVO › should throw if radius is invalid
+
+    expect(received).toThrow(expected)
+
+    Expected constructor: CustomApiError
+    Received constructor: BadRequestError
+
+    Received message: "Invalid parameter 'radiusInMeters': Radius must be greater than 0"
+
+          15 |
+          16 | export const INVALID_PARAMETER = (parameterName: string, details?: string) =>
+        > 17 |   new BadRequestError(
+             |   ^
+          18 |     `Invalid parameter '${parameterName}'${details !== undefined && details !== '' ? `: ${details}` : ''}`,
+          19 |     'INVALID_PARAMETER',
+          20 |     { parameterName },
+
+      at INVALID_PARAMETER (../errors-nest/src/errors/common.errors.ts:17:3)
+      at SearchAdvancedVO.validate (src/value-objects/search-advanced.value-object.ts:32:15)
+      at new SearchAdvancedVO (src/value-objects/search-advanced.value-object.ts:20:10)
+      at src/test/unit/search-advanced.value-object.unit.spec.ts:48:18
+      at Object.<anonymous> (../../node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (../../node_modules/expect/build/index.js:2235:93)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:48:79)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:48:79)
+
+  ● SearchAdvancedVO › should throw if startDateFrom is after startDateTo
+
+    expect(received).toThrow(expected)
+
+    Expected constructor: CustomApiError
+    Received constructor: BadRequestError
+
+    Received message: "Invalid parameter 'startDate': End date must be after start date"
+
+          15 |
+          16 | export const INVALID_PARAMETER = (parameterName: string, details?: string) =>
+        > 17 |   new BadRequestError(
+             |   ^
+          18 |     `Invalid parameter '${parameterName}'${details !== undefined && details !== '' ? `: ${details}` : ''}`,
+          19 |     'INVALID_PARAMETER',
+          20 |     { parameterName },
+
+      at INVALID_PARAMETER (../errors-nest/src/errors/common.errors.ts:17:3)
+      at SearchAdvancedVO.validate (src/value-objects/search-advanced.value-object.ts:38:15)
+      at new SearchAdvancedVO (src/value-objects/search-advanced.value-object.ts:20:10)
+      at src/test/unit/search-advanced.value-object.unit.spec.ts:54:9
+      at Object.<anonymous> (../../node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (../../node_modules/expect/build/index.js:2235:93)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:66:7)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:66:7)
+
+  ● SearchAdvancedVO › should throw if page is less than 1
+
+    expect(received).toThrow(expected)
+
+    Expected constructor: CustomApiError
+    Received constructor: BadRequestError
+
+    Received message: "Invalid parameter 'page': Page must be greater than 0"
+
+          15 |
+          16 | export const INVALID_PARAMETER = (parameterName: string, details?: string) =>
+        > 17 |   new BadRequestError(
+             |   ^
+          18 |     `Invalid parameter '${parameterName}'${details !== undefined && details !== '' ? `: ${details}` : ''}`,
+          19 |     'INVALID_PARAMETER',
+          20 |     { parameterName },
+
+      at INVALID_PARAMETER (../errors-nest/src/errors/common.errors.ts:17:3)
+      at SearchAdvancedVO.validate (src/value-objects/search-advanced.value-object.ts:43:13)
+      at new SearchAdvancedVO (src/value-objects/search-advanced.value-object.ts:20:10)
+      at src/test/unit/search-advanced.value-object.unit.spec.ts:72:9
+      at Object.<anonymous> (../../node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (../../node_modules/expect/build/index.js:2235:93)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:86:7)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:86:7)
+
+  ● SearchAdvancedVO › should throw if limit is less than 1
+
+    expect(received).toThrow(expected)
+
+    Expected constructor: CustomApiError
+    Received constructor: BadRequestError
+
+    Received message: "Invalid parameter 'limit': Limit must be between 1 and 100"
+
+          15 |
+          16 | export const INVALID_PARAMETER = (parameterName: string, details?: string) =>
+        > 17 |   new BadRequestError(
+             |   ^
+          18 |     `Invalid parameter '${parameterName}'${details !== undefined && details !== '' ? `: ${details}` : ''}`,
+          19 |     'INVALID_PARAMETER',
+          20 |     { parameterName },
+
+      at INVALID_PARAMETER (../errors-nest/src/errors/common.errors.ts:17:3)
+      at SearchAdvancedVO.validate (src/value-objects/search-advanced.value-object.ts:47:13)
+      at new SearchAdvancedVO (src/value-objects/search-advanced.value-object.ts:20:10)
+      at src/test/unit/search-advanced.value-object.unit.spec.ts:92:9
+      at Object.<anonymous> (../../node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (../../node_modules/expect/build/index.js:2235:93)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:107:7)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:107:7)
+
+  ● SearchAdvancedVO › should throw if limit is greater than 100
+
+    expect(received).toThrow(expected)
+
+    Expected constructor: CustomApiError
+    Received constructor: BadRequestError
+
+    Received message: "Invalid parameter 'limit': Limit must be between 1 and 100"
+
+          15 |
+          16 | export const INVALID_PARAMETER = (parameterName: string, details?: string) =>
+        > 17 |   new BadRequestError(
+             |   ^
+          18 |     `Invalid parameter '${parameterName}'${details !== undefined && details !== '' ? `: ${details}` : ''}`,
+          19 |     'INVALID_PARAMETER',
+          20 |     { parameterName },
+
+      at INVALID_PARAMETER (../errors-nest/src/errors/common.errors.ts:17:3)
+      at SearchAdvancedVO.validate (src/value-objects/search-advanced.value-object.ts:47:13)
+      at new SearchAdvancedVO (src/value-objects/search-advanced.value-object.ts:20:10)
+      at src/test/unit/search-advanced.value-object.unit.spec.ts:113:9
+      at Object.<anonymous> (../../node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (../../node_modules/expect/build/index.js:2235:93)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:128:7)
+      at Object.<anonymous> (src/test/unit/search-advanced.value-object.unit.spec.ts:128:7)
+
+(node:92509) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/test/unit/event-location.value-object.unit.spec.ts
+PASS src/test/unit/paginated-events.value-object.unit.spec.ts
+PASS src/test/unit/geocoding.service.unit.spec.ts
+  ● Console
+
+    console.warn
+      [2m2026-07-06T10:32:59.062Z[0m [33m[WARN][0m [33m[GeocodingService][0m Primary geocoding failed, attempting fallback...
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.warn (../logger/src/logger.ts:42:10)
+      at GeocodingService.geocode (src/services/geocoding/geocoding.service.ts:26:19)
+      at Object.<anonymous> (src/test/unit/geocoding.service.unit.spec.ts:42:20)
+
+    console.warn
+      [2m2026-07-06T10:32:59.077Z[0m [33m[WARN][0m [33m[GeocodingService][0m Primary geocoding failed, attempting fallback...
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.warn (../logger/src/logger.ts:42:10)
+      at GeocodingService.geocode (src/services/geocoding/geocoding.service.ts:26:19)
+      at Object.<anonymous> (src/test/unit/geocoding.service.unit.spec.ts:56:20)
+
+PASS src/test/unit/services/geocoding/strategy/open-street-map.strategy.unit.spec.ts
+(node:92507) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/test/unit/mappers.unit.spec.ts
+(node:92508) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/test/unit/requirement.service.unit.spec.ts
+  ● Console
+
+    console.error
+      [2m2026-07-06T10:32:59.279Z[0m [31m[ERROR][0m [33m[RequirementService][0m Failed to fetch requirements [31m{
+        "error": "Connection error",
+        "stack": "Error: Connection error\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/requirement.service.unit.spec.ts:45:48)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at RequirementService.findAll (src/services/requirement.service.ts:23:19)
+      at Object.<anonymous> (src/test/unit/requirement.service.unit.spec.ts:48:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.305Z[0m [31m[ERROR][0m [33m[RequirementService][0m Failed to fetch requirement: req-1 [31m{
+        "error": "Query failed",
+        "stack": "Error: Query failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/requirement.service.unit.spec.ts:81:49)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at RequirementService.findById (src/services/requirement.service.ts:38:19)
+      at Object.<anonymous> (src/test/unit/requirement.service.unit.spec.ts:84:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.306Z[0m [34m[INFO][0m [33m[RequirementService][0m Creating requirement: Requirement 2a5c465b
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.307Z[0m [34m[INFO][0m [33m[RequirementService][0m Creating requirement: Volunteer
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.307Z[0m [31m[ERROR][0m [33m[RequirementService][0m Failed to create requirement [31m{
+        "error": "Insert failed",
+        "stack": "Error: Insert failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/requirement.service.unit.spec.ts:107:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at RequirementService.create (src/services/requirement.service.ts:50:19)
+      at Object.<anonymous> (src/test/unit/requirement.service.unit.spec.ts:110:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.309Z[0m [31m[ERROR][0m [33m[RequirementService][0m Failed to update requirement: req-1 [31m{
+        "error": "Update crash",
+        "stack": "Error: Update crash\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/requirement.service.unit.spec.ts:162:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at RequirementService.update (src/services/requirement.service.ts:66:19)
+      at Object.<anonymous> (src/test/unit/requirement.service.unit.spec.ts:165:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.312Z[0m [31m[ERROR][0m [33m[RequirementService][0m Failed to delete requirement: req-1 [31m{
+        "error": "Delete failed",
+        "stack": "Error: Delete failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/requirement.service.unit.spec.ts:201:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at RequirementService.delete (src/services/requirement.service.ts:78:19)
+      at Object.<anonymous> (src/test/unit/requirement.service.unit.spec.ts:204:7)
+
+(node:92505) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/test/unit/tag.service.unit.spec.ts
+  ● Console
+
+    console.log
+      [2m2026-07-06T10:32:59.359Z[0m [90m[DEBUG][0m [33m[TagService][0m Fetching all tags
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.372Z[0m [90m[DEBUG][0m [33m[TagService][0m Fetching all tags
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.373Z[0m [90m[DEBUG][0m [33m[TagService][0m Fetching all tags
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.373Z[0m [31m[ERROR][0m [33m[TagService][0m Failed to fetch tags [31m{
+        "error": "Connection refused",
+        "stack": "Error: Connection refused\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/tag.service.unit.spec.ts:45:48)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at TagService.findAll (src/services/tag.service.ts:24:19)
+      at Object.<anonymous> (src/test/unit/tag.service.unit.spec.ts:48:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.384Z[0m [31m[ERROR][0m [33m[TagService][0m Failed to fetch tag: tag-1 [31m{
+        "error": "DB failure",
+        "stack": "Error: DB failure\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/tag.service.unit.spec.ts:89:49)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at TagService.findById (src/services/tag.service.ts:39:19)
+      at Object.<anonymous> (src/test/unit/tag.service.unit.spec.ts:92:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.385Z[0m [90m[DEBUG][0m [33m[TagService][0m Fetching tags by ids: f5e53f00-d361-4a17-bead-f8b8af171025, 85a7febb-ed11-4ae7-8c15-11133f4a1706
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.385Z[0m [90m[DEBUG][0m [33m[TagService][0m Fetching tags by ids: id-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.386Z[0m [31m[ERROR][0m [33m[TagService][0m Failed to fetch tags by ids: id-1 [31m{
+        "error": "Query error",
+        "stack": "Error: Query error\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/tag.service.unit.spec.ts:115:50)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at TagService.findByIds (src/services/tag.service.ts:50:19)
+      at Object.<anonymous> (src/test/unit/tag.service.unit.spec.ts:118:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.387Z[0m [31m[ERROR][0m [33m[TagService][0m Failed to fetch tag by slug: slug [31m{
+        "error": "DB error",
+        "stack": "Error: DB error\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/tag.service.unit.spec.ts:151:51)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at TagService.findBySlug (src/services/tag.service.ts:65:19)
+      at Object.<anonymous> (src/test/unit/tag.service.unit.spec.ts:154:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.387Z[0m [34m[INFO][0m [33m[TagService][0m Creating new tag: Tag dd987578
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.388Z[0m [34m[INFO][0m [33m[TagService][0m Creating new tag: No Slug
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.389Z[0m [34m[INFO][0m [33m[TagService][0m Creating new tag: Empty Slug
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.391Z[0m [34m[INFO][0m [33m[TagService][0m Creating new tag: undefined
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.391Z[0m [31m[ERROR][0m [33m[TagService][0m Failed to create tag [31m{
+        "error": "Insert failed",
+        "stack": "Error: Insert failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/tag.service.unit.spec.ts:221:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at TagService.create (src/services/tag.service.ts:83:19)
+      at Object.<anonymous> (src/test/unit/tag.service.unit.spec.ts:224:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.392Z[0m [34m[INFO][0m [33m[TagService][0m Updating tag: tag-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.393Z[0m [34m[INFO][0m [33m[TagService][0m Updating tag: tag-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.393Z[0m [34m[INFO][0m [33m[TagService][0m Updating tag: tag-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.393Z[0m [31m[ERROR][0m [33m[TagService][0m Failed to update tag: tag-1 [31m{
+        "error": "Update crash",
+        "stack": "Error: Update crash\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/tag.service.unit.spec.ts:281:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at TagService.update (src/services/tag.service.ts:101:19)
+      at Object.<anonymous> (src/test/unit/tag.service.unit.spec.ts:284:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.394Z[0m [34m[INFO][0m [33m[TagService][0m Deleting tag: tag-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.394Z[0m [34m[INFO][0m [33m[TagService][0m Deleting tag: tag-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.394Z[0m [31m[ERROR][0m [33m[TagService][0m Failed to delete tag: tag-1 [31m{
+        "error": "Delete failed",
+        "stack": "Error: Delete failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/tag.service.unit.spec.ts:320:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at TagService.delete (src/services/tag.service.ts:114:19)
+      at Object.<anonymous> (src/test/unit/tag.service.unit.spec.ts:323:7)
+
+(node:92504) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/test/unit/event.service.unit.spec.ts
+  ● Console
+
+    console.error
+      [2m2026-07-06T10:32:59.386Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to find event: evt-1 [31m{
+        "error": "Connection lost",
+        "stack": "Error: Connection lost\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:51:49)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.findById (src/services/event.service.ts:43:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:54:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.414Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to fetch events [31m{
+        "error": "DB failure",
+        "stack": "Error: DB failure\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:95:48)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.findAll (src/services/event.service.ts:53:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:98:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.421Z[0m [34m[INFO][0m [33m[EventService][0m Creating event: Event d41f23d4
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.423Z[0m [34m[INFO][0m [33m[EventService][0m Creating event: Event 44bfd806
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.423Z[0m [34m[INFO][0m [33m[EventService][0m Creating event: Event 39e53f18
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.424Z[0m [34m[INFO][0m [33m[EventService][0m Creating event: Event ce4a7033
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.425Z[0m [34m[INFO][0m [33m[EventService][0m Creating event: Event 7bc7927b
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.426Z[0m [34m[INFO][0m [33m[EventService][0m Creating event: Duplicate Event
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.426Z[0m [34m[INFO][0m [33m[EventService][0m Creating event: Event d541b4e2
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.426Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to create event [31m{
+        "error": "Insert failed",
+        "stack": "Error: Insert failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:193:63)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.create (src/services/event.service.ts:79:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:196:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.429Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to update event: evt-1 [31m{
+        "error": "Update crash",
+        "stack": "Error: Update crash\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:289:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.update (src/services/event.service.ts:113:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:292:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.430Z[0m [34m[INFO][0m [33m[EventService][0m Changing event state: evt-1 -> 2
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.434Z[0m [34m[INFO][0m [33m[EventService][0m Changing event state: evt-1 -> 1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.436Z[0m [34m[INFO][0m [33m[EventService][0m Changing event state: evt-1 -> 2
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.436Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to change event state: evt-1 [31m{
+        "error": "DB crash",
+        "stack": "Error: DB crash\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:376:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.changeState (src/services/event.service.ts:159:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:379:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.438Z[0m [34m[INFO][0m [33m[EventService][0m Updating event saga status: evt-1 -> DONE
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.439Z[0m [34m[INFO][0m [33m[EventService][0m Updating event saga status: missing -> DONE
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.444Z[0m [34m[INFO][0m [33m[EventService][0m Updating event saga status: evt-1 -> DONE
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.445Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to update event saga status: evt-1 [31m{
+        "error": "DB failure",
+        "stack": "Error: DB failure\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:413:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.updateSaga (src/services/event.service.ts:129:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:416:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.446Z[0m [34m[INFO][0m [33m[EventService][0m Deleting event: evt-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.447Z[0m [34m[INFO][0m [33m[EventService][0m Deleting event: missing
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.447Z[0m [34m[INFO][0m [33m[EventService][0m Deleting event: evt-1
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.448Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to delete event: evt-1 [31m{
+        "error": "Delete failed",
+        "stack": "Error: Delete failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:447:63)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.delete (src/services/event.service.ts:174:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:450:7)
+
+    console.log
+      [2m2026-07-06T10:32:59.449Z[0m [90m[DEBUG][0m [33m[EventService][0m Searching events with term: cleanup
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.450Z[0m [90m[DEBUG][0m [33m[EventService][0m Searching events with term: nonexistent
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.log
+      [2m2026-07-06T10:32:59.450Z[0m [90m[DEBUG][0m [33m[EventService][0m Searching events with term: term
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+
+    console.error
+      [2m2026-07-06T10:32:59.450Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to search events: term [31m{
+        "error": "Search failed",
+        "stack": "Error: Search failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:483:47)\n    at Promise.finally.completed (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)\n    at _callCircusTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at _runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:947:3)\n    at /Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:849:7\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:862:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at _runTestsForDescribeBlock (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:857:11)\n    at run (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:761:3)\n    at runAndTransformResultsToJestFormat (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)\n    at jestAdapter (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-circus/build/runner.js:101:19)\n    at runTestInternal (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:275:16)\n    at runTest (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:343:7)\n    at Object.worker (/Users/victoragahi/Developer/meta/npm-packages/node_modules/jest-runner/build/testWorker.js:497:12)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.search (src/services/event.service.ts:186:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:486:7)
+
+    console.error
+      [2m2026-07-06T10:32:59.452Z[0m [31m[ERROR][0m [33m[EventService][0m Failed to search events advanced [31m{
+        "error": "Search failed",
+        "stack": "Error: Search failed\n    at Object.<anonymous> (/Users/victoragahi/Developer/meta/npm-packages/packages/domain-event/src/test/unit/event.service.unit.spec.ts:515:55)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+      }[0m
+
+      102 |     }
+      103 |
+    > 104 |     console[logMethod](output);
+          |                       ^
+      105 |   }
+      106 |
+      107 |   private stringifyUnknown(val: unknown): string {
+
+      at Logger.print (../logger/src/logger.ts:104:23)
+      at Logger.error (../logger/src/logger.ts:46:10)
+      at EventService.searchAdvanced (src/services/event.service.ts:217:19)
+      at Object.<anonymous> (src/test/unit/event.service.unit.spec.ts:518:7)
+
+(node:92506) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/test/unit/postgres-event.repository.unit.spec.ts
+
+Test Suites: 1 failed, 9 passed, 10 total
+Tests:       7 failed, 114 passed, 121 total
+Snapshots:   0 total
+Time:        2.795 s, estimated 3 s
+Ran all test suites.
