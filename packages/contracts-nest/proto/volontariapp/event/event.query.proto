@@ -17,6 +17,12 @@ message SearchEventsQuery {
   bool only_available = 4;
   string search_term = 5;
   string organizer_id = 6;
+  repeated string ids = 7;
+  repeated string excluded_ids = 8;
+  optional string start_date_from = 9;
+  optional string start_date_to = 10;
+  repeated EventState statuses = 11;
+  volontariapp.common.PaginationRequest pagination = 12;
 }
 
 message GetEventsByIdsQuery {

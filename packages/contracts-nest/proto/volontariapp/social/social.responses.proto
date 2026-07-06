@@ -162,3 +162,8 @@ message GetEventPostsResponse {
 message GetEventNodeResponse {
   bool exists = 1;
 }
+
+message GetRecommendedEventIdsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
