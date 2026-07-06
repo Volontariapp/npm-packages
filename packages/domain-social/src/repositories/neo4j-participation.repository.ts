@@ -225,13 +225,13 @@ export class Neo4jParticipationRepository
     ) {
       // Find friends first (following each other)
       const relations = [];
-      if (filters.onlyParticipatedByFriends) relations.push('[:PARTICIPATE]');
-      if (filters.onlyWishedByFriends) relations.push('[:WISH_TO_PARTICIPATE]');
-      if (filters.onlyCreatedByFriends) relations.push('[:CREATED]');
+      if (filters.onlyParticipatedByFriends) relations.push('PARTICIPATE');
+      if (filters.onlyWishedByFriends) relations.push('WISH_TO_PARTICIPATE');
+      if (filters.onlyCreatedByFriends) relations.push('CREATED');
 
       const relString = relations.join('|');
-      baseMatch = `MATCH (u:SocialUser {userId: $userId})-[:FOLLOWS]->(friend:SocialUser)-[:FOLLOWS]->(u)
-                   MATCH (friend)-[${relString}]->(e:SocialEvent)`;
+      baseMatch = `MATCH (u:SocialUser {userId: $userId})-[:FOLLOW]->(friend:SocialUser)-[:FOLLOW]->(u)
+                   MATCH (friend)-[:${relString}]->(e:SocialEvent)`;
     } else {
       // Base case: we just consider all events
       baseMatch = 'MATCH (e:SocialEvent)';
@@ -251,10 +251,10 @@ export class Neo4jParticipationRepository
     if (filters.excludeBlockedUsers) {
       // Event creator is not blocked by me and hasn't blocked me
       conditions.push(
-        'NOT EXISTS { MATCH (:SocialUser {userId: $userId})-[:BLOCKS]->(creator:SocialUser)-[:CREATED]->(e) }',
+        'NOT EXISTS { MATCH (:SocialUser {userId: $userId})-[:BLOCK]->(creator:SocialUser)-[:CREATED]->(e) }',
       );
       conditions.push(
-        'NOT EXISTS { MATCH (creator:SocialUser)-[:BLOCKS]->(:SocialUser {userId: $userId}) WHERE (creator)-[:CREATED]->(e) }',
+        'NOT EXISTS { MATCH (creator:SocialUser)-[:BLOCK]->(:SocialUser {userId: $userId}) WHERE (creator)-[:CREATED]->(e) }',
       );
     }
 

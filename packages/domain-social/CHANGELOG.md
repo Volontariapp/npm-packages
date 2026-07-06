@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.1
+
+### Patch Changes
+
+- patch neo4j event search
+
 ## 0.10.0
 
 ### Patch Changes
