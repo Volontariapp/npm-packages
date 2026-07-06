@@ -344,7 +344,7 @@ describe('Neo4jParticipationRepository (Integration)', () => {
       const provider = getTestProvider();
       const session = provider.getDriver().session();
       await session.run(
-        'MATCH (a:SocialUser {userId: $u1}), (b:SocialUser {userId: $u2}) MERGE (a)-[:BLOCKS]->(b)',
+        'MATCH (a:SocialUser {userId: $u1}), (b:SocialUser {userId: $u2}) MERGE (a)-[:BLOCK]->(b)',
         { u1: 'user-a', u2: 'user-b' },
       );
       await session.close();
@@ -367,7 +367,7 @@ describe('Neo4jParticipationRepository (Integration)', () => {
       const provider = getTestProvider();
       const session = provider.getDriver().session();
       await session.run(
-        'MATCH (a:SocialUser {userId: $u1}), (b:SocialUser {userId: $u2}) MERGE (a)-[:BLOCKS]->(b)',
+        'MATCH (a:SocialUser {userId: $u1}), (b:SocialUser {userId: $u2}) MERGE (a)-[:BLOCK]->(b)',
         { u1: 'user-a', u2: 'user-b' },
       );
       await session.close();
