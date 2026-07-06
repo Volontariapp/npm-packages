@@ -91,6 +91,7 @@ service ParticipationQueryService {
   rpc AdminGetUserEvent(AdminGetUserEventQuery) returns (AdminGetUserEventResponse);
   rpc AdminGetUserParticipateEvent(AdminGetUserParticipateEventQuery) returns (AdminGetUserParticipateEventResponse);
   rpc AdminGetUserWishEvent(AdminGetUserWishEventQuery) returns (AdminGetUserWishEventResponse);
+  rpc GetRecommendedEventIds(GetRecommendedEventIdsQuery) returns (GetRecommendedEventIdsResponse);
 }
 
 service EventPostLinkCommandService {

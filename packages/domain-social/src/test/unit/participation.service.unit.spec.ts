@@ -532,4 +532,33 @@ describe('ParticipationService (Unit)', () => {
       ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
     });
   });
+
+  // ─── getRecommendedEventIds ───────────────────────────────────────────────
+
+  describe('getRecommendedEventIds()', () => {
+    it('should call repository with correct filters and pagination', async () => {
+      const expected = PaginatedIdsFactory.buildWithRandomIds(5);
+      const filters = { excludeCreatedByMe: true };
+      const spy = jest.spyOn(mockRepository, 'getRecommendedEventIds').mockResolvedValue(expected);
+
+      const result = await service.getRecommendedEventIds(
+        UserIdFactory.build('user-1'),
+        filters,
+        PAGINATION,
+      );
+
+      expect(result).toEqual(expected);
+      expect(spy).toHaveBeenCalledWith('user-1', filters, PAGINATION);
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest
+        .spyOn(mockRepository, 'getRecommendedEventIds')
+        .mockRejectedValue(new Error('Query failed'));
+
+      await expect(
+        service.getRecommendedEventIds(UserIdFactory.build('user-1'), {}, PAGINATION),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
 });

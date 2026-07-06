@@ -63,4 +63,46 @@ describe('PostgresEventRepository (Unit)', () => {
       });
     });
   });
+  describe('searchAdvanced', () => {
+    it('should build query with basic parameters and return PaginatedEventsVO', async () => {
+      queryBuilderMock.getManyAndCount.mockResolvedValue([[], 0]);
+
+      const { SearchAdvancedVO } = await import(
+        '../../value-objects/search-advanced.value-object.js'
+      );
+      const params = new SearchAdvancedVO(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        'test',
+        'org-1',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        2,
+        15,
+      );
+
+      const result = await repository.searchAdvanced(params);
+
+      expect(typeOrmRepositoryMock.createQueryBuilder).toHaveBeenCalledWith('event');
+      expect(queryBuilderMock.orderBy).toHaveBeenCalledWith('event.createdAt', 'DESC');
+      expect(queryBuilderMock.andWhere).toHaveBeenCalledWith('event.name ILIKE :searchTerm', {
+        searchTerm: '%test%',
+      });
+      expect(queryBuilderMock.andWhere).toHaveBeenCalledWith('event.organizerId = :organizerId', {
+        organizerId: 'org-1',
+      });
+      expect(queryBuilderMock.skip).toHaveBeenCalledWith(15); // (2-1)*15
+      expect(queryBuilderMock.take).toHaveBeenCalledWith(15);
+
+      expect(result.events).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(result.page).toBe(2);
+      expect(result.limit).toBe(15);
+    });
+  });
 });

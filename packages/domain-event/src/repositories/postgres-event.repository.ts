@@ -13,6 +13,8 @@ import {
   IEventDeletedPayload,
 } from '@volontariapp/messaging';
 import { EventType, EventState } from '@volontariapp/contracts';
+import { PaginatedEventsVO } from '../value-objects/paginated-events.value-object.js';
+import { SearchAdvancedVO } from '../value-objects/search-advanced.value-object.js';
 
 @Injectable()
 export class PostgresEventRepository
@@ -134,5 +136,77 @@ export class PostgresEventRepository
 
     const eventModels = await query.getMany();
     return eventModels.map((model) => this.toEntity(model));
+  }
+
+  async searchAdvanced(params: SearchAdvancedVO): Promise<PaginatedEventsVO> {
+    const query = this.repository.createQueryBuilder('event');
+
+    if (params.area) {
+      const { lat, lng, radiusInMeters } = params.area;
+      const origin = `ST_SetSRID(ST_MakePoint(${String(lng)}, ${String(lat)}), 4326)`;
+      query.andWhere(`ST_DWithin(event.location::geography, ${origin}::geography, :radius)`);
+      query.setParameter('radius', radiusInMeters);
+      query.orderBy(`ST_Distance(event.location::geography, ${origin}::geography)`, 'ASC');
+    } else {
+      query.orderBy('event.createdAt', 'DESC');
+    }
+
+    if (params.types && params.types.length > 0) {
+      query.andWhere('event.type IN (:...types)', { types: params.types });
+    }
+
+    if (params.statuses && params.statuses.length > 0) {
+      query.andWhere('event.state IN (:...statuses)', { statuses: params.statuses });
+    }
+
+    if (params.searchTerm) {
+      query.andWhere('event.name ILIKE :searchTerm', { searchTerm: `%${params.searchTerm}%` });
+    }
+
+    if (params.organizerId) {
+      query.andWhere('event.organizerId = :organizerId', { organizerId: params.organizerId });
+    }
+
+    if (params.startDateFrom) {
+      query.andWhere('event.startAt >= :startDateFrom', { startDateFrom: params.startDateFrom });
+    }
+
+    if (params.startDateTo) {
+      query.andWhere('event.startAt <= :startDateTo', { startDateTo: params.startDateTo });
+    }
+
+    if (params.onlyAvailable) {
+      query.andWhere('event.state = :availableState', {
+        availableState: EventState.EVENT_STATE_PUBLISHED,
+      });
+    }
+
+    if (params.ids && params.ids.length > 0) {
+      query.andWhere('event.id IN (:...ids)', { ids: params.ids });
+    }
+
+    if (params.excludedIds && params.excludedIds.length > 0) {
+      query.andWhere('event.id NOT IN (:...excludedIds)', { excludedIds: params.excludedIds });
+    }
+
+    if (params.tagSlugs && params.tagSlugs.length > 0) {
+      query.leftJoin('event.tags', 'tag');
+      query.andWhere('tag.slug IN (:...tagSlugs)', { tagSlugs: params.tagSlugs });
+    }
+
+    const page = params.page && params.page > 0 ? params.page : 1;
+    const limit = params.limit && params.limit > 0 ? params.limit : 10;
+
+    query.skip((page - 1) * limit);
+    query.take(limit);
+
+    const [models, total] = await query.getManyAndCount();
+
+    return new PaginatedEventsVO(
+      models.map((model) => this.toEntity(model)),
+      total,
+      page,
+      limit,
+    );
   }
 }

@@ -17,6 +17,8 @@ import { EventEntity } from '../entities/event.entity.js';
 import { TagService } from './tag.service.js';
 import { TagEntity } from '../entities/tag.entity.js';
 import { FindAroundMeVO } from '../value-objects/find-around-me.value-object.js';
+import { SearchAdvancedVO } from '../value-objects/search-advanced.value-object.js';
+import { PaginatedEventsVO } from '../value-objects/paginated-events.value-object.js';
 
 @Injectable()
 export class EventService {
@@ -203,6 +205,17 @@ export class EventService {
       const err = error as Error;
       this.logger.error('Failed to find events around location', err);
       throw DATABASE_ERROR('finding events around location', err.message);
+    }
+  }
+
+  async searchAdvanced(params: SearchAdvancedVO): Promise<PaginatedEventsVO> {
+    try {
+      return await this.eventRepository.searchAdvanced(params);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error('Failed to search events advanced', err);
+      throw DATABASE_ERROR('searching events advanced', err.message);
     }
   }
 

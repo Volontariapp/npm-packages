@@ -486,4 +486,44 @@ describe('EventService (Unit)', () => {
       await expect(service.search('term')).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
     });
   });
+
+  // ─── searchAdvanced ───────────────────────────────────────────────────────
+
+  describe('searchAdvanced()', () => {
+    it('should return paginated events from the repository', async () => {
+      // Arrange
+      const { PaginatedEventsVO } = await import(
+        '../../value-objects/paginated-events.value-object.js'
+      );
+      const { SearchAdvancedVO } = await import(
+        '../../value-objects/search-advanced.value-object.js'
+      );
+
+      const events = EventFactory.buildMany(2);
+      const paginatedResult = new PaginatedEventsVO(events, 2, 1, 10);
+      mockRepository.searchAdvanced.mockResolvedValue(paginatedResult);
+
+      const params = new SearchAdvancedVO();
+
+      // Act
+      const result = await service.searchAdvanced(params);
+
+      // Assert
+      expect(result).toEqual(paginatedResult);
+      expect(mockRepository.searchAdvanced).toHaveBeenCalledWith(params);
+    });
+
+    it('should throw DATABASE_ERROR when the repository throws', async () => {
+      // Arrange
+      const { SearchAdvancedVO } = await import(
+        '../../value-objects/search-advanced.value-object.js'
+      );
+      mockRepository.searchAdvanced.mockRejectedValue(new Error('Search failed'));
+
+      // Act + Assert
+      await expect(service.searchAdvanced(new SearchAdvancedVO())).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
 });

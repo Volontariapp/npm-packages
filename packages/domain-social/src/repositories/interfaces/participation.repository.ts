@@ -20,4 +20,17 @@ export interface IParticipationRepository {
   getUserParticipations(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getUserWishes(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getEventParticipants(event: SocialEventEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  getRecommendedEventIds(
+    userId: string,
+    filters: {
+      excludeCreatedByMe?: boolean;
+      excludeBlockedUsers?: boolean;
+      excludeParticipatedByMe?: boolean;
+      excludeWishedByMe?: boolean;
+      onlyParticipatedByFriends?: boolean;
+      onlyWishedByFriends?: boolean;
+      onlyCreatedByFriends?: boolean;
+    },
+    pagination: PaginationVO,
+  ): Promise<PaginatedIdsVO>;
 }

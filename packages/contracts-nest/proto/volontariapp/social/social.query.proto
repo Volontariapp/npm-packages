@@ -128,3 +128,14 @@ message GetEventPostsQuery {
 message GetSocialEventQuery {
   string event_id = 1;
 }
+
+message GetRecommendedEventIdsQuery {
+  bool exclude_created_by_me = 1;
+  bool exclude_blocked_users = 2;
+  bool exclude_participated_by_me = 3;
+  bool exclude_wished_by_me = 4;
+  bool only_participated_by_friends = 5;
+  bool only_wished_by_friends = 6;
+  bool only_created_by_friends = 7;
+  volontariapp.common.PaginationRequest pagination = 8;
+}

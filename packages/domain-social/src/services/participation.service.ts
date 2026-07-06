@@ -253,4 +253,29 @@ export class ParticipationService {
       throw DATABASE_ERROR('fetching user wishes', (error as Error).message);
     }
   }
+
+  async getRecommendedEventIds(
+    userId: UserId,
+    filters: {
+      excludeCreatedByMe?: boolean;
+      excludeBlockedUsers?: boolean;
+      excludeParticipatedByMe?: boolean;
+      excludeWishedByMe?: boolean;
+      onlyParticipatedByFriends?: boolean;
+      onlyWishedByFriends?: boolean;
+      onlyCreatedByFriends?: boolean;
+    },
+    pagination: PaginationVO,
+  ): Promise<PaginatedIdsVO> {
+    try {
+      return await this.repository.getRecommendedEventIds(userId.value, filters, pagination);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to get recommended events for user: ${userId.value}`,
+        error as Error,
+      );
+      throw DATABASE_ERROR('fetching recommended events', (error as Error).message);
+    }
+  }
 }
