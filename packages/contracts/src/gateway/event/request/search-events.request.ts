@@ -13,6 +13,7 @@ export interface SearchEventsWebQuery {
   startDateFrom?: string; // ISO 8601
   startDateTo?: string; // ISO 8601
   statuses?: EventState[];
+  organizerId?: string;
   // Filtres Sociaux (ms-social)
   excludeCreatedByMe?: boolean;
   excludeBlockedUsers?: boolean;
@@ -22,8 +23,8 @@ export interface SearchEventsWebQuery {
   onlyWishedByFriends?: boolean;
   onlyCreatedByFriends?: boolean;
   // Pagination
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
 }
 
 /**
