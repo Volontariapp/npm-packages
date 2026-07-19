@@ -5,7 +5,9 @@ import { DATABASE_ERROR, POST_ALREADY_EXISTS, POST_NOT_FOUND } from '@volontaria
 import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariapp/errors';
 import type { IPostRepository } from '../repositories/index.js';
 import { SagaStatus, UserRoles } from '@volontariapp/shared';
-import { PostgresPostRepository } from '../repositories/index.js';
+import { PostgresCommentRepository, PostgresPostRepository } from '../repositories/index.js';
+import type { ICommentRepository } from '../repositories/index.js';
+import { Optional } from '@nestjs/common';
 
 import { PostEntity } from '../entities/index.js';
 
@@ -13,7 +15,12 @@ import { PostEntity } from '../entities/index.js';
 export class PostService {
   private readonly logger = new Logger({ context: PostService.name });
 
-  constructor(@Inject(PostgresPostRepository) private readonly postRepository: IPostRepository) {}
+  constructor(
+    @Inject(PostgresPostRepository) private readonly postRepository: IPostRepository,
+    @Inject(PostgresCommentRepository)
+    @Optional()
+    private readonly commentRepository?: ICommentRepository,
+  ) {}
 
   async findById(id: string): Promise<PostEntity> {
     try {
@@ -170,6 +177,30 @@ export class PostService {
 
       this.logger.error(`Failed to delete posts for author: ${authorId}`, err);
       throw DATABASE_ERROR(`deleting posts for author: ${authorId}`, err.message);
+    }
+  }
+
+  async deleteByEventId(eventId: string): Promise<number> {
+    try {
+      this.logger.log(`Deleting posts and comments for event: ${eventId}`);
+      const posts = await this.postRepository.findByEventId(eventId);
+      const postIds = posts.map((p) => p.id);
+
+      if (postIds.length > 0 && this.commentRepository) {
+        await this.commentRepository.deleteByPostIds(postIds);
+      }
+
+      const affectedCount = await this.postRepository.deleteByEventId(eventId);
+      this.logger.log(
+        `Successfully deleted ${String(affectedCount)} posts for event: ${eventId}`,
+      );
+      return affectedCount;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+
+      this.logger.error(`Failed to delete posts for event: ${eventId}`, err);
+      throw DATABASE_ERROR(`deleting posts for event: ${eventId}`, err.message);
     }
   }
 }

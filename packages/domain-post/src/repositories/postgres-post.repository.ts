@@ -70,6 +70,18 @@ export class PostgresPostRepository
     return result.affected ?? 0;
   }
 
+  async findByEventId(eventId: string, relations: string[] = []): Promise<PostEntity[]> {
+    return super.find({
+      where: { eventId },
+      relations,
+    });
+  }
+
+  async deleteByEventId(eventId: string): Promise<number> {
+    const result = await super.deleteWhere({ eventId });
+    return result.affected ?? 0;
+  }
+
   async createWithPostCreated(data: Partial<PostEntity>): Promise<PostEntity> {
     return this.executeInTransaction(async (queryRunner) => {
       const modelData = this.toModel(data);

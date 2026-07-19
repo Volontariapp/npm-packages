@@ -16,6 +16,10 @@ export class PostModel {
   @Column({ type: 'uuid' })
   authorId!: string;
 
+  @Index()
+  @Column({ type: 'uuid', nullable: true })
+  eventId?: string;
+
   @Column({ type: 'varchar', length: 255, unique: true })
   title!: string;
 

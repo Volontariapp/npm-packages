@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.0
+
+### Minor Changes
+
+- Added eventId column to postModel, and added methods to remove posts from an eventId
+
 ## 3.6.14
 
 ### Patch Changes

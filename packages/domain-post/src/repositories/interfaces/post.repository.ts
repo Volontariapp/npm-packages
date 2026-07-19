@@ -11,6 +11,8 @@ export interface IPostRepository {
   delete(id: string): Promise<boolean>;
   deleteWithPostDeleted(id: string): Promise<boolean>;
   deleteByAuthorId(authorId: string): Promise<number>;
+  findByEventId(eventId: string): Promise<PostEntity[]>;
+  deleteByEventId(eventId: string): Promise<number>;
   search(searchTerm: string): Promise<PostEntity[]>;
   listPaginated(
     page: number,
