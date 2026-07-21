@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- added deleteEventsBatch for batch event deletion in Neo4j
+
 ## 0.10.1
 
 ### Patch Changes
