@@ -107,6 +107,38 @@ describe('ParticipationService (Unit)', () => {
     });
   });
 
+  // ─── deleteEventsBatch ─────────────────────────────────────────────────────
+
+  describe('deleteEventsBatch()', () => {
+    it('should do nothing if events list is empty', async () => {
+      const deleteEventsBatchSpy = jest.spyOn(mockRepository, 'deleteEventsBatch');
+
+      await service.deleteEventsBatch([]);
+
+      expect(deleteEventsBatchSpy).not.toHaveBeenCalled();
+    });
+
+    it('should call repository.deleteEventsBatch with mapped string IDs', async () => {
+      const eventIds = [EventIdFactory.build('event-1'), EventIdFactory.build('event-2')];
+      const deleteEventsBatchSpy = jest
+        .spyOn(mockRepository, 'deleteEventsBatch')
+        .mockResolvedValue(undefined);
+
+      await service.deleteEventsBatch(eventIds);
+
+      expect(deleteEventsBatchSpy).toHaveBeenCalledWith(['event-1', 'event-2']);
+    });
+
+    it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      const eventIds = [EventIdFactory.build('event-1')];
+      jest.spyOn(mockRepository, 'deleteEventsBatch').mockRejectedValue(new Error('Delete batch failed'));
+
+      await expect(service.deleteEventsBatch(eventIds)).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
+
   // ─── getEventExists ───────────────────────────────────────────────────────
 
   describe('getEventExists()', () => {

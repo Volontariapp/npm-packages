@@ -8,6 +8,7 @@ export interface IParticipationRepository {
   deleteEventNode(entity: SocialEventEntity): Promise<void>;
   eventExists(entity: SocialEventEntity): Promise<boolean>;
   createEventsBatch(events: { eventId: string; organizerId: string }[]): Promise<void>;
+  deleteEventsBatch(eventIds: string[]): Promise<void>;
   createUserEvent(user: SocialUserEntity, event: SocialEventEntity): Promise<void>;
   deleteUserEvent(user: SocialUserEntity, event: SocialEventEntity): Promise<void>;
   createParticipation(user: SocialUserEntity, event: SocialEventEntity): Promise<void>;
