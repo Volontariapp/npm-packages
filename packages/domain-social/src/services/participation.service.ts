@@ -69,6 +69,19 @@ export class ParticipationService {
     }
   }
 
+  async deleteEventsBatch(eventIds: EventId[]): Promise<void> {
+    if (eventIds.length === 0) return;
+    try {
+      this.logger.log(`Deleting social events batch: ${String(eventIds.length)} events`);
+      const ids = eventIds.map((id) => id.value);
+      await this.repository.deleteEventsBatch(ids);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to delete social events batch`, error as Error);
+      throw DATABASE_ERROR('deleting social events batch', (error as Error).message);
+    }
+  }
+
   async getEventExists(eventId: EventId): Promise<boolean> {
     const event = SocialEventMapper.toEntity(eventId);
     try {

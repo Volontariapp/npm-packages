@@ -68,6 +68,23 @@ describe('Neo4jParticipationRepository (Integration)', () => {
     });
   });
 
+  describe('deleteEventsBatch()', () => {
+    it('should delete multiple event nodes and their relationships', async () => {
+      await repository.createParticipation(USER_A, EVENT_1);
+      await repository.createParticipation(USER_B, EVENT_2);
+
+      await repository.deleteEventsBatch(['event-1', 'event-2']);
+
+      expect(await repository.eventExists(EVENT_1)).toBe(false);
+      expect(await repository.eventExists(EVENT_2)).toBe(false);
+    });
+
+    it('should handle non-existent IDs and empty arrays safely', async () => {
+      await expect(repository.deleteEventsBatch([])).resolves.toBeUndefined();
+      await expect(repository.deleteEventsBatch(['ghost-event'])).resolves.toBeUndefined();
+    });
+  });
+
   describe('eventExists()', () => {
     it('should return true when the event node exists', async () => {
       expect(await repository.eventExists(EVENT_1)).toBe(true);

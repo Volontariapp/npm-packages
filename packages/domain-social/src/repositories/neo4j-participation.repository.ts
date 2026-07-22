@@ -56,6 +56,15 @@ export class Neo4jParticipationRepository
     );
   }
 
+  async deleteEventsBatch(eventIds: string[]): Promise<void> {
+    await this.write(
+      `UNWIND $eventIds AS id
+       MATCH (e:SocialEvent {eventId: id})
+       DETACH DELETE e`,
+      { eventIds },
+    );
+  }
+
   async createUserEvent(user: SocialUserEntity, event: SocialEventEntity): Promise<void> {
     const userModel = SocialUserMapper.toModel(user);
     const eventModel = SocialEventMapper.toModel(event);
