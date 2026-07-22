@@ -66,8 +66,8 @@ export class Neo4jEventPostLinkRepository
     const postIds = postEntities.map((p) => SocialPostMapper.toModel(p).id.value);
 
     return this.read(
-      `MATCH (p:SocialPost)-[:LINK_TO_EVENT]->(e:SocialEvent)
-       WHERE p.postId IN $postIds
+      `UNWIND $postIds AS id
+       MATCH (p:SocialPost {postId: id})-[:LINK_TO_EVENT]->(e:SocialEvent)
        RETURN p.postId AS postId, e.eventId AS eventId`,
       { postIds },
       (r) => ({

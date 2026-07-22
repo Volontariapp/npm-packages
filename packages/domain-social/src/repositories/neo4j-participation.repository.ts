@@ -58,7 +58,9 @@ export class Neo4jParticipationRepository
 
   async deleteEventsBatch(eventIds: string[]): Promise<void> {
     await this.write(
-      'MATCH (e:SocialEvent) WHERE e.eventId IN $eventIds DETACH DELETE e',
+      `UNWIND $eventIds AS id
+       MATCH (e:SocialEvent {eventId: id})
+       DETACH DELETE e`,
       { eventIds },
     );
   }
