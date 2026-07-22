@@ -1,9 +1,20 @@
 # Changelog
 
+## 3.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.11.0
+  - @volontariapp/database@3.4.7
+  - @volontariapp/outbox@0.9.44
+
 ## 3.7.0
 
 ### Patch Changes
+
 Event Searching V2
+
 - Updated dependencies []:
   - @volontariapp/contracts@4.3.4
   - @volontariapp/messaging@2.10.3

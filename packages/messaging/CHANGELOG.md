@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.11.0
+
+### Minor Changes
+
+- Added SOCIAL*EVENT_DELETED*(SUCCESS & FAILED) and POST*EVENT_DELETED*(SUCCESS & FAILED)
+
 ## 2.10.3
 
 ### Patch Changes

@@ -16,6 +16,8 @@ export enum SocialEventMessagingType {
   // EVENT
   EVENT_SOCIAL_DELETED = 'event_social.deleted',
   EVENT_SOCIAL_DELETION_FAILED = 'event_social.deletion_failed',
+  SOCIAL_EVENT_DELETED_SUCCESS = 'social_event.deleted_success',
+  SOCIAL_EVENT_DELETED_FAILED = 'social_event.deleted_failed',
   // POST
   POST_SOCIAL_DELETED = 'post_social.deleted',
   POST_SOCIAL_DELETION_FAILED = 'post_social.deletion_failed',
@@ -34,6 +36,12 @@ export interface IEventSocialDeletedPayload extends IEventIdPayload, Partial<IUs
 export interface IEventSocialDeletionFailedPayload
   extends IEventIdPayload,
     Partial<IUserIdPayload> {}
+export interface ISocialEventDeletedSuccessPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
+export interface ISocialEventDeletedFailedPayload
+  extends IEventIdPayload,
+    Partial<IUserIdPayload> {
+  errorReason?: string;
+}
 
 // Un post peut etre lie avec un event
 export interface IPostSocialCreatedPayload
