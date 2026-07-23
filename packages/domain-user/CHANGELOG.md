@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.8.28
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.8.2
+  - @volontariapp/auth@3.3.10
+  - @volontariapp/database@3.4.8
+  - @volontariapp/messaging@2.12.1
+
 ## 2.8.27
 
 ### Patch Changes

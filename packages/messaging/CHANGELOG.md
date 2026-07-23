@@ -1,11 +1,19 @@
 # Changelog
 
+## 2.12.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.8.2
+
 ## 2.12.0
 
 ### Minor Changes
 
 - Added COMMENT Creation / deletion Event
 -
+
 ## 2.11.0
 
 ### Minor Changes

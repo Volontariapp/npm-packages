@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.2
+
+### Patch Changes
+
+- delete comment, creation comment event
+
 ## 0.8.1
 
 ### Patch Changes

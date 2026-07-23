@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.8.2
+
 ## 3.3.9
 
 ### Patch Changes
