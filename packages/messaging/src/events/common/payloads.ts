@@ -39,3 +39,6 @@ export interface IPostIdPayload {
 export interface IUserIdPayload {
   userId: string;
 }
+export interface ICommentIdPayload {
+  commentId: string;
+}
