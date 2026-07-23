@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.12.0
+
+### Minor Changes
+
+- Added COMMENT Creation / deletion Event
+-
 ## 2.11.0
 
 ### Minor Changes
