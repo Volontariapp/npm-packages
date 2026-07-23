@@ -37,6 +37,8 @@ import type {
   IPostDeletedPayload,
   IPostEventDeletedSuccessPayload,
   IPostEventDeletedFailedPayload,
+  ICommentCreatedPayload,
+  ICommentDeletedPayload,
 } from './post/payloads.js';
 
 import { CommonEventMessagingType } from './common/payloads.js';
@@ -112,6 +114,8 @@ export interface EventRegistry {
   [PostEventMessagingType.POST_DELETED]: IPostDeletedPayload;
   [PostEventMessagingType.POST_EVENT_DELETED_SUCCESS]: IPostEventDeletedSuccessPayload;
   [PostEventMessagingType.POST_EVENT_DELETED_FAILED]: IPostEventDeletedFailedPayload;
+  [PostEventMessagingType.COMMENT_CREATED]: ICommentCreatedPayload;
+  [PostEventMessagingType.COMMENT_DELETED]: ICommentDeletedPayload;
 
   // WS
 }
