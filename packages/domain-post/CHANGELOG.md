@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.6.16
+
+### Patch Changes
+
+- delete comment, creation comment event
+
+- Updated dependencies []:
+  - @volontariapp/database@3.4.8
+  - @volontariapp/messaging@2.12.1
+  - @volontariapp/outbox@0.9.45
+
 ## 3.6.15
 
 ### Patch Changes

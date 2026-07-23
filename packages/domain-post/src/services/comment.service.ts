@@ -52,7 +52,7 @@ export class CommentService {
         throw POST_NOT_FOUND('Post not found');
       }
 
-      return await this.commentRepository.create(data);
+      return await this.commentRepository.createWithCommentCreated(data);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
@@ -91,7 +91,7 @@ export class CommentService {
         }
       }
 
-      return await this.commentRepository.delete(id);
+      return await this.commentRepository.deleteWithCommentDeleted(id);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;

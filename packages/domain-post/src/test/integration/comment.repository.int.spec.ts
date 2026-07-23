@@ -6,15 +6,20 @@ import { PostModel } from '../../models/post.model.js';
 import { CommentFactory } from '../__test-utils__/factories/comment.factory.js';
 import { PostFactory } from '../__test-utils__/factories/post.factory.js';
 import { initializeTestDb, closeTestDb, truncateAll, getTestRepository } from '../data-source.js';
+import { EventQueueModel } from '@volontariapp/database';
+import { PostEventMessagingType } from '@volontariapp/messaging';
+import type { Repository } from '@volontariapp/database';
 
 describe('PostgresCommentRepository (Integration)', () => {
   let commentRepository: PostgresCommentRepository;
   let postRepository: PostgresPostRepository;
+  let eventQueueRepo: Repository<EventQueueModel>;
 
   beforeAll(async () => {
     await initializeTestDb();
     commentRepository = new PostgresCommentRepository(getTestRepository(CommentModel));
     postRepository = new PostgresPostRepository(getTestRepository(PostModel));
+    eventQueueRepo = getTestRepository(EventQueueModel);
   });
 
   afterAll(async () => {
@@ -42,6 +47,32 @@ describe('PostgresCommentRepository (Integration)', () => {
       const comment = CommentFactory.build();
       comment.content = null as unknown as string;
       await expect(commentRepository.create(comment)).rejects.toThrow();
+    });
+  });
+
+  describe('createWithCommentCreated()', () => {
+    it('should create a comment and emit COMMENT_CREATED event', async () => {
+      const post = PostFactory.build();
+      await postRepository.create(post);
+
+      const comment = CommentFactory.build({ postId: post.id, content: 'Nice post!' });
+      const created = await commentRepository.createWithCommentCreated(comment);
+
+      expect(created.id).toBeDefined();
+      expect(created.content).toBe('Nice post!');
+
+      const events = await eventQueueRepo.find({
+        where: { type: PostEventMessagingType.COMMENT_CREATED },
+      });
+      expect(events).toHaveLength(1);
+      expect(events[0].payload).toEqual({
+        after: {
+          commentId: created.id,
+          postId: created.postId,
+          authorId: created.authorId,
+        },
+      });
+      expect(events[0].emitterId).toEqual(created.authorId);
     });
   });
 
@@ -134,6 +165,44 @@ describe('PostgresCommentRepository (Integration)', () => {
 
       const found = await commentRepository.findById(comment.id);
       expect(found).toBeNull();
+    });
+  });
+
+  describe('deleteWithCommentDeleted()', () => {
+    it('should delete comment and emit COMMENT_DELETED event', async () => {
+      const post = PostFactory.build();
+      await postRepository.create(post);
+
+      const comment = CommentFactory.build({ postId: post.id });
+      await commentRepository.create(comment);
+
+      const result = await commentRepository.deleteWithCommentDeleted(comment.id);
+      expect(result).toBe(true);
+
+      const found = await commentRepository.findById(comment.id);
+      expect(found).toBeNull();
+
+      const events = await eventQueueRepo.find({
+        where: { type: PostEventMessagingType.COMMENT_DELETED },
+      });
+      expect(events).toHaveLength(1);
+      expect(events[0].payload).toEqual({
+        after: {
+          commentId: comment.id,
+          postId: comment.postId,
+        },
+      });
+      expect(events[0].emitterId).toEqual(comment.authorId);
+    });
+
+    it('should return false and not emit event if comment does not exist', async () => {
+      const result = await commentRepository.deleteWithCommentDeleted(
+        '00000000-0000-0000-0000-000000000000',
+      );
+      expect(result).toBe(false);
+
+      const events = await eventQueueRepo.find();
+      expect(events).toHaveLength(0);
     });
   });
 });
