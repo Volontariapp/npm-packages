@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_md",
+      "label": "antigravity-rtk-rules.md",
+      "file_type": "document",
+      "source_file": ".agents/rules/antigravity-rtk-rules.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_rtk_rust_token_killer",
+      "label": "RTK - Rust Token Killer",
+      "file_type": "document",
+      "source_file": ".agents/rules/antigravity-rtk-rules.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_commands_reference",
+      "label": "Commands Reference",
+      "file_type": "document",
+      "source_file": ".agents/rules/antigravity-rtk-rules.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_hook_based_usage",
+      "label": "Hook-Based Usage",
+      "file_type": "document",
+      "source_file": ".agents/rules/antigravity-rtk-rules.md",
+      "source_location": "L15"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_rtk_rust_token_killer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/rules/antigravity-rtk-rules.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_rtk_rust_token_killer",
+      "target": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_commands_reference",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/rules/antigravity-rtk-rules.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_rtk_rust_token_killer",
+      "target": "users_victoragahi_developer_meta_npm_packages_agents_rules_antigravity_rtk_rules_hook_based_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/rules/antigravity-rtk-rules.md",
+      "source_location": "L15",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

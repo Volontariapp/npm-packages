@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_claude_md",
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_claude_volontariapp_npm_packages_monorepo",
+      "label": "Volontariapp npm-packages monorepo",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_claude_packages",
+      "label": "Packages",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_claude_versioning_changesets",
+      "label": "Versioning (Changesets)",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_claude_propagation_aux_consommateurs",
+      "label": "Propagation aux consommateurs",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_claude_rtk_rust_token_killer_optimized",
+      "label": "RTK - Rust Token Killer (Optimized)",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L41"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_claude_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_claude_volontariapp_npm_packages_monorepo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_claude_volontariapp_npm_packages_monorepo",
+      "target": "users_victoragahi_developer_meta_npm_packages_claude_packages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_claude_volontariapp_npm_packages_monorepo",
+      "target": "users_victoragahi_developer_meta_npm_packages_claude_versioning_changesets",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_claude_volontariapp_npm_packages_monorepo",
+      "target": "users_victoragahi_developer_meta_npm_packages_claude_propagation_aux_consommateurs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_claude_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_claude_rtk_rust_token_killer_optimized",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L41",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

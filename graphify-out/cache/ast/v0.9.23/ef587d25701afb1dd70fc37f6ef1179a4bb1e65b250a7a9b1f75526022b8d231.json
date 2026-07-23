@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_volontariapp_validation_nest",
+      "label": "@volontariapp/validation-nest",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_pourquoi_cette_librairie",
+      "label": "Pourquoi cette librairie ?",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_impl\u00e9mentation",
+      "label": "Impl\u00e9mentation",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_fonctionnalit\u00e9s_cl\u00e9s",
+      "label": "Fonctionnalit\u00e9s Cl\u00e9s",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_installation",
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_utilisation",
+      "label": "Utilisation",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_options",
+      "label": "Options",
+      "file_type": "document",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L57"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_volontariapp_validation_nest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_volontariapp_validation_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_pourquoi_cette_librairie",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_volontariapp_validation_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_impl\u00e9mentation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_impl\u00e9mentation",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_fonctionnalit\u00e9s_cl\u00e9s",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_volontariapp_validation_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_installation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_volontariapp_validation_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_utilisation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_volontariapp_validation_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_validation_nest_readme_options",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/validation-nest/README.md",
+      "source_location": "L57",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

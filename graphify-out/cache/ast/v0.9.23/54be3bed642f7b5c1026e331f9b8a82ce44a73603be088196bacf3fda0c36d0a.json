@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_json",
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_extends",
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "ref_tsconfig_json",
+      "label": "../../tsconfig.json",
+      "file_type": "concept",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_rootdir",
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_outdir",
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_baseurl",
+      "label": "baseUrl",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_experimentaldecorators",
+      "label": "experimentalDecorators",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_emitdecoratormetadata",
+      "label": "emitDecoratorMetadata",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_include",
+      "label": "include",
+      "file_type": "code",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "ref_src",
+      "label": "src",
+      "file_type": "concept",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L10"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_json",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_extends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_json",
+      "target": "ref_tsconfig_json",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_json",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_rootdir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_outdir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_baseurl",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_experimentaldecorators",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_compileroptions_emitdecoratormetadata",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_json",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_include",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_tsconfig_include",
+      "target": "ref_src",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}

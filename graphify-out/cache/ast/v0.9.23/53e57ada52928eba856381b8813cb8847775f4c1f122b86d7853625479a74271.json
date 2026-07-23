@@ -1,0 +1,1007 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_md",
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "label": "Changelog",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_2",
+      "label": "0.13.2",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_1",
+      "label": "0.13.1",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_13",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_0",
+      "label": "0.13.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_12_0",
+      "label": "0.12.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_29",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_2",
+      "label": "0.11.2",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_35",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_1",
+      "label": "0.11.1",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_45",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_0",
+      "label": "0.11.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_53",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_2",
+      "label": "0.10.2",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_59",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_1",
+      "label": "0.10.1",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_65",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_0",
+      "label": "0.10.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_71",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_9_0",
+      "label": "0.9.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_80",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_8_0",
+      "label": "0.8.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_86",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_4",
+      "label": "0.7.4",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_92",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L92"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_3",
+      "label": "0.7.3",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_102",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_2",
+      "label": "0.7.2",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_109",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_1",
+      "label": "0.7.1",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L113"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_115",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_0",
+      "label": "0.7.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_121",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L121"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_6",
+      "label": "0.6.6",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_127",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L127"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_5",
+      "label": "0.6.5",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L131"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_133",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L133"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_4",
+      "label": "0.6.4",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_139",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_3",
+      "label": "0.6.3",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_145",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L145"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_2",
+      "label": "0.6.2",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L149"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_151",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L151"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_1",
+      "label": "0.6.1",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L159"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_161",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L161"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_0",
+      "label": "0.6.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_171",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L171"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_5_0",
+      "label": "0.5.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L175"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_177",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_181",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L181"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_4_0",
+      "label": "0.4.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L186"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_188",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L188"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_192",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L192"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_3_0",
+      "label": "0.3.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L197"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_199",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L199"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_2_0",
+      "label": "0.2.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_205",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L205"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_209",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L209"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_1_0",
+      "label": "0.1.0",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L216"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_218",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L218"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_13",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_13_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_12_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_12_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_29",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_35",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_45",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_11_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_53",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_59",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_65",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_10_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_71",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_9_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_9_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_80",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_8_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_8_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_86",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_92",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_102",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_109",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_115",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_7_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_121",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_6",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_127",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_133",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_139",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_145",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_151",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L159",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_161",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_6_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_171",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_5_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_5_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_177",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_5_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_181",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_4_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_4_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_188",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L188",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_4_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_192",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_3_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_3_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_199",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_2_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_205",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L205",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_patch_changes_209",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L209",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_0_1_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_nest_changelog_minor_changes_218",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors-nest/CHANGELOG.md",
+      "source_location": "L218",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

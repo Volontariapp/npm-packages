@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_volontariapp_contracts_nest",
+      "label": "@volontariapp/contracts-nest",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_purpose",
+      "label": "Purpose",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_compatibility",
+      "label": "\ufe0f Compatibility",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_usage",
+      "label": "Usage",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_microservice_setup",
+      "label": "Microservice Setup",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_grpc_service_controller",
+      "label": "gRPC Service Controller",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_maintenance",
+      "label": "Maintenance",
+      "file_type": "document",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L47"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_volontariapp_contracts_nest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_volontariapp_contracts_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_purpose",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_volontariapp_contracts_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_compatibility",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_volontariapp_contracts_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_microservice_setup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_grpc_service_controller",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_volontariapp_contracts_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_nest_readme_maintenance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts-nest/README.md",
+      "source_location": "L47",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

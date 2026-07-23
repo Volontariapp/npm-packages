@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_testing_outbox",
+      "label": "Testing Outbox",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_overview",
+      "label": "Overview",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_prerequisites",
+      "label": "Prerequisites",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_setup_in_a_test_file",
+      "label": "Setup in a Test File",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_1_database_redis_setup",
+      "label": "1. Database & Redis Setup",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_2_using_the_event_harness",
+      "label": "2. Using the Event Harness",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_3_using_the_job_harness",
+      "label": "3. Using the Job Harness",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_e2e_style_testing",
+      "label": "E2E Style Testing",
+      "file_type": "document",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L90"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_testing_outbox",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_testing_outbox",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_overview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_testing_outbox",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_prerequisites",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_testing_outbox",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_setup_in_a_test_file",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_setup_in_a_test_file",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_1_database_redis_setup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_setup_in_a_test_file",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_2_using_the_event_harness",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_setup_in_a_test_file",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_3_using_the_job_harness",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_testing_outbox",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_outbox_src_test_readme_e2e_style_testing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/outbox/src/test/README.md",
+      "source_location": "L90",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,287 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_md",
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "label": "Changelog",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_5",
+      "label": "2.2.5",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_4",
+      "label": "2.2.4",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_11",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_3",
+      "label": "2.2.3",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_17",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_2",
+      "label": "2.2.2",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_23",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_1",
+      "label": "2.2.1",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_29",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_0",
+      "label": "2.2.0",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_minor_changes",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_1_0",
+      "label": "2.1.0",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_minor_changes_41",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_0_0",
+      "label": "2.0.0",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_major_changes",
+      "label": "Major Changes",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L47"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_11",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_17",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_23",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_patch_changes_29",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_minor_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_1_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_minor_changes_41",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_0_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_2_0_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_eslint_config_changelog_major_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/eslint-config/CHANGELOG.md",
+      "source_location": "L47",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

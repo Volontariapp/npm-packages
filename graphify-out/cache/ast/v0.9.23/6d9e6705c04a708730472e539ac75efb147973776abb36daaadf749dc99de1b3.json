@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_volontariapp_testing",
+      "label": "@volontariapp/testing",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_installation",
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_fonctionnalit\u00e9s",
+      "label": "Fonctionnalit\u00e9s",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_mocks",
+      "label": "Mocks",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmock_t",
+      "label": "`createMock<T>()`",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmocklogger_t",
+      "label": "`createMockLogger<T>()`",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmockeventemitter",
+      "label": "`createMockEventEmitter()`",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmockrequest_overrides_createmockresponse",
+      "label": "`createMockRequest(overrides?)` & `createMockResponse()`",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_utilitaires_helpers",
+      "label": "Utilitaires (Helpers)",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_aides_au_temps_time_helpers",
+      "label": "Aides au temps (Time Helpers)",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_aides_\u00e0_l_al\u00e9atoire_random_helpers",
+      "label": "Aides \u00e0 l'al\u00e9atoire (Random Helpers)",
+      "file_type": "document",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L70"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_volontariapp_testing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_volontariapp_testing",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_installation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_volontariapp_testing",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_fonctionnalit\u00e9s",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_fonctionnalit\u00e9s",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_mocks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_mocks",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmock_t",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_mocks",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmocklogger_t",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_mocks",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmockeventemitter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_mocks",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_createmockrequest_overrides_createmockresponse",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_fonctionnalit\u00e9s",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_utilitaires_helpers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_utilitaires_helpers",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_aides_au_temps_time_helpers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_utilitaires_helpers",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_testing_readme_aides_\u00e0_l_al\u00e9atoire_random_helpers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/testing/README.md",
+      "source_location": "L70",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

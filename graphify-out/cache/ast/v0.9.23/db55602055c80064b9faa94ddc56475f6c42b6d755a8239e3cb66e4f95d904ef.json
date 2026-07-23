@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_volontariapp_bridge",
+      "label": "@volontariapp/bridge",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_features",
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_installation",
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_abstract_usage",
+      "label": "Abstract Usage",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_postgres_example",
+      "label": "Postgres Example",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_redis_example",
+      "label": "Redis Example",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_neo4j_example",
+      "label": "Neo4j Example",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_nestjs_usage",
+      "label": "NestJS Usage",
+      "file_type": "document",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L103"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_volontariapp_bridge",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_volontariapp_bridge",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_volontariapp_bridge",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_installation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_volontariapp_bridge",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_abstract_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_abstract_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_postgres_example",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_abstract_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_redis_example",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_abstract_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_neo4j_example",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_volontariapp_bridge",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_readme_nestjs_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge/README.md",
+      "source_location": "L103",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

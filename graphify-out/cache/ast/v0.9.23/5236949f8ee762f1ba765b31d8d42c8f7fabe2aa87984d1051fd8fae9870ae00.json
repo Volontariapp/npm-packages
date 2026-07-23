@@ -1,0 +1,479 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_md",
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "label": "Changelog",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_2",
+      "label": "0.6.2",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_1",
+      "label": "0.6.1",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_12",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_0",
+      "label": "0.6.0",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_2",
+      "label": "0.5.2",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_27",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_1",
+      "label": "0.5.1",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_36",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_0",
+      "label": "0.5.0",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_43",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_4",
+      "label": "0.4.4",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_49",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_3",
+      "label": "0.4.3",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_56",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_2",
+      "label": "0.4.2",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_62",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_1",
+      "label": "0.4.1",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_71",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_0",
+      "label": "0.4.0",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_80",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_3_0",
+      "label": "0.3.0",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_86",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_2_0",
+      "label": "0.2.0",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_92",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L92"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_1_0",
+      "label": "0.1.0",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L98"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_100",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L100"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_12",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_6_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_27",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_36",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_5_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_43",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_49",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_56",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_62",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_patch_changes_71",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_4_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_80",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_3_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_3_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_86",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_2_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_92",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_0_1_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_errors_changelog_minor_changes_100",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/errors/CHANGELOG.md",
+      "source_location": "L100",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

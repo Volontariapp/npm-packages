@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "label": "@volontariapp/crypto",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_features",
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_installation",
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_structure",
+      "label": "Structure",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_usage",
+      "label": "Usage",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_symmetric_encryption",
+      "label": "Symmetric Encryption",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_asymmetric_encryption_signatures",
+      "label": "Asymmetric Encryption & Signatures",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_hashing_passwords",
+      "label": "Hashing & Passwords",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L68"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_tokens_and_safety",
+      "label": "Tokens and Safety",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_error_handling",
+      "label": "Error Handling",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_license",
+      "label": "License",
+      "file_type": "document",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L104"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_installation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_symmetric_encryption",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_asymmetric_encryption_signatures",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_hashing_passwords",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_usage",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_tokens_and_safety",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_error_handling",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_volontariapp_crypto",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_crypto_readme_license",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/crypto/README.md",
+      "source_location": "L104",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

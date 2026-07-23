@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_volontariapp_ci_tools_orchestration",
+      "label": "Volontariapp - CI Tools & Orchestration",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_architecture_des_pipelines_ci_cd",
+      "label": "Architecture des Pipelines CI/CD",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_1_workflows_de_microservices_services_ci",
+      "label": "1. Workflows de Microservices (Services CI)",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_2_validation_de_l_\u00e9cosyst\u00e8me_e2e_matrix",
+      "label": "2. Validation de l'\u00c9cosyst\u00e8me (E2E & Matrix)",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_3_usine_logicielle_npm_npm_packages",
+      "label": "3. Usine Logicielle NPM (`npm-packages`)",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_4_synchronisation_globale_gitops",
+      "label": "4. Synchronisation Globale (GitOps)",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_actions_composites_r\u00e9utilisables",
+      "label": "Actions Composites R\u00e9utilisables",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_setup_node_yarn",
+      "label": "`setup-node-yarn`",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_outils_scripts_de_validation_scripts",
+      "label": "Outils & Scripts de Validation (`scripts/`)",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_e2e_matrix_parsing_sh",
+      "label": "`e2e-matrix-parsing.sh`",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_validate_matrix_main_sh",
+      "label": "`validate-matrix-main.sh`",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L58"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_infrastructure_d_int\u00e9gration_d\u00e9veloppement_docker_compose_yml",
+      "label": "Infrastructure d'Int\u00e9gration & D\u00e9veloppement (`docker-compose.yml`)",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_strat\u00e9gie_hybride_ghcr",
+      "label": "Strat\u00e9gie Hybride (GHCR)",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_profils_docker_d\u00e9veloppement_local",
+      "label": "Profils Docker & D\u00e9veloppement Local",
+      "file_type": "document",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L78"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_volontariapp_ci_tools_orchestration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_volontariapp_ci_tools_orchestration",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_architecture_des_pipelines_ci_cd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_architecture_des_pipelines_ci_cd",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_1_workflows_de_microservices_services_ci",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_architecture_des_pipelines_ci_cd",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_2_validation_de_l_\u00e9cosyst\u00e8me_e2e_matrix",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_architecture_des_pipelines_ci_cd",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_3_usine_logicielle_npm_npm_packages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_architecture_des_pipelines_ci_cd",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_4_synchronisation_globale_gitops",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_volontariapp_ci_tools_orchestration",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_actions_composites_r\u00e9utilisables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_actions_composites_r\u00e9utilisables",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_setup_node_yarn",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_volontariapp_ci_tools_orchestration",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_outils_scripts_de_validation_scripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_outils_scripts_de_validation_scripts",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_e2e_matrix_parsing_sh",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_outils_scripts_de_validation_scripts",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_validate_matrix_main_sh",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_volontariapp_ci_tools_orchestration",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_infrastructure_d_int\u00e9gration_d\u00e9veloppement_docker_compose_yml",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_infrastructure_d_int\u00e9gration_d\u00e9veloppement_docker_compose_yml",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_strat\u00e9gie_hybride_ghcr",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_infrastructure_d_int\u00e9gration_d\u00e9veloppement_docker_compose_yml",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_readme_profils_docker_d\u00e9veloppement_local",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/README.md",
+      "source_location": "L78",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

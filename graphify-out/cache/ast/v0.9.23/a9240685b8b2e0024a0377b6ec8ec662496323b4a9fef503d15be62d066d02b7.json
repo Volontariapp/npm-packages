@@ -1,0 +1,2015 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_md",
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "label": "Changelog",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_4",
+      "label": "4.3.4",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_3",
+      "label": "4.3.3",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_11",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_2",
+      "label": "4.3.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_20",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_1",
+      "label": "4.3.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_29",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_0",
+      "label": "4.3.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_8",
+      "label": "4.2.8",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_41",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_7",
+      "label": "4.2.7",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_47",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_6",
+      "label": "4.2.6",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_53",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_5",
+      "label": "4.2.5",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_59",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_4",
+      "label": "4.2.4",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_65",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_3",
+      "label": "4.2.3",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_71",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_2",
+      "label": "4.2.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_77",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_1",
+      "label": "4.2.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_83",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L83"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_0",
+      "label": "4.2.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L87"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_89",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_1_1",
+      "label": "4.1.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_95",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_1_0",
+      "label": "4.1.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L99"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_101",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L101"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_14",
+      "label": "4.0.14",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L105"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_107",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_13",
+      "label": "4.0.13",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_113",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L113"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_12",
+      "label": "4.0.12",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_119",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_11",
+      "label": "4.0.11",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L123"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_125",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_10",
+      "label": "4.0.10",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L132"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_134",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L134"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_9",
+      "label": "4.0.9",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_141",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_8",
+      "label": "4.0.8",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L145"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_147",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_7",
+      "label": "4.0.7",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L151"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_153",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L153"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_6",
+      "label": "4.0.6",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L157"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_159",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L159"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_5",
+      "label": "4.0.5",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L163"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_165",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L165"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_4",
+      "label": "4.0.4",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_171",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L171"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_3",
+      "label": "4.0.3",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L175"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_177",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_2",
+      "label": "4.0.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L181"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_183",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L183"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_1",
+      "label": "4.0.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L187"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_189",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L189"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_0",
+      "label": "4.0.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L193"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_195",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L195"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_4",
+      "label": "3.3.4",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L199"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_201",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L201"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_3",
+      "label": "3.3.3",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L206"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_208",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L208"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_2",
+      "label": "3.3.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L212"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_214",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L214"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_1",
+      "label": "3.3.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L218"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_220",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L220"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_0",
+      "label": "3.3.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L224"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_226",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L226"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_2",
+      "label": "3.2.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L230"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_232",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L232"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_1",
+      "label": "3.2.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L236"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_238",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L238"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_0",
+      "label": "3.2.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L242"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_244",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L244"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_5",
+      "label": "3.1.5",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L248"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_250",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L250"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_4",
+      "label": "3.1.4",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L254"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_256",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L256"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_3",
+      "label": "3.1.3",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L260"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_262",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L262"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_2",
+      "label": "3.1.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L269"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_271",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L271"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_1",
+      "label": "3.1.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L278"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_280",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L280"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_0",
+      "label": "3.1.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L284"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_286",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L286"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_10",
+      "label": "3.0.10",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L290"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_292",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L292"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_9",
+      "label": "3.0.9",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L296"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_298",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L298"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_8",
+      "label": "3.0.8",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L302"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_304",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_7",
+      "label": "3.0.7",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L308"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_310",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L310"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_6",
+      "label": "3.0.6",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L314"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_316",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L316"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_5",
+      "label": "3.0.5",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L320"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_322",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L322"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_4",
+      "label": "3.0.4",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L326"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_328",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L328"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_3",
+      "label": "3.0.3",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L332"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_334",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L334"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_2",
+      "label": "3.0.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L338"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_340",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L340"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_1",
+      "label": "3.0.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L344"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_346",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L346"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_0",
+      "label": "3.0.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L350"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_major_changes",
+      "label": "Major Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L352"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_2_0",
+      "label": "2.2.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L356"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_358",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L358"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_1_1",
+      "label": "2.1.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L362"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_364",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L364"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_1_0",
+      "label": "2.1.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L368"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_370",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L370"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_2",
+      "label": "2.0.2",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L374"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_376",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L376"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_1",
+      "label": "2.0.1",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L380"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_382",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L382"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_0",
+      "label": "2.0.0",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L386"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_major_changes_388",
+      "label": "Major Changes",
+      "file_type": "document",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L388"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_11",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_20",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_29",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_3_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_8",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_41",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_7",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_7",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_47",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_6",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_53",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_59",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_65",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_71",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_77",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_83",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_89",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_1_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_1_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_95",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_1_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_101",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_14",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_14",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_107",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_13",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_13",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_113",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_12",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_12",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_119",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_11",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_11",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_125",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_10",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_10",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_134",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_9",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_9",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_141",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_8",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_147",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_7",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_7",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_153",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_6",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_159",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L159",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_165",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_171",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_177",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_183",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L187",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_189",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_4_0_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_195",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_201",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L201",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L206",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_208",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L212",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_214",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_220",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L220",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L224",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_3_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_226",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L230",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_232",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L232",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L236",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_238",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L238",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L242",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_244",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L244",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L248",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_250",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L250",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_256",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L260",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_262",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L262",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L269",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_271",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L271",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L278",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_280",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L280",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L284",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_1_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_286",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L286",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_10",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L290",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_10",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_292",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L292",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_9",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_9",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_298",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L298",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L302",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_8",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_304",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_7",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L308",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_7",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_310",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L310",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L314",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_6",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_316",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L316",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L320",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_322",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L322",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L326",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_328",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L328",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L332",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_334",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L334",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L338",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_340",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L340",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L344",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_346",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L346",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L350",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_3_0_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_major_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L352",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_2_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L356",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_358",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L358",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_1_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L362",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_1_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_364",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L364",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L368",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_1_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_minor_changes_370",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L370",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L374",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_376",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L376",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L380",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_patch_changes_382",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L382",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L386",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_2_0_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_contracts_changelog_major_changes_388",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/CHANGELOG.md",
+      "source_location": "L388",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

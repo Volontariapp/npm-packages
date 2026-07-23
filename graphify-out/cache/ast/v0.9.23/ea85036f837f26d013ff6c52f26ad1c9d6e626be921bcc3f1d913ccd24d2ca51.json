@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "label": "@volontariapp/health-check-nest",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_ce_que_fait_la_librairie",
+      "label": "Ce que fait la librairie",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_installation",
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_configuration",
+      "label": "Configuration",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_utilisation_rapide_nestjs",
+      "label": "Utilisation rapide (NestJS)",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_exemple_partiel_seulement_postgres",
+      "label": "Exemple partiel (seulement postgres)",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_exemple_tol\u00e9rant_skip_des_providers_absents",
+      "label": "Exemple tol\u00e9rant (skip des providers absents)",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_architecture_recommand\u00e9e",
+      "label": "Architecture recommand\u00e9e",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_api_export\u00e9e",
+      "label": "API export\u00e9e",
+      "file_type": "document",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L121"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_ce_que_fait_la_librairie",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_installation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_configuration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_utilisation_rapide_nestjs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_exemple_partiel_seulement_postgres",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_exemple_tol\u00e9rant_skip_des_providers_absents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_architecture_recommand\u00e9e",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_volontariapp_health_check_nest",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_health_check_nest_readme_api_export\u00e9e",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/health-check-nest/README.md",
+      "source_location": "L121",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_package_post_processors",
+      "label": "Package Post-Processors",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_aper\u00e7u_overview",
+      "label": "Aper\u00e7u (Overview)",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_architecture",
+      "label": "Architecture",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_types_de_traitement",
+      "label": "Types de Traitement",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_m\u00e9canismes_internes_et_boucles",
+      "label": "M\u00e9canismes Internes et Boucles",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_tol\u00e9rance_aux_pannes_et_idempotence",
+      "label": "Tol\u00e9rance aux Pannes et Idempotence",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_pattern_circuit_breaker_disjoncteur",
+      "label": "Pattern Circuit Breaker (Disjoncteur)",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_comment_\u00e7a_marche",
+      "label": "Comment \u00e7a marche :",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_fonctionnalit\u00e9s_cl\u00e9s",
+      "label": "Fonctionnalit\u00e9s Cl\u00e9s",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L120"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_utilisation_avec_nestjs",
+      "label": "Utilisation avec NestJS",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_1_cr\u00e9er_le_service_post_processor",
+      "label": "1. Cr\u00e9er le Service Post-Processor",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_2_enregistrer_dans_un_module",
+      "label": "2. Enregistrer dans un Module",
+      "file_type": "document",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L196"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_package_post_processors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_package_post_processors",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_aper\u00e7u_overview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_package_post_processors",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_architecture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_architecture",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_types_de_traitement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_package_post_processors",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_m\u00e9canismes_internes_et_boucles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_package_post_processors",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_tol\u00e9rance_aux_pannes_et_idempotence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_tol\u00e9rance_aux_pannes_et_idempotence",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_pattern_circuit_breaker_disjoncteur",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_pattern_circuit_breaker_disjoncteur",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_comment_\u00e7a_marche",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_tol\u00e9rance_aux_pannes_et_idempotence",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_fonctionnalit\u00e9s_cl\u00e9s",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_package_post_processors",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_utilisation_avec_nestjs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_utilisation_avec_nestjs",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_1_cr\u00e9er_le_service_post_processor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_utilisation_avec_nestjs",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_post_processors_readme_2_enregistrer_dans_un_module",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/post-processors/README.md",
+      "source_location": "L196",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_volontariapp_domain_event",
+      "label": "@volontariapp/domain-event",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_overview_domain_driven_design_ddd",
+      "label": "Overview & Domain Driven Design (DDD)",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_architecture_du_domaine",
+      "label": "Architecture du Domaine",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_structure_des_dossiers",
+      "label": "Structure des Dossiers",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_exemples_d_impl\u00e9mentation",
+      "label": "Exemples d'Impl\u00e9mentation",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_1_value_object_entity",
+      "label": "1. Value Object & Entity",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_2_domain_service",
+      "label": "2. Domain Service",
+      "file_type": "document",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L108"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_volontariapp_domain_event",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_volontariapp_domain_event",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_overview_domain_driven_design_ddd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_volontariapp_domain_event",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_architecture_du_domaine",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_volontariapp_domain_event",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_structure_des_dossiers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_volontariapp_domain_event",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_exemples_d_impl\u00e9mentation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_exemples_d_impl\u00e9mentation",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_1_value_object_entity",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_exemples_d_impl\u00e9mentation",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_domain_event_readme_2_domain_service",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/domain-event/README.md",
+      "source_location": "L108",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_scripts_e2e_matrix_parsing_sh",
+      "label": "e2e-matrix-parsing.sh",
+      "file_type": "code",
+      "source_file": "ci-tools/scripts/e2e-matrix-parsing.sh",
+      "source_location": "L1",
+      "metadata": { "language": "bash", "kind": "file" }
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_scripts_e2e_matrix_parsing_sh__entry",
+      "label": "e2e-matrix-parsing.sh script",
+      "file_type": "code",
+      "source_file": "ci-tools/scripts/e2e-matrix-parsing.sh",
+      "source_location": "L1",
+      "metadata": { "language": "bash", "kind": "bash_entrypoint" }
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_ci_tools_scripts_e2e_matrix_parsing_resolve_tag",
+      "label": "resolve_tag()",
+      "file_type": "code",
+      "source_file": "ci-tools/scripts/e2e-matrix-parsing.sh",
+      "source_location": "L50",
+      "metadata": { "language": "bash", "kind": "bash_function" }
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_scripts_e2e_matrix_parsing_sh",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_scripts_e2e_matrix_parsing_sh__entry",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/scripts/e2e-matrix-parsing.sh",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_ci_tools_scripts_e2e_matrix_parsing_sh",
+      "target": "users_victoragahi_developer_meta_npm_packages_ci_tools_scripts_e2e_matrix_parsing_resolve_tag",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "ci-tools/scripts/e2e-matrix-parsing.sh",
+      "source_location": "L50",
+      "weight": 1.0
+    }
+  ]
+}

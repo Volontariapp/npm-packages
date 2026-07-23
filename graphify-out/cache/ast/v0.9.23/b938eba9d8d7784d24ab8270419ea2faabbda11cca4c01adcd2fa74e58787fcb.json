@@ -1,0 +1,847 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_md",
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "label": "Changelog",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_17",
+      "label": "0.3.17",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_16",
+      "label": "0.3.16",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_15",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_15",
+      "label": "0.3.15",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_27",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_14",
+      "label": "0.3.14",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_34",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_13",
+      "label": "0.3.13",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_46",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_12",
+      "label": "0.3.12",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_56",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_11",
+      "label": "0.3.11",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_64",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_10",
+      "label": "0.3.10",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_73",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_9",
+      "label": "0.3.9",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_80",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_8",
+      "label": "0.3.8",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_86",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_7",
+      "label": "0.3.7",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_92",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L92"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_6",
+      "label": "0.3.6",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_98",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L98"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_5",
+      "label": "0.3.5",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_104",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_4",
+      "label": "0.3.4",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_111",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_3",
+      "label": "0.3.3",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L116"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_118",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L118"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_2",
+      "label": "0.3.2",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_127",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L127"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_1",
+      "label": "0.3.1",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_139",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_0",
+      "label": "0.3.0",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_minor_changes",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L145"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_5",
+      "label": "0.2.5",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L155"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_157",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L157"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_4",
+      "label": "0.2.4",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L162"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_164",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L164"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_3",
+      "label": "0.2.3",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L174"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_176",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L176"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_2",
+      "label": "0.2.2",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L186"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_188",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L188"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_1",
+      "label": "0.2.1",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L193"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_195",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L195"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_0",
+      "label": "0.2.0",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L202"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_minor_changes_204",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L204"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_208",
+      "label": "Patch Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L208"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_1_0",
+      "label": "0.1.0",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L217"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_minor_changes_219",
+      "label": "Minor Changes",
+      "file_type": "document",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L219"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_17",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_17",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_16",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_16",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_15",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_15",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_15",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_27",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_14",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_14",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_34",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_13",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_13",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_46",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_12",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_12",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_56",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_11",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_11",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_64",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_10",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_10",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_73",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_9",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_9",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_80",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_8",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_86",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_7",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_7",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_92",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_6",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_98",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_104",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_111",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_118",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_127",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_139",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_3_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_minor_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_5",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_157",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_4",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_164",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_3",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_176",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L176",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_2",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_188",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L188",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_1",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_195",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_minor_changes_204",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L204",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_2_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_patch_changes_208",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_changelog",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_0_1_0",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_bridge_nest_changelog_minor_changes_219",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/bridge-nest/CHANGELOG.md",
+      "source_location": "L219",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "packages/database/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_volontariapp_database",
+      "label": "@volontariapp/database",
+      "file_type": "document",
+      "source_file": "packages/database/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_overview",
+      "label": "Overview",
+      "file_type": "document",
+      "source_file": "packages/database/README.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_architecture_d_acc\u00e8s_aux_donn\u00e9es",
+      "label": "Architecture d'Acc\u00e8s aux Donn\u00e9es",
+      "file_type": "document",
+      "source_file": "packages/database/README.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_key_features",
+      "label": "Key Features",
+      "file_type": "document",
+      "source_file": "packages/database/README.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_exemple_d_utilisation",
+      "label": "Exemple d'Utilisation",
+      "file_type": "document",
+      "source_file": "packages/database/README.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_utilisation_de_la_configuration_commune",
+      "label": "Utilisation de la Configuration Commune",
+      "file_type": "document",
+      "source_file": "packages/database/README.md",
+      "source_location": "L45"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_md",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_volontariapp_database",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_volontariapp_database",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_overview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/README.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_volontariapp_database",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_architecture_d_acc\u00e8s_aux_donn\u00e9es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/README.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_volontariapp_database",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_key_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/README.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_volontariapp_database",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_exemple_d_utilisation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/README.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_exemple_d_utilisation",
+      "target": "users_victoragahi_developer_meta_npm_packages_packages_database_readme_utilisation_de_la_configuration_commune",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/README.md",
+      "source_location": "L45",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
