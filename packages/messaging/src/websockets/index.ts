@@ -27,6 +27,8 @@ import type {
   IPostDeletionFailedWebsocketPayload,
   ICommentCreatedWebsocketPayload,
   ICommentDeletedWebsocketPayload,
+  IPostLikedWebsocketPayload,
+  IPostUnlikedWebsocketPayload,
 } from './posts/index.js';
 import { PostWebsocketMessagingType } from './posts/index.js';
 
@@ -61,6 +63,8 @@ export interface WebsocketEventRegistry {
   [PostWebsocketMessagingType.POST_DELETION_FAILED]: IPostDeletionFailedWebsocketPayload;
   [PostWebsocketMessagingType.COMMENT_CREATED]: ICommentCreatedWebsocketPayload;
   [PostWebsocketMessagingType.COMMENT_DELETED]: ICommentDeletedWebsocketPayload;
+  [PostWebsocketMessagingType.POST_LIKED]: IPostLikedWebsocketPayload;
+  [PostWebsocketMessagingType.POST_UNLIKED]: IPostUnlikedWebsocketPayload;
 }
 
 export const WebsocketMessagingType = {

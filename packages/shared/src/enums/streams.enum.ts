@@ -22,6 +22,8 @@ export enum PostStream {
   POST_DELETED = 'post-deleted',
   COMMENT_CREATED = 'comment-created',
   COMMENT_DELETED = 'comment-deleted',
+  POST_LIKED = 'post-liked',
+  POST_UNLIKED = 'post-unliked',
 }
 
 export enum SocialStream {

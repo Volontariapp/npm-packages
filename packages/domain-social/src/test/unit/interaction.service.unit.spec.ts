@@ -1,7 +1,10 @@
 import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { InteractionService } from '../../services/interaction.service.js';
 import type { IInteractionRepository } from '../../repositories/interfaces/interaction.repository.js';
+import type { Repository } from '@volontariapp/database';
+import type { EventQueueModel } from '@volontariapp/database';
 import { createInteractionRepositoryMock } from '../__test-utils__/mocks/interaction.repository.mock.js';
+import { createEventQueueRepositoryMock } from '../__test-utils__/mocks/event-queue.repository.mock.js';
 import { PaginatedIdsFactory } from '../__test-utils__/factories/paginated-ids.factory.js';
 import { UserIdFactory, PostIdFactory } from '../__test-utils__/factories/ids.factory.js';
 import { PaginationFactory } from '../__test-utils__/factories/pagination.factory.js';
@@ -13,10 +16,12 @@ const PAGINATION = PaginationFactory.build();
 describe('InteractionService (Unit)', () => {
   let service: InteractionService;
   let mockRepository: jest.Mocked<IInteractionRepository>;
+  let mockEventQueueRepository: jest.Mocked<Repository<EventQueueModel>>;
 
   beforeEach(() => {
     mockRepository = createInteractionRepositoryMock();
-    service = new InteractionService(mockRepository);
+    mockEventQueueRepository = createEventQueueRepositoryMock();
+    service = new InteractionService(mockRepository, mockEventQueueRepository);
   });
 
   afterEach(() => {

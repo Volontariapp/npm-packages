@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0
+
+### Minor Changes
+
+- new event for like or unlike post
+
 ## 0.11.0
 
 ### Minor Changes
