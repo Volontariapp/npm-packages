@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0
+
+### Minor Changes
+
+- new event for like or unlike post
+
 ## 0.8.2
 
 ### Patch Changes

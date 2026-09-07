@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-social",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -39,11 +39,16 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/typeorm": "^11.0.1",
     "@volontariapp/bridge-nest": "workspace:*",
     "@volontariapp/contracts": "workspace:*",
+    "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
+    "@volontariapp/messaging": "workspace:*",
+    "@volontariapp/outbox": "workspace:*",
+    "@volontariapp/shared": "workspace:*",
     "neo4j-driver": "^6.0.1",
     "reflect-metadata": "^0.2.2"
   },

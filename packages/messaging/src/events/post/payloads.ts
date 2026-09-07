@@ -12,6 +12,8 @@ export enum PostEventMessagingType {
   POST_EVENT_DELETED_FAILED = 'post_event.deleted_failed',
   COMMENT_CREATED = 'post.comment.created',
   COMMENT_DELETED = 'post.comment.deleted',
+  POST_LIKED = 'post.liked',
+  POST_UNLIKED = 'post.unliked',
 }
 
 export interface IPostCreatedPayload
@@ -33,3 +35,11 @@ export interface ICommentCreatedPayload
 }
 
 export interface ICommentDeletedPayload extends ICommentIdPayload, IPostIdPayload {}
+
+export interface IPostLikedPayload extends IPostIdPayload, Partial<IUserIdPayload> {
+  authorId: string;
+}
+
+export interface IPostUnlikedPayload extends IPostIdPayload, Partial<IUserIdPayload> {
+  authorId: string;
+}

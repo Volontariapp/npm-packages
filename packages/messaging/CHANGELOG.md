@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.13.0
+
+### Minor Changes
+
+- new event for like or unlike post
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.9.0
+
 ## 2.12.1
 
 ### Patch Changes

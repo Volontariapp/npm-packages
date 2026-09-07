@@ -5,4 +5,6 @@ export enum PostWebsocketMessagingType {
   POST_DELETION_FAILED = 'post.deletion_failed',
   COMMENT_CREATED = 'post.comment.created',
   COMMENT_DELETED = 'post.comment.deleted',
+  POST_LIKED = 'post.liked',
+  POST_UNLIKED = 'post.unliked',
 }
