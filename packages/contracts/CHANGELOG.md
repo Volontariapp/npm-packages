@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.6
+
+### Patch Changes
+
+- new follow event
+
 ## 4.3.5
 
 ### Patch Changes

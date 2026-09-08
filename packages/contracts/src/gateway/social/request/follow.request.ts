@@ -9,6 +9,7 @@ import type {
   GetMyFollowersQuery,
   AdminGetMyFollowsQuery,
   AdminGetMyFollowersQuery,
+  GetIsFollowingQuery,
 } from '../../../social/social.query.js';
 
 export interface PostFollowUserWebRequest extends PostFollowUserCommand {}
@@ -17,6 +18,7 @@ export interface AdminPostFollowUserWebRequest
   extends Omit<AdminPostFollowUserCommand, 'followerId'> {}
 export interface AdminDeleteFollowUserWebRequest
   extends Omit<AdminDeleteFollowUserCommand, 'followerId'> {}
+export interface GetIsFollowingWebRequest extends GetIsFollowingQuery {}
 
 export interface GetMyFollowsWebRequest extends Partial<GetMyFollowsQuery> {}
 export interface GetMyFollowersWebRequest extends Partial<GetMyFollowersQuery> {}

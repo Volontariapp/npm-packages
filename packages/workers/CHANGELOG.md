@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.13.2
+  - @volontariapp/database@3.4.11
+  - @volontariapp/outbox@0.9.48
+
 ## 1.3.15
 
 ### Patch Changes
