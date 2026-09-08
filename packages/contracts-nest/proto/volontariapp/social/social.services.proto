@@ -35,6 +35,8 @@ service RelationshipQueryService {
   rpc AdminGetMyFollowers(AdminGetMyFollowersQuery) returns (AdminGetMyFollowersResponse);
   rpc AdminGetMyBlocks(AdminGetMyBlocksQuery) returns (AdminGetMyBlocksResponse);
   rpc AdminGetWhoBlockedMe(AdminGetWhoBlockedMeQuery) returns (AdminGetWhoBlockedMeResponse);
+  rpc GetIsFollowing(GetIsFollowingQuery) returns (GetIsFollowingResponse);
+  rpc AdminGetIsFollowing(AdminGetIsFollowingQuery) returns (AdminGetIsFollowingResponse);
 }
 
 service PublicationCommandService {

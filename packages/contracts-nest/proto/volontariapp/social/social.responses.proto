@@ -52,6 +52,14 @@ message AdminGetWhoBlockedMeResponse {
   volontariapp.common.PaginationResponse pagination = 2;
 }
 
+message GetIsFollowingResponse {
+  bool is_following = 1;
+}
+
+message AdminGetIsFollowingResponse {
+  bool is_following = 1;
+}
+
 message CreatePostNodeResponse {}
 message DeletePostNodeResponse {}
 message PostUserOwnResponse {}
