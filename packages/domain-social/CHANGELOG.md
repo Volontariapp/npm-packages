@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.2
+
+### Patch Changes
+
+- is follow added on social domain
+
 ## 0.12.1
 
 ### Patch Changes

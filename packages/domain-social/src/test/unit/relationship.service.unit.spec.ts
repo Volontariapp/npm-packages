@@ -277,4 +277,43 @@ describe('RelationshipService (Unit)', () => {
       ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
     });
   });
+
+  // ─── isFollowing ──────────────────────────────────────────────────────────
+
+  describe('isFollowing()', () => {
+    it('should return true if repository returns true', async () => {
+      const followerEntity = SocialUserFactory.build({ userId: 'follower-1' });
+      const followedEntity = SocialUserFactory.build({ userId: 'followed-1' });
+      const relationshipExistsSpy = jest
+        .spyOn(mockRepository, 'relationshipExists')
+        .mockResolvedValue(true);
+
+      const result = await service.isFollowing(
+        UserIdFactory.build('follower-1'),
+        UserIdFactory.build('followed-1'),
+      );
+
+      expect(relationshipExistsSpy).toHaveBeenCalledWith(followerEntity, followedEntity, 'FOLLOW');
+      expect(result).toBe(true);
+    });
+
+    it('should return false if repository returns false', async () => {
+      jest.spyOn(mockRepository, 'relationshipExists').mockResolvedValue(false);
+
+      const result = await service.isFollowing(
+        UserIdFactory.build('follower-1'),
+        UserIdFactory.build('followed-1'),
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      jest.spyOn(mockRepository, 'relationshipExists').mockRejectedValue(new Error('Neo4j error'));
+
+      await expect(
+        service.isFollowing(UserIdFactory.build('f1'), UserIdFactory.build('f2')),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
 });
