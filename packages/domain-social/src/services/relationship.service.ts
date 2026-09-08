@@ -142,4 +142,19 @@ export class RelationshipService {
       throw DATABASE_ERROR('fetching who blocked me', (error as Error).message);
     }
   }
+
+  async isFollowing(followerId: UserId, followedId: UserId): Promise<boolean> {
+    const follower = SocialUserMapper.toEntity(followerId);
+    const followed = SocialUserMapper.toEntity(followedId);
+    try {
+      return await this.repository.relationshipExists(follower, followed, 'FOLLOW');
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to check if ${followerId.value} is following ${followedId.value}`,
+        error as Error,
+      );
+      throw DATABASE_ERROR('checking follow relationship', (error as Error).message);
+    }
+  }
 }
