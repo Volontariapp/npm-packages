@@ -1,6 +1,9 @@
 import { JobMessagingType } from '../jobs/index.js';
 import { EventEventMessagingType } from '../events/event/payloads.js';
+import { PostEventMessagingType } from '../events/post/payloads.js';
 import { EventWebsocketMessagingType } from '../websockets/events/types.js';
+import { PostWebsocketMessagingType } from '../websockets/posts/types.js';
+import type { WebsocketMessagingType } from '../websockets/index.js';
 
 export const JOB_TO_EVENT_MAPPING: Partial<Record<JobMessagingType, EventEventMessagingType>> = {
   [JobMessagingType.FALLBACK_CREATE_EVENT]: EventEventMessagingType.FALLBACK_CREATE_EVENT,
@@ -31,6 +34,13 @@ export const EVENT_TO_WS_EVENT_MAPPING = {
   [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: EventWebsocketMessagingType.EVENT_DELETED,
   [EventEventMessagingType.EVENT_DELETION_FAILED]: EventWebsocketMessagingType.EVENT_DELETION_FAILED,
 
+  [PostEventMessagingType.POST_CREATED]: PostWebsocketMessagingType.POST_CREATED,
+  [PostEventMessagingType.POST_DELETED]: PostWebsocketMessagingType.POST_DELETED,
+  [PostEventMessagingType.POST_CREATION_SUCCESSFULL]: PostWebsocketMessagingType.POST_CREATED,
+  [PostEventMessagingType.POST_CREATION_FAILED]: PostWebsocketMessagingType.POST_CREATION_FAILED,
+  [PostEventMessagingType.POST_DELETION_SUCCESSFULL]: PostWebsocketMessagingType.POST_DELETED,
+  [PostEventMessagingType.POST_DELETION_FAILED]: PostWebsocketMessagingType.POST_DELETION_FAILED,
+
   [EventEventMessagingType.FALLBACK_CREATE_EVENT]:
     EventWebsocketMessagingType.FALLBACK_CREATE_EVENT,
   [EventEventMessagingType.FALLBACK_UPDATE_EVENT]:
@@ -49,11 +59,11 @@ export const EVENT_TO_WS_EVENT_MAPPING = {
 export type EventToWsEventMapping = typeof EVENT_TO_WS_EVENT_MAPPING;
 
 export function getWsEventForEvent(
-  eventType: EventEventMessagingType | string,
-): EventWebsocketMessagingType {
+  eventType: string,
+): WebsocketMessagingType {
   const wsEvent = EVENT_TO_WS_EVENT_MAPPING[eventType as keyof EventToWsEventMapping];
   if (!wsEvent) {
     throw new Error(`No ws event mapping found for event type: ${eventType}`);
   }
-  return wsEvent;
+  return wsEvent as WebsocketMessagingType;
 }
