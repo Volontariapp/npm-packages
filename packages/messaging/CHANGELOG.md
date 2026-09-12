@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.14.0
+
+### Minor Changes
+
+- feat(messaging): add post creation/deletion lifecycle events (POST_CREATION_SUCCESSFULL, POST_CREATION_FAILED, POST_DELETION_SUCCESSFULL, POST_DELETION_FAILED) and map them to PostWebsocketMessagingType in EVENT_TO_WS_EVENT_MAPPING
+
 ## 2.13.2
 
 ### Patch Changes
