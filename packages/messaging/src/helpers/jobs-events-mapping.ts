@@ -1,8 +1,10 @@
 import { JobMessagingType } from '../jobs/index.js';
 import { EventEventMessagingType } from '../events/event/payloads.js';
 import { PostEventMessagingType } from '../events/post/payloads.js';
+import { UserEventMessagingType } from '../events/user/payloads.js';
 import { EventWebsocketMessagingType } from '../websockets/events/types.js';
 import { PostWebsocketMessagingType } from '../websockets/posts/types.js';
+import { UserWebsocketMessagingType } from '../websockets/users/types.js';
 import type { WebsocketMessagingType } from '../websockets/index.js';
 
 export const JOB_TO_EVENT_MAPPING: Partial<Record<JobMessagingType, EventEventMessagingType>> = {
@@ -40,6 +42,13 @@ export const EVENT_TO_WS_EVENT_MAPPING = {
   [PostEventMessagingType.POST_CREATION_FAILED]: PostWebsocketMessagingType.POST_CREATION_FAILED,
   [PostEventMessagingType.POST_DELETION_SUCCESSFULL]: PostWebsocketMessagingType.POST_DELETED,
   [PostEventMessagingType.POST_DELETION_FAILED]: PostWebsocketMessagingType.POST_DELETION_FAILED,
+
+  [UserEventMessagingType.USER_CREATED]: UserWebsocketMessagingType.USER_CREATED,
+  [UserEventMessagingType.USER_DELETED]: UserWebsocketMessagingType.USER_DELETED,
+  [UserEventMessagingType.USER_CREATION_SUCCESSFULL]: UserWebsocketMessagingType.USER_CREATED,
+  [UserEventMessagingType.USER_CREATION_FAILED]: UserWebsocketMessagingType.USER_CREATION_FAILED,
+  [UserEventMessagingType.USER_DELETION_SUCCESSFULL]: UserWebsocketMessagingType.USER_DELETED,
+  [UserEventMessagingType.USER_DELETION_FAILED]: UserWebsocketMessagingType.USER_DELETION_FAILED,
 
   [EventEventMessagingType.FALLBACK_CREATE_EVENT]:
     EventWebsocketMessagingType.FALLBACK_CREATE_EVENT,
