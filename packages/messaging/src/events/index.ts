@@ -11,7 +11,14 @@ import type {
 } from './event/payloads.js';
 
 import { UserEventMessagingType } from './user/payloads.js';
-import type { IUserCreatedPayload, IUserDeleledPayload } from './user/payloads.js';
+import type {
+  IUserCreatedPayload,
+  IUserDeleledPayload,
+  IUserCreationSuccessfullPayload,
+  IUserCreationFailedPayload,
+  IUserDeletionSuccessfullPayload,
+  IUserDeletionFailedPayload,
+} from './user/payloads.js';
 
 import { SocialEventMessagingType } from './social/payloads.js';
 import type {
@@ -98,6 +105,10 @@ export interface EventRegistry {
   // User
   [UserEventMessagingType.USER_CREATED]: IUserCreatedPayload;
   [UserEventMessagingType.USER_DELETED]: IUserDeleledPayload;
+  [UserEventMessagingType.USER_CREATION_SUCCESSFULL]: IUserCreationSuccessfullPayload;
+  [UserEventMessagingType.USER_CREATION_FAILED]: IUserCreationFailedPayload;
+  [UserEventMessagingType.USER_DELETION_SUCCESSFULL]: IUserDeletionSuccessfullPayload;
+  [UserEventMessagingType.USER_DELETION_FAILED]: IUserDeletionFailedPayload;
 
   // Social
   [SocialEventMessagingType.EVENT_SOCIAL_CREATED]: IEventSocialCreatedPayload;

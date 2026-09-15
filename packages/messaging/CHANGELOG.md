@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.15.0
+
+### Minor Changes
+
+- feat(messaging): add user lifecycle events, payloads, and websocket mappings for scatter-gather
+
 ## 2.14.0
 
 ### Minor Changes
