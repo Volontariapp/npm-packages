@@ -154,12 +154,9 @@ export const EventMessagingType = {
 export type EventMessagingType = (typeof EventMessagingType)[keyof typeof EventMessagingType];
 
 export * from './event/payloads.js';
-export * from './event/mapping.js';
 export * from './user/payloads.js';
-export * from './user/mapping.js';
 export * from './social/payloads.js';
 export * from './post/payloads.js';
-export * from './post/mapping.js';
 export * from './common/payloads.js';
 
 export * from './utils.js';

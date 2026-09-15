@@ -1,5 +1,5 @@
-import { EventEventMessagingType } from './payloads.js';
-import { EventWebsocketMessagingType } from '../../websockets/events/types.js';
+import { EventEventMessagingType } from '../../events/event/payloads.js';
+import { EventWebsocketMessagingType } from './types.js';
 import { JobMessagingType } from '../../jobs/index.js';
 
 export const JOB_TO_EVENT_MAPPING: Partial<Record<JobMessagingType, EventEventMessagingType>> = {

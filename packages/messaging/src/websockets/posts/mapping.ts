@@ -1,5 +1,5 @@
-import { PostEventMessagingType } from './payloads.js';
-import { PostWebsocketMessagingType } from '../../websockets/posts/types.js';
+import { PostEventMessagingType } from '../../events/post/payloads.js';
+import { PostWebsocketMessagingType } from './types.js';
 
 export const POST_EVENT_TO_WS_EVENT_MAPPING = {
   [PostEventMessagingType.POST_CREATED]: PostWebsocketMessagingType.POST_CREATED,

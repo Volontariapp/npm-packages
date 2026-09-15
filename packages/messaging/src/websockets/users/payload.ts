@@ -1,16 +1,16 @@
 import type {
   IEmitterPayload,
-  IUserSocialCreatedPayload,
-  IUserSocialCreationFailedPayload,
-  IUserSocialDeletedPayload,
-  IUserSocialDeletionFailedPayload,
+  IUserCreatedPayload,
+  IUserCreationFailedPayload,
+  IUserDeleledPayload,
+  IUserDeletionFailedPayload,
 } from '../../index.js';
 
-export interface IUserCreatedWebsocketPayload extends IUserSocialCreatedPayload, IEmitterPayload {}
+export interface IUserCreatedWebsocketPayload extends IUserCreatedPayload, IEmitterPayload {}
 export interface IUserCreationFailedWebsocketPayload
-  extends IUserSocialCreationFailedPayload,
+  extends IUserCreationFailedPayload,
     IEmitterPayload {}
-export interface IUserDeletedWebsocketPayload extends IUserSocialDeletedPayload, IEmitterPayload {}
+export interface IUserDeletedWebsocketPayload extends IUserDeleledPayload, IEmitterPayload {}
 export interface IUserDeletionFailedWebsocketPayload
-  extends IUserSocialDeletionFailedPayload,
+  extends IUserDeletionFailedPayload,
     IEmitterPayload {}

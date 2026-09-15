@@ -1,5 +1,5 @@
-import { UserEventMessagingType } from './payloads.js';
-import { UserWebsocketMessagingType } from '../../websockets/users/types.js';
+import { UserEventMessagingType } from '../../events/user/payloads.js';
+import { UserWebsocketMessagingType } from './types.js';
 
 export const USER_EVENT_TO_WS_EVENT_MAPPING = {
   [UserEventMessagingType.USER_CREATED]: UserWebsocketMessagingType.USER_CREATED,
