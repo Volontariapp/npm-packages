@@ -4229,6 +4229,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/domain-storage@workspace:packages/domain-storage":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/domain-storage@workspace:packages/domain-storage"
+  dependencies:
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/domain-user@workspace:packages/domain-user":
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-user@workspace:packages/domain-user"
