@@ -19,3 +19,25 @@ jobs:
     secrets:
       ORG_REPO_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  update-deploy-submodule:
+    needs: run-pipeline
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Deploy Repo
+        uses: actions/checkout@v4
+        with:
+          repository: Volontariapp/deploy
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          path: deploy
+          submodules: true
+      - name: Update npm-packages submodule
+        run: |
+          cd deploy
+          git submodule update --remote submodules/npm-packages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add submodules/npm-packages
+          git commit -m "chore: bump npm-packages submodule" || echo "No changes to commit"
+          git push origin main
