@@ -20,6 +20,7 @@ export enum PostStream {
   POST_JOB_OUTBOX_FAILURE = 'post:job:outbox:failure',
   POST_CREATED = 'post-created',
   POST_DELETED = 'post-deleted',
+  POST_SUCCESSFULLY_CREATED = 'post:successfully_created',
   COMMENT_CREATED = 'comment-created',
   COMMENT_DELETED = 'comment-deleted',
   POST_LIKED = 'post-liked',

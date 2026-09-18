@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1
+
+### Patch Changes
+
+- new stream for saga enums
+
 ## 0.9.0
 
 ### Minor Changes

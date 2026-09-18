@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.15.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.9.1
+
 ## 2.15.0
 
 ### Minor Changes
