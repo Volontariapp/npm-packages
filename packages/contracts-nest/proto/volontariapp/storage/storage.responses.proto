@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package volontariapp.storage;
+
+import "google/protobuf/timestamp.proto";
+import "volontariapp/storage/storage.proto";
+
+message GenerateUploadUrlResponse {
+  string file_id = 1;
+  string upload_url = 2;
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+message ConfirmFileAttachmentResponse {
+  bool success = 1;
+  int32 updated_count = 2;
+}
+
+message DeleteFileResponse {
+  bool success = 1;
+}
+
+message FileMetadataResponse {
+  FileMetadata file = 1;
+}

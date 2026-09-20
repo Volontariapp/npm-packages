@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package volontariapp.storage;
+
+message GetFileMetadataQuery {
+  string file_id = 1;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package volontariapp.storage;
+
+import "volontariapp/storage/storage.command.proto";
+import "volontariapp/storage/storage.query.proto";
+import "volontariapp/storage/storage.responses.proto";
+
+service StorageService {
+  rpc GenerateUploadUrl (GenerateUploadUrlCommand) returns (GenerateUploadUrlResponse) {}
+  rpc ConfirmFileAttachment (ConfirmFileAttachmentCommand) returns (ConfirmFileAttachmentResponse) {}
+  rpc DeleteFile (DeleteFileCommand) returns (DeleteFileResponse) {}
+  rpc GetFileMetadata (GetFileMetadataQuery) returns (FileMetadataResponse) {}
+}
