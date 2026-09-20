@@ -1,0 +1,6 @@
+export enum FileStatus {
+  PENDING = 'PENDING',
+  ATTACHED = 'ATTACHED',
+  ORPHANED = 'ORPHANED',
+  DELETED = 'DELETED',
+}
