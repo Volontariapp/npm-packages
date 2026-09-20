@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/Volontariapp/npm-packages.git"
   },
-  "description": "",
+  "description": "Domain storage definitions, value objects, enums and exceptions for Volontariapp",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -30,9 +30,17 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\""
+    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest"
+  },
+  "dependencies": {
+    "@volontariapp/errors": "workspace:*"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.10.7",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.6",
     "typescript": "5.7.3"
   }
 }

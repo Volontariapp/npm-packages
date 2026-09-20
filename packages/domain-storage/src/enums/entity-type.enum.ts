@@ -1,0 +1,6 @@
+export enum EntityType {
+  POST = 'POST',
+  USER_AVATAR = 'USER_AVATAR',
+  BADGE_ICON = 'BADGE_ICON',
+  EVENT_COVER = 'EVENT_COVER',
+}
