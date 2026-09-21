@@ -6,7 +6,7 @@
 
 - Updated dependencies []:
   - @volontariapp/contracts@4.3.7
-  - @volontariapp/messaging@2.15.2
+  - @volontariapp/messaging@2.16.0
   - @volontariapp/database@3.4.15
 
 ## 2.8.34

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.16.0
+
+### Minor Changes
+
+- feat(messaging): contrats et registres de complétion des Sagas Scatter-Gather - [#197](https://github.com/Volontariapp/npm-packages/issues/197)
+
 ## 2.15.2
 
 ### Patch Changes
