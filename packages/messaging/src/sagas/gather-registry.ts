@@ -10,6 +10,7 @@ export const SagaGatherType = {
   EVENT_DELETION: 'EVENT_DELETION_GATHER',
   POST_CREATION: 'POST_CREATION_GATHER',
   POST_DELETION: 'POST_DELETION_GATHER',
+  USER_CREATION: 'USER_CREATION_GATHER',
   USER_DELETION: 'USER_DELETION_GATHER',
 } as const;
 
@@ -38,6 +39,11 @@ export const SAGA_GATHER_COMPLETION_MAPPING: Record<SagaGatherType, IGatherCompl
     targetEvent: EventMessagingType.POST_DELETED,
     stream: 'post:deleted',
     wsEvent: WebsocketMessagingType.POST_DELETED,
+  },
+  [SagaGatherType.USER_CREATION]: {
+    targetEvent: EventMessagingType.USER_CREATED,
+    stream: 'user:created',
+    wsEvent: WebsocketMessagingType.USER_CREATED,
   },
   [SagaGatherType.USER_DELETION]: {
     targetEvent: EventMessagingType.USER_DELETED,

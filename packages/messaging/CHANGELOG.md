@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.17.0
+
+### Minor Changes
+
+- Add USER_CREATION to SagaGatherType and SAGA_GATHER_COMPLETION_MAPPING
+
 ## 2.16.0
 
 ### Minor Changes

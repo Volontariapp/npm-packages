@@ -18,6 +18,15 @@ describe('SagaGatherRegistry', () => {
     });
   });
 
+  it('should return valid completion config for USER_CREATION', () => {
+    const config = getGatherCompletionConfig(SagaGatherType.USER_CREATION);
+    expect(config).toEqual({
+      targetEvent: EventMessagingType.USER_CREATED,
+      stream: 'user:created',
+      wsEvent: WebsocketMessagingType.USER_CREATED,
+    });
+  });
+
   it('should return valid completion config for EVENT_DELETION', () => {
     const config = getGatherCompletionConfig(SagaGatherType.EVENT_DELETION);
     expect(config).toEqual({
