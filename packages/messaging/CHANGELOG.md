@@ -4,7 +4,14 @@
 
 ### Minor Changes
 
-- feat(messaging): contrats et registres de complétion des Sagas Scatter-Gather- [#197](https://github.com/Volontariapp/npm-packages/issues/197)
+- feat(messaging): contrats et registres de complétion des Sagas Scatter-Gather - [#197](https://github.com/Volontariapp/npm-packages/issues/197)
+
+## 2.15.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.3.7
 
 ## 2.15.1
 

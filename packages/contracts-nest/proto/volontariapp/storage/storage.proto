@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package volontariapp.storage;
+
+import "google/protobuf/timestamp.proto";
+
+enum FileStatus {
+  FILE_STATUS_UNSPECIFIED = 0;
+  FILE_STATUS_PENDING = 1;
+  FILE_STATUS_ATTACHED = 2;
+  FILE_STATUS_ORPHANED = 3;
+  FILE_STATUS_DELETED = 4;
+}
+
+enum EntityType {
+  ENTITY_TYPE_UNSPECIFIED = 0;
+  ENTITY_TYPE_POST = 1;
+  ENTITY_TYPE_USER_AVATAR = 2;
+  ENTITY_TYPE_BADGE_ICON = 3;
+  ENTITY_TYPE_EVENT_COVER = 4;
+}
+
+message FileMetadata {
+  string id = 1;
+  string owner_id = 2;
+  string object_key = 3;
+  string mime_type = 4;
+  FileStatus status = 5;
+  optional EntityType entity_type = 6;
+  optional string entity_id = 7;
+  bool is_public = 8;
+  google.protobuf.Timestamp upload_expires_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
