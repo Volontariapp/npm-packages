@@ -8,12 +8,13 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import { ConfirmFileAttachmentCommand, DeleteFileCommand, GenerateUploadUrlCommand } from "./storage.command.js";
-import { GetFileMetadataQuery } from "./storage.query.js";
+import { GetFileMetadataQuery, VerifyFilesExistQuery } from "./storage.query.js";
 import {
   ConfirmFileAttachmentResponse,
   DeleteFileResponse,
   FileMetadataResponse,
   GenerateUploadUrlResponse,
+  VerifyFilesExistResponse,
 } from "./storage.responses.js";
 
 export interface StorageServiceClient {
@@ -24,6 +25,8 @@ export interface StorageServiceClient {
   deleteFile(request: DeleteFileCommand): Observable<DeleteFileResponse>;
 
   getFileMetadata(request: GetFileMetadataQuery): Observable<FileMetadataResponse>;
+
+  verifyFilesExist(request: VerifyFilesExistQuery): Observable<VerifyFilesExistResponse>;
 }
 
 export interface StorageServiceController {
@@ -42,11 +45,21 @@ export interface StorageServiceController {
   getFileMetadata(
     request: GetFileMetadataQuery,
   ): Promise<FileMetadataResponse> | Observable<FileMetadataResponse> | FileMetadataResponse;
+
+  verifyFilesExist(
+    request: VerifyFilesExistQuery,
+  ): Promise<VerifyFilesExistResponse> | Observable<VerifyFilesExistResponse> | VerifyFilesExistResponse;
 }
 
 export function StorageServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["generateUploadUrl", "confirmFileAttachment", "deleteFile", "getFileMetadata"];
+    const grpcMethods: string[] = [
+      "generateUploadUrl",
+      "confirmFileAttachment",
+      "deleteFile",
+      "getFileMetadata",
+      "verifyFilesExist",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("StorageService", method)(constructor.prototype[method], method, descriptor);

@@ -26,3 +26,8 @@ export interface DeleteFileResponse {
 export interface FileMetadataResponse {
   file: FileMetadata | undefined;
 }
+
+export interface VerifyFilesExistResponse {
+  allExist: boolean;
+  missingFileIds: string[];
+}

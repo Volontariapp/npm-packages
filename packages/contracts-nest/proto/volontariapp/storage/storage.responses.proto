@@ -23,3 +23,9 @@ message DeleteFileResponse {
 message FileMetadataResponse {
   FileMetadata file = 1;
 }
+
+message VerifyFilesExistResponse {
+  bool all_exist = 1;
+  repeated string missing_file_ids = 2;
+}
+

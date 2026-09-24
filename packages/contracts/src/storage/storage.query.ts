@@ -9,3 +9,7 @@
 export interface GetFileMetadataQuery {
   fileId: string;
 }
+
+export interface VerifyFilesExistQuery {
+  fileIds: string[];
+}
