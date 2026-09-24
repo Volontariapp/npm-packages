@@ -11,4 +11,6 @@ service StorageService {
   rpc ConfirmFileAttachment (ConfirmFileAttachmentCommand) returns (ConfirmFileAttachmentResponse) {}
   rpc DeleteFile (DeleteFileCommand) returns (DeleteFileResponse) {}
   rpc GetFileMetadata (GetFileMetadataQuery) returns (FileMetadataResponse) {}
+  rpc VerifyFilesExist (VerifyFilesExistQuery) returns (VerifyFilesExistResponse) {}
 }
+
