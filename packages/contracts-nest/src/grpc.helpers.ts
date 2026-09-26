@@ -28,6 +28,7 @@ export enum GRPC_SERVICES {
   PARTICIPATION_QUERY_SERVICE = 'ParticipationQueryService',
   EVENT_POST_LINK_COMMAND_SERVICE = 'EventPostLinkCommandService',
   EVENT_POST_LINK_QUERY_SERVICE = 'EventPostLinkQueryService',
+  STORAGE_SERVICE = 'StorageService',
 }
 
 export enum GRPC_MICROSERVICES {
@@ -35,6 +36,7 @@ export enum GRPC_MICROSERVICES {
   POST = 'POST',
   EVENT = 'EVENT',
   SOCIAL = 'SOCIAL',
+  STORAGE = 'STORAGE',
 }
 
 export const GRPC_SERVICES_CONFIG = {
@@ -58,7 +60,13 @@ export const GRPC_SERVICES_CONFIG = {
     protoFileName: 'social.services.proto',
     domain: 'social',
   },
+  STORAGE: {
+    package: 'volontariapp.storage',
+    protoFileName: 'storage.services.proto',
+    domain: 'storage',
+  },
 };
+
 
 export const getGrpcOptions = (
   domain: keyof typeof GRPC_SERVICES_CONFIG,

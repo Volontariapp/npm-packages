@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- add STORAGE domain to GRPC_MICROSERVICES and GRPC_SERVICES_CONFIG helper
+
 ## 3.2.0
 
 ### Minor Changes
