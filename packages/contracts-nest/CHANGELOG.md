@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+### Minor Changes
+
+- export storage contracts from contracts-nest root index
+
 ## 3.1.18
 
 ### Patch Changes
