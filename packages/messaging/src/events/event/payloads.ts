@@ -3,6 +3,7 @@ import type { IEventIdPayload, IUserIdPayload } from '../index.js';
 export enum EventEventMessagingType {
   EVENT_CREATED = 'event.created',
   EVENT_DELETED = 'event.deleted',
+  EVENT_COVER_REPLACED = 'event.cover_replaced',
 
   EVENT_GEOCODED = 'event.geocoded',
   EVENT_GEOCODING_FAILED = 'event.geocoding_failed',
@@ -23,8 +24,15 @@ export enum EventEventMessagingType {
   FALLBACK_DELETE_TAG = 'fallback.delete.tag',
 }
 
-export interface IEventCreatedPayload extends IEventIdPayload, Partial<IUserIdPayload> {
+export interface IEventCreatedPayload extends IEventIdPayload, IUserIdPayload {
   localisationName: string;
+  coverFileId?: string;
+}
+
+/** Emitted when the cover of an event changes. At least one of the two file ids is expected. */
+export interface IEventCoverReplacedPayload extends IEventIdPayload, IUserIdPayload {
+  newFileId?: string;
+  oldFileId?: string;
 }
 export interface IEventDeletedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 

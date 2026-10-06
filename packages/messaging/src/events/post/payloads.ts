@@ -22,8 +22,11 @@ export enum PostEventMessagingType {
 
 export interface IPostCreatedPayload
   extends IPostIdPayload,
-    Partial<IEventIdPayload>,
-    Partial<IUserIdPayload> {}
+    IUserIdPayload,
+    Partial<IEventIdPayload> {
+  /** Ids of the files to attach to the post, in display order. Empty when the post has no media. */
+  fileIds: string[];
+}
 
 export interface IPostDeletedPayload extends IPostIdPayload, Partial<IUserIdPayload> {}
 

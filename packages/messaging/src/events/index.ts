@@ -8,6 +8,7 @@ import type {
   IEventDeletionFailedPayload,
   IEventCreatedPayload,
   IEventDeletedPayload,
+  IEventCoverReplacedPayload,
 } from './event/payloads.js';
 
 import { UserEventMessagingType } from './user/payloads.js';
@@ -18,6 +19,10 @@ import type {
   IUserCreationFailedPayload,
   IUserDeletionSuccessfullPayload,
   IUserDeletionFailedPayload,
+  IUserAvatarReplacedPayload,
+  IBadgeCreatedPayload,
+  IBadgeIconReplacedPayload,
+  IBadgeDeletedPayload,
 } from './user/payloads.js';
 
 import { SocialEventMessagingType } from './social/payloads.js';
@@ -73,6 +78,7 @@ export interface EventRegistry {
   [EventEventMessagingType.EVENT_CREATION_SUCCESSFULL]: IEventCreationSuccessfullPayload;
   [EventEventMessagingType.EVENT_CREATION_FAILED]: IEventCreationFailedPayload;
   [EventEventMessagingType.EVENT_DELETED]: IEventDeletedPayload;
+  [EventEventMessagingType.EVENT_COVER_REPLACED]: IEventCoverReplacedPayload;
   [EventEventMessagingType.EVENT_DELETION_FAILED]: IEventDeletionFailedPayload;
   [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: IEventDeletionSuccessfullPayload;
 
@@ -112,6 +118,10 @@ export interface EventRegistry {
   // User
   [UserEventMessagingType.USER_CREATED]: IUserCreatedPayload;
   [UserEventMessagingType.USER_DELETED]: IUserDeleledPayload;
+  [UserEventMessagingType.USER_AVATAR_REPLACED]: IUserAvatarReplacedPayload;
+  [UserEventMessagingType.USER_BADGE_CREATED]: IBadgeCreatedPayload;
+  [UserEventMessagingType.USER_BADGE_ICON_REPLACED]: IBadgeIconReplacedPayload;
+  [UserEventMessagingType.USER_BADGE_DELETED]: IBadgeDeletedPayload;
   [UserEventMessagingType.USER_CREATION_SUCCESSFULL]: IUserCreationSuccessfullPayload;
   [UserEventMessagingType.USER_CREATION_FAILED]: IUserCreationFailedPayload;
   [UserEventMessagingType.USER_DELETION_SUCCESSFULL]: IUserDeletionSuccessfullPayload;

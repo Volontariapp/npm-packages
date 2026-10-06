@@ -77,8 +77,11 @@ export class PostgresPostRepository
       const savedPostModel = await queryRunner.manager.save(this.modelClass, postModel);
       const savedPostEntity = this.toEntity(savedPostModel);
 
+      // PostEntity carries no media yet: file attachment is wired in with the domain-post media work.
       const payload: IPostCreatedPayload = {
         postId: savedPostEntity.id,
+        userId: savedPostEntity.authorId,
+        fileIds: [],
       };
 
       if (data.eventId) {
