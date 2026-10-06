@@ -91,6 +91,12 @@ export class FileModel {
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 
+  /**
+   * Refreshed by TypeORM only (`save`, `update` through the repository).
+   * Raw SQL UPDATEs, such as the future repository of ms-storage, must set
+   * `updated_at = now()` explicitly: the column has no database trigger, and
+   * `idx_files_orphaned` and the purge jobs rely on it.
+   */
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt!: Date;
 }
