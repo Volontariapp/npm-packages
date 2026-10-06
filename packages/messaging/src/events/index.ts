@@ -54,6 +54,13 @@ import type {
   IPostUnlikedPayload,
 } from './post/payloads.js';
 
+import { StorageEventMessagingType } from './storage/payloads.js';
+import type {
+  IFileScannedPayload,
+  IFileRejectedPayload,
+  IAttachmentRejectedPayload,
+} from './storage/payloads.js';
+
 import { CommonEventMessagingType } from './common/payloads.js';
 import type { IFeedbackEventPayload, IJobAuditPayload } from './common/payloads.js';
 
@@ -140,6 +147,11 @@ export interface EventRegistry {
   [PostEventMessagingType.POST_LIKED]: IPostLikedPayload;
   [PostEventMessagingType.POST_UNLIKED]: IPostUnlikedPayload;
 
+  // Storage
+  [StorageEventMessagingType.FILE_SCANNED]: IFileScannedPayload;
+  [StorageEventMessagingType.FILE_REJECTED]: IFileRejectedPayload;
+  [StorageEventMessagingType.ATTACHMENT_REJECTED]: IAttachmentRejectedPayload;
+
   // WS
 }
 
@@ -148,6 +160,7 @@ export const EventMessagingType = {
   ...UserEventMessagingType,
   ...SocialEventMessagingType,
   ...PostEventMessagingType,
+  ...StorageEventMessagingType,
   ...CommonEventMessagingType,
 } as const;
 
@@ -157,6 +170,7 @@ export * from './event/payloads.js';
 export * from './user/payloads.js';
 export * from './social/payloads.js';
 export * from './post/payloads.js';
+export * from './storage/payloads.js';
 export * from './common/payloads.js';
 
 export * from './utils.js';

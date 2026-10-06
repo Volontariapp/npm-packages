@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.18.0
+
+### Minor Changes
+
+- Add the storage messaging domain: jobs `storage.scan_file` and `storage.cleanup_files` on `storage-queue`, events `storage.file_scanned`, `storage.file_rejected` and `storage.attachment_rejected` with their payloads, registered in `JobRegistry` and `EventRegistry`.
+
 ## 2.17.6
 
 ### Patch Changes

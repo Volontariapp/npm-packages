@@ -34,6 +34,8 @@ import type {
   IFallbackDeleteTagJobPayload,
   IGeocodeEventPayload,
 } from './event/payloads.js';
+import { StorageJobType } from './storage/payloads.js';
+import type { IScanFilePayload, ICleanupFilesPayload } from './storage/payloads.js';
 import { PostJobType } from './post/payloads.js';
 import type { IPublishPostPayload } from './post/payloads.js';
 
@@ -42,6 +44,7 @@ export const JobMessagingType = {
   ...SocialJobType,
   ...EventsJobType,
   ...PostJobType,
+  ...StorageJobType,
 } as const;
 
 export type JobMessagingType = (typeof JobMessagingType)[keyof typeof JobMessagingType];
@@ -52,6 +55,8 @@ export interface JobRegistry {
   [JobMessagingType.FOLLOW_USER]: IFollowUserPayload;
   [JobMessagingType.PUBLISH_EVENT]: IPublishEventPayload;
   [JobMessagingType.PUBLISH_POST]: IPublishPostPayload;
+  [JobMessagingType.SCAN_FILE]: IScanFilePayload;
+  [JobMessagingType.CLEANUP_FILES]: ICleanupFilesPayload;
   [JobMessagingType.FALLBACK_GET_MY_FOLLOWS]: IFallbackGetMyFollowsJobPayload;
   [JobMessagingType.FALLBACK_GET_MY_FOLLOWERS]: IFallbackGetMyFollowersJobPayload;
   [JobMessagingType.FALLBACK_GET_POST_LIKERS]: IFallbackGetPostLikersJobPayload;
@@ -87,4 +92,6 @@ export * from './event/payloads.js';
 export * from './event/queue.js';
 export * from './post/payloads.js';
 export * from './post/queue.js';
+export * from './storage/payloads.js';
+export * from './storage/queue.js';
 export * from './envelope.js';
