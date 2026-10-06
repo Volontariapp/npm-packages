@@ -4240,7 +4240,6 @@ __metadata:
     "@volontariapp/errors": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
-    "@volontariapp/outbox": "workspace:*"
     jest: "npm:^30.3.0"
     pg: "npm:^8.20.0"
     reflect-metadata: "npm:^0.2.2"

@@ -13,6 +13,7 @@ export const mockOutboxInsertFailure = async (table: OutboxTable): Promise<() =>
      BEGIN RAISE EXCEPTION 'simulated outbox failure'; END;
      $$ LANGUAGE plpgsql`,
   );
+  await testDataSource.query(`DROP TRIGGER IF EXISTS fail_outbox_insert ON ${table}`);
   await testDataSource.query(
     `CREATE TRIGGER fail_outbox_insert BEFORE INSERT ON ${table}
      FOR EACH ROW EXECUTE FUNCTION fail_outbox_insert()`,

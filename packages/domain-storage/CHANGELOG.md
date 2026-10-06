@@ -6,6 +6,8 @@
 
 - Add `PostgresFileRepository` (sub-path `@volontariapp/domain-storage/repositories`) with `createPending`, `confirmUpload`, `switchToAsync`, `resetToAwaitingUpload`, `completeScan` and `rejectScan`. Each transition is a single conditional `UPDATE ... RETURNING`; the `storage.scan_file` job (`jobs_outbox`) and the `storage.file_scanned` / `storage.file_rejected` events (`event_queue`, only for an `ATTACHED` file) are written in the same transaction.
 
+  WARNING, do not wire `completeScan` / `rejectScan` into `ms-storage` or `worker-storage` yet: `StorageStream` does not exist in `@volontariapp/shared` (ticket 1.14), so the `storage.file_scanned` / `storage.file_rejected` events are written with an empty `targetServices` (`FILE_SCAN_RESULT_TARGET_SERVICES`). The outbox pusher skips such a row without an error and the consumer then marks it `COMPLETED`: the event would be silently lost and the post media would stay `PENDING`. Fill the constant once `StorageStream` exists. The `storage.scan_file` job is not affected.
+
 ## 0.6.0
 
 ### Minor Changes

@@ -50,8 +50,7 @@
     "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*",
-    "@volontariapp/messaging": "workspace:*",
-    "@volontariapp/outbox": "workspace:*"
+    "@volontariapp/messaging": "workspace:*"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.2.2",

@@ -70,7 +70,7 @@ export class PostgresFileRepository {
    * file, other owner, already confirmed, expired upload).
    */
   async confirmUpload(input: ConfirmUploadInput): Promise<ConfirmUploadResult | null> {
-    const result = await this.dataSource.transaction(async (manager) => {
+    const result = await this.runInTransaction('confirmUpload', input.fileId, async (manager) => {
       const [rows] = await manager.query<
         UpdateReturning<{ id: string; owner_id: string; validation_mode: ValidationMode }>
       >(
@@ -108,7 +108,7 @@ export class PostgresFileRepository {
    * matches, so a replay never creates a second job. Returns whether the file was switched.
    */
   async switchToAsync(fileId: string): Promise<boolean> {
-    const switched = await this.dataSource.transaction(async (manager) => {
+    const switched = await this.runInTransaction('switchToAsync', fileId, async (manager) => {
       const [rows] = await manager.query<UpdateReturning<{ id: string; owner_id: string }>>(
         `UPDATE files
          SET validation_mode = $1, updated_at = now()
@@ -194,7 +194,7 @@ export class PostgresFileRepository {
     writeEvent: ScanEventWriter,
     transition: string,
   ): Promise<ScanTransitionResult | null> {
-    const result = await this.dataSource.transaction(async (manager) => {
+    const result = await this.runInTransaction(transition, fileId, async (manager) => {
       const idParam = update.params.length + 1;
       const [rows] = await manager.query<UpdateReturning<ScanTransitionRow>>(
         `UPDATE files
@@ -217,6 +217,23 @@ export class PostgresFileRepository {
 
     this.logTransition(transition, fileId, result !== null);
     return result;
+  }
+
+  /**
+   * Runs one transition in a transaction and logs a failure (outbox write error, invalid state)
+   * before rethrowing it, so that a rolled back transition never goes unnoticed.
+   */
+  private async runInTransaction<T>(
+    transition: string,
+    fileId: string,
+    work: (manager: EntityManager) => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await this.dataSource.transaction(work);
+    } catch (error) {
+      this.logger.error(`${transition} failed and was rolled back for file ${fileId}`, error);
+      throw error;
+    }
   }
 
   private async writeScanJob(
