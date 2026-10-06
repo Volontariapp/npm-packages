@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-storage",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -47,10 +47,12 @@
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "dependencies": {
+    "@nestjs/common": "^11.0.1",
     "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*",
-    "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/messaging": "workspace:*",
+    "@volontariapp/outbox": "workspace:*"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.2.2",
@@ -66,6 +68,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "@nestjs/typeorm": "^11.0.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "jest": "^30.3.0",

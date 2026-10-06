@@ -1,15 +1,21 @@
-import type { ObjectLiteral } from '@volontariapp/database';
-import { EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
-import { Logger } from '@volontariapp/logger';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import type { Repository } from '@volontariapp/database';
+import { BaseRepository, EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
+import type { StorageEventMessagingType, StorageJobType } from '@volontariapp/messaging';
+import { EventQueueRepository, JobsOutboxRepository } from '@volontariapp/outbox';
 import { In } from 'typeorm';
-import type { DataSource, EntityManager } from 'typeorm';
+import type { EntityManager } from 'typeorm';
+import { FileEntity } from '../entities/file.entity.js';
+import type { EntityType } from '../enums/entity-type.enum.js';
 import { FileStatus } from '../enums/file-status.enum.js';
 import { ScanStatus } from '../enums/scan-status.enum.js';
 import { ValidationMode } from '../enums/validation-mode.enum.js';
 import { FileAttachmentRefusedException } from '../exceptions/file-attachment-refused.exception.js';
 import { FileNotFoundException } from '../exceptions/file-not-found.exception.js';
 import { TooManyFilesException } from '../exceptions/too-many-files.exception.js';
-import { FileModel } from '../models/file.model.js';
+// Through the index, not `file.model.js`: loading it registers the entity <-> model mappings.
+import { FileModel } from '../models/index.js';
 import { classifyFileForAttachment } from '../policies/attachment-validation.rule.js';
 import type { AttachmentVerdict } from '../policies/attachment-validation.rule.js';
 import { getValidationPolicy } from '../policies/get-validation-policy.js';
@@ -18,6 +24,7 @@ import {
   buildFileScannedEvent,
   buildScanFileJob,
 } from './file-outbox.builders.js';
+import type { IFileRepository } from './interfaces/file.repository.js';
 import type {
   CompleteScanInput,
   ConfirmUploadInput,
@@ -35,12 +42,6 @@ export const RESET_UPLOAD_DELAY_MINUTES = 15;
 
 type UpdateReturning<TRow> = [TRow[], number];
 
-/*
- * The outbox rows are inserted with `manager.insert<ObjectLiteral>`: the typed form instantiates
- * `QueryDeepPartialEntity` over the generic outbox payloads and exceeds the TypeScript depth
- * limit. The entities built by `file-outbox.builders.ts` are already fully typed.
- */
-
 /** Result of the transaction of `reserve`: the refusal is thrown once the transaction is over. */
 type ReserveOutcome = { failure: Error } | { files: FileModel[] };
 
@@ -57,23 +58,31 @@ type ScanEventWriter = (manager: EntityManager, row: ScanTransitionRow) => Promi
  * file). The `jobs_outbox` / `event_queue` row of a transition is written in the same
  * transaction as the `UPDATE`.
  */
-export class PostgresFileRepository {
-  private readonly logger = new Logger({ context: PostgresFileRepository.name });
+@Injectable()
+export class PostgresFileRepository
+  extends BaseRepository<FileModel, FileEntity>
+  implements IFileRepository
+{
+  constructor(@InjectRepository(FileModel) repository: Repository<FileModel>) {
+    super(repository, FileEntity, FileModel);
+  }
 
-  constructor(private readonly dataSource: DataSource) {}
-
-  /** Inserts a file waiting for its upload (`PENDING`, `AWAITING_UPLOAD`). */
-  async createPending(input: CreatePendingFileInput): Promise<FileModel> {
-    const repository = this.dataSource.getRepository(FileModel);
-    // `insert`, never `save`: `save` would silently update a row that already has this id.
-    await repository.insert({
-      ...input,
-      status: FileStatus.PENDING,
-      scanStatus: ScanStatus.AWAITING_UPLOAD,
-    });
-    const saved = await repository.findOneByOrFail({ id: input.id });
+  /**
+   * Declares the file with `FileEntity.create` (which holds the invariants) and inserts it as
+   * `PENDING` / `AWAITING_UPLOAD`.
+   */
+  async createPending(input: CreatePendingFileInput): Promise<FileEntity> {
+    const file = FileEntity.create(input);
+    // `insert`, never `BaseRepository.create`: `save` would silently update a row that already
+    // has this id, while `insert` fails on the primary key.
+    await this.repository.insert(this.toModel(file));
+    const saved = await this.findOneOrFail({ id: file.id });
     this.logger.log(`File ${saved.id} created, awaiting upload (${saved.validationMode})`);
     return saved;
+  }
+
+  async findByEntity(entityType: EntityType, entityId: string): Promise<FileEntity[]> {
+    return this.find({ where: { entityType, entityId }, order: { createdAt: 'ASC', id: 'ASC' } });
   }
 
   /**
@@ -145,7 +154,7 @@ export class PostgresFileRepository {
    * whether the file was reset.
    */
   async resetToAwaitingUpload(fileId: string): Promise<boolean> {
-    const [rows] = await this.dataSource.query<UpdateReturning<{ id: string }>>(
+    const [rows] = await this.repository.manager.query<UpdateReturning<{ id: string }>>(
       `UPDATE files
        SET scan_status = $1,
            upload_expires_at = GREATEST(upload_expires_at, now() + make_interval(mins => $2)),
@@ -172,7 +181,7 @@ export class PostgresFileRepository {
    * `FileAttachmentRefusedException` for the first refused file, in input order. Nothing is
    * written when it throws. Returns the files in input order, duplicates removed.
    */
-  async reserve(input: ReserveFilesInput): Promise<FileModel[]> {
+  async reserve(input: ReserveFilesInput): Promise<FileEntity[]> {
     const fileIds = [...new Set(input.fileIds)];
     const { maxPerEntity } = getValidationPolicy(input.entityType);
     if (fileIds.length > maxPerEntity) {
@@ -255,7 +264,7 @@ export class PostgresFileRepository {
     }
 
     this.logger.log(`reserve applied for ${label}: ${String(outcome.files.length)} file(s)`);
-    return outcome.files;
+    return this.toEntities(outcome.files);
   }
 
   /**
@@ -271,7 +280,9 @@ export class PostgresFileRepository {
       },
       input.fileId,
       async (manager, row) => {
-        await manager.insert<ObjectLiteral>(EventQueueModel, buildFileScannedEvent(row));
+        await this.eventQueueRepository<StorageEventMessagingType.FILE_SCANNED>(manager).create(
+          buildFileScannedEvent(row),
+        );
       },
       'completeScan',
     );
@@ -289,8 +300,7 @@ export class PostgresFileRepository {
       },
       input.fileId,
       async (manager, row) => {
-        await manager.insert<ObjectLiteral>(
-          EventQueueModel,
+        await this.eventQueueRepository<StorageEventMessagingType.FILE_REJECTED>(manager).create(
           buildFileRejectedEvent(row, input.reason),
         );
       },
@@ -339,7 +349,7 @@ export class PostgresFileRepository {
     work: (manager: EntityManager) => Promise<T>,
   ): Promise<T> {
     try {
-      return await this.dataSource.transaction(work);
+      return await this.repository.manager.transaction(work);
     } catch (error) {
       this.logger.error(`${transition} failed and was rolled back for file ${fileId}`, error);
       throw error;
@@ -351,7 +361,16 @@ export class PostgresFileRepository {
     fileId: string,
     ownerId: string,
   ): Promise<void> {
-    await manager.insert<ObjectLiteral>(JobsOutboxModel, buildScanFileJob(fileId, ownerId));
+    await new JobsOutboxRepository<StorageJobType.SCAN_FILE>(
+      manager.getRepository(JobsOutboxModel),
+    ).create(buildScanFileJob(fileId, ownerId));
+  }
+
+  /** Outbox repository bound to the transaction of `manager`, as in `domain-post`. */
+  private eventQueueRepository<K extends StorageEventMessagingType>(
+    manager: EntityManager,
+  ): EventQueueRepository<K> {
+    return new EventQueueRepository<K>(manager.getRepository(EventQueueModel));
   }
 
   private logTransition(transition: string, fileId: string, applied: boolean): void {

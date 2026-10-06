@@ -11,12 +11,15 @@ import {
 import { StorageEventMessagingType, StorageJobType, StorageQueue } from '@volontariapp/messaging';
 import {
   EntityType,
+  FileEntity,
   FileId,
   FileStatus,
   RejectionReason,
   ScanStatus,
+  UPLOAD_EXPIRY_GRACE_MS,
   ValidationMode,
 } from '../../index.js';
+import { FileModel } from '../../models/index.js';
 import { PostgresFileRepository, RESET_UPLOAD_DELAY_MINUTES } from '../../repositories/index.js';
 import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
 import {
@@ -29,6 +32,8 @@ import {
 import { mockOutboxInsertFailure } from '../mocks/outbox-write-failure.mock.js';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
+const ONE_MEGABYTE = 1024 * 1024;
+const PRESIGNED_URL_TTL_SECONDS = 15 * 60;
 
 const newId = (): string => FileId.generate().getValue();
 
@@ -46,7 +51,7 @@ describe('PostgresFileRepository (integration)', () => {
 
   beforeAll(async () => {
     await initializeTestDb();
-    repository = new PostgresFileRepository(testDataSource);
+    repository = new PostgresFileRepository(testDataSource.getRepository(FileModel));
   });
 
   afterAll(async () => {
@@ -67,46 +72,110 @@ describe('PostgresFileRepository (integration)', () => {
     it('inserts a PENDING file awaiting its upload, with no scan attempt', async () => {
       const id = newId();
       const ownerId = newId();
-      const uploadExpiresAt = new Date(Date.now() + ONE_HOUR_MS);
+      const now = new Date();
 
       const created = await repository.createPending({
         id,
         ownerId,
         entityType: EntityType.POST,
         declaredMimeType: 'image/png',
-        declaredSize: 2048,
-        quarantineKey: `quarantine/${id}`,
-        validationMode: ValidationMode.ASYNC,
-        uploadExpiresAt,
+        declaredSize: 2 * ONE_MEGABYTE,
+        presignedUrlTtlSeconds: PRESIGNED_URL_TTL_SECONDS,
+        now,
       });
 
+      expect(created).toBeInstanceOf(FileEntity);
       expect(created.id).toBe(id);
       const row = await readFile(id);
       expect(row.ownerId).toBe(ownerId);
       expect(row.status).toBe(FileStatus.PENDING);
       expect(row.scanStatus).toBe(ScanStatus.AWAITING_UPLOAD);
       expect(row.validationMode).toBe(ValidationMode.ASYNC);
+      expect(row.quarantineKey).toBe(`quarantine/${id}`);
       expect(row.scanAttempts).toBe(0);
       expect(row.entityId).toBeNull();
-      expect(row.declaredSize).toBe(2048);
-      expect(row.uploadExpiresAt.getTime()).toBe(uploadExpiresAt.getTime());
+      expect(row.declaredSize).toBe(2 * ONE_MEGABYTE);
+      expect(row.uploadExpiresAt.getTime()).toBe(
+        now.getTime() + PRESIGNED_URL_TTL_SECONDS * 1000 + UPLOAD_EXPIRY_GRACE_MS,
+      );
     });
 
-    it('refuses an id that already exists', async () => {
+    it('returns the entity read back from the database, nullables and bigint included', async () => {
+      const created = await repository.createPending({
+        ownerId: newId(),
+        entityType: EntityType.USER_AVATAR,
+        declaredMimeType: 'IMAGE/PNG',
+        declaredSize: 4096,
+        presignedUrlTtlSeconds: PRESIGNED_URL_TTL_SECONDS,
+      });
+
+      expect(created.validationMode).toBe(ValidationMode.SYNC);
+      expect(created.declaredMimeType).toBe('image/png');
+      expect(created.declaredSize).toBe(4096);
+      expect(created.actualSize).toBeNull();
+      expect(created.publicKey).toBeNull();
+      expect(created.confirmedAt).toBeNull();
+      expect(created.createdAt).toBeInstanceOf(Date);
+    });
+
+    it('writes nothing for an invalid declaration', async () => {
+      await expect(
+        repository.createPending({
+          ownerId: newId(),
+          entityType: EntityType.USER_AVATAR,
+          declaredMimeType: 'image/gif',
+          declaredSize: 1024,
+          presignedUrlTtlSeconds: PRESIGNED_URL_TTL_SECONDS,
+        }),
+      ).rejects.toThrow();
+
+      const rows = await testDataSource.query<Array<{ count: string }>>(
+        'SELECT count(*) AS count FROM files',
+      );
+      expect(rows.at(0)?.count).toBe('0');
+    });
+
+    it('refuses an id that already exists and leaves the existing row untouched', async () => {
       const file = await insertFile();
 
       await expect(
         repository.createPending({
           id: file.id,
-          ownerId: file.ownerId,
+          ownerId: newId(),
           entityType: file.entityType,
           declaredMimeType: file.declaredMimeType,
           declaredSize: file.declaredSize,
-          quarantineKey: file.quarantineKey,
-          validationMode: file.validationMode,
-          uploadExpiresAt: file.uploadExpiresAt,
+          presignedUrlTtlSeconds: PRESIGNED_URL_TTL_SECONDS,
         }),
       ).rejects.toThrow();
+
+      expect((await readFile(file.id)).ownerId).toBe(file.ownerId);
+    });
+  });
+
+  describe('reads', () => {
+    it('findById returns an entity, or null for an unknown file', async () => {
+      const file = await insertFile({ declaredSize: 777 });
+
+      const found = await repository.findById(file.id);
+
+      expect(found).toBeInstanceOf(FileEntity);
+      expect(found?.declaredSize).toBe(777);
+      expect(await repository.findById(newId())).toBeNull();
+    });
+
+    it('findByIds and findByEntity return entities', async () => {
+      const entityId = newId();
+      const first = await insertFile({ entityId });
+      const second = await insertFile({ entityId });
+      await insertFile();
+
+      const byIds = await repository.findByIds([first.id, second.id]);
+      const byEntity = await repository.findByEntity(EntityType.POST, entityId);
+
+      expect(byIds.map((file) => file.id).sort()).toEqual([first.id, second.id].sort());
+      expect(byEntity.map((file) => file.id).sort()).toEqual([first.id, second.id].sort());
+      expect(byEntity.every((file) => file instanceof FileEntity)).toBe(true);
     });
   });
 
