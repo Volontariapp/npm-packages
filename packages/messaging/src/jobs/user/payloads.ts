@@ -57,13 +57,23 @@ export interface IFallbackGetPostLikersJobPayload
 export interface IFallbackGetEventParticipantsJobPayload
   extends IUserFallbackJobPayload<GetEventParticipantsQuery> {}
 export interface IFallbackCreateBadgeJobPayload
-  extends IUserFallbackJobPayload<CreateBadgeCommand> {}
+  extends IUserFallbackJobPayload<CreateBadgeCommand> {
+  /** Id computed before the write, so that a replay inserts the same entity. */
+  badgeId: string;
+  iconFileId?: string;
+}
 export interface IFallbackUpdateBadgeJobPayload
-  extends IUserFallbackJobPayload<UpdateBadgeCommand> {}
+  extends IUserFallbackJobPayload<UpdateBadgeCommand> {
+  /** File id of the new icon, when the update changes it. */
+  iconFileId?: string;
+}
 export interface IFallbackDeleteBadgeJobPayload
   extends IUserFallbackJobPayload<DeleteBadgeCommand> {}
 export interface IFallbackSignUpJobPayload extends IUserFallbackJobPayload<SignUpCommand> {}
-export interface IFallbackUpdateUserJobPayload extends IUserFallbackJobPayload<UpdateUserCommand> {}
+export interface IFallbackUpdateUserJobPayload extends IUserFallbackJobPayload<UpdateUserCommand> {
+  /** File id of the new avatar, when the update changes it. */
+  avatarFileId?: string;
+}
 export interface IFallbackDeleteUserJobPayload extends IUserFallbackJobPayload<DeleteUserCommand> {}
 export interface IFallbackAddBadgeToUserJobPayload
   extends IUserFallbackJobPayload<AddBadgeToUserCommand> {}

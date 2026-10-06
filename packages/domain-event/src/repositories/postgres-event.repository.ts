@@ -55,6 +55,7 @@ export class PostgresEventRepository
 
       const payload: IEventCreatedPayload = {
         eventId: savedEventEntity.id,
+        userId: savedEventEntity.organizerId,
         localisationName: savedEventEntity.localisationName,
       };
 

@@ -50,9 +50,15 @@ export interface IFallbackGetUserParticipatedEventsJobPayload
 export interface IFallbackGetUserWishedEventsJobPayload
   extends IEventFallbackJobPayload<GetUserWishEventQuery> {}
 export interface IFallbackCreateEventJobPayload
-  extends IEventFallbackJobPayload<CreateEventCommand> {}
+  extends IEventFallbackJobPayload<CreateEventCommand> {
+  /** Id computed before the write, so that a replay inserts the same entity. */
+  eventId: string;
+}
 export interface IFallbackUpdateEventJobPayload
-  extends IEventFallbackJobPayload<UpdateEventCommand> {}
+  extends IEventFallbackJobPayload<UpdateEventCommand> {
+  /** File id of the new cover, when the update changes it. */
+  coverFileId?: string;
+}
 export interface IFallbackChangeEventStateJobPayload
   extends IEventFallbackJobPayload<ChangeEventStateCommand> {}
 export interface IFallbackManageRequirementsJobPayload

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.19.0
+
+### Minor Changes
+
+- Enrich post and event payloads for file attachment and add avatar and cover events. Potentially breaking: `IPostCreatedPayload` now requires `userId` and `fileIds`, and `IEventCreatedPayload` now requires `userId` (new optional `coverFileId`). New events `event.cover_replaced`, `user.avatar_replaced`, `user.badge_created`, `user.badge_icon_replaced`, `user.badge_deleted`. The creation fallback job payloads for events and badges now require the computed entity id (`eventId`, `badgeId`), and the update fallback payloads accept the concerned file id. `IUserPayload` and `IBadgePayload` gain `avatarFileId` and `iconFileId`.
+
 ## 2.18.0
 
 ### Minor Changes
