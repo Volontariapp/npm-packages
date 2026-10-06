@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- feat(domain-storage): add FileModel and ReleasedEntityModel (TypeORM)
+
+  Add the `FileModel` (table `files`) and `ReleasedEntityModel` (table `released_entities`) mapped on the `ms_storage` schema, with explicit snake_case column names, the partial indexes used by the purge jobs, and a `bigint` to number transformer for the file sizes.
+  Add the integration test setup (`test:integration`, `migration:run`, a test migration and a data source) so that `ms-storage`, `worker-storage` and `post-processor-storage` share a single persistence model.
+  The models are exposed on the `@volontariapp/domain-storage/models` subpath only: the root entry point no longer loads `typeorm`, so consumers that do not persist files (for example `api-gateway`, for `buildPublicFileUrl`) do not need it. `typeorm` and `reflect-metadata` are optional peer dependencies, required only by consumers of `./models`.
+  Add `getValidationPolicy` and `InvalidEntityTypeException` (`BadRequestError`, code `INVALID_ENTITY_TYPE`): `resolveValidationMode` and the object key helpers now reject an unknown entity type with this typed error instead of a `TypeError`.
+  `FileId.create` now normalizes the UUID to lowercase, so the object key helpers produce a single key per file and `equals` ignores the input case.
+
 ## 0.5.0
 
 ### Minor Changes

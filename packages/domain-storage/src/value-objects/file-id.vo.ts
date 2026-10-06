@@ -14,7 +14,8 @@ export class FileId {
     if (!id || typeof id !== 'string' || !UUID_V4_REGEX.test(id)) {
       throw new BadRequestError(`Invalid FileId UUID v4 format: '${id}'`, 'INVALID_FILE_ID', { id });
     }
-    return new FileId(id);
+    // UUIDs are case-insensitive: lowercase so one file never maps to two S3 keys.
+    return new FileId(id.toLowerCase());
   }
 
   public static generate(): FileId {
@@ -26,7 +27,7 @@ export class FileId {
   }
 
   public equals(other: FileId): boolean {
-    if (!other || !(other instanceof FileId)) {
+    if (!(other instanceof FileId)) {
       return false;
     }
     return this.value === other.getValue();

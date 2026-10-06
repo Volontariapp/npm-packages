@@ -83,6 +83,20 @@ describe('Domain Storage Unit Tests', () => {
       expect(fileId1.equals(fileId2)).toBe(true);
       expect(fileId1.equals(fileId3)).toBe(false);
     });
+
+    it('should normalize an uppercase UUID to lowercase', () => {
+      const fileId = FileId.create('123E4567-E89B-42D3-A456-426614174000');
+
+      expect(fileId.getValue()).toBe('123e4567-e89b-42d3-a456-426614174000');
+    });
+
+    it('should compare FileId instances regardless of the input case', () => {
+      const lower = FileId.create('123e4567-e89b-42d3-a456-426614174000');
+      const upper = FileId.create('123E4567-E89B-42D3-A456-426614174000');
+
+      expect(lower.equals(upper)).toBe(true);
+      expect(upper.equals(lower)).toBe(true);
+    });
   });
 
   describe('MimeType Value Object & Constants', () => {

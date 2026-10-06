@@ -3,10 +3,12 @@ import {
   ALLOWED_MIME_TYPES_BY_ENTITY,
   EntityType,
   FileSizeNotAllowedException,
+  InvalidEntityTypeException,
   ONE_MEGABYTE,
   TEN_MEGABYTES,
   VALIDATION_POLICY_BY_ENTITY,
   ValidationMode,
+  getValidationPolicy,
   resolveValidationMode,
 } from '../index.js';
 
@@ -133,6 +135,34 @@ describe('Validation policy', () => {
           expect(error.message).toContain('USER_AVATAR');
         }
       }
+    });
+  });
+
+  describe('getValidationPolicy', () => {
+    it.each(Object.values(EntityType))('should return the policy of %s', (entityType) => {
+      expect(getValidationPolicy(entityType)).toBe(VALIDATION_POLICY_BY_ENTITY[entityType]);
+    });
+
+    it.each(['UNKNOWN', '', 'toString', '__proto__', 'constructor'])(
+      'should reject the unknown entity type %p with INVALID_ENTITY_TYPE',
+      (unknown) => {
+        const act = (): unknown => getValidationPolicy(unknown as EntityType);
+
+        expect(act).toThrow(InvalidEntityTypeException);
+        expect(act).toThrow(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'INVALID_ENTITY_TYPE',
+            message: `Unknown entity type: '${unknown}'`,
+          }),
+        );
+      },
+    );
+
+    it('should make resolveValidationMode reject an unknown entity type', () => {
+      expect(() => resolveValidationMode('UNKNOWN' as EntityType, 1024)).toThrow(
+        InvalidEntityTypeException,
+      );
     });
   });
 });

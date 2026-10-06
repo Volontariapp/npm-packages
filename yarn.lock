@@ -4238,8 +4238,20 @@ __metadata:
     "@types/node": "npm:^22.10.7"
     "@volontariapp/errors": "workspace:*"
     jest: "npm:^30.3.0"
+    pg: "npm:^8.20.0"
+    reflect-metadata: "npm:^0.2.2"
     ts-jest: "npm:^29.4.6"
+    ts-node: "npm:^10.9.2"
+    typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
+  peerDependencies:
+    reflect-metadata: ^0.2.2
+    typeorm: ^0.3.28
+  peerDependenciesMeta:
+    reflect-metadata:
+      optional: true
+    typeorm:
+      optional: true
   languageName: unknown
   linkType: soft
 
