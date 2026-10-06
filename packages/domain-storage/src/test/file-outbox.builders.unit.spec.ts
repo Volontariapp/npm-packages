@@ -1,12 +1,26 @@
 import { describe, expect, it } from '@jest/globals';
 import { OutboxStatus } from '@volontariapp/database';
-import { StorageEventMessagingType, StorageJobType, StorageQueue } from '@volontariapp/messaging';
-import { EntityType, FileStatus, RejectionReason } from '../index.js';
 import {
+  StorageAttachmentRejectionReason,
+  StorageEventMessagingType,
+  StorageJobType,
+  StorageQueue,
+} from '@volontariapp/messaging';
+import {
+  AttachmentRefusalReason,
+  EntityType,
+  FileStatus,
+  RejectionReason,
+  ScanStatus,
+} from '../index.js';
+import {
+  buildAttachmentRejectedEvent,
   buildFileRejectedEvent,
   buildFileScannedEvent,
   buildScanFileJob,
   FILE_OUTBOX_EMITTER,
+  FILE_SCAN_RESULT_TARGET_SERVICES,
+  toAttachmentRejectionReason,
 } from '../repositories/file-outbox.builders.js';
 import type { ScanTransitionRow } from '../repositories/file-repository.types.js';
 
@@ -75,6 +89,59 @@ describe('file outbox builders', () => {
       expect(() =>
         buildFileRejectedEvent(attachedRow({ entity_id: null }), RejectionReason.MALWARE),
       ).toThrow('has no entity_id');
+    });
+  });
+
+  describe('toAttachmentRejectionReason()', () => {
+    it.each([
+      ['NOT_FOUND', null, StorageAttachmentRejectionReason.NOT_FOUND],
+      [AttachmentRefusalReason.FILE_RELEASED, null, StorageAttachmentRejectionReason.NOT_FOUND],
+      [
+        AttachmentRefusalReason.ENTITY_TYPE_MISMATCH,
+        ScanStatus.CLEAN,
+        StorageAttachmentRejectionReason.WRONG_ENTITY_TYPE,
+      ],
+      [
+        AttachmentRefusalReason.ATTACHED_TO_ANOTHER_ENTITY,
+        ScanStatus.CLEAN,
+        StorageAttachmentRejectionReason.ALREADY_ATTACHED,
+      ],
+      [
+        AttachmentRefusalReason.SCAN_STATUS_NOT_ACCEPTED,
+        ScanStatus.REJECTED,
+        StorageAttachmentRejectionReason.CONTENT_REJECTED,
+      ],
+      [
+        AttachmentRefusalReason.SCAN_STATUS_NOT_ACCEPTED,
+        ScanStatus.AWAITING_UPLOAD,
+        StorageAttachmentRejectionReason.NOT_CONFIRMED,
+      ],
+      [
+        AttachmentRefusalReason.SCAN_STATUS_NOT_ACCEPTED,
+        ScanStatus.SCANNING,
+        StorageAttachmentRejectionReason.NOT_CONFIRMED,
+      ],
+    ] as const)('maps %s with scan %s to %s', (refusal, scanStatus, expected) => {
+      expect(toAttachmentRejectionReason(refusal, scanStatus)).toBe(expected);
+    });
+  });
+
+  describe('buildAttachmentRejectedEvent()', () => {
+    it('carries the file, the entity and the reason, with the owner as emitter id', () => {
+      const payload = {
+        fileId: 'file-1',
+        entityType: EntityType.POST,
+        entityId: 'entity-1',
+        reason: StorageAttachmentRejectionReason.NOT_CONFIRMED,
+      };
+
+      const event = buildAttachmentRejectedEvent(payload, 'owner-1');
+
+      expect(event.type).toBe(StorageEventMessagingType.ATTACHMENT_REJECTED);
+      expect(event.payload.after).toEqual(payload);
+      expect(event.emitter).toBe(FILE_OUTBOX_EMITTER);
+      expect(event.emitterId).toBe('owner-1');
+      expect(event.targetServices).toEqual(FILE_SCAN_RESULT_TARGET_SERVICES);
     });
   });
 });
