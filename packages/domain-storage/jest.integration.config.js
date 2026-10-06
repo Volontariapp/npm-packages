@@ -13,8 +13,9 @@ export default {
       },
     ],
   },
-  coverageDirectory: 'coverage/unit',
+  coverageDirectory: 'coverage/integration',
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/', '/src/test/'],
-  testMatch: ['**/*.unit.spec.ts'],
+  testMatch: ['**/*.int.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
+  testTimeout: 30000,
 };
