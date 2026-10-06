@@ -59,4 +59,6 @@ message Event {
   optional string organizer_id = 13;
   repeated Tag tags = 14;
   repeated Requirement requirements = 15;
+  optional string cover_file_id = 16;
+  CoverStatus cover_status = 17;
 }
