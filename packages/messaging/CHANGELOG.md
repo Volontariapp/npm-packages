@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.18.0
+
+### Minor Changes
+
+- Add the storage messaging domain: jobs `storage.scan_file` and `storage.cleanup_files` on `storage-queue`, events `storage.file_scanned`, `storage.file_rejected` and `storage.attachment_rejected` with their payloads (`StorageEntityType` and `StorageFileRejectionReason` are literal unions, so the matching enums of `@volontariapp/domain-storage` are assignable to them without a cast), registered in `JobRegistry` and `EventRegistry`.
+
 ## 2.17.6
 
 ### Patch Changes
