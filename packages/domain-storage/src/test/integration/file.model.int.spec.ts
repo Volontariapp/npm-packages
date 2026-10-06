@@ -2,13 +2,12 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/glo
 import {
   EntityType,
   FileId,
-  FileModel,
   FileStatus,
   RejectionReason,
-  ReleasedEntityModel,
   ScanStatus,
   ValidationMode,
 } from '../../index.js';
+import { FileModel, ReleasedEntityModel } from '../../models/index.js';
 import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
 import { buildFileData } from '../factories/file.factory.js';
 

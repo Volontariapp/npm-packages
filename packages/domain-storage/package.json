@@ -18,6 +18,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./models": {
+      "types": "./dist/models/index.d.ts",
+      "import": "./dist/models/index.js"
     }
   },
   "files": [
@@ -40,6 +44,18 @@
   },
   "dependencies": {
     "@volontariapp/errors": "workspace:*"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28"
+  },
+  "peerDependenciesMeta": {
+    "reflect-metadata": {
+      "optional": true
+    },
+    "typeorm": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",

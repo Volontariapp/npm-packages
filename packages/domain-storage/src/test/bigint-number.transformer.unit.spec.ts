@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { bigintNumberTransformer } from '../index.js';
+import { bigintNumberTransformer } from '../models/index.js';
 
 describe('bigintNumberTransformer', () => {
   it('converts the string returned by pg into a number', () => {
