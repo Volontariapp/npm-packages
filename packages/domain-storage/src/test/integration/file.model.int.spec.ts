@@ -120,8 +120,13 @@ describe('files and released_entities persistence (integration)', () => {
      */
     it('does not drift between the model and the migrated database', async () => {
       const sqlInMemory = await testDataSource.driver.createSchemaBuilder().log();
+      // `event_queue` and `jobs_outbox` come from the common migrations of the other services:
+      // their schema is owned by `@volontariapp/database`, not by this package.
+      const ownQueries = sqlInMemory.upQueries
+        .map((query) => query.query)
+        .filter((query) => !/event_queue|jobs_outbox/.test(query));
 
-      expect(sqlInMemory.upQueries.map((query) => query.query)).toEqual([]);
+      expect(ownQueries).toEqual([]);
     });
 
     it('detects a drift when the database differs from the model', async () => {

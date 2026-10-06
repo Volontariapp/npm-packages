@@ -39,4 +39,11 @@ describe('Root entry point', () => {
     const reached = [...files].filter((file) => file.includes('/models/'));
     expect(reached).toEqual([]);
   });
+
+  it('does not reach the repositories, which depend on typeorm and the outbox', () => {
+    const reached = [...files].filter((file) => file.includes('/repositories/'));
+    expect(reached).toEqual([]);
+    expect(packages.has('@volontariapp/database')).toBe(false);
+    expect(packages.has('@volontariapp/outbox')).toBe(false);
+  });
 });

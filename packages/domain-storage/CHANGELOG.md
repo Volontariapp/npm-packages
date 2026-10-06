@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- Add `PostgresFileRepository` (sub-path `@volontariapp/domain-storage/repositories`) with `createPending`, `confirmUpload`, `switchToAsync`, `resetToAwaitingUpload`, `completeScan` and `rejectScan`. Each transition is a single conditional `UPDATE ... RETURNING`; the `storage.scan_file` job (`jobs_outbox`) and the `storage.file_scanned` / `storage.file_rejected` events (`event_queue`, only for an `ATTACHED` file) are written in the same transaction.
+
 ## 0.6.0
 
 ### Minor Changes
