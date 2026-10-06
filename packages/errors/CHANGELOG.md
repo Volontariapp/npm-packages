@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.3
+
+### Patch Changes
+
+- chore(errors): patch bump alongside domain-storage 0.4.0
+
+  `@volontariapp/domain-storage` depends on `@volontariapp/errors` and its new `FileSizeNotAllowedException` extends `BadRequestError`. No code change in this package.
+
 ## 0.6.2
 
 ### Patch Changes
