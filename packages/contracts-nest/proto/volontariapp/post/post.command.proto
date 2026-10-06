@@ -8,6 +8,8 @@ message CreatePostCommand {
   string title = 1;
   string content = 2;
   optional string event_id = 3;
+  repeated string file_ids = 4;
+  string idempotency_key = 5;
 }
 
 message AdminCreatePostCommand {

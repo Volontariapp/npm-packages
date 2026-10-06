@@ -5,6 +5,19 @@ package volontariapp.post;
 
 import "google/protobuf/timestamp.proto";
 
+enum PostMediaStatus {
+  POST_MEDIA_STATUS_UNSPECIFIED = 0;
+  POST_MEDIA_STATUS_NONE = 1;
+  POST_MEDIA_STATUS_PENDING = 2;
+  POST_MEDIA_STATUS_READY = 3;
+  POST_MEDIA_STATUS_REJECTED = 4;
+}
+
+message PostMedia {
+  string file_id = 1;
+  int32 position = 2;
+}
+
 message Post {
   string id = 1;
   string author_id = 2;
@@ -13,4 +26,6 @@ message Post {
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
   optional string event_id = 7;
+  repeated PostMedia media = 8;
+  PostMediaStatus media_status = 9;
 }

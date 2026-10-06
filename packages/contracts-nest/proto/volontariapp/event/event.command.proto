@@ -10,11 +10,15 @@ message CreateEventCommand {
   string description = 2;
   google.protobuf.Timestamp start_at = 3;
   google.protobuf.Timestamp end_at = 4;
+  reserved 5;
+  reserved "location";
   string localisation_name = 6;
   EventType type = 7;
   int32 awarded_impact_score = 8;
   int32 max_participants = 9;
   repeated string tag_ids = 10;
+  optional string cover_file_id = 11;
+  string idempotency_key = 12;
 }
 
 message UpdateEventCommand {

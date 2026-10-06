@@ -12,9 +12,11 @@ message Badge {
   string id = 1;
   string name = 2;
   string slug = 3;
-  optional string icon_path = 4;
+  // Deprecated: use icon_file_id.
+  optional string icon_path = 4 [deprecated = true];
   string description = 5;
   google.protobuf.Timestamp awarded_at = 6;
+  optional string icon_file_id = 7;
 }
 
 message User {
@@ -23,18 +25,22 @@ message User {
   string pseudo = 3;
   optional string bio = 4;
   string role = 5;
-  optional string logo_path = 6;
+  // Deprecated: use avatar_file_id.
+  optional string logo_path = 6 [deprecated = true];
   int32 total_impact_score = 7;
   optional OrganisationInfo organisation_info = 8;
   repeated Badge badges = 9;
+  optional string avatar_file_id = 10;
 }
 
 message UserPublic {
   string id = 1;
   string pseudo = 2;
   optional string bio = 3;
-  optional string logo_path = 4;
+  // Deprecated: use avatar_file_id.
+  optional string logo_path = 4 [deprecated = true];
   int32 total_impact_score = 5;
   optional OrganisationInfo organisation_info = 6;
   repeated Badge badges = 7;
+  optional string avatar_file_id = 8;
 }

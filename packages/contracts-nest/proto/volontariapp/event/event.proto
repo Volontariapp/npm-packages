@@ -20,6 +20,14 @@ enum EventState {
   EVENT_STATE_CANCELLED = 5;
 }
 
+enum CoverStatus {
+  COVER_STATUS_UNSPECIFIED = 0;
+  COVER_STATUS_NONE = 1;
+  COVER_STATUS_PENDING = 2;
+  COVER_STATUS_READY = 3;
+  COVER_STATUS_REJECTED = 4;
+}
+
 message Tag {
   string id = 1;
   string slug = 2;
