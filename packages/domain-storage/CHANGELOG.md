@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- [`5cf1c51`](https://github.com/Volontariapp/npm-packages/commit/5cf1c51503e441ac7f232b9ab96d7df33470632a) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - Add the shared attachment validation rule (`classifyFileForAttachment`) and `PostgresFileRepository.reserve`, the synchronous all-or-nothing reservation of `ConfirmFileAttachment`, with the `FileAttachmentRefusedException` and `TooManyFilesException` domain errors.
+
 ## 0.7.0
 
 ### Minor Changes
