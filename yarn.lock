@@ -4244,6 +4244,14 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typeorm: "npm:^0.3.28"
     typescript: "npm:5.7.3"
+  peerDependencies:
+    reflect-metadata: ^0.2.2
+    typeorm: ^0.3.28
+  peerDependenciesMeta:
+    reflect-metadata:
+      optional: true
+    typeorm:
+      optional: true
   languageName: unknown
   linkType: soft
 
