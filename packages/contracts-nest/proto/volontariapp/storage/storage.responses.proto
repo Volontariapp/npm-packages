@@ -9,11 +9,19 @@ message GenerateUploadUrlResponse {
   string file_id = 1;
   string upload_url = 2;
   google.protobuf.Timestamp expires_at = 3;
+  // Fields of the signed POST form.
+  map<string, string> upload_fields = 4;
+}
+
+message ConfirmUploadResponse {
+  // SCANNING (ASYNC) or final state (SYNC).
+  FileMetadata file = 1;
 }
 
 message ConfirmFileAttachmentResponse {
   bool success = 1;
   int32 updated_count = 2;
+  repeated FileMetadata files = 3;
 }
 
 message DeleteFileResponse {

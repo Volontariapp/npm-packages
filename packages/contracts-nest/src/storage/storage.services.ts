@@ -7,10 +7,16 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
-import { ConfirmFileAttachmentCommand, DeleteFileCommand, GenerateUploadUrlCommand } from "./storage.command.js";
+import {
+  ConfirmFileAttachmentCommand,
+  ConfirmUploadCommand,
+  DeleteFileCommand,
+  GenerateUploadUrlCommand,
+} from "./storage.command.js";
 import { GetFileMetadataQuery, VerifyFilesExistQuery } from "./storage.query.js";
 import {
   ConfirmFileAttachmentResponse,
+  ConfirmUploadResponse,
   DeleteFileResponse,
   FileMetadataResponse,
   GenerateUploadUrlResponse,
@@ -20,11 +26,15 @@ import {
 export interface StorageServiceClient {
   generateUploadUrl(request: GenerateUploadUrlCommand): Observable<GenerateUploadUrlResponse>;
 
+  confirmUpload(request: ConfirmUploadCommand): Observable<ConfirmUploadResponse>;
+
   confirmFileAttachment(request: ConfirmFileAttachmentCommand): Observable<ConfirmFileAttachmentResponse>;
 
   deleteFile(request: DeleteFileCommand): Observable<DeleteFileResponse>;
 
   getFileMetadata(request: GetFileMetadataQuery): Observable<FileMetadataResponse>;
+
+  /** @deprecated */
 
   verifyFilesExist(request: VerifyFilesExistQuery): Observable<VerifyFilesExistResponse>;
 }
@@ -33,6 +43,10 @@ export interface StorageServiceController {
   generateUploadUrl(
     request: GenerateUploadUrlCommand,
   ): Promise<GenerateUploadUrlResponse> | Observable<GenerateUploadUrlResponse> | GenerateUploadUrlResponse;
+
+  confirmUpload(
+    request: ConfirmUploadCommand,
+  ): Promise<ConfirmUploadResponse> | Observable<ConfirmUploadResponse> | ConfirmUploadResponse;
 
   confirmFileAttachment(
     request: ConfirmFileAttachmentCommand,
@@ -55,6 +69,7 @@ export function StorageServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
       "generateUploadUrl",
+      "confirmUpload",
       "confirmFileAttachment",
       "deleteFile",
       "getFileMetadata",

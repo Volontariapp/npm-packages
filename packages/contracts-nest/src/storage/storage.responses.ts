@@ -11,12 +11,27 @@ import { FileMetadata } from "./storage.js";
 export interface GenerateUploadUrlResponse {
   fileId: string;
   uploadUrl: string;
-  expiresAt: Timestamp | undefined;
+  expiresAt:
+    | Timestamp
+    | undefined;
+  /** Fields of the signed POST form. */
+  uploadFields: { [key: string]: string };
+}
+
+export interface GenerateUploadUrlResponse_UploadFieldsEntry {
+  key: string;
+  value: string;
+}
+
+export interface ConfirmUploadResponse {
+  /** SCANNING (ASYNC) or final state (SYNC). */
+  file: FileMetadata | undefined;
 }
 
 export interface ConfirmFileAttachmentResponse {
   success: boolean;
   updatedCount: number;
+  files: FileMetadata[];
 }
 
 export interface DeleteFileResponse {

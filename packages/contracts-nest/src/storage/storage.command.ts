@@ -11,7 +11,16 @@ export interface GenerateUploadUrlCommand {
   mimeType: string;
   sizeBytes: number;
   entityType: EntityType;
+  /**
+   * Deprecated: ignored, visibility is derived from the scan result.
+   *
+   * @deprecated
+   */
   isPublic: boolean;
+}
+
+export interface ConfirmUploadCommand {
+  fileId: string;
 }
 
 export interface ConfirmFileAttachmentCommand {
