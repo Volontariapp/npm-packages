@@ -3,4 +3,5 @@ export enum FileStatus {
   ATTACHED = 'ATTACHED',
   ORPHANED = 'ORPHANED',
   DELETED = 'DELETED',
+  RESERVED = 'RESERVED',
 }

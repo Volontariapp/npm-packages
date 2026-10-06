@@ -6,6 +6,9 @@ import {
   FileStatus,
   InvalidFileExtensionException,
   MimeType,
+  RejectionReason,
+  ScanStatus,
+  ValidationMode,
   COMMON_ALLOWED_MIME_TYPES,
   GLOBAL_ALLOWED_MIME_TYPES,
   ALLOWED_MIME_TYPES_BY_ENTITY,
@@ -18,6 +21,30 @@ describe('Domain Storage Unit Tests', () => {
       expect(FileStatus.ATTACHED).toBe('ATTACHED');
       expect(FileStatus.ORPHANED).toBe('ORPHANED');
       expect(FileStatus.DELETED).toBe('DELETED');
+      expect(FileStatus.RESERVED).toBe('RESERVED');
+    });
+
+    it('should contain expected ScanStatus values', () => {
+      expect(Object.values(ScanStatus)).toEqual([
+        'AWAITING_UPLOAD',
+        'SCANNING',
+        'CLEAN',
+        'REJECTED',
+      ]);
+    });
+
+    it('should contain expected ValidationMode values', () => {
+      expect(Object.values(ValidationMode)).toEqual(['SYNC', 'ASYNC']);
+    });
+
+    it('should contain expected RejectionReason values', () => {
+      expect(Object.values(RejectionReason)).toEqual([
+        'SIZE_MISMATCH',
+        'MIME_MISMATCH',
+        'MALWARE',
+        'UNDECODABLE',
+        'SCAN_TIMEOUT',
+      ]);
     });
 
     it('should contain expected EntityType values', () => {
@@ -64,9 +91,9 @@ describe('Domain Storage Unit Tests', () => {
       expect(COMMON_ALLOWED_MIME_TYPES).toContain('image/png');
       expect(COMMON_ALLOWED_MIME_TYPES).toContain('image/webp');
 
-      expect(ALLOWED_MIME_TYPES_BY_ENTITY.BADGE_ICON).toContain('image/svg+xml');
+      expect(ALLOWED_MIME_TYPES_BY_ENTITY.BADGE_ICON).not.toContain('image/svg+xml');
       expect(ALLOWED_MIME_TYPES_BY_ENTITY.USER_AVATAR).not.toContain('image/svg+xml');
-      expect(GLOBAL_ALLOWED_MIME_TYPES).toContain('image/svg+xml');
+      expect(GLOBAL_ALLOWED_MIME_TYPES).not.toContain('image/svg+xml');
     });
 
     it('should create valid MimeType without entityType', () => {
@@ -75,20 +102,24 @@ describe('Domain Storage Unit Tests', () => {
     });
 
     it('should create valid MimeType for entityType', () => {
-      const mime = MimeType.create('image/svg+xml', EntityType.BADGE_ICON);
-      expect(mime.getValue()).toBe('image/svg+xml');
+      const mime = MimeType.create('image/png', EntityType.BADGE_ICON);
+      expect(mime.getValue()).toBe('image/png');
+    });
+
+    it('should reject SVG for badge icons (XSS risk)', () => {
+      expect(() => MimeType.create('image/svg+xml', EntityType.BADGE_ICON)).toThrow(
+        InvalidFileExtensionException,
+      );
     });
 
     it('should throw InvalidFileExtensionException when MIME type is not allowed for entity', () => {
-      expect(() =>
-        MimeType.create('image/svg+xml', EntityType.USER_AVATAR),
-      ).toThrow(InvalidFileExtensionException);
+      expect(() => MimeType.create('image/svg+xml', EntityType.USER_AVATAR)).toThrow(
+        InvalidFileExtensionException,
+      );
     });
 
     it('should throw InvalidFileExtensionException for unsupported global MIME type', () => {
-      expect(() => MimeType.create('application/exe')).toThrow(
-        InvalidFileExtensionException,
-      );
+      expect(() => MimeType.create('application/exe')).toThrow(InvalidFileExtensionException);
     });
 
     it('should verify equality of MimeType instances', () => {

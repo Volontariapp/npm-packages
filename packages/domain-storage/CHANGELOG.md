@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- feat(domain-storage): add validation policy, processing mode resolution and scan enums
+
+  Add the `ScanStatus`, `ValidationMode` and `RejectionReason` enums and `FileStatus.RESERVED`.
+  Add `VALIDATION_POLICY_BY_ENTITY` (max size, 1 MB SYNC threshold, async allowed, MIME types,
+  output format, max files per entity) and the pure function `resolveValidationMode(entityType, declaredSizeBytes)`,
+  which throws `FileSizeNotAllowedException` when the declared size is invalid or too large.
+
+  BREAKING for 0.x: `image/svg+xml` is no longer an allowed MIME type for `BADGE_ICON` (XSS risk).
+
 ## 0.3.0
 
 ### Minor Changes
