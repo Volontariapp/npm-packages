@@ -1,0 +1,15 @@
+---
+'@volontariapp/domain-storage': minor
+---
+
+Add `attachFromConfirmationEvent`, `releaseForEntity`, `releaseFile` and `releaseForOwner` to `PostgresFileRepository` / `IFileRepository` (ticket 1.11).
+
+- `attachFromConfirmationEvent({ fileIds, entityType, entityId, ownerId })` attaches the files named by a confirmation event, on the synchronous path (`RESERVED` for the entity) and the asynchronous one (`PENDING`, never reserved). It reuses the rule of `reserve`: the new pure `classifyFileForConfirmation` delegates to `classifyFileForAttachment` for every file the entity does not already hold. One transaction, under a per entity `pg_advisory_xact_lock` (doc 11 P1): an entity with a tombstone releases the named `PENDING` / `RESERVED` files of the owner instead of attaching them; a file attached after its scan ended writes `storage.file_scanned` / `storage.file_rejected`; a file the rule refuses writes `storage.attachment_rejected` (`NOT_FOUND`, `WRONG_ENTITY_TYPE`, `NOT_CONFIRMED`, `CONTENT_REJECTED`, `ALREADY_ATTACHED`); a replay (`ATTACHED` or `ORPHANED` for the entity) writes nothing. It returns one `FileAttachmentResult` per file (`FileAttachmentOutcome`).
+- `releaseForEntity({ entityType, entityId })` writes the `released_entities` tombstone (`ReleasedEntityEntity`, `ON CONFLICT DO NOTHING`) and orphans the `RESERVED` / `ATTACHED` files of the entity, in one transaction under the same lock.
+- `releaseFile({ fileId, entityType, entityId, ownerId?, newFileId? })` orphans a named file from `PENDING` (owner required, `entity_id` recorded), `RESERVED` or `ATTACHED` (matched on the entity, owner optional for events without owner such as the badge icon); it is skipped when `newFileId` is the same file.
+- `releaseForOwner({ ownerId })` orphans every `PENDING` / `RESERVED` / `ATTACHED` file of the owner except the `BADGE_ICON` platform resources (`OWNER_RELEASE_EXCLUDED_ENTITY_TYPES`).
+- `ORPHANED` is absorbing and every method is idempotent. No method reads or writes a date condition.
+
+Also, from the review of the repository refactor: `now` is removed from `NewFileData` (a caller could backdate `createdAt` and the upload deadline), and `FileEntity.create` refuses a `presignedUrlTtlSeconds` above `MAX_PRESIGNED_URL_TTL_SECONDS` (7 days) with a `BadRequestError` instead of an Invalid Date that only failed in the database driver.
+
+WARNING, unchanged: `StorageStream` does not exist in `@volontariapp/shared` (ticket 1.14), so every storage event of this package is written with an empty `targetServices` (`FILE_SCAN_RESULT_TARGET_SERVICES`): `storage.file_scanned`, `storage.file_rejected` and, new in this version, `storage.attachment_rejected` (written by `attachFromConfirmationEvent`). The outbox pusher skips such a row without an error and the consumer marks it `COMPLETED`: the event is silently lost, and the post media or the cover would stay `PENDING`. Do not wire these methods into `post-processor-storage`, `ms-storage` or `worker-storage` before `StorageStream` exists and the constant is filled.
