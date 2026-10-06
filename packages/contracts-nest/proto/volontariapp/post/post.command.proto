@@ -8,7 +8,9 @@ message CreatePostCommand {
   string title = 1;
   string content = 2;
   optional string event_id = 3;
+  // Ids of the uploaded files, in display order. Empty for a post without media.
   repeated string file_ids = 4;
+  // Client-generated key: retrying the same request yields the same post.
   string idempotency_key = 5;
 }
 
