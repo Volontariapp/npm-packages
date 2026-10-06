@@ -8,7 +8,12 @@ message GenerateUploadUrlCommand {
   string mime_type = 1;
   int64 size_bytes = 2;
   EntityType entity_type = 3;
-  bool is_public = 4;
+  // Deprecated: ignored, visibility is derived from the scan result.
+  bool is_public = 4 [deprecated = true];
+}
+
+message ConfirmUploadCommand {
+  string file_id = 1;
 }
 
 message ConfirmFileAttachmentCommand {

@@ -8,9 +8,12 @@ import "volontariapp/storage/storage.responses.proto";
 
 service StorageService {
   rpc GenerateUploadUrl (GenerateUploadUrlCommand) returns (GenerateUploadUrlResponse) {}
+  rpc ConfirmUpload (ConfirmUploadCommand) returns (ConfirmUploadResponse) {}
   rpc ConfirmFileAttachment (ConfirmFileAttachmentCommand) returns (ConfirmFileAttachmentResponse) {}
   rpc DeleteFile (DeleteFileCommand) returns (DeleteFileResponse) {}
   rpc GetFileMetadata (GetFileMetadataQuery) returns (FileMetadataResponse) {}
-  rpc VerifyFilesExist (VerifyFilesExistQuery) returns (VerifyFilesExistResponse) {}
+  rpc VerifyFilesExist (VerifyFilesExistQuery) returns (VerifyFilesExistResponse) {
+    option deprecated = true;
+  }
 }
 
