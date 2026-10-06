@@ -3,7 +3,18 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    // Yarn instantiates typeorm once per peer set, so this package resolves its own copy of
+    // 0.3.28 (devDependencies pg and ts-node) next to the one @volontariapp/database and
+    // @volontariapp/outbox resolve. The types are identical but nominally incompatible (TS2345,
+    // "Property 'findOptions' is protected but type 'SelectQueryBuilder<Entity>' is not a class
+    // derived from 'SelectQueryBuilder<Entity>'"). Resolving the types of typeorm to the single
+    // hoisted copy keeps a Repository, an EntityManager or a DataSource of this package
+    // assignable to the ones of database and outbox, with no cast. Types only: the emitted
+    // imports are untouched.
+    "paths": {
+      "typeorm": ["../../node_modules/typeorm/index.d.ts"]
+    }
   },
   "include": ["src"]
 }
