@@ -14,7 +14,8 @@ import { ValidationMode } from '../enums/validation-mode.enum.js';
 import { FileAttachmentRefusedException } from '../exceptions/file-attachment-refused.exception.js';
 import { FileNotFoundException } from '../exceptions/file-not-found.exception.js';
 import { TooManyFilesException } from '../exceptions/too-many-files.exception.js';
-// Through the index, not `file.model.js`: loading it registers the entity <-> model mappings.
+// Through the index, not `file.model.js`: loading it registers the entity <-> model mappings
+// (the root entry point does not, see `models/index.ts`).
 import { FileModel } from '../models/index.js';
 import { classifyFileForAttachment } from '../policies/attachment-validation.rule.js';
 import type { AttachmentVerdict } from '../policies/attachment-validation.rule.js';

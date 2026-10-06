@@ -72,7 +72,7 @@ describe('PostgresFileRepository (integration)', () => {
     it('inserts a PENDING file awaiting its upload, with no scan attempt', async () => {
       const id = newId();
       const ownerId = newId();
-      const now = new Date();
+      const before = Date.now();
 
       const created = await repository.createPending({
         id,
@@ -81,7 +81,6 @@ describe('PostgresFileRepository (integration)', () => {
         declaredMimeType: 'image/png',
         declaredSize: 2 * ONE_MEGABYTE,
         presignedUrlTtlSeconds: PRESIGNED_URL_TTL_SECONDS,
-        now,
       });
 
       expect(created).toBeInstanceOf(FileEntity);
@@ -95,8 +94,11 @@ describe('PostgresFileRepository (integration)', () => {
       expect(row.scanAttempts).toBe(0);
       expect(row.entityId).toBeNull();
       expect(row.declaredSize).toBe(2 * ONE_MEGABYTE);
+      // The creation instant is the current time, never a caller input.
+      expect(created.createdAt.getTime()).toBeGreaterThanOrEqual(before);
+      expect(created.createdAt.getTime()).toBeLessThanOrEqual(Date.now());
       expect(row.uploadExpiresAt.getTime()).toBe(
-        now.getTime() + PRESIGNED_URL_TTL_SECONDS * 1000 + UPLOAD_EXPIRY_GRACE_MS,
+        created.createdAt.getTime() + PRESIGNED_URL_TTL_SECONDS * 1000 + UPLOAD_EXPIRY_GRACE_MS,
       );
     });
 
