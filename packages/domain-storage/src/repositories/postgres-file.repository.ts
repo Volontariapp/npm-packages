@@ -1,11 +1,18 @@
 import type { ObjectLiteral } from '@volontariapp/database';
 import { EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
+import { In } from 'typeorm';
 import type { DataSource, EntityManager } from 'typeorm';
 import { FileStatus } from '../enums/file-status.enum.js';
 import { ScanStatus } from '../enums/scan-status.enum.js';
 import { ValidationMode } from '../enums/validation-mode.enum.js';
+import { FileAttachmentRefusedException } from '../exceptions/file-attachment-refused.exception.js';
+import { FileNotFoundException } from '../exceptions/file-not-found.exception.js';
+import { TooManyFilesException } from '../exceptions/too-many-files.exception.js';
 import { FileModel } from '../models/file.model.js';
+import { classifyFileForAttachment } from '../policies/attachment-validation.rule.js';
+import type { AttachmentVerdict } from '../policies/attachment-validation.rule.js';
+import { getValidationPolicy } from '../policies/get-validation-policy.js';
 import {
   buildFileRejectedEvent,
   buildFileScannedEvent,
@@ -17,6 +24,8 @@ import type {
   ConfirmUploadResult,
   CreatePendingFileInput,
   RejectScanInput,
+  ReservationRow,
+  ReserveFilesInput,
   ScanTransitionResult,
   ScanTransitionRow,
 } from './file-repository.types.js';
@@ -31,6 +40,9 @@ type UpdateReturning<TRow> = [TRow[], number];
  * `QueryDeepPartialEntity` over the generic outbox payloads and exceeds the TypeScript depth
  * limit. The entities built by `file-outbox.builders.ts` are already fully typed.
  */
+
+/** Result of the transaction of `reserve`: the refusal is thrown once the transaction is over. */
+type ReserveOutcome = { failure: Error } | { files: FileModel[] };
 
 /** Writes the result event of a terminal scan, inside the transaction of the transition. */
 type ScanEventWriter = (manager: EntityManager, row: ScanTransitionRow) => Promise<void>;
@@ -146,6 +158,104 @@ export class PostgresFileRepository {
     const reset = rows.length > 0;
     this.logTransition('resetToAwaitingUpload', fileId, reset);
     return reset;
+  }
+
+  /**
+   * Synchronous reservation (`ConfirmFileAttachment`): all or nothing. Locks the rows with
+   * `SELECT ... FOR UPDATE` (in id order, so that two concurrent reservations cannot deadlock),
+   * classifies each one with the shared attachment rule, then moves the `PENDING` ones to
+   * `RESERVED` with a single `UPDATE`. A file already `RESERVED` / `ATTACHED` for the same
+   * entity is returned as is (idempotent retry). Writes no event.
+   *
+   * Throws `TooManyFilesException` above `maxPerEntity` distinct ids, `FileNotFoundException`
+   * for an unknown file or one of another owner (it wins over any other refusal), and
+   * `FileAttachmentRefusedException` for the first refused file, in input order. Nothing is
+   * written when it throws. Returns the files in input order, duplicates removed.
+   */
+  async reserve(input: ReserveFilesInput): Promise<FileModel[]> {
+    const fileIds = [...new Set(input.fileIds)];
+    const { maxPerEntity } = getValidationPolicy(input.entityType);
+    if (fileIds.length > maxPerEntity) {
+      throw new TooManyFilesException(input.entityType, fileIds.length, maxPerEntity);
+    }
+    if (fileIds.length === 0) return [];
+
+    const label = `${input.entityType} ${input.entityId}`;
+    const outcome = await this.runInTransaction<ReserveOutcome>(
+      'reserve',
+      label,
+      async (manager) => {
+        const rows = await manager.query<ReservationRow[]>(
+          `SELECT id, owner_id, entity_type, entity_id, status, scan_status
+         FROM files
+         WHERE id = ANY($1::uuid[])
+         ORDER BY id
+         FOR UPDATE`,
+          [fileIds],
+        );
+        const rowById = new Map(rows.map((row) => [row.id, row]));
+
+        const verdicts = fileIds.map((fileId): [string, AttachmentVerdict] => {
+          const row = rowById.get(fileId);
+          return [
+            fileId,
+            classifyFileForAttachment(
+              row
+                ? {
+                    ownerId: row.owner_id,
+                    entityType: row.entity_type,
+                    entityId: row.entity_id,
+                    status: row.status,
+                    scanStatus: row.scan_status,
+                  }
+                : null,
+              input,
+            ),
+          ];
+        });
+
+        const missing = verdicts.find(([, verdict]) => verdict.kind === 'NOT_FOUND');
+        if (missing) return { failure: new FileNotFoundException(missing[0]) };
+
+        for (const [fileId, verdict] of verdicts) {
+          if (verdict.kind === 'REFUSED') {
+            return {
+              failure: new FileAttachmentRefusedException(
+                fileId,
+                verdict.reason,
+                input.entityType,
+                input.entityId,
+              ),
+            };
+          }
+        }
+
+        const toReserve = verdicts
+          .filter(([, verdict]) => verdict.kind === 'RESERVE')
+          .map(([fileId]) => fileId);
+        if (toReserve.length > 0) {
+          await manager.query(
+            `UPDATE files
+           SET status = $1, entity_id = $2, reserved_at = now(), updated_at = now()
+           WHERE id = ANY($3::uuid[]) AND status = $4`,
+            [FileStatus.RESERVED, input.entityId, toReserve, FileStatus.PENDING],
+          );
+        }
+
+        const files = await manager.find(FileModel, { where: { id: In(fileIds) } });
+        const fileById = new Map(files.map((file) => [file.id, file]));
+        return { files: fileIds.flatMap((fileId) => fileById.get(fileId) ?? []) };
+      },
+    );
+
+    if ('failure' in outcome) {
+      const { failure } = outcome;
+      this.logger.warn(`reserve refused for ${label}: ${failure.message}`);
+      throw failure;
+    }
+
+    this.logger.log(`reserve applied for ${label}: ${String(outcome.files.length)} file(s)`);
+    return outcome.files;
   }
 
   /**

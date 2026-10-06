@@ -1,5 +1,6 @@
 import type { EntityType } from '../enums/entity-type.enum.js';
 import type { FileStatus } from '../enums/file-status.enum.js';
+import type { ScanStatus } from '../enums/scan-status.enum.js';
 import type { RejectionReason } from '../enums/rejection-reason.enum.js';
 import type { ValidationMode } from '../enums/validation-mode.enum.js';
 
@@ -24,6 +25,25 @@ export interface ConfirmUploadInput {
 export interface ConfirmUploadResult {
   id: string;
   validationMode: ValidationMode;
+}
+
+export interface ReserveFilesInput {
+  /** Duplicates are ignored. At most `maxPerEntity` distinct ids for the `entityType`. */
+  fileIds: readonly string[];
+  entityType: EntityType;
+  entityId: string;
+  /** The `CurrentUser` of the `INTERNAL_TOKEN`, never read from a payload. */
+  ownerId: string;
+}
+
+/** Locked `files` columns read by `reserve` before the attachment rule is applied. */
+export interface ReservationRow {
+  id: string;
+  owner_id: string;
+  entity_type: EntityType;
+  entity_id: string | null;
+  status: FileStatus;
+  scan_status: ScanStatus;
 }
 
 export interface CompleteScanInput {
