@@ -104,9 +104,7 @@ describe('files and released_entities persistence (integration)', () => {
         Object.keys(SPEC_INDEXES).sort(),
       );
       for (const index of modelIndexes) {
-        expect(index.where === undefined || index.where === '').toBe(
-          SPEC_INDEXES[index.name ?? '']?.predicate === undefined,
-        );
+        expect(Boolean(index.where)).toBe(SPEC_INDEXES[index.name].predicate !== undefined);
       }
     });
 
