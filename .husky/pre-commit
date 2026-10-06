@@ -1,1 +1,14 @@
 npx lint-staged --config scripts/lint-staged.config.js --allow-empty
+
+# Skills de meta : si ce repo est cloné dans le méta-dépôt Volontariapp, les skills qui décrivent
+# les fichiers commités doivent être relues et vérifiées (source de vérité : meta/.agents/skills).
+# Repo cloné seul (CI, autre poste) : aucun effet.
+# Contournement : SKIP_SKILL_CHECK=1 git commit ...   Avertir sans bloquer : SKILL_CHECK_MODE=warn
+META_EVOLVE="$(git rev-parse --show-toplevel)/../.agents/skills/volontariapp-skill-evolution/scripts/evolve.py"
+if [ -z "$SKIP_SKILL_CHECK" ] && [ -f "$META_EVOLVE" ] && command -v python3 >/dev/null 2>&1; then
+  if [ "$SKILL_CHECK_MODE" = "warn" ]; then
+    PYTHONDONTWRITEBYTECODE=1 python3 "$META_EVOLVE" check-staged --warn
+  else
+    PYTHONDONTWRITEBYTECODE=1 python3 "$META_EVOLVE" check-staged || exit 1
+  fi
+fi
