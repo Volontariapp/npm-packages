@@ -1,6 +1,8 @@
+import { BadRequestError } from '@volontariapp/errors';
 import { describe, expect, it } from '@jest/globals';
 import {
   EntityType,
+  InvalidEntityTypeException,
   VALIDATION_POLICY_BY_ENTITY,
   buildPublicFileUrl,
   buildPublicObjectKey,
@@ -9,6 +11,12 @@ import {
 
 const FILE_ID = '3f2b8c1e-5d4a-4e7b-9a6c-1d2e3f4a5b6c';
 const BASE_URL = 'https://cdn.volontariapp.com';
+
+/** Asserts a typed 400 error carrying the expected business code. */
+const expectBadRequest = (act: () => unknown, code: string): void => {
+  expect(act).toThrow(BadRequestError);
+  expect(act).toThrow(expect.objectContaining({ statusCode: 400, code }));
+};
 
 const EXPECTED_KEYS: readonly [EntityType, string][] = [
   [EntityType.POST, `post/${FILE_ID}.webp`],
@@ -23,10 +31,6 @@ describe('Object key helpers', () => {
       expect(buildQuarantineObjectKey(FILE_ID)).toBe(`quarantine/${FILE_ID}`);
     });
 
-    it('should be deterministic', () => {
-      expect(buildQuarantineObjectKey(FILE_ID)).toBe(buildQuarantineObjectKey(FILE_ID));
-    });
-
     it('should build the same key for an uppercase file id', () => {
       expect(buildQuarantineObjectKey(FILE_ID.toUpperCase())).toBe(`quarantine/${FILE_ID}`);
     });
@@ -34,7 +38,7 @@ describe('Object key helpers', () => {
     it.each(['', 'not-a-uuid', '../etc/passwd', `${FILE_ID}/x`])(
       'should reject the invalid file id %p',
       (invalid) => {
-        expect(() => buildQuarantineObjectKey(invalid)).toThrow();
+        expectBadRequest(() => buildQuarantineObjectKey(invalid), 'INVALID_FILE_ID');
       },
     );
   });
@@ -51,12 +55,6 @@ describe('Object key helpers', () => {
       }
     });
 
-    it('should be deterministic', () => {
-      expect(buildPublicObjectKey(EntityType.POST, FILE_ID)).toBe(
-        buildPublicObjectKey(EntityType.POST, FILE_ID),
-      );
-    });
-
     it('should build the same key for an uppercase file id', () => {
       expect(buildPublicObjectKey(EntityType.POST, FILE_ID.toUpperCase())).toBe(
         `post/${FILE_ID}.webp`,
@@ -64,11 +62,14 @@ describe('Object key helpers', () => {
     });
 
     it('should reject an invalid file id', () => {
-      expect(() => buildPublicObjectKey(EntityType.POST, 'nope')).toThrow();
+      expectBadRequest(() => buildPublicObjectKey(EntityType.POST, 'nope'), 'INVALID_FILE_ID');
     });
 
     it('should reject an unknown entity type', () => {
-      expect(() => buildPublicObjectKey('UNKNOWN' as EntityType, FILE_ID)).toThrow();
+      const act = (): string => buildPublicObjectKey('UNKNOWN' as EntityType, FILE_ID);
+
+      expect(act).toThrow(InvalidEntityTypeException);
+      expectBadRequest(act, 'INVALID_ENTITY_TYPE');
     });
   });
 
@@ -89,14 +90,11 @@ describe('Object key helpers', () => {
       );
     });
 
-    it('should be deterministic', () => {
-      expect(buildPublicFileUrl(EntityType.POST, FILE_ID, BASE_URL)).toBe(
-        buildPublicFileUrl(EntityType.POST, FILE_ID, BASE_URL),
-      );
-    });
-
     it.each(['', '   ', '/', '///'])('should reject the empty base URL %p', (baseUrl) => {
-      expect(() => buildPublicFileUrl(EntityType.POST, FILE_ID, baseUrl)).toThrow();
+      expectBadRequest(
+        () => buildPublicFileUrl(EntityType.POST, FILE_ID, baseUrl),
+        'INVALID_PUBLIC_BASE_URL',
+      );
     });
 
     it('should build the same URL for an uppercase file id', () => {
@@ -106,7 +104,10 @@ describe('Object key helpers', () => {
     });
 
     it('should reject an invalid file id', () => {
-      expect(() => buildPublicFileUrl(EntityType.POST, 'nope', BASE_URL)).toThrow();
+      expectBadRequest(
+        () => buildPublicFileUrl(EntityType.POST, 'nope', BASE_URL),
+        'INVALID_FILE_ID',
+      );
     });
   });
 });

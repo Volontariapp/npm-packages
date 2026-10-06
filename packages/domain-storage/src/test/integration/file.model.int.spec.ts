@@ -20,6 +20,29 @@ interface IndexRow {
   indexdef: string;
 }
 
+interface SpecIndex {
+  columns: string;
+  /** Postgres normalized form of the WHERE clause; `undefined` for a full index. */
+  predicate?: string;
+}
+
+/** Section 8 of docs/stockage-fichiers/08-contrats-et-evolutions.md, as `pg_indexes.indexdef` prints it. */
+const SPEC_INDEXES: Readonly<Record<string, SpecIndex>> = {
+  idx_files_entity: { columns: 'entity_type, entity_id' },
+  idx_files_owner: { columns: 'owner_id' },
+  idx_files_awaiting: {
+    columns: 'upload_expires_at',
+    predicate: "((scan_status)::text = 'AWAITING_UPLOAD'::text)",
+  },
+  idx_files_scanning: {
+    columns: 'confirmed_at',
+    predicate: "((scan_status)::text = 'SCANNING'::text)",
+  },
+  idx_files_unused: { columns: 'confirmed_at', predicate: "((status)::text = 'PENDING'::text)" },
+  idx_files_reserved: { columns: 'reserved_at', predicate: "((status)::text = 'RESERVED'::text)" },
+  idx_files_orphaned: { columns: 'updated_at', predicate: "((status)::text = 'ORPHANED'::text)" },
+};
+
 const dbColumns = async (table: string): Promise<string[]> => {
   const rows = await testDataSource.query<ColumnRow[]>(
     `SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = $1`,
@@ -56,41 +79,62 @@ describe('files and released_entities persistence (integration)', () => {
       expect(modelColumns(ReleasedEntityModel)).toEqual(await dbColumns('released_entities'));
     });
 
-    it('declares the indexes of the spec, the purge ones being partial', async () => {
+    it('declares the indexes of the spec (docs/stockage-fichiers/08-contrats-et-evolutions.md, section 8)', async () => {
       const indexes = await testDataSource.query<IndexRow[]>(
-        `SELECT indexname, indexdef FROM pg_indexes WHERE schemaname = 'public' AND tablename = 'files'`,
+        `SELECT indexname, indexdef FROM pg_indexes WHERE schemaname = 'public' AND tablename = 'files' AND indexname LIKE 'idx_files_%'`,
       );
-      const byName = new Map(indexes.map((index) => [index.indexname, index.indexdef]));
+      const actual = new Map(
+        indexes.map((index) => {
+          const [, columns = '', predicate] =
+            /\((?<columns>[^)]*)\)(?: WHERE (?<predicate>.*))?$/.exec(index.indexdef) ?? [];
+          return [index.indexname, { columns, predicate }] as const;
+        }),
+      );
 
-      for (const name of ['idx_files_entity', 'idx_files_owner']) {
-        expect(byName.get(name)).toBeDefined();
-      }
-      for (const name of [
-        'idx_files_awaiting',
-        'idx_files_scanning',
-        'idx_files_unused',
-        'idx_files_reserved',
-        'idx_files_orphaned',
-      ]) {
-        expect(byName.get(name)).toContain('WHERE');
+      expect([...actual.keys()].sort()).toEqual(Object.keys(SPEC_INDEXES).sort());
+      for (const [name, expected] of Object.entries(SPEC_INDEXES)) {
+        expect({ name, ...actual.get(name) }).toEqual({ name, ...expected });
       }
     });
 
-    it('declares the same indexes on the model as in the migration', () => {
-      const modelIndexes = testDataSource
-        .getMetadata(FileModel)
-        .indices.map((index) => index.name)
-        .sort();
+    it('declares the same indexes on the model as in the spec', () => {
+      const modelIndexes = testDataSource.getMetadata(FileModel).indices;
 
-      expect(modelIndexes).toEqual([
-        'idx_files_awaiting',
-        'idx_files_entity',
-        'idx_files_orphaned',
-        'idx_files_owner',
-        'idx_files_reserved',
-        'idx_files_scanning',
-        'idx_files_unused',
-      ]);
+      expect(modelIndexes.map((index) => index.name).sort()).toEqual(
+        Object.keys(SPEC_INDEXES).sort(),
+      );
+      for (const index of modelIndexes) {
+        expect(index.where === undefined || index.where === '').toBe(
+          SPEC_INDEXES[index.name ?? '']?.predicate === undefined,
+        );
+      }
+    });
+
+    /**
+     * The model is mapped by hand and the schema comes from a separate migration:
+     * TypeORM must have nothing left to create or alter to turn the migrated
+     * database into the model schema. Observed on PostgreSQL 16 with a database
+     * built from the migration: no false positive (varchar columns, bigint,
+     * timestamptz and partial indexes all compare equal), so the assertion is
+     * kept strict. If a TypeORM upgrade introduces a harmless difference
+     * (for example `character varying` versus `varchar`), narrow the filter
+     * here rather than dropping the check.
+     */
+    it('does not drift between the model and the migrated database', async () => {
+      const sqlInMemory = await testDataSource.driver.createSchemaBuilder().log();
+
+      expect(sqlInMemory.upQueries.map((query) => query.query)).toEqual([]);
+    });
+
+    it('detects a drift when the database differs from the model', async () => {
+      await testDataSource.query('ALTER TABLE files ADD COLUMN drifted int');
+      try {
+        const sqlInMemory = await testDataSource.driver.createSchemaBuilder().log();
+
+        expect(sqlInMemory.upQueries.length).toBeGreaterThan(0);
+      } finally {
+        await testDataSource.query('ALTER TABLE files DROP COLUMN drifted');
+      }
     });
   });
 
