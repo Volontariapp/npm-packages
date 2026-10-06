@@ -1,4 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
+import { GrpcStatus } from '@volontariapp/errors';
 import {
   AttachmentRefusalReason,
   EntityType,
@@ -16,6 +17,7 @@ describe('Attachment exceptions', () => {
     );
 
     expect(error.statusCode).toBe(422);
+    expect(error.grpcCode).toBe(GrpcStatus.FAILED_PRECONDITION);
     expect(error.code).toBe('FILE_ATTACHMENT_REFUSED');
     expect(error.details).toEqual({
       fileId: 'file-1',
