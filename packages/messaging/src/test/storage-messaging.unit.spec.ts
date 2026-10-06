@@ -3,7 +3,9 @@ import {
   EventMessagingType,
   JobMessagingType,
   StorageAttachmentRejectionReason,
+  StorageEntityType,
   StorageEventMessagingType,
+  StorageFileRejectionReason,
   StorageJobType,
   StorageQueue,
 } from '../index.js';
@@ -30,6 +32,28 @@ describe('Storage messaging', () => {
       expect(StorageEventMessagingType.FILE_SCANNED).toBe('storage.file_scanned');
       expect(StorageEventMessagingType.FILE_REJECTED).toBe('storage.file_rejected');
       expect(StorageEventMessagingType.ATTACHMENT_REJECTED).toBe('storage.attachment_rejected');
+    });
+
+    // Duplicated on purpose: messaging cannot depend on @volontariapp/domain-storage. These lists
+    // must stay identical to `EntityType` and `RejectionReason` in
+    // packages/domain-storage/src/enums (entity-type.enum.ts, rejection-reason.enum.ts).
+    it('should keep the entity types identical to domain-storage', () => {
+      expect(Object.values(StorageEntityType).sort()).toEqual([
+        'BADGE_ICON',
+        'EVENT_COVER',
+        'POST',
+        'USER_AVATAR',
+      ]);
+    });
+
+    it('should keep the file rejection reasons identical to domain-storage', () => {
+      expect(Object.values(StorageFileRejectionReason).sort()).toEqual([
+        'MALWARE',
+        'MIME_MISMATCH',
+        'SCAN_TIMEOUT',
+        'SIZE_MISMATCH',
+        'UNDECODABLE',
+      ]);
     });
 
     it('should list the attachment rejection reasons of the contract', () => {
@@ -95,8 +119,23 @@ describe('Storage messaging', () => {
         // @ts-expect-error reason is restricted to the contract values
         reason: 'UNKNOWN',
       };
+      const badFileReason: EventRegistry[typeof EventMessagingType.FILE_REJECTED] = {
+        ...buildFileRejectedPayload(),
+        // @ts-expect-error reason is restricted to the file rejection reasons
+        reason: 'UNKNOWN',
+      };
+      const badEntityType: EventRegistry[typeof EventMessagingType.FILE_REJECTED] = {
+        ...buildFileRejectedPayload(),
+        // @ts-expect-error entityType is restricted to the storage entity types
+        entityType: 'INVALID',
+      };
 
-      expect([missingFileId, extraField, withOwner, badReason]).toHaveLength(4);
+      expect(missingFileId).toEqual({});
+      expect(extraField).toEqual({ fileId: 'file-1' });
+      expect(withOwner.fileId).toBe('file-1');
+      expect(badReason.reason).toBe('UNKNOWN');
+      expect(badFileReason.reason).toBe('UNKNOWN');
+      expect(badEntityType.entityType).toBe('INVALID');
     });
   });
 });
