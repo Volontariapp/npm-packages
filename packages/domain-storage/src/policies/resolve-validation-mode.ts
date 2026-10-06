@@ -1,7 +1,7 @@
 import type { EntityType } from '../enums/entity-type.enum.js';
 import { ValidationMode } from '../enums/validation-mode.enum.js';
 import { FileSizeNotAllowedException } from '../exceptions/file-size-not-allowed.exception.js';
-import { VALIDATION_POLICY_BY_ENTITY } from './validation-policy.constants.js';
+import { getValidationPolicy } from './get-validation-policy.js';
 
 /**
  * Picks the processing mode from the declared size, never from the client.
@@ -18,7 +18,7 @@ export function resolveValidationMode(
     throw new FileSizeNotAllowedException(entityType, declaredSizeBytes);
   }
 
-  const policy = VALIDATION_POLICY_BY_ENTITY[entityType];
+  const policy = getValidationPolicy(entityType);
 
   if (declaredSizeBytes > policy.maxSizeBytes) {
     throw new FileSizeNotAllowedException(entityType, declaredSizeBytes, policy.maxSizeBytes);

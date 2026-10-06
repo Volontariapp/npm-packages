@@ -1,6 +1,6 @@
 import { BadRequestError } from '@volontariapp/errors';
 import type { EntityType } from '../enums/entity-type.enum.js';
-import { VALIDATION_POLICY_BY_ENTITY } from '../policies/validation-policy.constants.js';
+import { getValidationPolicy } from '../policies/get-validation-policy.js';
 import { FileId } from '../value-objects/file-id.vo.js';
 
 export const QUARANTINE_KEY_PREFIX = 'quarantine';
@@ -11,11 +11,6 @@ function resolveFileId(fileId: string): string {
 
 /** `USER_AVATAR` becomes `user-avatar`, the folder of the public bucket. */
 function toEntityFolder(entityType: EntityType): string {
-  if (!Object.hasOwn(VALIDATION_POLICY_BY_ENTITY, entityType)) {
-    throw new BadRequestError(`Unknown entity type: '${entityType}'`, 'INVALID_ENTITY_TYPE', {
-      entityType,
-    });
-  }
   return entityType.toLowerCase().replaceAll('_', '-');
 }
 
@@ -29,8 +24,8 @@ export function buildQuarantineObjectKey(fileId: string): string {
  * The extension is the output format of the entity validation policy.
  */
 export function buildPublicObjectKey(entityType: EntityType, fileId: string): string {
+  const { format } = getValidationPolicy(entityType).output;
   const folder = toEntityFolder(entityType);
-  const { format } = VALIDATION_POLICY_BY_ENTITY[entityType].output;
   return `${folder}/${resolveFileId(fileId)}.${format}`;
 }
 
