@@ -5,16 +5,25 @@ package volontariapp.post;
 
 import "google/protobuf/timestamp.proto";
 
+// Aggregated processing state of the media attached to a post.
+// Only NONE and READY posts are visible to readers other than the author.
 enum PostMediaStatus {
   POST_MEDIA_STATUS_UNSPECIFIED = 0;
+  // The post has no media.
   POST_MEDIA_STATUS_NONE = 1;
+  // At least one media is still being validated.
   POST_MEDIA_STATUS_PENDING = 2;
+  // Every media is CLEAN.
   POST_MEDIA_STATUS_READY = 3;
+  // At least one media was rejected.
   POST_MEDIA_STATUS_REJECTED = 4;
 }
 
+// A file attached to a post. The public URL is not part of the contract:
+// the gateway computes it from file_id.
 message PostMedia {
   string file_id = 1;
+  // Display order of the media inside the post.
   int32 position = 2;
 }
 
