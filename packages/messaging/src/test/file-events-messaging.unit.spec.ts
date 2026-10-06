@@ -98,5 +98,16 @@ describe('File related event payloads', () => {
       expect(event.eventId).toBe('event-1');
       expect(badge.badgeId).toBe('badge-1');
     });
+
+    it('should reject a creation fallback payload without the computed entity id', () => {
+      type EventFallbackWithoutId = Omit<IFallbackCreateEventJobPayload, 'eventId'>;
+      type BadgeFallbackWithoutId = Omit<IFallbackCreateBadgeJobPayload, 'badgeId'>;
+      // @ts-expect-error eventId is mandatory
+      const event: IFallbackCreateEventJobPayload = {} as EventFallbackWithoutId;
+      // @ts-expect-error badgeId is mandatory
+      const badge: IFallbackCreateBadgeJobPayload = {} as BadgeFallbackWithoutId;
+      expect(event).toBeDefined();
+      expect(badge).toBeDefined();
+    });
   });
 });

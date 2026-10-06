@@ -4,6 +4,8 @@
 
 ### Patch Changes
 
+- Emitter adapted to the enriched `post.created` payload of `@volontariapp/messaging` 2.19.0: it now carries `userId` (the author) and `fileIds`. `fileIds` is always `[]` for now, because `PostEntity` does not carry media yet: it is relayed by the domain-post ticket 1.15 (provided id, `post_media`, idempotent creation). Until then no image can be attached asynchronously from `post.created`, so the gateway must not relay `fileIds` before 1.15 is released.
+
 - Updated dependencies []:
   - @volontariapp/messaging@2.19.0
   - @volontariapp/database@3.4.24
