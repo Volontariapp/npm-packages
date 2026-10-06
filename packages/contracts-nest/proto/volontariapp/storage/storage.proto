@@ -10,6 +10,30 @@ enum FileStatus {
   FILE_STATUS_ATTACHED = 2;
   FILE_STATUS_ORPHANED = 3;
   FILE_STATUS_DELETED = 4;
+  FILE_STATUS_RESERVED = 5;
+}
+
+enum ScanStatus {
+  SCAN_STATUS_UNSPECIFIED = 0;
+  SCAN_STATUS_AWAITING_UPLOAD = 1;
+  SCAN_STATUS_SCANNING = 2;
+  SCAN_STATUS_CLEAN = 3;
+  SCAN_STATUS_REJECTED = 4;
+}
+
+enum ValidationMode {
+  VALIDATION_MODE_UNSPECIFIED = 0;
+  VALIDATION_MODE_SYNC = 1;
+  VALIDATION_MODE_ASYNC = 2;
+}
+
+enum RejectionReason {
+  REJECTION_REASON_UNSPECIFIED = 0;
+  REJECTION_REASON_SIZE_MISMATCH = 1;
+  REJECTION_REASON_MIME_MISMATCH = 2;
+  REJECTION_REASON_MALWARE = 3;
+  REJECTION_REASON_UNDECODABLE = 4;
+  REJECTION_REASON_SCAN_TIMEOUT = 5;
 }
 
 enum EntityType {
@@ -23,13 +47,22 @@ enum EntityType {
 message FileMetadata {
   string id = 1;
   string owner_id = 2;
+  // Public object key when scan_status is CLEAN, empty otherwise.
+  // The quarantine key is never exposed.
   string object_key = 3;
   string mime_type = 4;
   FileStatus status = 5;
   optional EntityType entity_type = 6;
   optional string entity_id = 7;
-  bool is_public = 8;
+  // Deprecated: visibility is derived from scan_status.
+  bool is_public = 8 [deprecated = true];
   google.protobuf.Timestamp upload_expires_at = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
+  ScanStatus scan_status = 12;
+  optional RejectionReason rejection_reason = 13;
+  // Set only when scan_status is CLEAN.
+  optional string public_url = 14;
+  // SYNC or ASYNC, after a possible switch.
+  ValidationMode validation_mode = 15;
 }
