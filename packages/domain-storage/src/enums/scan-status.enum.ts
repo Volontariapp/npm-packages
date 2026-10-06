@@ -1,0 +1,6 @@
+export enum ScanStatus {
+  AWAITING_UPLOAD = 'AWAITING_UPLOAD',
+  SCANNING = 'SCANNING',
+  CLEAN = 'CLEAN',
+  REJECTED = 'REJECTED',
+}
