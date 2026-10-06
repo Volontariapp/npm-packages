@@ -27,6 +27,10 @@ describe('Object key helpers', () => {
       expect(buildQuarantineObjectKey(FILE_ID)).toBe(buildQuarantineObjectKey(FILE_ID));
     });
 
+    it('should build the same key for an uppercase file id', () => {
+      expect(buildQuarantineObjectKey(FILE_ID.toUpperCase())).toBe(`quarantine/${FILE_ID}`);
+    });
+
     it.each(['', 'not-a-uuid', '../etc/passwd', `${FILE_ID}/x`])(
       'should reject the invalid file id %p',
       (invalid) => {
@@ -50,6 +54,12 @@ describe('Object key helpers', () => {
     it('should be deterministic', () => {
       expect(buildPublicObjectKey(EntityType.POST, FILE_ID)).toBe(
         buildPublicObjectKey(EntityType.POST, FILE_ID),
+      );
+    });
+
+    it('should build the same key for an uppercase file id', () => {
+      expect(buildPublicObjectKey(EntityType.POST, FILE_ID.toUpperCase())).toBe(
+        `post/${FILE_ID}.webp`,
       );
     });
 
@@ -87,6 +97,12 @@ describe('Object key helpers', () => {
 
     it.each(['', '   ', '/', '///'])('should reject the empty base URL %p', (baseUrl) => {
       expect(() => buildPublicFileUrl(EntityType.POST, FILE_ID, baseUrl)).toThrow();
+    });
+
+    it('should build the same URL for an uppercase file id', () => {
+      expect(buildPublicFileUrl(EntityType.POST, FILE_ID.toUpperCase(), BASE_URL)).toBe(
+        `${BASE_URL}/post/${FILE_ID}.webp`,
+      );
     });
 
     it('should reject an invalid file id', () => {
