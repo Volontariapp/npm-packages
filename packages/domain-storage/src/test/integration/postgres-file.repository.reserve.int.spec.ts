@@ -18,6 +18,7 @@ import {
   ScanStatus,
   TooManyFilesException,
 } from '../../index.js';
+import { FileModel } from '../../models/index.js';
 import { PostgresFileRepository } from '../../repositories/index.js';
 import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
 import { insertFile, readEvents, readFile, readJobs } from '../helpers/file-db.helper.js';
@@ -47,7 +48,7 @@ describe('PostgresFileRepository.reserve() (integration)', () => {
 
   beforeAll(async () => {
     await initializeTestDb();
-    repository = new PostgresFileRepository(testDataSource);
+    repository = new PostgresFileRepository(testDataSource.getRepository(FileModel));
   });
 
   afterAll(async () => {
