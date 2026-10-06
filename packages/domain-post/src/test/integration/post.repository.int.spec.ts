@@ -150,7 +150,9 @@ describe('PostgresPostRepository (Integration)', () => {
         where: { type: PostEventMessagingType.POST_CREATED },
       });
       expect(events).toHaveLength(1);
-      expect(events[0].payload).toEqual({ after: { postId: result.id } });
+      expect(events[0].payload).toEqual({
+        after: { postId: result.id, userId: result.authorId, fileIds: [] },
+      });
       expect(events[0].emitterId).toEqual(result.authorId);
     });
 
