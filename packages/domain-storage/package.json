@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-storage",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -22,6 +22,10 @@
     "./models": {
       "types": "./dist/models/index.d.ts",
       "import": "./dist/models/index.js"
+    },
+    "./repositories": {
+      "types": "./dist/repositories/index.d.ts",
+      "import": "./dist/repositories/index.js"
     }
   },
   "files": [
@@ -43,7 +47,10 @@
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "dependencies": {
-    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/database": "workspace:*",
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/logger": "workspace:*",
+    "@volontariapp/messaging": "workspace:*"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.2.2",
