@@ -1,4 +1,5 @@
 import type {
+  IBadgePayload,
   IEmitterPayload,
   IUserCreatedPayload,
   IUserCreationFailedPayload,
@@ -14,3 +15,6 @@ export interface IUserDeletedWebsocketPayload extends IUserDeleledPayload, IEmit
 export interface IUserDeletionFailedWebsocketPayload
   extends IUserDeletionFailedPayload,
     IEmitterPayload {}
+export interface IUserBadgeAwardedWebsocketPayload {
+  badges: IBadgePayload[];
+}

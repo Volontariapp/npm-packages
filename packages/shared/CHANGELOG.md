@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.10.0
+
+### Minor Changes
+
+- Add USER_BADGE_AWARDED event contracts, websocket messaging types, and stream definition for badge attribution flow.
+
+  - `@volontariapp/shared`: add `USER_BADGE_AWARDED = 'user:badge_awarded'` to `UserStream` and `Streams`.
+  - `@volontariapp/messaging`:
+    - Add `USER_BADGE_AWARDED = 'user.badge_awarded'` to `UserEventMessagingType`.
+    - Expose `IUserBadgeAwardedPayload` and register in `EventRegistry`.
+    - Add `USER_BADGE_AWARDED = 'user.badge_awarded'` to `UserWebsocketMessagingType` and `WebsocketMessagingType`.
+    - Expose `IUserBadgeAwardedWebsocketPayload` and register in `WebsocketEventRegistry`.
+    - Add mapping in `USER_EVENT_TO_WS_EVENT_MAPPING`.
+
 ## 0.9.1
 
 ### Patch Changes

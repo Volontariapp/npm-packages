@@ -3,6 +3,7 @@ export enum UserStream {
   USER_JOB_OUTBOX_FAILURE = 'user:job:outbox:failure',
   USER_CREATED = 'user:created',
   USER_DELETED = 'user:deleted',
+  USER_BADGE_AWARDED = 'user:badge_awarded',
 }
 
 export enum EventStream {
