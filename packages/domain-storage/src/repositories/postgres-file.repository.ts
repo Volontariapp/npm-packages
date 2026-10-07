@@ -3,34 +3,53 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
 import { BaseRepository, EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
 import type { StorageEventMessagingType, StorageJobType } from '@volontariapp/messaging';
+import { InternalServerError } from '@volontariapp/errors';
 import { EventQueueRepository, JobsOutboxRepository } from '@volontariapp/outbox';
 import { In } from 'typeorm';
 import type { EntityManager } from 'typeorm';
 import { FileEntity } from '../entities/file.entity.js';
-import type { EntityType } from '../enums/entity-type.enum.js';
+import { ReleasedEntityEntity } from '../entities/released-entity.entity.js';
+import { EntityType } from '../enums/entity-type.enum.js';
+import { FileAttachmentOutcome } from '../enums/file-attachment-outcome.enum.js';
 import { FileStatus } from '../enums/file-status.enum.js';
 import { ScanStatus } from '../enums/scan-status.enum.js';
 import { ValidationMode } from '../enums/validation-mode.enum.js';
 import { FileAttachmentRefusedException } from '../exceptions/file-attachment-refused.exception.js';
 import { FileNotFoundException } from '../exceptions/file-not-found.exception.js';
 import { TooManyFilesException } from '../exceptions/too-many-files.exception.js';
-// Through the index, not `file.model.js`: loading it registers the entity <-> model mappings.
-import { FileModel } from '../models/index.js';
-import { classifyFileForAttachment } from '../policies/attachment-validation.rule.js';
-import type { AttachmentVerdict } from '../policies/attachment-validation.rule.js';
+// Through the index, not `file.model.js`: loading it registers the entity <-> model mappings
+// (the root entry point does not, see `models/index.ts`).
+import { FileModel, ReleasedEntityModel } from '../models/index.js';
+import {
+  classifyFileForAttachment,
+  classifyFileForConfirmation,
+} from '../policies/attachment-validation.rule.js';
+import type {
+  AttachmentVerdict,
+  ConfirmationVerdict,
+} from '../policies/attachment-validation.rule.js';
 import { getValidationPolicy } from '../policies/get-validation-policy.js';
 import {
+  buildAttachmentRejectedEvent,
   buildFileRejectedEvent,
   buildFileScannedEvent,
   buildScanFileJob,
+  toAttachmentRejectionReason,
 } from './file-outbox.builders.js';
 import type { IFileRepository } from './interfaces/file.repository.js';
 import type {
+  AttachedRow,
+  AttachFromConfirmationEventInput,
   CompleteScanInput,
   ConfirmUploadInput,
   ConfirmUploadResult,
   CreatePendingFileInput,
+  FileAttachmentResult,
   RejectScanInput,
+  ReleaseFileInput,
+  ReleaseForEntityInput,
+  ReleaseForEntityResult,
+  ReleaseForOwnerInput,
   ReservationRow,
   ReserveFilesInput,
   ScanTransitionResult,
@@ -39,6 +58,12 @@ import type {
 
 /** Delay added to `upload_expires_at` when a failed synchronous processing is rolled back. */
 export const RESET_UPLOAD_DELAY_MINUTES = 15;
+
+/**
+ * Entity types whose files survive the deletion of their owner: platform resources, uploaded by
+ * an administrator but belonging to the platform (docs/stockage-fichiers/07, section 2).
+ */
+export const OWNER_RELEASE_EXCLUDED_ENTITY_TYPES: readonly EntityType[] = [EntityType.BADGE_ICON];
 
 type UpdateReturning<TRow> = [TRow[], number];
 
@@ -265,6 +290,376 @@ export class PostgresFileRepository
 
     this.logger.log(`reserve applied for ${label}: ${String(outcome.files.length)} file(s)`);
     return this.toEntities(outcome.files);
+  }
+
+  /**
+   * Confirmation event of an entity (docs/stockage-fichiers/03-cycle-de-vie-fichier.md, section
+   * 4), for the synchronous path (`RESERVED` for the entity) and the asynchronous one (`PENDING`
+   * file never reserved). One transaction, under the lock of the entity (`pg_advisory_xact_lock`,
+   * doc 11 P1):
+   *
+   * 1. The entity has a tombstone: the named `PENDING` / `RESERVED` files of the owner are moved
+   *    to `ORPHANED` instead of attached, and nothing else is written.
+   * 2. Otherwise the named rows are locked (`SELECT ... FOR UPDATE ORDER BY id`) and each one is
+   *    classified by `classifyFileForConfirmation`, which applies the rule of `reserve`
+   *    (`classifyFileForAttachment`) to everything not already held by the entity. The files to
+   *    attach are moved with a single `UPDATE ... RETURNING`.
+   * 3. A file attached after its scan ended emits `storage.file_scanned` / `storage.file_rejected`
+   *    (emission rule: the later of the scan and the attachment emits; the scan transition sees
+   *    `ATTACHED` in its own `RETURNING` when it comes second). A file the rule refuses writes
+   *    `storage.attachment_rejected`. A file already `ATTACHED` / `ORPHANED` for the entity
+   *    (replayed event) writes nothing.
+   *
+   * No condition on a date: a late event attaches a file whose reservation has expired. All the
+   * events are written in the same transaction as the updates, so a failure rolls everything
+   * back and the redelivered event starts again. Events are written with an empty
+   * `targetServices` until `StorageStream` exists (see `FILE_SCAN_RESULT_TARGET_SERVICES`).
+   */
+  async attachFromConfirmationEvent(
+    input: AttachFromConfirmationEventInput,
+  ): Promise<FileAttachmentResult[]> {
+    getValidationPolicy(input.entityType);
+    const fileIds = [...new Set(input.fileIds.map((fileId) => fileId.toLowerCase()))];
+    if (fileIds.length === 0) return [];
+
+    const label = `${input.entityType} ${input.entityId}`;
+    const results = await this.runInTransaction(
+      'attachFromConfirmationEvent',
+      label,
+      async (manager) => {
+        await this.lockEntity(manager, input.entityType, input.entityId);
+
+        const released = await manager
+          .getRepository(ReleasedEntityModel)
+          .existsBy({ entityType: input.entityType, entityId: input.entityId });
+        if (released) {
+          await manager.query(
+            `UPDATE files
+           SET status = $1, entity_id = $2, updated_at = now()
+           WHERE id = ANY($3::uuid[]) AND entity_type = $4 AND owner_id = $5
+             AND (status = $6 OR (status = $7 AND entity_id = $2))`,
+            [
+              FileStatus.ORPHANED,
+              input.entityId,
+              fileIds,
+              input.entityType,
+              input.ownerId,
+              FileStatus.PENDING,
+              FileStatus.RESERVED,
+            ],
+          );
+          return fileIds.map(
+            (fileId): FileAttachmentResult => ({
+              fileId,
+              outcome: FileAttachmentOutcome.ENTITY_RELEASED,
+              scanEventEmitted: false,
+            }),
+          );
+        }
+
+        const rows = await manager.query<ReservationRow[]>(
+          `SELECT id, owner_id, entity_type, entity_id, status, scan_status
+         FROM files
+         WHERE id = ANY($1::uuid[])
+         ORDER BY id
+         FOR UPDATE`,
+          [fileIds],
+        );
+        const rowById = new Map(rows.map((row) => [row.id, row]));
+
+        const verdicts = fileIds.map((fileId): [string, ConfirmationVerdict] => {
+          const row = rowById.get(fileId);
+          return [
+            fileId,
+            classifyFileForConfirmation(
+              row
+                ? {
+                    ownerId: row.owner_id,
+                    entityType: row.entity_type,
+                    entityId: row.entity_id,
+                    status: row.status,
+                    scanStatus: row.scan_status,
+                  }
+                : null,
+              input,
+            ),
+          ];
+        });
+
+        const toAttach = verdicts
+          .filter(
+            ([, verdict]) =>
+              verdict.kind === 'ATTACH_RESERVED' || verdict.kind === 'ATTACH_PENDING',
+          )
+          .map(([fileId]) => fileId);
+        const attachedById = new Map<string, AttachedRow>();
+        if (toAttach.length > 0) {
+          const [attached] = await manager.query<UpdateReturning<AttachedRow>>(
+            `UPDATE files
+           SET status = $1, entity_id = $2, attached_at = now(), updated_at = now()
+           WHERE id = ANY($3::uuid[]) AND entity_type = $4
+             AND ((status = $5 AND entity_id = $2) OR (status = $6 AND owner_id = $7))
+           RETURNING id, status, entity_type, entity_id, owner_id, scan_status, rejection_reason`,
+            [
+              FileStatus.ATTACHED,
+              input.entityId,
+              toAttach,
+              input.entityType,
+              FileStatus.RESERVED,
+              FileStatus.PENDING,
+              input.ownerId,
+            ],
+          );
+          for (const row of attached) attachedById.set(row.id, row);
+        }
+
+        const outcomes: FileAttachmentResult[] = [];
+        for (const [fileId, verdict] of verdicts) {
+          outcomes.push(
+            await this.settleConfirmation(
+              manager,
+              fileId,
+              verdict,
+              attachedById.get(fileId),
+              rowById.get(fileId),
+              input,
+            ),
+          );
+        }
+        return outcomes;
+      },
+    );
+
+    this.logger.log(
+      `attachFromConfirmationEvent for ${label}: ${results
+        .map((result) => `${result.fileId}=${result.outcome}`)
+        .join(', ')}`,
+    );
+    return results;
+  }
+
+  /** Writes the event of one file of `attachFromConfirmationEvent`, inside its transaction. */
+  private async settleConfirmation(
+    manager: EntityManager,
+    fileId: string,
+    verdict: ConfirmationVerdict,
+    attached: AttachedRow | undefined,
+    locked: ReservationRow | undefined,
+    input: AttachFromConfirmationEventInput,
+  ): Promise<FileAttachmentResult> {
+    switch (verdict.kind) {
+      case 'ATTACH_RESERVED':
+      case 'ATTACH_PENDING': {
+        if (!attached) {
+          // The row is locked and was classified in this transaction: this cannot happen.
+          throw new InternalServerError(
+            `File ${fileId} was classified attachable but the update matched no row`,
+            'FILE_ATTACHMENT_LOST',
+            { fileId },
+          );
+        }
+        const scanEventEmitted = await this.emitScanResultOfAttachedFile(manager, attached);
+        return { fileId, outcome: FileAttachmentOutcome.ATTACHED, scanEventEmitted };
+      }
+      case 'ALREADY_ATTACHED':
+        return { fileId, outcome: FileAttachmentOutcome.ALREADY_ATTACHED, scanEventEmitted: false };
+      case 'ALREADY_RELEASED':
+        return { fileId, outcome: FileAttachmentOutcome.ALREADY_RELEASED, scanEventEmitted: false };
+      case 'REJECTED': {
+        const rejectionReason = toAttachmentRejectionReason(
+          verdict.refusal,
+          locked?.scan_status ?? null,
+        );
+        await this.eventQueueRepository<StorageEventMessagingType.ATTACHMENT_REJECTED>(
+          manager,
+        ).create(
+          buildAttachmentRejectedEvent(
+            {
+              fileId,
+              entityType: input.entityType,
+              entityId: input.entityId,
+              reason: rejectionReason,
+            },
+            input.ownerId,
+          ),
+        );
+        return {
+          fileId,
+          outcome: FileAttachmentOutcome.REJECTED,
+          rejectionReason,
+          scanEventEmitted: false,
+        };
+      }
+    }
+  }
+
+  /**
+   * Emission rule, attachment side: a file that has just become `ATTACHED` emits the result of a
+   * scan that already ended (`CLEAN` or `REJECTED`); with `SCANNING` or `AWAITING_UPLOAD` the
+   * scan transition will emit, as it sees `ATTACHED` in its own `RETURNING`.
+   */
+  private async emitScanResultOfAttachedFile(
+    manager: EntityManager,
+    row: AttachedRow,
+  ): Promise<boolean> {
+    if (row.scan_status === ScanStatus.CLEAN) {
+      await this.eventQueueRepository<StorageEventMessagingType.FILE_SCANNED>(manager).create(
+        buildFileScannedEvent(row),
+      );
+      return true;
+    }
+    if (row.scan_status === ScanStatus.REJECTED) {
+      if (row.rejection_reason === null) {
+        throw new InternalServerError(
+          `Rejected file ${row.id} has no rejection reason`,
+          'FILE_REJECTED_WITHOUT_REASON',
+          { fileId: row.id },
+        );
+      }
+      await this.eventQueueRepository<StorageEventMessagingType.FILE_REJECTED>(manager).create(
+        buildFileRejectedEvent(row, row.rejection_reason),
+      );
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Release by entity (`*.deleted`, `*.creation_failed`), under the lock of the entity: the
+   * tombstone is written in `released_entities` (`ON CONFLICT DO NOTHING`, the first release date
+   * is kept), then the `RESERVED` / `ATTACHED` files of the entity move to `ORPHANED` with one
+   * `UPDATE`. `PENDING` files are not seen here (no `entity_id` yet): the tombstone makes
+   * `attachFromConfirmationEvent` release them when their late event arrives. Replaying it
+   * changes nothing. `ORPHANED` and `DELETED` files are never touched. Writes no event.
+   */
+  async releaseForEntity(input: ReleaseForEntityInput): Promise<ReleaseForEntityResult> {
+    const tombstone = ReleasedEntityEntity.create(input);
+    const label = `${input.entityType} ${input.entityId}`;
+
+    const result = await this.runInTransaction('releaseForEntity', label, async (manager) => {
+      await this.lockEntity(manager, input.entityType, input.entityId);
+
+      const inserted = await manager
+        .getRepository(ReleasedEntityModel)
+        .createQueryBuilder()
+        .insert()
+        .values(this.mapper.map(tombstone, ReleasedEntityEntity, ReleasedEntityModel))
+        .orIgnore()
+        .returning('entity_id')
+        .execute();
+
+      const [released] = await manager.query<UpdateReturning<{ id: string }>>(
+        `UPDATE files
+         SET status = $1, updated_at = now()
+         WHERE entity_type = $2 AND entity_id = $3 AND status IN ($4, $5)
+         RETURNING id`,
+        [
+          FileStatus.ORPHANED,
+          input.entityType,
+          input.entityId,
+          FileStatus.RESERVED,
+          FileStatus.ATTACHED,
+        ],
+      );
+      return {
+        releasedFileIds: released.map((row) => row.id),
+        tombstoneCreated: Array.isArray(inserted.raw) && inserted.raw.length > 0,
+      };
+    });
+
+    this.logger.log(
+      `releaseForEntity for ${label}: ${String(result.releasedFileIds.length)} file(s) released, tombstone ${result.tombstoneCreated ? 'written' : 'already present'}`,
+    );
+    return result;
+  }
+
+  /**
+   * Release of a named file (`oldFileId` of a `*_replaced` event): `PENDING`, `RESERVED` or
+   * `ATTACHED` to `ORPHANED` with one conditional `UPDATE ... RETURNING`. A `RESERVED` /
+   * `ATTACHED` file must be held by `(entityType, entityId)` (and by `ownerId` when given); a
+   * `PENDING` file must belong to `ownerId` and gets the `entity_id`, so that a late confirmation
+   * event for it is recognised as released instead of rejected. `ORPHANED` and `DELETED` are
+   * absorbing: they match nothing. Skipped when `newFileId` is the same file. Writes no event.
+   * Returns whether a file was released.
+   */
+  async releaseFile(input: ReleaseFileInput): Promise<boolean> {
+    if (input.newFileId?.toLowerCase() === input.fileId.toLowerCase()) {
+      this.logger.warn(`releaseFile skipped for file ${input.fileId}: it is its own replacement`);
+      return false;
+    }
+
+    const released = await this.runInTransaction('releaseFile', input.fileId, async (manager) => {
+      const [rows] = await manager.query<UpdateReturning<{ id: string }>>(
+        `UPDATE files
+         SET status = $1, entity_id = $2, updated_at = now()
+         WHERE id = $3 AND entity_type = $4
+           AND (
+             (status IN ($5, $6) AND entity_id = $2 AND ($7::uuid IS NULL OR owner_id = $7))
+             OR (status = $8 AND owner_id = $7)
+           )
+         RETURNING id`,
+        [
+          FileStatus.ORPHANED,
+          input.entityId,
+          input.fileId,
+          input.entityType,
+          FileStatus.RESERVED,
+          FileStatus.ATTACHED,
+          input.ownerId ?? null,
+          FileStatus.PENDING,
+        ],
+      );
+      return rows.length > 0;
+    });
+
+    this.logTransition('releaseFile', input.fileId, released);
+    return released;
+  }
+
+  /**
+   * Account deletion (`user.deleted`): one `UPDATE` moves every `PENDING`, `RESERVED` or
+   * `ATTACHED` file of the owner to `ORPHANED`, except the platform resources
+   * (`OWNER_RELEASE_EXCLUDED_ENTITY_TYPES`). It covers the files of posts removed without a
+   * `post.deleted`. No tombstone (no entity): a late confirmation event of a released `PENDING`
+   * file is refused with `storage.attachment_rejected`. Returns the released file ids.
+   */
+  async releaseForOwner(input: ReleaseForOwnerInput): Promise<string[]> {
+    const [rows] = await this.repository.manager.query<UpdateReturning<{ id: string }>>(
+      `UPDATE files
+       SET status = $1, updated_at = now()
+       WHERE owner_id = $2
+         AND entity_type <> ALL($3::varchar[])
+         AND status IN ($4, $5, $6)
+       RETURNING id`,
+      [
+        FileStatus.ORPHANED,
+        input.ownerId,
+        OWNER_RELEASE_EXCLUDED_ENTITY_TYPES,
+        FileStatus.PENDING,
+        FileStatus.RESERVED,
+        FileStatus.ATTACHED,
+      ],
+    );
+
+    this.logger.log(
+      `releaseForOwner for ${input.ownerId}: ${String(rows.length)} file(s) released`,
+    );
+    return rows.map((row) => row.id);
+  }
+
+  /**
+   * Serialises the confirmation and the release of one entity (doc 11 P1): without it, the
+   * attachment can read `released_entities` before the commit of a concurrent release, and attach
+   * a file to a released entity. Held until the end of the transaction.
+   */
+  private async lockEntity(
+    manager: EntityManager,
+    entityType: EntityType,
+    entityId: string,
+  ): Promise<void> {
+    await manager.query(`SELECT pg_advisory_xact_lock(hashtext($1))`, [
+      `${entityType}:${entityId.toLowerCase()}`,
+    ]);
   }
 
   /**

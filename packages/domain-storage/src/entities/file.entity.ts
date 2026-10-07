@@ -16,6 +16,13 @@ import { MimeType } from '../value-objects/mime-type.vo.js';
  */
 export const UPLOAD_EXPIRY_GRACE_MS = 5 * 60 * 1000;
 
+/**
+ * Upper bound of the presigned URL lifetime: 7 days, the maximum of an AWS Signature V4
+ * presigned URL. A larger value is a caller bug, and a huge one would overflow `Date` (an
+ * Invalid Date that only fails in the database driver).
+ */
+export const MAX_PRESIGNED_URL_TTL_SECONDS = 7 * 24 * 60 * 60;
+
 /** Data needed to declare a file that is about to be uploaded. */
 export interface NewFileData {
   /** Generated with `FileId.generate()` when omitted. */
@@ -26,10 +33,8 @@ export interface NewFileData {
   declaredMimeType: string;
   /** Size announced by the client, in bytes. It selects the validation mode, never the client. */
   declaredSize: number;
-  /** Lifetime of the presigned upload URL, in seconds. */
+  /** Lifetime of the presigned upload URL, in seconds, at most `MAX_PRESIGNED_URL_TTL_SECONDS`. */
   presignedUrlTtlSeconds: number;
-  /** Creation instant, injectable for tests. Defaults to the current time. */
-  now?: Date;
 }
 
 /**
@@ -71,7 +76,7 @@ export class FileEntity {
    * Throws `InvalidEntityTypeException` for an unknown entity type,
    * `InvalidFileExtensionException` for a MIME type the entity does not allow,
    * `FileSizeNotAllowedException` for a declared size out of the policy (or an ASYNC size on an
-   * entity that only allows SYNC), and `BadRequestError` for a blank owner or an invalid TTL.
+   * entity that only allows SYNC), and `BadRequestError` for a blank owner or a TTL out of `]0, MAX_PRESIGNED_URL_TTL_SECONDS]`.
    */
   static create(data: NewFileData): FileEntity {
     if (typeof data.ownerId !== 'string' || data.ownerId.trim() === '') {
@@ -79,9 +84,13 @@ export class FileEntity {
         ownerId: data.ownerId,
       });
     }
-    if (!Number.isFinite(data.presignedUrlTtlSeconds) || data.presignedUrlTtlSeconds <= 0) {
+    if (
+      !Number.isFinite(data.presignedUrlTtlSeconds) ||
+      data.presignedUrlTtlSeconds <= 0 ||
+      data.presignedUrlTtlSeconds > MAX_PRESIGNED_URL_TTL_SECONDS
+    ) {
       throw new BadRequestError(
-        'Presigned URL lifetime must be a positive number of seconds',
+        `Presigned URL lifetime must be between 1 and ${String(MAX_PRESIGNED_URL_TTL_SECONDS)} seconds`,
         'INVALID_PRESIGNED_URL_TTL',
         { presignedUrlTtlSeconds: data.presignedUrlTtlSeconds },
       );
@@ -92,7 +101,8 @@ export class FileEntity {
     const mimeType = MimeType.create(data.declaredMimeType, data.entityType);
     const validationMode = resolveValidationMode(data.entityType, data.declaredSize);
     const id = (data.id === undefined ? FileId.generate() : FileId.create(data.id)).getValue();
-    const now = data.now ?? new Date();
+    // The creation instant is always the current time: never a caller input.
+    const now = new Date();
 
     const file = new FileEntity();
     file.id = id;

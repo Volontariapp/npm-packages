@@ -1,4 +1,5 @@
-import { describe, expect, it } from '@jest/globals';
+import { BadRequestError } from '@volontariapp/errors';
+import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import {
   EntityType,
   FileEntity,
@@ -7,6 +8,7 @@ import {
   FileStatus,
   InvalidEntityTypeException,
   InvalidFileExtensionException,
+  MAX_PRESIGNED_URL_TTL_SECONDS,
   ReleasedEntityEntity,
   ScanStatus,
   UPLOAD_EXPIRY_GRACE_MS,
@@ -17,6 +19,10 @@ import { buildNewFileData, PRESIGNED_URL_TTL_SECONDS } from './factories/file-en
 const ONE_MEGABYTE = 1024 * 1024;
 
 describe('FileEntity.create', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('declares a PENDING file awaiting its upload, with empty nullable fields', () => {
     const file = FileEntity.create(buildNewFileData());
 
@@ -59,7 +65,8 @@ describe('FileEntity.create', () => {
 
   it('computes the upload deadline as creation + presigned TTL + the 5 minute grace', () => {
     const now = new Date('2026-10-07T10:00:00.000Z');
-    const file = FileEntity.create(buildNewFileData({ now }));
+    jest.useFakeTimers({ now });
+    const file = FileEntity.create(buildNewFileData());
 
     expect(file.createdAt).toEqual(now);
     expect(file.updatedAt).toEqual(now);
@@ -124,14 +131,28 @@ describe('FileEntity.create', () => {
       );
     });
 
-    it.each([0, -5, Number.NaN, Number.POSITIVE_INFINITY])(
-      'refuses the presigned URL lifetime %s',
-      (presignedUrlTtlSeconds) => {
-        expect(() => FileEntity.create(buildNewFileData({ presignedUrlTtlSeconds }))).toThrow(
-          'Presigned URL lifetime must be a positive number of seconds',
-        );
-      },
-    );
+    it.each([
+      0,
+      -5,
+      Number.NaN,
+      Number.POSITIVE_INFINITY,
+      MAX_PRESIGNED_URL_TTL_SECONDS + 1,
+      Number.MAX_SAFE_INTEGER,
+    ])('refuses the presigned URL lifetime %s with a business error', (presignedUrlTtlSeconds) => {
+      const create = (): FileEntity =>
+        FileEntity.create(buildNewFileData({ presignedUrlTtlSeconds }));
+
+      expect(create).toThrow(BadRequestError);
+      expect(create).toThrow('Presigned URL lifetime must be between 1 and 604800 seconds');
+    });
+
+    it('accepts the maximum presigned URL lifetime and builds a valid deadline', () => {
+      const file = FileEntity.create(
+        buildNewFileData({ presignedUrlTtlSeconds: MAX_PRESIGNED_URL_TTL_SECONDS }),
+      );
+
+      expect(Number.isNaN(file.uploadExpiresAt.getTime())).toBe(false);
+    });
   });
 });
 

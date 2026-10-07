@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.10.0
+
+### Minor Changes
+
+- [`11fe06c`](https://github.com/Volontariapp/npm-packages/commit/11fe06c3eda4b27b9f089d90fbf5a3e862587d74) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - Add `attachFromConfirmationEvent`, `releaseForEntity`, `releaseFile` and `releaseForOwner` to `PostgresFileRepository` / `IFileRepository` (ticket 1.11).
+
+  - `attachFromConfirmationEvent({ fileIds, entityType, entityId, ownerId })` attaches the files named by a confirmation event, on the synchronous path (`RESERVED` for the entity) and the asynchronous one (`PENDING`, never reserved). It reuses the rule of `reserve`: the new pure `classifyFileForConfirmation` delegates to `classifyFileForAttachment` for every file the entity does not already hold. One transaction, under a per entity `pg_advisory_xact_lock` (doc 11 P1): an entity with a tombstone releases the named `PENDING` / `RESERVED` files of the owner instead of attaching them; a file attached after its scan ended writes `storage.file_scanned` / `storage.file_rejected`; a file the rule refuses writes `storage.attachment_rejected` (`NOT_FOUND`, `WRONG_ENTITY_TYPE`, `NOT_CONFIRMED`, `CONTENT_REJECTED`, `ALREADY_ATTACHED`); a replay (`ATTACHED` or `ORPHANED` for the entity) writes nothing. It returns one `FileAttachmentResult` per file (`FileAttachmentOutcome`).
+  - `releaseForEntity({ entityType, entityId })` writes the `released_entities` tombstone (`ReleasedEntityEntity`, `ON CONFLICT DO NOTHING`) and orphans the `RESERVED` / `ATTACHED` files of the entity, in one transaction under the same lock.
+  - `releaseFile({ fileId, entityType, entityId, ownerId?, newFileId? })` orphans a named file from `PENDING` (owner required, `entity_id` recorded), `RESERVED` or `ATTACHED` (matched on the entity, owner optional for events without owner such as the badge icon); it is skipped when `newFileId` is the same file.
+  - `releaseForOwner({ ownerId })` orphans every `PENDING` / `RESERVED` / `ATTACHED` file of the owner except the `BADGE_ICON` platform resources (`OWNER_RELEASE_EXCLUDED_ENTITY_TYPES`).
+  - `ORPHANED` is absorbing and every method is idempotent. No method reads or writes a date condition.
+
+  Also, from the review of the repository refactor: `now` is removed from `NewFileData` (a caller could backdate `createdAt` and the upload deadline), and `FileEntity.create` refuses a `presignedUrlTtlSeconds` above `MAX_PRESIGNED_URL_TTL_SECONDS` (7 days) with a `BadRequestError` instead of an Invalid Date that only failed in the database driver.
+
+  WARNING, unchanged: `StorageStream` does not exist in `@volontariapp/shared` (ticket 1.14), so every storage event of this package is written with an empty `targetServices` (`FILE_SCAN_RESULT_TARGET_SERVICES`): `storage.file_scanned`, `storage.file_rejected` and, new in this version, `storage.attachment_rejected` (written by `attachFromConfirmationEvent`). The outbox pusher skips such a row without an error and the consumer marks it `COMPLETED`: the event is silently lost, and the post media or the cover would stay `PENDING`. Do not wire these methods into `post-processor-storage`, `ms-storage` or `worker-storage` before `StorageStream` exists and the constant is filled.
+
 ## 0.9.0
 
 ### Minor Changes
@@ -7,10 +23,10 @@
 - [`3ef7b69`](https://github.com/Volontariapp/npm-packages/commit/3ef7b69ced4e5561c5dc6dcbeff8ec219aadbf29) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - Align the file repository on the `domain-user` pattern.
 
   - Add `FileEntity` (pure domain class, exported by the root entry point) whose `FileEntity.create` holds the declaration invariants: allowed MIME type, validation mode resolved from the declared size, quarantine key, and `uploadExpiresAt` computed as creation + presigned URL lifetime + 5 minutes. Add `ReleasedEntityEntity` for the `released_entities` tombstone (used by ticket 1.11).
-  - Add `registerStorageMappings()` (sub-path `@volontariapp/domain-storage/models`, also run when that sub-path is imported) mapping `FileEntity`, `ReleasedEntityEntity` and the outbox entities to their models.
+  - Add `registerStorageMappings()` (sub-path `@volontariapp/domain-storage/models`, also run when that sub-path is imported: unlike `domain-post` and `domain-event`, which register at the import of their root entry point, the root of this package must not load `typeorm`; `domain-user` leaves the registration to the consumer) mapping `FileEntity`, `ReleasedEntityEntity` and the outbox entities to their models.
   - Add `IFileRepository`, which returns entities. `PostgresFileRepository` now extends `BaseRepository<FileModel, FileEntity>`, is `@Injectable()` and writes `jobs_outbox` / `event_queue` through `JobsOutboxRepository` / `EventQueueRepository` of `@volontariapp/outbox`. Add `findByEntity`; `findById`, `findByIds` come from `BaseRepository`. Transitions (`confirmUpload`, `switchToAsync`, `resetToAwaitingUpload`, `completeScan`, `rejectScan`, `reserve`) stay single conditional `UPDATE ... RETURNING` statements.
 
-  BREAKING for direct users of the repository (none yet: `ms-storage` does not use it): the constructor takes a `Repository<FileModel>` (`@InjectRepository(FileModel)`) instead of a `DataSource`; `createPending` takes `{ ownerId, entityType, declaredMimeType, declaredSize, presignedUrlTtlSeconds, id?, now? }` (the quarantine key, validation mode and deadline are derived) and returns a `FileEntity`; `reserve` returns `FileEntity[]`. New dependencies: `@nestjs/common`, `@volontariapp/outbox`; dev: `@nestjs/typeorm`.
+  BREAKING for direct users of the repository (none yet: `ms-storage` does not use it): the constructor takes a `Repository<FileModel>` (`@InjectRepository(FileModel)`) instead of a `DataSource`; `createPending` takes `{ ownerId, entityType, declaredMimeType, declaredSize, presignedUrlTtlSeconds, id? }` (the quarantine key, validation mode and deadline are derived; the creation instant is always the current time, and the presigned URL lifetime is refused above `MAX_PRESIGNED_URL_TTL_SECONDS`, 7 days, with a `BadRequestError`) and returns a `FileEntity`; `reserve` returns `FileEntity[]`. New dependencies: `@nestjs/common`, `@volontariapp/outbox`; dev: `@nestjs/typeorm`.
 
   WARNING, unchanged: do not wire `completeScan` / `rejectScan` into `ms-storage` or `worker-storage` yet. `StorageStream` does not exist in `@volontariapp/shared` (ticket 1.14), so `FILE_SCAN_RESULT_TARGET_SERVICES` is still empty: the outbox pusher skips such an `event_queue` row without an error and the event is silently lost.
 

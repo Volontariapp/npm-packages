@@ -1,11 +1,17 @@
 import type { FileEntity } from '../../entities/file.entity.js';
 import type { EntityType } from '../../enums/entity-type.enum.js';
 import type {
+  AttachFromConfirmationEventInput,
   CompleteScanInput,
   ConfirmUploadInput,
   ConfirmUploadResult,
   CreatePendingFileInput,
+  FileAttachmentResult,
   RejectScanInput,
+  ReleaseFileInput,
+  ReleaseForEntityInput,
+  ReleaseForEntityResult,
+  ReleaseForOwnerInput,
   ReserveFilesInput,
   ScanTransitionResult,
 } from '../file-repository.types.js';
@@ -37,4 +43,30 @@ export interface IFileRepository {
   rejectScan(input: RejectScanInput): Promise<ScanTransitionResult | null>;
   /** All or nothing reservation of the files of an entity, in input order, duplicates removed. */
   reserve(input: ReserveFilesInput): Promise<FileEntity[]>;
+
+  /**
+   * Confirmation event of an entity: moves the files it names to `ATTACHED` (from `RESERVED` for
+   * this entity, or from a valid `PENDING` file), with the same rule as `reserve`. A file the
+   * rule refuses gets a `storage.attachment_rejected` event; a replayed event writes nothing for
+   * an `ATTACHED` / `ORPHANED` file; a released entity (tombstone) releases the files instead.
+   * Emits the scan result of a file attached after its scan ended. One result per file.
+   */
+  attachFromConfirmationEvent(
+    input: AttachFromConfirmationEventInput,
+  ): Promise<FileAttachmentResult[]>;
+  /**
+   * Release by entity (`*.deleted`, `*.creation_failed`): `RESERVED` / `ATTACHED` files of the
+   * entity to `ORPHANED`, and the entity is written in `released_entities` (tombstone).
+   */
+  releaseForEntity(input: ReleaseForEntityInput): Promise<ReleaseForEntityResult>;
+  /**
+   * Release of a named file (`oldFileId` of a `*_replaced` event) from `PENDING`, `RESERVED` or
+   * `ATTACHED`. Returns false when nothing matched (replay, other entity, `ORPHANED` absorbing).
+   */
+  releaseFile(input: ReleaseFileInput): Promise<boolean>;
+  /**
+   * Account deletion (`user.deleted`): every `PENDING` / `RESERVED` / `ATTACHED` file of the
+   * owner to `ORPHANED`, except the platform resources (`BADGE_ICON`). Returns the released ids.
+   */
+  releaseForOwner(input: ReleaseForOwnerInput): Promise<string[]>;
 }

@@ -22,13 +22,7 @@ import {
 import { FileModel } from '../../models/index.js';
 import { PostgresFileRepository, RESET_UPLOAD_DELAY_MINUTES } from '../../repositories/index.js';
 import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
-import {
-  attachDirectly,
-  insertFile,
-  readEvents,
-  readFile,
-  readJobs,
-} from '../helpers/file-db.helper.js';
+import { insertFile, readEvents, readFile, readJobs } from '../helpers/file-db.helper.js';
 import { mockOutboxInsertFailure } from '../mocks/outbox-write-failure.mock.js';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
@@ -72,7 +66,7 @@ describe('PostgresFileRepository (integration)', () => {
     it('inserts a PENDING file awaiting its upload, with no scan attempt', async () => {
       const id = newId();
       const ownerId = newId();
-      const now = new Date();
+      const before = Date.now();
 
       const created = await repository.createPending({
         id,
@@ -81,7 +75,6 @@ describe('PostgresFileRepository (integration)', () => {
         declaredMimeType: 'image/png',
         declaredSize: 2 * ONE_MEGABYTE,
         presignedUrlTtlSeconds: PRESIGNED_URL_TTL_SECONDS,
-        now,
       });
 
       expect(created).toBeInstanceOf(FileEntity);
@@ -95,8 +88,11 @@ describe('PostgresFileRepository (integration)', () => {
       expect(row.scanAttempts).toBe(0);
       expect(row.entityId).toBeNull();
       expect(row.declaredSize).toBe(2 * ONE_MEGABYTE);
+      // The creation instant is the current time, never a caller input.
+      expect(created.createdAt.getTime()).toBeGreaterThanOrEqual(before);
+      expect(created.createdAt.getTime()).toBeLessThanOrEqual(Date.now());
       expect(row.uploadExpiresAt.getTime()).toBe(
-        now.getTime() + PRESIGNED_URL_TTL_SECONDS * 1000 + UPLOAD_EXPIRY_GRACE_MS,
+        created.createdAt.getTime() + PRESIGNED_URL_TTL_SECONDS * 1000 + UPLOAD_EXPIRY_GRACE_MS,
       );
     });
 
@@ -595,72 +591,6 @@ describe('PostgresFileRepository (integration)', () => {
       expect(row.scanStatus).toBe(ScanStatus.SCANNING);
       expect(row.rejectionReason).toBeNull();
       expect(await readEvents()).toHaveLength(0);
-    });
-  });
-
-  describe('emission rule, both orders', () => {
-    it('scan then attachment: the scan does not emit, the attachment sees a terminal scan_status', async () => {
-      const file = await insertFile({ scanStatus: ScanStatus.SCANNING });
-
-      const scan = await repository.completeScan({ fileId: file.id, publicKey: 'public/x' });
-      const scanStatusSeenByAttachment = await attachDirectly(file.id, newId());
-
-      expect(scan?.eventEmitted).toBe(false);
-      expect(await readEvents()).toHaveLength(0);
-      expect(scanStatusSeenByAttachment).toBe(ScanStatus.CLEAN);
-    });
-
-    it('attachment then scan: the attachment sees SCANNING, the scan emits', async () => {
-      const file = await insertFile({ scanStatus: ScanStatus.SCANNING });
-
-      const scanStatusSeenByAttachment = await attachDirectly(file.id, newId());
-      const scan = await repository.completeScan({ fileId: file.id, publicKey: 'public/x' });
-
-      expect(scanStatusSeenByAttachment).toBe(ScanStatus.SCANNING);
-      expect(scan?.eventEmitted).toBe(true);
-      expect(await readEvents()).toHaveLength(1);
-    });
-
-    it('rejection follows the same two orders', async () => {
-      const scanFirst = await insertFile({ scanStatus: ScanStatus.SCANNING });
-      const attachFirst = await insertFile({ scanStatus: ScanStatus.SCANNING });
-
-      const early = await repository.rejectScan({
-        fileId: scanFirst.id,
-        reason: RejectionReason.MALWARE,
-      });
-      const seenByLateAttachment = await attachDirectly(scanFirst.id, newId());
-      await attachDirectly(attachFirst.id, newId());
-      const late = await repository.rejectScan({
-        fileId: attachFirst.id,
-        reason: RejectionReason.MALWARE,
-      });
-
-      expect(early?.eventEmitted).toBe(false);
-      expect(seenByLateAttachment).toBe(ScanStatus.REJECTED);
-      expect(late?.eventEmitted).toBe(true);
-      expect(await readEvents()).toHaveLength(1);
-    });
-
-    it('a concurrent scan and attachment emit exactly once, whatever the interleaving', async () => {
-      const runs = 25;
-      let emissions = 0;
-
-      for (let run = 0; run < runs; run += 1) {
-        const file = await insertFile({ scanStatus: ScanStatus.SCANNING });
-
-        const [scan, scanStatusSeenByAttachment] = await Promise.all([
-          repository.completeScan({ fileId: file.id, publicKey: 'public/x' }),
-          attachDirectly(file.id, newId()),
-        ]);
-
-        const emittedByScan = scan?.eventEmitted === true ? 1 : 0;
-        const emittedByAttachment = scanStatusSeenByAttachment === ScanStatus.CLEAN ? 1 : 0;
-        expect(emittedByScan + emittedByAttachment).toBe(1);
-        emissions += emittedByScan;
-      }
-
-      expect(await readEvents()).toHaveLength(emissions);
     });
   });
 });
