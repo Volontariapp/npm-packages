@@ -42,6 +42,8 @@ import type {
   IUserSocialDeletionFailedPayload,
   ISocialEventDeletedSuccessPayload,
   ISocialEventDeletedFailedPayload,
+  IEventSocialWishedPayload,
+  IEventSocialUnwishedPayload,
 } from './social/payloads.js';
 
 import { PostEventMessagingType } from './post/payloads.js';
@@ -144,6 +146,8 @@ export interface EventRegistry {
   [SocialEventMessagingType.USER_SOCIAL_CREATION_FAILED]: IUserSocialCreationFailedPayload;
   [SocialEventMessagingType.USER_SOCIAL_DELETED]: IUserSocialDeletedPayload;
   [SocialEventMessagingType.USER_SOCIAL_DELETION_FAILED]: IUserSocialDeletionFailedPayload;
+  [SocialEventMessagingType.EVENT_SOCIAL_WISHED]: IEventSocialWishedPayload;
+  [SocialEventMessagingType.EVENT_SOCIAL_UNWISHED]: IEventSocialUnwishedPayload;
 
   // Post
   [PostEventMessagingType.POST_CREATED]: IPostCreatedPayload;

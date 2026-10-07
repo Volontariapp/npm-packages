@@ -24,6 +24,9 @@ export enum SocialEventMessagingType {
   // USER
   USER_SOCIAL_DELETED = 'user_social.deleted',
   USER_SOCIAL_DELETION_FAILED = 'user_social.deletion_failed',
+  // === INTERACTION / PARTICIPATION ===
+  EVENT_SOCIAL_WISHED = 'event_social.wished',
+  EVENT_SOCIAL_UNWISHED = 'event_social.unwished',
 }
 
 // Par default le userId est le emitter mais si un admin cree un event pour un autre utilisateur, il faudra specifier le userId
@@ -36,12 +39,15 @@ export interface IEventSocialDeletedPayload extends IEventIdPayload, Partial<IUs
 export interface IEventSocialDeletionFailedPayload
   extends IEventIdPayload,
     Partial<IUserIdPayload> {}
-export interface ISocialEventDeletedSuccessPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
-export interface ISocialEventDeletedFailedPayload
+export interface ISocialEventDeletedSuccessPayload
   extends IEventIdPayload,
-    Partial<IUserIdPayload> {
+    Partial<IUserIdPayload> {}
+export interface ISocialEventDeletedFailedPayload extends IEventIdPayload, Partial<IUserIdPayload> {
   errorReason?: string;
 }
+
+export interface IEventSocialWishedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
+export interface IEventSocialUnwishedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 // Un post peut etre lie avec un event
 export interface IPostSocialCreatedPayload
