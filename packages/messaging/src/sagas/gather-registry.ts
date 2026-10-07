@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+import { Streams } from '@volontariapp/shared';
 import { EventMessagingType } from '../events/index.js';
 import { WebsocketMessagingType } from '../websockets/index.js';
 import type { IGatherCompletionConfig } from './types.js';
@@ -22,32 +24,32 @@ export type SagaGatherType = (typeof SagaGatherType)[keyof typeof SagaGatherType
 export const SAGA_GATHER_COMPLETION_MAPPING: Record<SagaGatherType, IGatherCompletionConfig> = {
   [SagaGatherType.EVENT_CREATION]: {
     targetEvent: EventMessagingType.EVENT_CREATED,
-    stream: 'event:created',
+    stream: Streams.EVENT_SUCCESSFULLY_CREATED,
     wsEvent: WebsocketMessagingType.EVENT_CREATED,
   },
   [SagaGatherType.EVENT_DELETION]: {
     targetEvent: EventMessagingType.EVENT_DELETED,
-    stream: 'event:deleted',
+    stream: Streams.EVENT_DELETED,
     wsEvent: WebsocketMessagingType.EVENT_DELETED,
   },
   [SagaGatherType.POST_CREATION]: {
     targetEvent: EventMessagingType.POST_CREATED,
-    stream: 'post:created',
+    stream: Streams.POST_SUCCESSFULLY_CREATED,
     wsEvent: WebsocketMessagingType.POST_CREATED,
   },
   [SagaGatherType.POST_DELETION]: {
     targetEvent: EventMessagingType.POST_DELETED,
-    stream: 'post:deleted',
+    stream: Streams.POST_DELETED,
     wsEvent: WebsocketMessagingType.POST_DELETED,
   },
   [SagaGatherType.USER_CREATION]: {
     targetEvent: EventMessagingType.USER_CREATED,
-    stream: 'user:created',
+    stream: Streams.USER_CREATED,
     wsEvent: WebsocketMessagingType.USER_CREATED,
   },
   [SagaGatherType.USER_DELETION]: {
     targetEvent: EventMessagingType.USER_DELETED,
-    stream: 'user:deleted',
+    stream: Streams.USER_DELETED,
     wsEvent: WebsocketMessagingType.USER_DELETED,
   },
 } as const;

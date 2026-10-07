@@ -1,3 +1,4 @@
+import { Streams } from '@volontariapp/shared';
 import { describe, it, expect } from '@jest/globals';
 import {
   SagaGatherType,
@@ -13,7 +14,7 @@ describe('SagaGatherRegistry', () => {
     expect(config).toEqual(SAGA_GATHER_COMPLETION_MAPPING[SagaGatherType.EVENT_CREATION]);
     expect(config).toEqual({
       targetEvent: EventMessagingType.EVENT_CREATED,
-      stream: 'event:created',
+      stream: Streams.EVENT_SUCCESSFULLY_CREATED,
       wsEvent: WebsocketMessagingType.EVENT_CREATED,
     });
   });
@@ -37,7 +38,7 @@ describe('SagaGatherRegistry', () => {
   });
 
   it('should throw an error if an invalid gather type is requested', () => {
-    expect(() => getGatherCompletionConfig('INVALID_GATHER' as any)).toThrow(
+    expect(() => getGatherCompletionConfig('INVALID_GATHER' as never)).toThrow(
       '[Messaging] No completion config found for saga gather type: INVALID_GATHER',
     );
   });

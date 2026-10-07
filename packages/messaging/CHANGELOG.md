@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.20.1
+
+### Patch Changes
+
+- Fix gather completion stream names in `SAGA_GATHER_COMPLETION_MAPPING` to use `Streams.EVENT_SUCCESSFULLY_CREATED` and `Streams.POST_SUCCESSFULLY_CREATED` instead of trigger stream names.
+
 ## 2.20.0
 
 ### Minor Changes
