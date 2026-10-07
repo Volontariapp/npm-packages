@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.7.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.3.0
+  - @volontariapp/contracts@4.3.14
+  - @volontariapp/database@3.4.25
+  - @volontariapp/errors@0.6.3
+  - @volontariapp/errors-nest@0.13.3
+  - @volontariapp/outbox@0.9.62
+  - @volontariapp/messaging@2.19.1
+
 ## 3.7.18
 
 ### Patch Changes

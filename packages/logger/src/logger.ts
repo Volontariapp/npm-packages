@@ -1,16 +1,22 @@
 import type { LogLevel } from './colors.js';
 import { Colors, getLevelColor } from './colors.js';
+import type { MaskingConfig } from './masking.js';
+import { Masker } from './masking.js';
+import { getTraceFields } from './trace-context.js';
 
 export interface LoggerConfig {
   context?: string;
   format?: 'json' | 'text';
   minLevel?: LogLevel;
+  /** Masking of sensitive metadata and messages. Enabled by default, `false` disables it. */
+  masking?: MaskingConfig | false;
 }
 
 export class Logger {
   private readonly context: string;
   private readonly format: 'json' | 'text';
   private readonly minLevel: LogLevel;
+  private readonly masker: Masker | undefined;
 
   private readonly levels: Record<LogLevel, number> = {
     debug: 0,
@@ -24,6 +30,7 @@ export class Logger {
     this.context = config?.context ?? 'App';
     this.format = config?.format ?? 'text';
     this.minLevel = config?.minLevel ?? 'debug';
+    this.masker = config?.masking === false ? undefined : new Masker(config?.masking);
   }
 
   public log(message: unknown, ...optionalParams: unknown[]): void {
@@ -69,8 +76,10 @@ export class Logger {
       optionalArgs = params.slice(0, params.length - 1);
     }
 
-    const parsedMessage = typeof message === 'string' ? message : this.stringifyUnknown(message);
-    const meta = this.parseParams(optionalArgs);
+    const rawMessage = typeof message === 'string' ? message : this.stringifyUnknown(message);
+    const parsedMessage = this.masker?.maskString(rawMessage) ?? rawMessage;
+    const rawMeta = this.parseParams(optionalArgs);
+    const meta = this.masker?.maskRecord(rawMeta) ?? rawMeta;
     const logMethod =
       level === 'error' || level === 'fatal' ? 'error' : level === 'warn' ? 'warn' : 'log';
 
@@ -81,6 +90,7 @@ export class Logger {
         context: contextOverride,
         message: parsedMessage,
         ...meta,
+        ...getTraceFields(),
       };
 
       console[logMethod](JSON.stringify(payload));
