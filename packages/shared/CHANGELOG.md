@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- Add event_social.wished and event_social.unwished event contracts, streams, and outbox emission in ParticipationService.
+
+  - `@volontariapp/shared`:
+    - Add `EVENT_SOCIAL_WISHED = 'event-social-wished'` and `EVENT_SOCIAL_UNWISHED = 'event-social-unwished'` to `SocialStream`.
+  - `@volontariapp/messaging`:
+    - Add `EVENT_SOCIAL_WISHED = 'event_social.wished'` and `EVENT_SOCIAL_UNWISHED = 'event_social.unwished'` to `SocialEventMessagingType`.
+    - Expose `IEventSocialWishedPayload` and `IEventSocialUnwishedPayload` interfaces and register them in `EventRegistry`.
+  - `@volontariapp/domain-social`:
+    - Emit `EVENT_SOCIAL_WISHED` and `EVENT_SOCIAL_UNWISHED` events to outbox in `ParticipationService.wishEvent` and `ParticipationService.unwishEvent`.
+
 ## 0.10.0
 
 ### Minor Changes

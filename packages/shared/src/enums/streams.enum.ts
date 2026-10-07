@@ -37,6 +37,8 @@ export enum SocialStream {
   SOCIAL_PUBLICATIONS = 'social:publications',
   SOCIAL_RELATIONS = 'social:relations',
   SOCIAL_USER = 'social:user',
+  EVENT_SOCIAL_WISHED = 'event-social-wished',
+  EVENT_SOCIAL_UNWISHED = 'event-social-unwished',
 }
 
 export enum WebsocketStream {

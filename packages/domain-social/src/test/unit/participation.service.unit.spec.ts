@@ -1,7 +1,10 @@
 import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { ParticipationService } from '../../services/participation.service.js';
 import type { IParticipationRepository } from '../../repositories/interfaces/participation.repository.js';
+import type { Repository } from '@volontariapp/database';
+import type { EventQueueModel } from '@volontariapp/database';
 import { createParticipationRepositoryMock } from '../__test-utils__/mocks/participation.repository.mock.js';
+import { createEventQueueRepositoryMock } from '../__test-utils__/mocks/event-queue.repository.mock.js';
 import { PaginatedIdsFactory } from '../__test-utils__/factories/paginated-ids.factory.js';
 import { UserIdFactory, EventIdFactory } from '../__test-utils__/factories/ids.factory.js';
 import { PaginationFactory } from '../__test-utils__/factories/pagination.factory.js';
@@ -13,10 +16,12 @@ const PAGINATION = PaginationFactory.build();
 describe('ParticipationService (Unit)', () => {
   let service: ParticipationService;
   let mockRepository: jest.Mocked<IParticipationRepository>;
+  let mockEventQueueRepository: jest.Mocked<Repository<EventQueueModel>>;
 
   beforeEach(() => {
     mockRepository = createParticipationRepositoryMock();
-    service = new ParticipationService(mockRepository);
+    mockEventQueueRepository = createEventQueueRepositoryMock();
+    service = new ParticipationService(mockRepository, mockEventQueueRepository);
   });
 
   afterEach(() => {
@@ -131,7 +136,9 @@ describe('ParticipationService (Unit)', () => {
 
     it('should throw DATABASE_ERROR on a generic repository failure', async () => {
       const eventIds = [EventIdFactory.build('event-1')];
-      jest.spyOn(mockRepository, 'deleteEventsBatch').mockRejectedValue(new Error('Delete batch failed'));
+      jest
+        .spyOn(mockRepository, 'deleteEventsBatch')
+        .mockRejectedValue(new Error('Delete batch failed'));
 
       await expect(service.deleteEventsBatch(eventIds)).rejects.toMatchObject({
         code: 'DATABASE_ERROR',
@@ -332,12 +339,14 @@ describe('ParticipationService (Unit)', () => {
       const eventExistsSpy = jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
       const wishExistsSpy = jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(false);
       const createWishSpy = jest.spyOn(mockRepository, 'createWish').mockResolvedValue(undefined);
+      const outboxSaveSpy = jest.spyOn(mockEventQueueRepository, 'save');
 
       await service.wishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1'));
 
       expect(eventExistsSpy).toHaveBeenCalledWith(eventEntity);
       expect(wishExistsSpy).toHaveBeenCalledWith(userEntity, eventEntity);
       expect(createWishSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+      expect(outboxSaveSpy).toHaveBeenCalled();
     });
 
     it('should throw SOCIAL_EVENT_NOT_FOUND if event does not exist', async () => {
@@ -382,6 +391,17 @@ describe('ParticipationService (Unit)', () => {
 
       expect(wishExistsSpy).toHaveBeenCalledWith(userEntity, eventEntity);
       expect(deleteWishSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+    });
+
+    it('should push EVENT_SOCIAL_UNWISHED to outbox when unwished', async () => {
+      jest.spyOn(mockRepository, 'eventExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'wishExists').mockResolvedValue(true);
+      jest.spyOn(mockRepository, 'deleteWish').mockResolvedValue(undefined);
+      const outboxSaveSpy = jest.spyOn(mockEventQueueRepository, 'save');
+
+      await service.unwishEvent(UserIdFactory.build('user-1'), EventIdFactory.build('event-1'));
+
+      expect(outboxSaveSpy).toHaveBeenCalled();
     });
 
     it('should throw SOCIAL_WISH_NOT_FOUND if wish does not exist', async () => {

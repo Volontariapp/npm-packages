@@ -10,6 +10,16 @@ import {
   SOCIAL_WISH_NOT_FOUND,
 } from '@volontariapp/errors-nest';
 import { isBaseError } from '@volontariapp/errors';
+import { InjectRepository } from '@nestjs/typeorm';
+import type { Repository } from '@volontariapp/database';
+import { EventQueueEntity, EventQueueModel } from '@volontariapp/database';
+import { EventQueueRepository } from '@volontariapp/outbox';
+import {
+  SocialEventMessagingType,
+  IEventSocialWishedPayload,
+  IEventSocialUnwishedPayload,
+} from '@volontariapp/messaging';
+import { Streams } from '@volontariapp/shared';
 import { Neo4jParticipationRepository } from '../repositories/neo4j-participation.repository.js';
 import type { IParticipationRepository } from '../repositories/interfaces/participation.repository.js';
 import { SocialUserMapper } from '../mappers/social-user.mapper.js';
@@ -25,6 +35,8 @@ export class ParticipationService {
   constructor(
     @Inject(Neo4jParticipationRepository)
     private readonly repository: IParticipationRepository,
+    @InjectRepository(EventQueueModel)
+    private readonly eventQueueRepository: Repository<EventQueueModel>,
   ) {}
 
   async createEvent(eventId: EventId): Promise<void> {
@@ -224,6 +236,33 @@ export class ParticipationService {
         throw SOCIAL_WISH_ALREADY_EXISTS(userId.value, eventId.value);
       }
       await this.repository.createWish(user, event);
+
+      try {
+        const payload: IEventSocialWishedPayload = {
+          eventId: eventId.value,
+          userId: userId.value,
+        };
+        const eventQueueEntity =
+          EventQueueEntity.createEvent<SocialEventMessagingType.EVENT_SOCIAL_WISHED>({
+            type: SocialEventMessagingType.EVENT_SOCIAL_WISHED,
+            emitter: 'ms-social',
+            emitterId: userId.value,
+            payload,
+            targetServices: [Streams.EVENT_SOCIAL_WISHED],
+          });
+        const eventQueueRepo =
+          new EventQueueRepository<SocialEventMessagingType.EVENT_SOCIAL_WISHED>(
+            this.eventQueueRepository,
+          );
+        await eventQueueRepo.create(eventQueueEntity);
+        this.logger.log(
+          `Successfully pushed EVENT_SOCIAL_WISHED event to outbox for user ${userId.value} -> event ${eventId.value}`,
+        );
+      } catch (eventError: unknown) {
+        this.logger.warn(
+          `Failed to push EVENT_SOCIAL_WISHED event to outbox: ${(eventError as Error).message}`,
+        );
+      }
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       this.logger.error(
@@ -246,6 +285,33 @@ export class ParticipationService {
         throw SOCIAL_WISH_NOT_FOUND(userId.value, eventId.value);
       }
       await this.repository.deleteWish(user, event);
+
+      try {
+        const payload: IEventSocialUnwishedPayload = {
+          eventId: eventId.value,
+          userId: userId.value,
+        };
+        const eventQueueEntity =
+          EventQueueEntity.createEvent<SocialEventMessagingType.EVENT_SOCIAL_UNWISHED>({
+            type: SocialEventMessagingType.EVENT_SOCIAL_UNWISHED,
+            emitter: 'ms-social',
+            emitterId: userId.value,
+            payload,
+            targetServices: [Streams.EVENT_SOCIAL_UNWISHED],
+          });
+        const eventQueueRepo =
+          new EventQueueRepository<SocialEventMessagingType.EVENT_SOCIAL_UNWISHED>(
+            this.eventQueueRepository,
+          );
+        await eventQueueRepo.create(eventQueueEntity);
+        this.logger.log(
+          `Successfully pushed EVENT_SOCIAL_UNWISHED event to outbox for user ${userId.value} -> event ${eventId.value}`,
+        );
+      } catch (eventError: unknown) {
+        this.logger.warn(
+          `Failed to push EVENT_SOCIAL_UNWISHED event to outbox: ${(eventError as Error).message}`,
+        );
+      }
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       this.logger.error(
