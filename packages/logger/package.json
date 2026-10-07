@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/logger",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -32,6 +32,9 @@
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
     "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0"
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",

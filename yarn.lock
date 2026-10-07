@@ -4409,6 +4409,7 @@ __metadata:
   resolution: "@volontariapp/logger@workspace:packages/logger"
   dependencies:
     "@jest/globals": "npm:^30.3.0"
+    "@opentelemetry/api": "npm:^1.9.0"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^25.5.2"
     "@volontariapp/testing": "workspace:*"

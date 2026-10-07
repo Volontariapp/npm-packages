@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.13.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.3.0
+  - @volontariapp/errors@0.6.3
+
 ## 0.13.2
 
 ### Patch Changes
