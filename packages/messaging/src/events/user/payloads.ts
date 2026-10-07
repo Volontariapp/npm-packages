@@ -8,6 +8,7 @@ export enum UserEventMessagingType {
   USER_BADGE_CREATED = 'user.badge_created',
   USER_BADGE_ICON_REPLACED = 'user.badge_icon_replaced',
   USER_BADGE_DELETED = 'user.badge_deleted',
+  USER_BADGE_AWARDED = 'user.badge_awarded',
   USER_CREATION_SUCCESSFULL = 'user.creation_successfull',
   USER_CREATION_FAILED = 'user.creation_failed',
   USER_DELETION_SUCCESSFULL = 'user.deletion_successfull',
@@ -22,6 +23,11 @@ export interface IBadgePayload {
   /** @deprecated Use `iconFileId`. */
   iconPath?: string;
   iconFileId?: string;
+}
+
+export interface IUserBadgeAwardedPayload {
+  userId: string;
+  badges: IBadgePayload[];
 }
 
 export interface IUserPayload {
