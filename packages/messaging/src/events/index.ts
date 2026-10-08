@@ -8,6 +8,7 @@ import type {
   IEventDeletionFailedPayload,
   IEventCreatedPayload,
   IEventDeletedPayload,
+  IEventFinishedPayload,
   IEventCoverReplacedPayload,
 } from './event/payloads.js';
 
@@ -81,6 +82,7 @@ export interface EventRegistry {
   [EventEventMessagingType.EVENT_CREATION_SUCCESSFULL]: IEventCreationSuccessfullPayload;
   [EventEventMessagingType.EVENT_CREATION_FAILED]: IEventCreationFailedPayload;
   [EventEventMessagingType.EVENT_DELETED]: IEventDeletedPayload;
+  [EventEventMessagingType.EVENT_FINISHED]: IEventFinishedPayload;
   [EventEventMessagingType.EVENT_COVER_REPLACED]: IEventCoverReplacedPayload;
   [EventEventMessagingType.EVENT_DELETION_FAILED]: IEventDeletionFailedPayload;
   [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: IEventDeletionSuccessfullPayload;

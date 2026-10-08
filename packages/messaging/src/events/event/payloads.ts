@@ -1,8 +1,10 @@
+import type { EventType } from '@volontariapp/contracts';
 import type { IEventIdPayload, IUserIdPayload } from '../index.js';
 
 export enum EventEventMessagingType {
   EVENT_CREATED = 'event.created',
   EVENT_DELETED = 'event.deleted',
+  EVENT_FINISHED = 'event.finished',
   EVENT_COVER_REPLACED = 'event.cover_replaced',
 
   EVENT_GEOCODED = 'event.geocoded',
@@ -35,6 +37,9 @@ export interface IEventCoverReplacedPayload extends IEventIdPayload, IUserIdPayl
   oldFileId?: string;
 }
 export interface IEventDeletedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
+export interface IEventFinishedPayload extends IEventIdPayload {
+  eventType: EventType;
+}
 
 export interface IEventGeocodedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 

@@ -8,9 +8,9 @@ import {
   INVALID_EVENT_STATE_TRANSITION,
   INVALID_DATE_PARAMETERS,
 } from '@volontariapp/errors-nest';
-import { isDatabaseDriverError, isBaseError } from '@volontariapp/errors';
+import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariapp/errors';
 import { EventState } from '@volontariapp/contracts';
-import { SagaStatus } from '@volontariapp/shared';
+import { SagaStatus, UserRoles } from '@volontariapp/shared';
 import type { IEventRepository } from '../repositories/interfaces/event.repository.js';
 import { PostgresEventRepository } from '../repositories/postgres-event.repository.js';
 import { EventEntity } from '../entities/event.entity.js';
@@ -131,24 +131,42 @@ export class EventService {
     }
   }
 
-  async changeState(id: string, state: EventState): Promise<EventEntity> {
+  async changeState(
+    id: string,
+    state: EventState,
+    actorId?: string,
+    actorRole?: UserRoles,
+  ): Promise<EventEntity> {
     try {
       const event = await this.findById(id);
+
+      if (actorId && actorRole !== UserRoles.ADMIN && event.organizerId !== actorId) {
+        throw new ForbiddenError('You are not the organizer of this event');
+      }
 
       if (event.state === state) {
         return event;
       }
 
+      if (event.state === EventState.EVENT_STATE_FINISHED) {
+        throw INVALID_EVENT_STATE_TRANSITION('FINISHED', String(state));
+      }
+
       if (
         event.state === EventState.EVENT_STATE_CANCELLED &&
-        state === EventState.EVENT_STATE_PUBLISHED
+        (state === EventState.EVENT_STATE_PUBLISHED || state === EventState.EVENT_STATE_FINISHED)
       ) {
-        throw INVALID_EVENT_STATE_TRANSITION('CANCELLED', 'PUBLISHED');
+        throw INVALID_EVENT_STATE_TRANSITION('CANCELLED', String(state));
       }
 
       this.logger.log(`Changing event state: ${id} -> ${String(state)}`);
-      const merged = Object.assign(new EventEntity(), event, { state });
-      const updated = await this.eventRepository.update(id, merged);
+      let updated: EventEntity | null;
+      if (state === EventState.EVENT_STATE_FINISHED) {
+        updated = await this.eventRepository.changeStateWithEventFinished(id, state);
+      } else {
+        const merged = Object.assign(new EventEntity(), event, { state });
+        updated = await this.eventRepository.update(id, merged);
+      }
       if (!updated) {
         throw EVENT_NOT_FOUND(id);
       }

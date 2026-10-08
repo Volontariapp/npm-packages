@@ -14,6 +14,7 @@ export enum EventStream {
   EVENT_TAGS = 'event:tags',
   EVENT_REQUIREMENTS = 'event:requirements',
   EVENT_SUCCESSFULLY_CREATED = 'event:successfully_created',
+  EVENT_FINISHED = 'event:finished',
 }
 
 export enum PostStream {
