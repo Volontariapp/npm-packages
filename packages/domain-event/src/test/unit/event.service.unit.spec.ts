@@ -1,6 +1,6 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { EventState } from '@volontariapp/contracts';
-import { SagaStatus } from '@volontariapp/shared';
+import { SagaStatus, UserRoles } from '@volontariapp/shared';
 import { EventService } from '../../services/event.service.js';
 import type { IEventRepository } from '../../repositories/interfaces/event.repository.js';
 import { EventFactory } from '../__test-utils__/factories/event.factory.js';
@@ -309,6 +309,86 @@ describe('EventService (Unit)', () => {
       expect(mockRepository.update).not.toHaveBeenCalled();
     });
 
+    it('should throw ForbiddenError when actor is not organizer and not admin', async () => {
+      // Arrange
+      const event = EventFactory.build({
+        id: 'evt-1',
+        organizerId: 'org-1',
+        state: EventState.EVENT_STATE_DRAFT,
+      });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
+
+      // Act + Assert
+      await expect(
+        service.changeState(
+          'evt-1',
+          EventState.EVENT_STATE_PUBLISHED,
+          'not-org-user',
+          UserRoles.VOLUNTEER,
+        ),
+      ).rejects.toMatchObject({
+        statusCode: 403,
+        message: 'You are not the organizer of this event',
+      });
+      expect(mockRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should allow changing state when actor is organizer', async () => {
+      // Arrange
+      const event = EventFactory.build({
+        id: 'evt-1',
+        organizerId: 'org-1',
+        state: EventState.EVENT_STATE_DRAFT,
+      });
+      const published = EventFactory.build({
+        id: 'evt-1',
+        organizerId: 'org-1',
+        state: EventState.EVENT_STATE_PUBLISHED,
+      });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
+      mockRepository.update.mockResolvedValue(published);
+
+      // Act
+      const result = await service.changeState(
+        'evt-1',
+        EventState.EVENT_STATE_PUBLISHED,
+        'org-1',
+        UserRoles.ORGANIZATION,
+      );
+
+      // Assert
+      expect(result.state).toBe(EventState.EVENT_STATE_PUBLISHED);
+      expect(mockRepository.update).toHaveBeenCalled();
+    });
+
+    it('should allow changing state when actor is ADMIN even if not organizer', async () => {
+      // Arrange
+      const event = EventFactory.build({
+        id: 'evt-1',
+        organizerId: 'org-1',
+        state: EventState.EVENT_STATE_DRAFT,
+      });
+      const published = EventFactory.build({
+        id: 'evt-1',
+        organizerId: 'org-1',
+        state: EventState.EVENT_STATE_PUBLISHED,
+      });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
+      mockRepository.update.mockResolvedValue(published);
+
+      // Act
+      const result = await service.changeState(
+        'evt-1',
+        EventState.EVENT_STATE_PUBLISHED,
+        'admin-user',
+        UserRoles.ADMIN,
+      );
+
+      // Assert
+      expect(result.state).toBe(EventState.EVENT_STATE_PUBLISHED);
+      expect(mockRepository.update).toHaveBeenCalled();
+    });
+
     it('should throw INVALID_EVENT_STATE_TRANSITION for CANCELLED → PUBLISHED', async () => {
       // Arrange
       const event = EventFactory.build({ id: 'evt-1', state: EventState.EVENT_STATE_CANCELLED });
@@ -357,6 +437,60 @@ describe('EventService (Unit)', () => {
 
       // Assert
       expect(result.state).toBe(EventState.EVENT_STATE_DRAFT);
+    });
+
+    it('should call changeStateWithEventFinished and return the event when transitioning to FINISHED', async () => {
+      // Arrange
+      const event = EventFactory.build({ id: 'evt-1', state: EventState.EVENT_STATE_IN_PROGRESS });
+      const finishedEvent = EventFactory.build({
+        id: 'evt-1',
+        state: EventState.EVENT_STATE_FINISHED,
+      });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
+      mockRepository.changeStateWithEventFinished.mockResolvedValue(finishedEvent);
+
+      // Act
+      const result = await service.changeState('evt-1', EventState.EVENT_STATE_FINISHED);
+
+      // Assert
+      expect(result.state).toBe(EventState.EVENT_STATE_FINISHED);
+      expect(mockRepository.changeStateWithEventFinished).toHaveBeenCalledWith(
+        'evt-1',
+        EventState.EVENT_STATE_FINISHED,
+      );
+      expect(mockRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should throw INVALID_EVENT_STATE_TRANSITION for FINISHED → any state', async () => {
+      // Arrange
+      const event = EventFactory.build({ id: 'evt-1', state: EventState.EVENT_STATE_FINISHED });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
+
+      // Act + Assert
+      await expect(
+        service.changeState('evt-1', EventState.EVENT_STATE_PUBLISHED),
+      ).rejects.toMatchObject({
+        code: 'INVALID_STATE_TRANSITION',
+        message: expect.stringContaining('FINISHED'),
+      });
+      expect(mockRepository.update).not.toHaveBeenCalled();
+      expect(mockRepository.changeStateWithEventFinished).not.toHaveBeenCalled();
+    });
+
+    it('should throw INVALID_EVENT_STATE_TRANSITION for CANCELLED → FINISHED', async () => {
+      // Arrange
+      const event = EventFactory.build({ id: 'evt-1', state: EventState.EVENT_STATE_CANCELLED });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
+
+      // Act + Assert
+      await expect(
+        service.changeState('evt-1', EventState.EVENT_STATE_FINISHED),
+      ).rejects.toMatchObject({
+        code: 'INVALID_STATE_TRANSITION',
+        message: expect.stringContaining('CANCELLED'),
+      });
+      expect(mockRepository.update).not.toHaveBeenCalled();
+      expect(mockRepository.changeStateWithEventFinished).not.toHaveBeenCalled();
     });
 
     it('should throw EVENT_NOT_FOUND when the event does not exist', async () => {

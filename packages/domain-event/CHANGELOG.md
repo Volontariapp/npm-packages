@@ -1,5 +1,30 @@
 # Changelog
 
+## 3.8.0
+
+### Minor Changes
+
+- Add event.finished event contracts, streams, badge progress models, and outbox emission for event finished badge flow.
+
+  - `@volontariapp/shared`: add `EVENT_FINISHED = 'event:finished'` to `EventStream` and `Streams`.
+  - `@volontariapp/messaging`:
+    - Add `EVENT_FINISHED = 'event.finished'` to `EventEventMessagingType`.
+    - Expose `IEventFinishedPayload` and register in `EventRegistry`.
+  - `@volontariapp/domain-user`:
+    - Add `BadgeProgressModel` (table `badge_progress` tracking `(user_id, metric, value)`).
+    - Add `BadgeProgressEventModel` (table `badge_progress_events` for deduplication `(event_id, user_id)`).
+  - `@volontariapp/domain-event`:
+    - Add `changeStateWithEventFinished` to `IEventRepository` and `PostgresEventRepository`.
+    - Update `EventService.changeState` to emit `event.finished` in outbox on transition to `EVENT_STATE_FINISHED` and reject transitions from `FINISHED`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.12.0
+  - @volontariapp/messaging@2.22.0
+  - @volontariapp/database@3.4.29
+  - @volontariapp/outbox@0.9.66
+
 ## 3.7.22
 
 ### Patch Changes

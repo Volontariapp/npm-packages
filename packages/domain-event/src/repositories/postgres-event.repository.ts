@@ -11,6 +11,7 @@ import {
   EventEventMessagingType,
   IEventCreatedPayload,
   IEventDeletedPayload,
+  IEventFinishedPayload,
 } from '@volontariapp/messaging';
 import { EventType, EventState } from '@volontariapp/contracts';
 import { PaginatedEventsVO } from '../value-objects/paginated-events.value-object.js';
@@ -108,6 +109,42 @@ export class PostgresEventRepository
       await eventQueueRepo.create(eventQueueEntity);
 
       return true;
+    });
+  }
+
+  async changeStateWithEventFinished(id: string, state: EventState): Promise<EventEntity | null> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const model = await queryRunner.manager.findOne(this.modelClass, { where: { id } });
+      const entity = model ? this.toEntity(model) : null;
+      if (!entity) return null;
+
+      entity.state = state;
+      const modelData = this.toModel(entity);
+      const updatedModel = await queryRunner.manager.save(this.modelClass, modelData);
+      const savedEntity = this.toEntity(updatedModel);
+
+      const payload: IEventFinishedPayload = {
+        eventId: savedEntity.id,
+        eventType: savedEntity.type,
+      };
+
+      const eventQueueEntity: EventQueueEntity<
+        EventEventMessagingType.EVENT_FINISHED,
+        IEventFinishedPayload
+      > = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_FINISHED>({
+        type: EventEventMessagingType.EVENT_FINISHED,
+        emitter: 'ms-event',
+        emitterId: savedEntity.organizerId,
+        payload,
+        targetServices: [Streams.EVENT_FINISHED],
+      });
+
+      const eventQueueRepo = new EventQueueRepository<EventEventMessagingType.EVENT_FINISHED>(
+        queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
+      );
+      await eventQueueRepo.create(eventQueueEntity);
+
+      return savedEntity;
     });
   }
 
