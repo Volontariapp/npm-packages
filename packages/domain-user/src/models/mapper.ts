@@ -1,4 +1,4 @@
-import { databaseMapper } from '@volontariapp/database';
+import { databaseMapper, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
 import { UserEntity } from '../entities/user.entity.js';
 import { UserModel } from './user.model.js';
 import { BadgeEntity } from '../entities/badge.entity.js';
@@ -35,4 +35,5 @@ export function registerUserMappings() {
     ],
   });
   databaseMapper.registerBidirectional(BadgeEntity, BadgeModel);
+  databaseMapper.registerBidirectional(EventQueueEntity, EventQueueModel);
 }
