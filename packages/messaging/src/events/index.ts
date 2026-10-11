@@ -10,6 +10,8 @@ import type {
   IEventDeletedPayload,
   IEventFinishedPayload,
   IEventCoverReplacedPayload,
+  IUserEventDeletedPayload,
+  IUserEventDeletionFailedPayload,
 } from './event/payloads.js';
 
 import { UserEventMessagingType } from './user/payloads.js';
@@ -61,6 +63,8 @@ import type {
   ICommentDeletedPayload,
   IPostLikedPayload,
   IPostUnlikedPayload,
+  IUserPostDeletedPayload,
+  IUserPostDeletionFailedPayload,
 } from './post/payloads.js';
 
 import { StorageEventMessagingType } from './storage/payloads.js';
@@ -68,6 +72,8 @@ import type {
   IFileScannedPayload,
   IFileRejectedPayload,
   IAttachmentRejectedPayload,
+  IUserStorageDeletedPayload,
+  IUserStorageDeletionFailedPayload,
 } from './storage/payloads.js';
 
 import { CommonEventMessagingType } from './common/payloads.js';
@@ -86,6 +92,8 @@ export interface EventRegistry {
   [EventEventMessagingType.EVENT_COVER_REPLACED]: IEventCoverReplacedPayload;
   [EventEventMessagingType.EVENT_DELETION_FAILED]: IEventDeletionFailedPayload;
   [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: IEventDeletionSuccessfullPayload;
+  [EventEventMessagingType.USER_EVENT_DELETED]: IUserEventDeletedPayload;
+  [EventEventMessagingType.USER_EVENT_DELETION_FAILED]: IUserEventDeletionFailedPayload;
 
   [EventEventMessagingType.EVENT_GEOCODED]: IEventGeocodedPayload;
   [EventEventMessagingType.EVENT_GEOCODING_FAILED]: IEventGeocodingFailedPayload;
@@ -164,11 +172,15 @@ export interface EventRegistry {
   [PostEventMessagingType.COMMENT_DELETED]: ICommentDeletedPayload;
   [PostEventMessagingType.POST_LIKED]: IPostLikedPayload;
   [PostEventMessagingType.POST_UNLIKED]: IPostUnlikedPayload;
+  [PostEventMessagingType.USER_POST_DELETED]: IUserPostDeletedPayload;
+  [PostEventMessagingType.USER_POST_DELETION_FAILED]: IUserPostDeletionFailedPayload;
 
   // Storage
   [StorageEventMessagingType.FILE_SCANNED]: IFileScannedPayload;
   [StorageEventMessagingType.FILE_REJECTED]: IFileRejectedPayload;
   [StorageEventMessagingType.ATTACHMENT_REJECTED]: IAttachmentRejectedPayload;
+  [StorageEventMessagingType.USER_STORAGE_DELETED]: IUserStorageDeletedPayload;
+  [StorageEventMessagingType.USER_STORAGE_DELETION_FAILED]: IUserStorageDeletionFailedPayload;
 
   // WS
 }

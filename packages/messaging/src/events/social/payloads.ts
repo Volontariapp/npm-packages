@@ -70,4 +70,6 @@ export interface IPostSocialDeletionFailedPayload
 export interface IUserSocialCreatedPayload extends Partial<IUserIdPayload> {}
 export interface IUserSocialCreationFailedPayload extends Partial<IUserIdPayload> {}
 export interface IUserSocialDeletedPayload extends Partial<IUserIdPayload> {}
-export interface IUserSocialDeletionFailedPayload extends Partial<IUserIdPayload> {}
+export interface IUserSocialDeletionFailedPayload extends Partial<IUserIdPayload> {
+  errorReason?: string;
+}

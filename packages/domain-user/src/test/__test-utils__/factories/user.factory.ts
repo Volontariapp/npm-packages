@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { UserEntity } from '../../../entities/user.entity.js';
 import { UserRoles } from '@volontariapp/shared';
+import { UserStatus } from '../../../entities/user-status.enum.js';
 
 export const generateRandomRna = (): string => {
   const digits = Math.random().toString().slice(2, 11);
@@ -19,6 +20,7 @@ export class UserFactory {
       bio: `Bio for user ${uid}`,
       role: UserRoles.VOLUNTEER,
       totalImpactScore: 0,
+      status: UserStatus.ACTIVE,
       badges: [],
       ...overrides,
     });
@@ -38,6 +40,7 @@ export class UserFactory {
       bio: `Bio for user ${uid}`,
       role: UserRoles.VOLUNTEER,
       totalImpactScore: 0,
+      status: UserStatus.ACTIVE,
       badges: [],
       ...overrides,
     };

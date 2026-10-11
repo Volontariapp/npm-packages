@@ -132,13 +132,22 @@ export class UserService {
     return updatedUser;
   }
 
-  async delete(id: UserId): Promise<void> {
-    const deleted = await this.db(`deleting user with id ${id.value}`, () =>
-      this.userRepository.delete(id.value),
+  async requestDeletion(id: UserId): Promise<void> {
+    const user = await this.db(`requesting deletion of user with id ${id.value}`, () =>
+      this.userRepository.requestDeletionWithUserDeleted(id.value),
     );
-    if (!deleted) {
+    if (!user) {
       this.logger.warn(`User with id ${id.value} not found for deletion`);
       throw USER_NOT_FOUND(id.value);
+    }
+  }
+
+  async finalizeDeletion(id: UserId): Promise<void> {
+    const deleted = await this.db(`finalizing deletion of user with id ${id.value}`, () =>
+      this.userRepository.finalizeDeletion(id.value),
+    );
+    if (!deleted) {
+      this.logger.warn(`User with id ${id.value} not pending deletion or already deleted`);
     }
   }
 

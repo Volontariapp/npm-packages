@@ -3,6 +3,9 @@ export enum UserStream {
   USER_JOB_OUTBOX_FAILURE = 'user:job:outbox:failure',
   USER_CREATED = 'user:created',
   USER_DELETED = 'user:deleted',
+  USER_DELETED_POST = 'user:deleted:post',
+  USER_DELETED_EVENT = 'user:deleted:event',
+  USER_DELETED_STORAGE = 'user:deleted:storage',
   USER_BADGE_AWARDED = 'user:badge_awarded',
 }
 

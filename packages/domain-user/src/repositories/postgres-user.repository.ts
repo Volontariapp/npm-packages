@@ -1,11 +1,16 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
-import { BaseRepository } from '@volontariapp/database';
+import { BaseRepository, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
+import { EventQueueRepository } from '@volontariapp/outbox';
+import { UserEventMessagingType } from '@volontariapp/messaging';
+import type { IUserDeleledPayload } from '@volontariapp/messaging';
+import { Streams } from '@volontariapp/shared';
 import type { DeepPartial } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { UserModel } from '../models/user.model.js';
 import { UserEntity } from '../entities/user.entity.js';
+import { UserStatus } from '../entities/user-status.enum.js';
 import { IUserRepository } from './interfaces/user.repository.js';
 import { encryptDeterministic, decrypt } from '@volontariapp/crypto';
 import { EMAIL_ENCRYPTION_SECRET } from '../constants.js';
@@ -74,6 +79,60 @@ export class PostgresUserRepository
       user: { id: userId },
       badge: { id: badgeId },
     });
+  }
+
+  /**
+   * Marks the user as PENDING_DELETION and writes `user.deleted` to the outbox in the same
+   * transaction. The row is only removed by `finalizeDeletion` once every domain has purged
+   * its data. Returns null when the user does not exist. When the user is already
+   * PENDING_DELETION nothing is written, so calling it twice never emits a second event.
+   */
+  async requestDeletionWithUserDeleted(id: string): Promise<UserEntity | null> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const model = await queryRunner.manager.findOne(this.modelClass, {
+        where: this.buildIdWhere(id),
+      });
+      if (!model) return null;
+
+      const entity = this.toEntity(model);
+      if (model.status === UserStatus.PENDING_DELETION) return entity;
+
+      model.status = UserStatus.PENDING_DELETION;
+      model.deletionRequestedAt = new Date();
+      await queryRunner.manager.save(this.modelClass, model);
+
+      const payload: IUserDeleledPayload = { id: model.id, role: entity.role };
+      const eventQueueEntity = EventQueueEntity.createEvent<UserEventMessagingType.USER_DELETED>({
+        type: UserEventMessagingType.USER_DELETED,
+        emitter: 'ms-user',
+        emitterId: model.id,
+        payload,
+        targetServices: [
+          Streams.USER_DELETED,
+          Streams.SOCIAL_USER,
+          Streams.USER_DELETED_POST,
+          Streams.USER_DELETED_EVENT,
+          Streams.USER_DELETED_STORAGE,
+        ],
+      });
+
+      const eventQueueRepo = new EventQueueRepository<UserEventMessagingType.USER_DELETED>(
+        queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
+      );
+      await eventQueueRepo.create(eventQueueEntity);
+
+      entity.status = UserStatus.PENDING_DELETION;
+      return entity;
+    });
+  }
+
+  /** Physically deletes the user, only when it is still PENDING_DELETION. */
+  async finalizeDeletion(id: string): Promise<boolean> {
+    const result = await this.repository.delete({
+      ...this.buildIdWhere(id),
+      status: UserStatus.PENDING_DELETION,
+    });
+    return (result.affected ?? 0) > 0;
   }
 
   async incrementImpactScore(userId: string, score: number): Promise<void> {
