@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import type { UserBadgeModel } from './user-badge.model.js';
+import { UserStatus } from '../entities/user-status.enum.js';
 
 @Entity('users')
 export class UserModel {
@@ -32,6 +33,12 @@ export class UserModel {
 
   @Column({ type: 'int', default: 0, name: 'total_impact_score' })
   totalImpactScore!: number;
+
+  @Column({ type: 'varchar', length: 32, default: UserStatus.ACTIVE })
+  status!: UserStatus;
+
+  @Column({ type: 'timestamptz', nullable: true, name: 'deletion_requested_at' })
+  deletionRequestedAt?: Date;
 
   @OneToMany('UserBadgeModel', 'user')
   userBadges!: UserBadgeModel[];

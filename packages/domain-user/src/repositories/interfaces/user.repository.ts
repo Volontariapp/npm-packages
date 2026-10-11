@@ -8,6 +8,8 @@ export interface IUserRepository {
   create(user: Partial<UserEntity>): Promise<UserEntity>;
   update(id: string, data: Partial<UserEntity>): Promise<UserEntity | null>;
   delete(id: string): Promise<boolean>;
+  requestDeletionWithUserDeleted(id: string): Promise<UserEntity | null>;
+  finalizeDeletion(id: string): Promise<boolean>;
   addBadgeToUser(userId: string, badgeId: string): Promise<void>;
   removeBadgeFromUser(userId: string, badgeId: string): Promise<void>;
   incrementImpactScore(userId: string, score: number): Promise<void>;

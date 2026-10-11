@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-post",
-  "version": "3.6.37",
+  "version": "3.6.38",
   "publishConfig": {
     "access": "public",
     "provenance": true

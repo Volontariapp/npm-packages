@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.23.0
+
+### Minor Changes
+
+- Add the contracts and domain support for two-step user account deletion (PENDING_DELETION).
+
+  - `@volontariapp/shared`: add `USER_DELETED_POST`, `USER_DELETED_EVENT` and `USER_DELETED_STORAGE` to `UserStream`, one fan-out stream per domain consuming `user.deleted`.
+  - `@volontariapp/messaging`:
+    - Add completion events `USER_POST_DELETED`, `USER_EVENT_DELETED`, `USER_STORAGE_DELETED` and their `*_DELETION_FAILED` counterparts, with payloads, registered in `EventRegistry`.
+    - Add optional `errorReason` to `IUserSocialDeletionFailedPayload`.
+  - `@volontariapp/domain-user`:
+    - Add `UserStatus` (`ACTIVE`, `PENDING_DELETION`), `UserModel.status` and `UserModel.deletionRequestedAt` (`deletion_requested_at`). A migration is required in `ms-user`.
+    - Add `requestDeletionWithUserDeleted` and `finalizeDeletion` to `IUserRepository` and `PostgresUserRepository`. The first marks the user and writes `user.deleted` to the outbox in one transaction, fanned out to the ws, social, post, event and storage streams.
+    - Breaking: `UserService.delete` is replaced by `UserService.requestDeletion` and `UserService.finalizeDeletion`. `IUserRepository.delete` is kept for the base repository but must no longer be used to delete an account.
+    - Add the `@volontariapp/outbox` dependency.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.13.0
+
 ## 2.22.0
 
 ### Minor Changes

@@ -4274,6 +4274,7 @@ __metadata:
     "@volontariapp/errors-nest": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/outbox": "workspace:*"
     "@volontariapp/shared": "workspace:*"
     "@volontariapp/testing": "workspace:*"
     reflect-metadata: "npm:^0.2.2"

@@ -17,6 +17,7 @@ import {
   ImpactScore,
 } from '../../value-objects/index.js';
 import { BadgeId } from '../../value-objects/index.js';
+import { UserStatus } from '../../entities/user-status.enum.js';
 
 describe('UserService (Unit)', () => {
   let service: UserService;
@@ -443,32 +444,32 @@ describe('UserService (Unit)', () => {
   });
 
   // ───────────────────────────────────────────────────────────────────────────
-  // delete()
+  // requestDeletion()
   // ───────────────────────────────────────────────────────────────────────────
-  describe('delete()', () => {
-    describe('HAPPY PATH: User deleted', () => {
-      it('should delete user when found', async () => {
+  describe('requestDeletion()', () => {
+    describe('HAPPY PATH: Deletion requested', () => {
+      it('should mark the user as pending deletion when found', async () => {
         // ARRANGE
-        mockRepository.delete.mockResolvedValue(true);
+        mockRepository.requestDeletionWithUserDeleted.mockResolvedValue(
+          UserFactory.build({ id: 'user-123', status: UserStatus.PENDING_DELETION }),
+        );
 
         // ACT
-        await service.delete(new UserId('user-123'));
+        await service.requestDeletion(new UserId('user-123'));
 
         // ASSERT
-        expect(
-          mockRepository.delete.mock.calls[mockRepository.delete.mock.calls.length - 1],
-        ).toEqual(['user-123']);
-        expect(mockRepository.delete.mock.calls).toHaveLength(1);
+        expect(mockRepository.requestDeletionWithUserDeleted.mock.calls).toEqual([['user-123']]);
+        expect(mockRepository.delete.mock.calls).toHaveLength(0);
       });
     });
 
     describe('SAD PATH: User not found', () => {
       it('should throw NOT_FOUND when user does not exist', async () => {
         // ARRANGE
-        mockRepository.delete.mockResolvedValue(false);
+        mockRepository.requestDeletionWithUserDeleted.mockResolvedValue(null);
 
         // ACT & ASSERT
-        const error = await service.delete(new UserId('missing')).catch((e: unknown) => e);
+        const error = await service.requestDeletion(new UserId('missing')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('NOT_FOUND');
         expect((error as Record<string, unknown>).message).toContain('missing');
         expect(loggerWarnSpy).toHaveBeenCalled();
@@ -478,13 +479,52 @@ describe('UserService (Unit)', () => {
     describe('ERROR HANDLING: Database failures', () => {
       it('should throw DATABASE_ERROR when repository fails', async () => {
         // ARRANGE
-        mockRepository.delete.mockRejectedValue(new Error('Delete constraint violation'));
+        mockRepository.requestDeletionWithUserDeleted.mockRejectedValue(
+          new Error('Transaction failed'),
+        );
 
         // ACT & ASSERT
-        const error = await service.delete(new UserId('user-1')).catch((e: unknown) => e);
+        const error = await service.requestDeletion(new UserId('user-1')).catch((e: unknown) => e);
         expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
         expect(loggerErrorSpy).toHaveBeenCalled();
       });
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // finalizeDeletion()
+  // ───────────────────────────────────────────────────────────────────────────
+  describe('finalizeDeletion()', () => {
+    it('should physically delete the pending user', async () => {
+      // ARRANGE
+      mockRepository.finalizeDeletion.mockResolvedValue(true);
+
+      // ACT
+      await service.finalizeDeletion(new UserId('user-123'));
+
+      // ASSERT
+      expect(mockRepository.finalizeDeletion.mock.calls).toEqual([['user-123']]);
+    });
+
+    it('should be idempotent when the user is already gone', async () => {
+      // ARRANGE
+      mockRepository.finalizeDeletion.mockResolvedValue(false);
+
+      // ACT
+      await service.finalizeDeletion(new UserId('user-123'));
+
+      // ASSERT
+      expect(loggerWarnSpy).toHaveBeenCalled();
+    });
+
+    it('should throw DATABASE_ERROR when repository fails', async () => {
+      // ARRANGE
+      mockRepository.finalizeDeletion.mockRejectedValue(new Error('Delete failed'));
+
+      // ACT & ASSERT
+      const error = await service.finalizeDeletion(new UserId('user-1')).catch((e: unknown) => e);
+      expect((error as Record<string, unknown>).code).toBe('DATABASE_ERROR');
+      expect(loggerErrorSpy).toHaveBeenCalled();
     });
   });
 

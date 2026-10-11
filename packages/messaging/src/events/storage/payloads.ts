@@ -1,7 +1,11 @@
+import type { IUserIdPayload } from '../index.js';
+
 export enum StorageEventMessagingType {
   FILE_SCANNED = 'storage.file_scanned',
   FILE_REJECTED = 'storage.file_rejected',
   ATTACHMENT_REJECTED = 'storage.attachment_rejected',
+  USER_STORAGE_DELETED = 'user_storage.deleted',
+  USER_STORAGE_DELETION_FAILED = 'user_storage.deletion_failed',
 }
 
 /**
@@ -59,4 +63,9 @@ export interface IFileRejectedPayload extends IFileScannedPayload {
 
 export interface IAttachmentRejectedPayload extends IStorageFileEntityPayload {
   reason: StorageAttachmentRejectionReason;
+}
+
+export interface IUserStorageDeletedPayload extends IUserIdPayload {}
+export interface IUserStorageDeletionFailedPayload extends IUserIdPayload {
+  errorReason?: string;
 }

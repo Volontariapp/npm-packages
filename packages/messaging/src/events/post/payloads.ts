@@ -18,6 +18,8 @@ export enum PostEventMessagingType {
   COMMENT_DELETED = 'post.comment.deleted',
   POST_LIKED = 'post.liked',
   POST_UNLIKED = 'post.unliked',
+  USER_POST_DELETED = 'user_post.deleted',
+  USER_POST_DELETION_FAILED = 'user_post.deletion_failed',
 }
 
 export interface IPostCreatedPayload
@@ -30,30 +32,26 @@ export interface IPostCreatedPayload
 
 export interface IPostDeletedPayload extends IPostIdPayload, Partial<IUserIdPayload> {}
 
-export interface IPostCreationSuccessfullPayload
-  extends IPostIdPayload,
-    Partial<IUserIdPayload> {}
+export interface IPostCreationSuccessfullPayload extends IPostIdPayload, Partial<IUserIdPayload> {}
 
-export interface IPostCreationFailedPayload
-  extends IPostIdPayload,
-    Partial<IUserIdPayload> {
+export interface IPostCreationFailedPayload extends IPostIdPayload, Partial<IUserIdPayload> {
   failedEvents?: string[];
   errorReason?: string;
 }
 
-export interface IPostDeletionSuccessfullPayload
-  extends IPostIdPayload,
-    Partial<IUserIdPayload> {}
+export interface IPostDeletionSuccessfullPayload extends IPostIdPayload, Partial<IUserIdPayload> {}
 
-export interface IPostDeletionFailedPayload
-  extends IPostIdPayload,
-    Partial<IUserIdPayload> {
+export interface IPostDeletionFailedPayload extends IPostIdPayload, Partial<IUserIdPayload> {
   failedEvents?: string[];
   errorReason?: string;
 }
 
 export interface IPostEventDeletedSuccessPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 export interface IPostEventDeletedFailedPayload extends IEventIdPayload, Partial<IUserIdPayload> {
+  errorReason?: string;
+}
+export interface IUserPostDeletedPayload extends IUserIdPayload {}
+export interface IUserPostDeletionFailedPayload extends IUserIdPayload {
   errorReason?: string;
 }
 export interface ICommentCreatedPayload

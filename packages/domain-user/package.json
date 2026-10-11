@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-user",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -47,6 +47,7 @@
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
+    "@volontariapp/outbox": "workspace:*",
     "@volontariapp/shared": "workspace:*"
   },
   "devDependencies": {

@@ -6,6 +6,8 @@ export enum EventEventMessagingType {
   EVENT_DELETED = 'event.deleted',
   EVENT_FINISHED = 'event.finished',
   EVENT_COVER_REPLACED = 'event.cover_replaced',
+  USER_EVENT_DELETED = 'user_event.deleted',
+  USER_EVENT_DELETION_FAILED = 'user_event.deletion_failed',
 
   EVENT_GEOCODED = 'event.geocoded',
   EVENT_GEOCODING_FAILED = 'event.geocoding_failed',
@@ -37,6 +39,11 @@ export interface IEventCoverReplacedPayload extends IEventIdPayload, IUserIdPayl
   oldFileId?: string;
 }
 export interface IEventDeletedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
+
+export interface IUserEventDeletedPayload extends IUserIdPayload {}
+export interface IUserEventDeletionFailedPayload extends IUserIdPayload {
+  errorReason?: string;
+}
 export interface IEventFinishedPayload extends IEventIdPayload {
   eventType: EventType;
 }

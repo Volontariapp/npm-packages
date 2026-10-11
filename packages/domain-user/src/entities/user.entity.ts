@@ -1,6 +1,7 @@
 import { INVALID_RNA } from '@volontariapp/errors-nest';
 import type { BadgeEntity } from './badge.entity.js';
 import { UserRoles } from '@volontariapp/shared';
+import { UserStatus } from './user-status.enum.js';
 
 const ADJECTIVES = ['Green', 'Social', 'Eco', 'Solidary', 'Active', 'Bright', 'Kind', 'Wild'];
 const NOUNS = ['Hero', 'Leaf', 'Heart', 'Action', 'Seed', 'Root', 'Planet', 'Citizen'];
@@ -23,6 +24,8 @@ export class UserEntity {
   totalImpactScore!: number;
   badges!: BadgeEntity[];
   passwordHash?: string;
+  status!: UserStatus;
+  deletionRequestedAt?: Date;
 
   static isValidRna(rna?: string): boolean {
     if (rna == null) return true;
@@ -35,6 +38,7 @@ export class UserEntity {
     Object.assign(user, data);
     user.badges = data.badges ?? [];
     user.totalImpactScore = data.totalImpactScore ?? 0;
+    user.status = data.status ?? UserStatus.ACTIVE;
     if (user.rna != null) {
       if (!UserEntity.isValidRna(user.rna)) {
         throw INVALID_RNA(user.rna);
