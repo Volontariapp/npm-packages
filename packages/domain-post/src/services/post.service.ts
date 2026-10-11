@@ -172,4 +172,18 @@ export class PostService {
       throw DATABASE_ERROR(`deleting posts for author: ${authorId}`, err.message);
     }
   }
+
+  async purgePostsByAuthor(authorId: string): Promise<number> {
+    try {
+      this.logger.log(`Purging all posts for author: ${authorId}`);
+      const affectedCount = await this.postRepository.purgePostsByAuthor(authorId);
+      this.logger.log(`Successfully purged ${String(affectedCount)} posts for author: ${authorId}`);
+      return affectedCount;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to purge posts for author: ${authorId}`, err);
+      throw DATABASE_ERROR(`purging posts for author: ${authorId}`, err.message);
+    }
+  }
 }

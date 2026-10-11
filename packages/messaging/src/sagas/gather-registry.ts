@@ -48,8 +48,8 @@ export const SAGA_GATHER_COMPLETION_MAPPING: Record<SagaGatherType, IGatherCompl
     wsEvent: WebsocketMessagingType.USER_CREATED,
   },
   [SagaGatherType.USER_DELETION]: {
-    targetEvent: EventMessagingType.USER_DELETED,
-    stream: Streams.USER_DELETED,
+    targetEvent: EventMessagingType.USER_DELETION_SUCCESSFULL,
+    stream: Streams.USER_DELETION_SUCCESS,
     wsEvent: WebsocketMessagingType.USER_DELETED,
   },
 } as const;

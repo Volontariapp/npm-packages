@@ -4,6 +4,7 @@ import type { Repository } from '@volontariapp/database';
 import {
   BaseRepository,
   ILike,
+  In,
   PaginatedResult,
   EventQueueEntity,
   EventQueueModel,
@@ -15,7 +16,7 @@ import {
   IPostCreatedPayload,
   IPostDeletedPayload,
 } from '@volontariapp/messaging';
-import { PostModel } from '../models/index.js';
+import { PostModel, CommentModel } from '../models/index.js';
 import { PostEntity } from '../entities/index.js';
 import { IPostRepository } from './interfaces/index.js';
 
@@ -131,6 +132,21 @@ export class PostgresPostRepository
       await eventQueueRepo.create(eventQueueEntity);
 
       return true;
+    });
+  }
+
+  async purgePostsByAuthor(authorId: string): Promise<number> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const posts = await queryRunner.manager.find(this.modelClass, {
+        where: { authorId },
+        select: ['id'],
+      });
+      const postIds = posts.map((p) => p.id);
+      if (postIds.length > 0) {
+        await queryRunner.manager.delete(CommentModel, { postId: In(postIds) });
+        await queryRunner.manager.delete(this.modelClass, { authorId });
+      }
+      return postIds.length;
     });
   }
 }

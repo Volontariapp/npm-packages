@@ -37,6 +37,15 @@ describe('SagaGatherRegistry', () => {
     });
   });
 
+  it('should return valid completion config for USER_DELETION', () => {
+    const config = getGatherCompletionConfig(SagaGatherType.USER_DELETION);
+    expect(config).toEqual({
+      targetEvent: EventMessagingType.USER_DELETION_SUCCESSFULL,
+      stream: Streams.USER_DELETION_SUCCESS,
+      wsEvent: WebsocketMessagingType.USER_DELETED,
+    });
+  });
+
   it('should throw an error if an invalid gather type is requested', () => {
     expect(() => getGatherCompletionConfig('INVALID_GATHER' as never)).toThrow(
       '[Messaging] No completion config found for saga gather type: INVALID_GATHER',

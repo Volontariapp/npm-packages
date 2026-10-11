@@ -194,6 +194,18 @@ export class EventService {
     }
   }
 
+  async deleteAllByOrganizer(organizerId: string): Promise<number> {
+    try {
+      this.logger.log(`Deleting all events for organizer: ${organizerId}`);
+      return await this.eventRepository.deleteAllByOrganizerWithEventDeleted(organizerId);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to delete all events for organizer: ${organizerId}`, err);
+      throw DATABASE_ERROR(`deleting events for organizer: ${organizerId}`, err.message);
+    }
+  }
+
   async search(searchTerm: string): Promise<EventEntity[]> {
     try {
       this.logger.debug(`Searching events with term: ${searchTerm}`);

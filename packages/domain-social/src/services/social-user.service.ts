@@ -61,4 +61,16 @@ export class SocialUserService {
       throw DATABASE_ERROR('checking social user existence', (error as Error).message);
     }
   }
+
+  async purgeUser(userId: UserId): Promise<void> {
+    const entity = SocialUserMapper.toEntity(userId);
+    try {
+      this.logger.log(`Purging social user node: ${userId.value}`);
+      await this.repository.purgeUser(entity);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to purge social user node: ${userId.value}`, error as Error);
+      throw DATABASE_ERROR('purging social user node', (error as Error).message);
+    }
+  }
 }

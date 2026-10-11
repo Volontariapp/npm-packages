@@ -313,4 +313,25 @@ describe('PostService (Unit)', () => {
       });
     });
   });
+
+  // ─── purgePostsByAuthor ───────────────────────────────────────────────────
+
+  describe('purgePostsByAuthor()', () => {
+    it('should return count of purged posts', async () => {
+      const purgeSpy = jest.spyOn(mockRepository, 'purgePostsByAuthor').mockResolvedValue(3);
+
+      const result = await service.purgePostsByAuthor('author-1');
+
+      expect(result).toBe(3);
+      expect(purgeSpy).toHaveBeenCalledWith('author-1');
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest.spyOn(mockRepository, 'purgePostsByAuthor').mockRejectedValue(new Error('DB error'));
+
+      await expect(service.purgePostsByAuthor('author-1')).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
 });

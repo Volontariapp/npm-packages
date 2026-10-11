@@ -165,4 +165,19 @@ describe('Domain Storage Unit Tests', () => {
       expect(exc.message).toContain('POST');
     });
   });
+
+  describe('markFilesForDeletionByOwner', () => {
+    it('should delegate to releaseForOwner with ownerId', async () => {
+      const fakeRepo = {
+        releaseForOwner: (input: { ownerId: string }) =>
+          Promise.resolve([`file-for-${input.ownerId}`]),
+        markFilesForDeletionByOwner: async (ownerId: string) => {
+          return fakeRepo.releaseForOwner({ ownerId });
+        },
+      };
+
+      const result = await fakeRepo.markFilesForDeletionByOwner('owner-123');
+      expect(result).toEqual(['file-for-owner-123']);
+    });
+  });
 });

@@ -4,4 +4,5 @@ export interface ISocialUserRepository {
   createNode(entity: SocialUserEntity): Promise<void>;
   deleteNode(entity: SocialUserEntity): Promise<void>;
   exists(entity: SocialUserEntity): Promise<boolean>;
+  purgeUser(entity: SocialUserEntity): Promise<void>;
 }

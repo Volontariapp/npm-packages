@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- Domain purge and completion contract updates for two-step user account deletion:
+  - shared: export DELETED_USER_ID sentinel (UUID v4) and USER_DELETION_SUCCESS completion stream in UserStream.
+  - messaging: reference USER_DELETION_SUCCESS and USER_DELETION_SUCCESSFULL in SAGA_GATHER_COMPLETION_MAPPING.USER_DELETION.
+  - domain-social: add idempotent purgeUser to ISocialUserRepository, Neo4jSocialUserRepository, and SocialUserService.
+  - domain-post: add purgePostsByAuthor to IPostRepository/PostgresPostRepository/PostService, anonymizeCommentsByAuthor to ICommentRepository/PostgresCommentRepository/CommentService, and export DELETED_COMMENT_PLACEHOLDER.
+  - domain-event: add deleteAllByOrganizerWithEventDeleted to IEventRepository/PostgresEventRepository and deleteAllByOrganizer to EventService with event.deleted outbox re-emission.
+  - domain-storage: add markFilesForDeletionByOwner to IFileRepository and PostgresFileRepository.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.23.1
+  - @volontariapp/database@3.4.31
+  - @volontariapp/outbox@0.9.68
+
 ## 0.10.6
 
 ### Patch Changes

@@ -17,4 +17,5 @@ export interface IPostRepository {
     limit: number,
     authorId?: string,
   ): Promise<PaginatedResult<PostEntity>>;
+  purgePostsByAuthor(authorId: string): Promise<number>;
 }
