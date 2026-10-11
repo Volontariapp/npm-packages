@@ -139,4 +139,40 @@ describe('SocialUserService (Unit)', () => {
       });
     });
   });
+
+  // ─── purgeUser ───────────────────────────────────────────────────────────
+
+  describe('purgeUser()', () => {
+    it('should call repository.purgeUser with the entity', async () => {
+      const userId = UserIdFactory.build('user-1');
+      const entity = SocialUserFactory.build({ userId: 'user-1' });
+      const purgeSpy = jest.spyOn(mockRepository, 'purgeUser').mockResolvedValue(undefined);
+
+      await service.purgeUser(userId);
+
+      expect(purgeSpy).toHaveBeenCalledWith(entity);
+    });
+
+    it('should rethrow a BaseError without wrapping', async () => {
+      const userId = UserIdFactory.build('user-1');
+      jest.spyOn(mockRepository, 'purgeUser').mockRejectedValue({
+        code: 'DATABASE_QUERY_ERROR',
+        isBaseError: true,
+      });
+
+      await expect(service.purgeUser(userId)).rejects.toMatchObject({
+        code: 'DATABASE_QUERY_ERROR',
+        isBaseError: true,
+      });
+    });
+
+    it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      const userId = UserIdFactory.build('user-1');
+      jest.spyOn(mockRepository, 'purgeUser').mockRejectedValue(new Error('Cypher error'));
+
+      await expect(service.purgeUser(userId)).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
 });

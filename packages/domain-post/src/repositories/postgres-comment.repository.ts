@@ -8,12 +8,13 @@ import {
   EventQueueModel,
 } from '@volontariapp/database';
 import { EventQueueRepository } from '@volontariapp/outbox';
-import { Streams } from '@volontariapp/shared';
+import { Streams, DELETED_USER_ID } from '@volontariapp/shared';
 import {
   PostEventMessagingType,
   ICommentCreatedPayload,
   ICommentDeletedPayload,
 } from '@volontariapp/messaging';
+import { DELETED_COMMENT_PLACEHOLDER } from '../constants/index.js';
 import { CommentModel } from '../models/index.js';
 import { CommentEntity } from '../entities/index.js';
 import { ICommentRepository } from './interfaces/index.js';
@@ -106,5 +107,16 @@ export class PostgresCommentRepository
 
       return true;
     });
+  }
+
+  async anonymizeCommentsByAuthor(authorId: string): Promise<number> {
+    const result = await super.updateWhere(
+      { authorId },
+      {
+        authorId: DELETED_USER_ID,
+        content: DELETED_COMMENT_PLACEHOLDER,
+      },
+    );
+    return result.affected ?? 0;
   }
 }

@@ -99,4 +99,20 @@ export class CommentService {
       throw DATABASE_ERROR('deleting comment', err.message);
     }
   }
+
+  async anonymizeCommentsByAuthor(authorId: string): Promise<number> {
+    try {
+      this.logger.log(`Anonymizing all comments for author: ${authorId}`);
+      const affectedCount = await this.commentRepository.anonymizeCommentsByAuthor(authorId);
+      this.logger.log(
+        `Successfully anonymized ${String(affectedCount)} comments for author: ${authorId}`,
+      );
+      return affectedCount;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to anonymize comments for author: ${authorId}`, err);
+      throw DATABASE_ERROR('anonymizing comments', err.message);
+    }
+  }
 }

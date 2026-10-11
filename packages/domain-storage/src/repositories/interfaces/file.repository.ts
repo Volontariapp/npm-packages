@@ -69,4 +69,8 @@ export interface IFileRepository {
    * owner to `ORPHANED`, except the platform resources (`BADGE_ICON`). Returns the released ids.
    */
   releaseForOwner(input: ReleaseForOwnerInput): Promise<string[]>;
+  /**
+   * Alias for account deletion: releases all files belonging to ownerId.
+   */
+  markFilesForDeletionByOwner(ownerId: string): Promise<string[]>;
 }

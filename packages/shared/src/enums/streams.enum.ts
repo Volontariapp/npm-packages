@@ -6,6 +6,7 @@ export enum UserStream {
   USER_DELETED_POST = 'user:deleted:post',
   USER_DELETED_EVENT = 'user:deleted:event',
   USER_DELETED_STORAGE = 'user:deleted:storage',
+  USER_DELETION_SUCCESS = 'user:deletion:success',
   USER_BADGE_AWARDED = 'user:badge_awarded',
 }
 

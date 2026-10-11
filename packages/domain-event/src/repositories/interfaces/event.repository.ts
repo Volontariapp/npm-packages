@@ -12,6 +12,7 @@ export interface IEventRepository {
   changeStateWithEventFinished(id: string, state: EventState): Promise<EventEntity | null>;
   delete(id: string): Promise<boolean>;
   deleteWithEventDeleted(id: string): Promise<boolean>;
+  deleteAllByOrganizerWithEventDeleted(organizerId: string): Promise<number>;
   search(searchTerm: string): Promise<EventEntity[]>;
   findAroundMe(
     lat: number,

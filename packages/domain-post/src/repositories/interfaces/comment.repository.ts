@@ -13,4 +13,5 @@ export interface ICommentRepository {
     page: number,
     limit: number,
   ): Promise<PaginatedResult<CommentEntity>>;
+  anonymizeCommentsByAuthor(authorId: string): Promise<number>;
 }

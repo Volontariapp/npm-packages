@@ -57,4 +57,29 @@ describe('CommentService (Unit)', () => {
       });
     });
   });
+
+  // ─── anonymizeCommentsByAuthor ───────────────────────────────────────────
+
+  describe('anonymizeCommentsByAuthor()', () => {
+    it('should call repository.anonymizeCommentsByAuthor and return count', async () => {
+      const anonymizeSpy = jest
+        .spyOn(mockCommentRepository, 'anonymizeCommentsByAuthor')
+        .mockResolvedValue(5);
+
+      const result = await service.anonymizeCommentsByAuthor('author-1');
+
+      expect(result).toBe(5);
+      expect(anonymizeSpy).toHaveBeenCalledWith('author-1');
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest
+        .spyOn(mockCommentRepository, 'anonymizeCommentsByAuthor')
+        .mockRejectedValue(new Error('DB failure'));
+
+      await expect(service.anonymizeCommentsByAuthor('author-1')).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
 });

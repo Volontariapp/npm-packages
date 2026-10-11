@@ -112,6 +112,42 @@ export class PostgresEventRepository
     });
   }
 
+  async deleteAllByOrganizerWithEventDeleted(organizerId: string): Promise<number> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const models = await queryRunner.manager.find(this.modelClass, {
+        where: { organizerId },
+      });
+      if (models.length === 0) return 0;
+
+      await queryRunner.manager.delete(this.modelClass, { organizerId });
+
+      const eventQueueRepo = new EventQueueRepository<EventEventMessagingType.EVENT_DELETED>(
+        queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
+      );
+
+      for (const model of models) {
+        const payload: IEventDeletedPayload = {
+          eventId: model.id,
+        };
+
+        const eventQueueEntity: EventQueueEntity<
+          EventEventMessagingType.EVENT_DELETED,
+          IEventDeletedPayload
+        > = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_DELETED>({
+          type: EventEventMessagingType.EVENT_DELETED,
+          emitter: 'ms-event',
+          emitterId: organizerId,
+          payload,
+          targetServices: [Streams.EVENT_DELETED],
+        });
+
+        await eventQueueRepo.create(eventQueueEntity);
+      }
+
+      return models.length;
+    });
+  }
+
   async changeStateWithEventFinished(id: string, state: EventState): Promise<EventEntity | null> {
     return this.executeInTransaction(async (queryRunner) => {
       const model = await queryRunner.manager.findOne(this.modelClass, { where: { id } });

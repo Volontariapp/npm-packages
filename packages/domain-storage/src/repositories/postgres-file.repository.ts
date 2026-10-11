@@ -648,6 +648,13 @@ export class PostgresFileRepository
   }
 
   /**
+   * Alias for account deletion: releases all files belonging to ownerId.
+   */
+  async markFilesForDeletionByOwner(ownerId: string): Promise<string[]> {
+    return this.releaseForOwner({ ownerId });
+  }
+
+  /**
    * Serialises the confirmation and the release of one entity (doc 11 P1): without it, the
    * attachment can read `released_entities` before the commit of a concurrent release, and attach
    * a file to a released entity. Held until the end of the transaction.

@@ -40,4 +40,19 @@ export class Neo4jSocialUserRepository
     );
     return result !== null;
   }
+
+  async purgeUser(entity: SocialUserEntity): Promise<void> {
+    const model = SocialUserMapper.toModel(entity);
+    await this.write(
+      `MATCH (u:SocialUser {userId: $userId})
+       OPTIONAL MATCH (u)-[:OWN]->(p:SocialPost)
+       DETACH DELETE p
+       WITH DISTINCT u
+       OPTIONAL MATCH (u)-[:CREATED]->(e:SocialEvent)
+       DETACH DELETE e
+       WITH DISTINCT u
+       DETACH DELETE u`,
+      { userId: model.id.value },
+    );
+  }
 }

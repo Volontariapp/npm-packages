@@ -585,6 +585,29 @@ describe('EventService (Unit)', () => {
     });
   });
 
+  // ─── deleteAllByOrganizer ────────────────────────────────────────────────
+
+  describe('deleteAllByOrganizer()', () => {
+    it('should call repository.deleteAllByOrganizerWithEventDeleted and return count', async () => {
+      mockRepository.deleteAllByOrganizerWithEventDeleted.mockResolvedValue(4);
+
+      const result = await service.deleteAllByOrganizer('org-1');
+
+      expect(result).toBe(4);
+      expect(mockRepository.deleteAllByOrganizerWithEventDeleted).toHaveBeenCalledWith('org-1');
+    });
+
+    it('should throw DATABASE_ERROR when repository throws', async () => {
+      mockRepository.deleteAllByOrganizerWithEventDeleted.mockRejectedValue(
+        new Error('Batch delete failed'),
+      );
+
+      await expect(service.deleteAllByOrganizer('org-1')).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
+    });
+  });
+
   // ─── search ───────────────────────────────────────────────────────────────
 
   describe('search()', () => {
