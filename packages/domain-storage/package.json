@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-storage",
-  "version": "0.11.4",
+  "version": "0.11.5",
   "publishConfig": {
     "access": "public",
     "provenance": true

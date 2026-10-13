@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.4.0
+
+### Minor Changes
+
+- Restore the trace context of an asynchronous step. `BaseWorker.process`, `SinglePostProcessor` and `BatchPostProcessor` now extract the `traceparent` carried by the job or the event and run the handler in a child span (`job <type>` / `event <type>`, attributes `type`, `emitter`, `correlation_id`). A batch gets one span per message, in the trace of its own message, plus a batch span linked to them. Adds `runInTraceContext` and `runBatchInTraceContext` to `@volontariapp/database`. A message without a `traceparent` starts a new trace.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.8.0
+  - @volontariapp/outbox@0.10.2
+
 ## 1.3.40
 
 ### Patch Changes

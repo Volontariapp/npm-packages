@@ -4,7 +4,7 @@ import { hostname } from 'node:os';
 import type { Job, RedisClient } from 'bullmq';
 import type { JobMessagingType, JobRegistry, JobEnvelope } from '@volontariapp/messaging';
 import type { JobAuditRepository } from '../data/index.js';
-import { JobAuditStatus } from '@volontariapp/database';
+import { JobAuditStatus, runInTraceContext } from '@volontariapp/database';
 
 export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost {
   protected readonly logger = new Logger({ context: this.constructor.name });
@@ -22,7 +22,23 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
     return job.data.payload;
   }
 
+  /**
+   * Runs the job inside a span that is a child of the trace carried by the job
+   * envelope (`traceparent`), so the job joins the trace of the request that
+   * enqueued it. Jobs enqueued before the field existed start a new trace.
+   */
   async process(job: Job<JobEnvelope<JobRegistry[K]>, void, K>, _token?: string): Promise<void> {
+    await runInTraceContext(
+      {
+        traceparent: job.data.traceparent,
+        name: `job ${job.name}`,
+        attributes: { type: job.name, emitter: job.data.emitter },
+      },
+      () => this.processWithAudit(job),
+    );
+  }
+
+  private async processWithAudit(job: Job<JobEnvelope<JobRegistry[K]>, void, K>): Promise<void> {
     this.logger.info('Processing job', {
       jobId: job.id,
       type: job.name,

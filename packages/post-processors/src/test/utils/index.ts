@@ -12,3 +12,4 @@ export * from './helpers/push-db-event.helper.js';
 export * from './classes/test-job-outbox-success.post-processor.class.js';
 export * from './classes/test-job-outbox-failed.post-processor.class.js';
 export * from './factories/job-outbox-event.factory.js';
+export * from './helpers/trace-recorder.helper.js';

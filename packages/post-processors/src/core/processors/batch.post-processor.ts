@@ -3,6 +3,7 @@ import type { EventMessagingType, EventRegistry, StreamEvent } from '@volontaria
 import type { RedisStreamEntry, ExtractPayload, ParseResult } from '../../types/index.js';
 import type { BatchEventItem } from '../../interfaces/index.js';
 import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
+import { runBatchInTraceContext } from '@volontariapp/database';
 
 export abstract class BatchPostProcessor<
   EventType extends EventMessagingType,
@@ -117,7 +118,19 @@ export abstract class BatchPostProcessor<
   ): Promise<void> {
     try {
       this.logger.info('Processing batch of events', { count: items.length });
-      await this.processEvents(items);
+      await runBatchInTraceContext(
+        `batch ${this.options.groupName}`,
+        items.map(({ event }) => ({
+          traceparent: event.traceparent,
+          name: `event ${event.type}`,
+          attributes: {
+            type: event.type,
+            emitter: event.emitter,
+            correlation_id: event.correlationId,
+          },
+        })),
+        () => this.processEvents(items),
+      );
       this.circuitBreaker.recordSuccess();
 
       // Successfully processed - clear retry data and acknowledge all
