@@ -11,6 +11,7 @@ import type {
   GetUserParticipateEventQuery,
   GetUserWishEventQuery,
 } from '@volontariapp/contracts';
+import type { UserRoles } from '@volontariapp/shared';
 
 export enum EventsJobType {
   PUBLISH_EVENT = 'events.publish_event',
@@ -64,7 +65,10 @@ export interface IFallbackChangeEventStateJobPayload
 export interface IFallbackManageRequirementsJobPayload
   extends IEventFallbackJobPayload<ManageRequirementCommand> {}
 export interface IFallbackDeleteEventJobPayload
-  extends IEventFallbackJobPayload<DeleteEventCommand> {}
+  extends IEventFallbackJobPayload<DeleteEventCommand> {
+  /** Role of the requesting user, so that a replay re-checks event ownership. */
+  userRole: UserRoles;
+}
 export interface IFallbackCreateTagJobPayload extends IEventFallbackJobPayload<CreateTagCommand> {}
 export interface IFallbackUpdateTagJobPayload extends IEventFallbackJobPayload<UpdateTagCommand> {}
 export interface IFallbackDeleteTagJobPayload extends IEventFallbackJobPayload<DeleteTagCommand> {}
