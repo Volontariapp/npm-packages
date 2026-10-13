@@ -3,27 +3,31 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
-import { resourceFromAttributes } from '@opentelemetry/resources';
-import { Logger } from '@volontariapp/logger';
-
-const logger = new Logger({ context: 'Monitoring', format: 'json' });
+import { resolveEnvironment } from './environment.js';
+import { buildResource } from './resource.js';
+import { createSampler, resolveSampleRatio } from './sampling.js';
+import { registerGracefulShutdown } from './shutdown.js';
 
 export interface TracingOptions {
   serviceName: string;
   serviceVersion?: string;
   exporterUrl?: string;
   metricExportIntervalMs?: number;
+  /** Ratio of root traces kept, between 0 and 1. Defaults to `OTEL_TRACES_SAMPLER_ARG`, then 1. */
+  sampleRatio?: number;
+  /** Environment name (`prod`, `staging`...). Defaults to `DD_ENV`; the attribute is omitted if neither is set. */
+  environment?: string;
 }
 
 export function initTracing(options: TracingOptions): NodeSDK {
   const exporterUrl =
     options.exporterUrl ?? process.env['OTEL_EXPORTER_OTLP_ENDPOINT'] ?? 'http://localhost:4317';
 
-  const resource = resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: options.serviceName,
-    [ATTR_SERVICE_VERSION]: options.serviceVersion ?? '0.0.1',
-  });
+  const resource = buildResource(
+    options.serviceName,
+    options.serviceVersion,
+    resolveEnvironment(options.environment),
+  );
 
   const traceExporter = new OTLPTraceExporter({ url: exporterUrl });
 
@@ -34,6 +38,7 @@ export function initTracing(options: TracingOptions): NodeSDK {
 
   const sdk = new NodeSDK({
     resource,
+    sampler: createSampler(resolveSampleRatio(options.sampleRatio)),
     traceExporter,
     metricReader,
     instrumentations: [
@@ -46,14 +51,7 @@ export function initTracing(options: TracingOptions): NodeSDK {
 
   sdk.start();
 
-  process.on('SIGTERM', () => {
-    sdk
-      .shutdown()
-      .catch((err: unknown) => {
-        logger.error('OTel SDK shutdown error', err);
-      })
-      .finally(() => process.exit(0));
-  });
+  registerGracefulShutdown(sdk);
 
   return sdk;
 }
