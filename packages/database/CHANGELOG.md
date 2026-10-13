@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.0
+
+### Minor Changes
+
+- Add `traceparent` (required, `''` when there is no trace context) to `GatherStateMetadata` (jsonb `gather_state.metadata`, no migration), so a gather completion event can replay the trace context of the trigger event. Code that builds a `GatherStateMetadata` must now provide it; rows stored before this change lack it at runtime.
+
 ## 3.6.0
 
 ### Minor Changes
