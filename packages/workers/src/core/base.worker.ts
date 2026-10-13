@@ -160,7 +160,8 @@ export abstract class BaseWorker<K extends JobMessagingType> extends WorkerHost 
           jobType: job.name,
           status: JobAuditStatus.PROCESSING,
           workerId: this.workerId,
-          emitter: job.data.emitter,
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          emitter: job.data?.emitter ?? 'unknown',
           currentAttempt: job.attemptsMade + 1,
           startedAt,
         },

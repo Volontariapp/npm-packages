@@ -8,6 +8,7 @@ export function makeJobAuditModel(overrides?: Partial<JobAuditModel>): JobAuditM
   model.jobType = 'SEND_WELCOME_EMAIL';
   model.status = JobAuditStatus.COMPLETED;
   model.workerId = 'worker-1';
+  model.emitter = 'ms-test';
   model.currentAttempt = 1;
 
   if (overrides) {

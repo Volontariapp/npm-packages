@@ -299,6 +299,7 @@ describe('Outbox to Worker E2E Flow — Integration', () => {
       jobType: 'SEND_WELCOME_EMAIL',
       status: JobAuditStatus.COMPLETED,
       workerId: 'previous-worker',
+      emitter: 'database-tests',
       currentAttempt: 1,
       startedAt: new Date(),
       finishedAt: new Date(),

@@ -1,11 +1,41 @@
 import { DataSource } from 'typeorm';
-import { JobAuditModel, JobsOutboxModel } from '@volontariapp/database';
-import { InitialSchemaJobAudit1778328780881 } from './migrations/1778328780881-InitialSchemaJobAudit.js';
-import { CreateJobsOutbox1776783577425 } from './migrations/1776783577425-CreateJobsOutbox.js';
-import { AddEmitterToJobAudit1779115200000 } from './migrations/1779115200000-AddEmitterToJobAudit.js';
-import { AddEmitterIdToOutbox1779542033290 } from './migrations/1779542033290-AddEmitterIdToOutbox.js';
+import { EventQueueModel, JobAuditModel, JobsOutboxModel } from '@volontariapp/database';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { readdirSync } from 'fs';
 
-import { EventQueueModel } from '@volontariapp/database';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const loadMigrations = async (): Promise<Array<() => void>> => {
+  const migrations: Array<() => void> = [];
+  const migrationsDir = join(__dirname, 'migrations');
+
+  const addDir = async (dirPath: string) => {
+    const entries = readdirSync(dirPath, { withFileTypes: true });
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+
+    for (const entry of entries) {
+      const fullPath = join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        await addDir(fullPath);
+      } else if (
+        (entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) ||
+        entry.name.endsWith('.js')
+      ) {
+        const mod = (await import(fullPath)) as Record<string, unknown>;
+        for (const key of Object.keys(mod)) {
+          if (typeof mod[key] === 'function') {
+            migrations.push(mod[key] as () => void);
+          }
+        }
+      }
+    }
+  };
+
+  await addDir(migrationsDir);
+  return migrations;
+};
 
 export const testDataSource = new DataSource({
   type: 'postgres',
@@ -15,17 +45,12 @@ export const testDataSource = new DataSource({
   password: 'testpassword',
   database: 'volontariapp_test',
   entities: [JobAuditModel, JobsOutboxModel, EventQueueModel],
-  migrations: [
-    CreateJobsOutbox1776783577425,
-    InitialSchemaJobAudit1778328780881,
-    AddEmitterToJobAudit1779115200000,
-    AddEmitterIdToOutbox1779542033290,
-  ],
+  migrations: await loadMigrations(),
   synchronize: false,
   logging: false,
 });
 
-export const initializeTestDb = async () => {
+export const initializeTestDb = async (): Promise<void> => {
   if (!testDataSource.isInitialized) {
     await testDataSource.initialize();
     const queryRunner = testDataSource.createQueryRunner();
@@ -38,7 +63,7 @@ export const initializeTestDb = async () => {
   }
 };
 
-export const closeTestDb = async () => {
+export const closeTestDb = async (): Promise<void> => {
   if (testDataSource.isInitialized) {
     await testDataSource.destroy();
   }
