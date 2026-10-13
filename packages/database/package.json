@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/database",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -55,6 +55,8 @@
   "devDependencies": {
     "@jest/globals": "^30.3.0",
     "@opentelemetry/core": "^2.6.1",
+    "@opentelemetry/sdk-trace-base": "^2.7.1",
+    "@opentelemetry/sdk-trace-node": "^2.7.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/pg": "^8",

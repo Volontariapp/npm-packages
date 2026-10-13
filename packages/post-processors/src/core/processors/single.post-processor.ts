@@ -7,6 +7,7 @@ import type {
 } from '@volontariapp/messaging';
 import type { ParseResult, RedisStreamEntry } from '../../types/index.js';
 import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
+import { runInTraceContext } from '@volontariapp/database';
 
 type ExtractPayload<T> = T extends EventChangedPayload<infer P> ? P : T;
 
@@ -90,7 +91,18 @@ export abstract class SinglePostProcessor<
 
       this.logger.info('Processing event', { messageId: id, eventId: event.id, type: event.type });
 
-      await this.processEvent(event, id);
+      await runInTraceContext(
+        {
+          traceparent: event.traceparent,
+          name: `event ${event.type}`,
+          attributes: {
+            type: event.type,
+            emitter: event.emitter,
+            correlation_id: event.correlationId,
+          },
+        },
+        () => this.processEvent(event, id),
+      );
       this.circuitBreaker.recordSuccess();
 
       await this.retryHelper.clearRetryData(this.redis, this.options.groupName, id);
