@@ -179,9 +179,17 @@ export class EventService {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, actorId: string, actorRole: UserRoles): Promise<void> {
     try {
       this.logger.log(`Deleting event: ${id}`);
+
+      if (actorRole !== UserRoles.ADMIN) {
+        const event = await this.findById(id);
+        if (event.organizerId !== actorId) {
+          throw new ForbiddenError('You are not the organizer of this event');
+        }
+      }
+
       const deleted = await this.eventRepository.deleteWithEventDeleted(id);
       if (!deleted) {
         throw EVENT_NOT_FOUND(id);
