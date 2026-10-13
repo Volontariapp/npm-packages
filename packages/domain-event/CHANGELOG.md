@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.10.0
+
+### Minor Changes
+
+- EventService.delete now enforces ownership: it takes `actorId` and `actorRole` (both required) and throws ForbiddenError unless the actor is the event organizer or an ADMIN. Callers must pass the authenticated user identity.
+
 ## 3.9.0
 
 ### Minor Changes

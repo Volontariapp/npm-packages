@@ -556,14 +556,44 @@ describe('EventService (Unit)', () => {
   // ─── delete ───────────────────────────────────────────────────────────────
 
   describe('delete()', () => {
-    it('should find and delete the event successfully', async () => {
+    it('should throw ForbiddenError and not delete when actor is not organizer and not admin', async () => {
       // Arrange
+      const event = EventFactory.build({ id: 'evt-1', organizerId: 'org-1' });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
+
+      // Act + Assert
+      await expect(
+        service.delete('evt-1', 'not-org-user', UserRoles.VOLUNTEER),
+      ).rejects.toMatchObject({
+        statusCode: 403,
+        message: 'You are not the organizer of this event',
+      });
+      expect(mockRepository.deleteWithEventDeleted).not.toHaveBeenCalled();
+    });
+
+    it('should delete the event when actor is the organizer', async () => {
+      // Arrange
+      const event = EventFactory.build({ id: 'evt-1', organizerId: 'org-1' });
+      jest.spyOn(service, 'findById').mockResolvedValue(event);
       mockRepository.deleteWithEventDeleted.mockResolvedValue(true);
 
       // Act
-      await service.delete('evt-1');
+      await service.delete('evt-1', 'org-1', UserRoles.ORGANIZATION);
 
       // Assert
+      expect(mockRepository.deleteWithEventDeleted).toHaveBeenCalledWith('evt-1');
+    });
+
+    it('should delete the event of another organizer when actor is admin', async () => {
+      // Arrange
+      const findByIdSpy = jest.spyOn(service, 'findById');
+      mockRepository.deleteWithEventDeleted.mockResolvedValue(true);
+
+      // Act
+      await service.delete('evt-1', 'admin-1', UserRoles.ADMIN);
+
+      // Assert
+      expect(findByIdSpy).not.toHaveBeenCalled();
       expect(mockRepository.deleteWithEventDeleted).toHaveBeenCalledWith('evt-1');
     });
 
@@ -572,8 +602,21 @@ describe('EventService (Unit)', () => {
       mockRepository.deleteWithEventDeleted.mockResolvedValue(false);
 
       // Act + Assert
-      await expect(service.delete('missing')).rejects.toMatchObject({ code: 'NOT_FOUND' });
+      await expect(service.delete('missing', 'admin-1', UserRoles.ADMIN)).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
       expect(mockRepository.deleteWithEventDeleted).toHaveBeenCalledWith('missing');
+    });
+
+    it('should throw EVENT_NOT_FOUND without deleting when a non-admin targets a missing event', async () => {
+      // Arrange
+      mockRepository.findById.mockResolvedValue(null);
+
+      // Act + Assert
+      await expect(service.delete('missing', 'user-1', UserRoles.VOLUNTEER)).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+      expect(mockRepository.deleteWithEventDeleted).not.toHaveBeenCalled();
     });
 
     it('should throw DATABASE_ERROR when repository.delete throws', async () => {
@@ -581,7 +624,9 @@ describe('EventService (Unit)', () => {
       mockRepository.deleteWithEventDeleted.mockRejectedValue(new Error('Delete failed'));
 
       // Act + Assert
-      await expect(service.delete('evt-1')).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+      await expect(service.delete('evt-1', 'admin-1', UserRoles.ADMIN)).rejects.toMatchObject({
+        code: 'DATABASE_ERROR',
+      });
     });
   });
 
