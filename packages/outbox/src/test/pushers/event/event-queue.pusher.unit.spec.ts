@@ -229,14 +229,14 @@ describe('EventQueuePusher (Unit)', () => {
       expect(event.traceparent).toBe(TRACEPARENT);
     });
 
-    it('should push an empty traceparent field and omit it from the JSON when absent', async () => {
+    it('should always write the traceparent, as an empty string when absent', async () => {
       // Act
       const xaddArgs = await pushAndGetXaddArgs(undefined);
 
       // Assert
       expect(xaddArgs[xaddArgs.indexOf('traceparent') + 1]).toBe('');
       const event = JSON.parse(xaddArgs[xaddArgs.length - 1] as string) as Record<string, unknown>;
-      expect(event.traceparent).toBeUndefined();
+      expect(event.traceparent).toBe('');
     });
   });
 

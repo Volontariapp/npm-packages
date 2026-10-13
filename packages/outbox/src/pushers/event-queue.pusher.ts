@@ -1,4 +1,4 @@
-import { OutboxPusher, normalizeTraceparent, type EventQueueEntity } from '@volontariapp/database';
+import { OutboxPusher, type EventQueueEntity } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
 import type { Redis } from 'ioredis';
 
@@ -41,7 +41,7 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
       emitterId,
       correlationId,
       traceId,
-      traceparent: normalizeTraceparent(traceparent),
+      traceparent: traceparent ?? '',
       version,
       payload: {
         before: payload.before,
@@ -103,7 +103,7 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
         'traceId',
         fields.traceId,
         'traceparent',
-        fields.traceparent ?? '',
+        fields.traceparent,
         'version',
         fields.version,
         'createdAt',

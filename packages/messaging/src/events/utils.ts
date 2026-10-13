@@ -10,8 +10,12 @@ export interface RedisEventMessage<T = unknown> {
   emitterId: string;
   correlationId: string;
   traceId?: string;
-  /** W3C trace context captured when the event was created. */
-  traceparent?: string;
+  /**
+   * W3C trace context captured when the event was created. Always present on
+   * messages written by the pusher; an empty string means no trace context.
+   * Messages already in a stream before this field existed lack it at runtime.
+   */
+  traceparent: string;
   version: number;
   payload: {
     before?: T;
@@ -31,8 +35,8 @@ export interface RedisEventStreamFields {
   emitterId: string;
   correlationId: string;
   traceId: string;
-  /** Empty string when the event was created without an active span. Optional for messages written before this field existed. */
-  traceparent?: string;
+  /** Empty string when the event was created without an active span. */
+  traceparent: string;
   version: string;
   createdAt: string;
   payload: string; // JSON string of { before?: P, after: P }

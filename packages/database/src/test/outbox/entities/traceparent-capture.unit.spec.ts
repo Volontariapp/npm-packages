@@ -83,9 +83,71 @@ describe('traceparent capture (Unit)', () => {
       expect(normalizeTraceparent(null)).toBeUndefined();
     });
 
+    it('should turn the empty string of the stream wire format into undefined', () => {
+      expect(normalizeTraceparent('')).toBeUndefined();
+    });
+
     it('should keep undefined and string values unchanged', () => {
       expect(normalizeTraceparent(undefined)).toBeUndefined();
       expect(normalizeTraceparent(SAMPLED_TRACEPARENT)).toBe(SAMPLED_TRACEPARENT);
+    });
+  });
+
+  describe('EventQueueEntity.createFollowUp', () => {
+    const makeProps = () => ({
+      type: 'user.badge_awarded',
+      emitter: 'post-processor-user',
+      emitterId: EMITTER_ID,
+      payload: { id: 'user-1' },
+      targetServices: [],
+    });
+
+    const CORRELATION_ID = '9f8c1a52-3d2e-4b8a-9c11-0d6a7e5b4c33';
+
+    it('should copy traceId, traceparent and correlationId from the source event', () => {
+      // Arrange
+      withoutActiveSpan();
+      const source = {
+        correlationId: CORRELATION_ID,
+        traceId: '0b1c2d3e-4f50-4162-8374-95a6b7c8d9e0',
+        traceparent: EXPLICIT_TRACEPARENT,
+      };
+
+      // Act
+      const entity = EventQueueEntity.createFollowUp(source, makeProps());
+
+      // Assert
+      expect(entity.correlationId).toBe(CORRELATION_ID);
+      expect(entity.traceId).toBe(source.traceId);
+      expect(entity.traceparent).toBe(EXPLICIT_TRACEPARENT);
+    });
+
+    it('should not replace the source traceparent with the active span of the consumer', () => {
+      // Arrange
+      withActiveSpan();
+
+      // Act
+      const entity = EventQueueEntity.createFollowUp(
+        { correlationId: CORRELATION_ID, traceparent: EXPLICIT_TRACEPARENT },
+        makeProps(),
+      );
+
+      // Assert
+      expect(entity.traceparent).toBe(EXPLICIT_TRACEPARENT);
+    });
+
+    it('should store no traceparent when the source message had none', () => {
+      // Arrange
+      withoutActiveSpan();
+
+      // Act
+      const entity = EventQueueEntity.createFollowUp(
+        { correlationId: CORRELATION_ID, traceparent: '' },
+        makeProps(),
+      );
+
+      // Assert
+      expect(entity.traceparent).toBeUndefined();
     });
   });
 

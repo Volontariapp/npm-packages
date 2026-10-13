@@ -51,6 +51,7 @@ export function makeTestEvent(id: string): StreamEvent<IEventCreatedPayload> {
     emitter: 'test-emitter',
     emitterId: '00000000-0000-0000-0000-000000000000',
     correlationId: randomUUID(),
+    traceparent: '',
     version: 1,
     payload: {
       after: {

@@ -14,10 +14,11 @@ export function captureTraceparent(): string | undefined {
 }
 
 /**
- * A nullable column is read back from Postgres as `null`, not `undefined`.
- * Pushers use this so a missing trace context never leaks as `null` into a
- * Redis Stream message or a BullMQ job envelope.
+ * "No trace context" has three spellings: `undefined` (not set), `null` (a
+ * nullable column read back from Postgres) and `''` (the Redis Stream wire
+ * format). This maps all of them to `undefined`, so a missing trace context
+ * never leaks as `null` into a BullMQ envelope or as `''` into a NULL column.
  */
 export function normalizeTraceparent(value: string | null | undefined): string | undefined {
-  return value ?? undefined;
+  return value === null || value === undefined || value === '' ? undefined : value;
 }

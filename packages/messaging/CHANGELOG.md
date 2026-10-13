@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- Capture the active OpenTelemetry context into `traceparent` when an outbox row is created (`EventQueueEntity.createEvent`, `JobsOutboxEntity.createJob`), and carry it in Redis Stream fields / event JSON and in the BullMQ job envelope. Adds `captureTraceparent` and `normalizeTraceparent`, and optional `traceparent` on `JobEnvelope`, `RedisEventMessage` and `RedisEventStreamFields`. Without an active span the field stays empty.
+- Capture the active OpenTelemetry context into `traceparent` when an outbox row is created (`EventQueueEntity.createEvent`, `JobsOutboxEntity.createJob`), and carry it in Redis Stream fields / event JSON and in the BullMQ job envelope. Adds `captureTraceparent`, `normalizeTraceparent` and `EventQueueEntity.createFollowUp`, which copies `traceId`, `traceparent` and `correlationId` from the consumed event. `traceparent` is optional on `JobEnvelope` but required on `RedisEventMessage` and `RedisEventStreamFields` (empty string when there is no trace context): code that builds these types must now provide it. Messages already in a stream may lack it at runtime. Without an active span the field stays empty.
 
 ## 2.24.0
 
