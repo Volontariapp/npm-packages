@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.6.0
+
+### Minor Changes
+
+- Capture the active OpenTelemetry context into `traceparent` when an outbox row is created (`EventQueueEntity.createEvent`, `JobsOutboxEntity.createJob`), and carry it in Redis Stream fields / event JSON and in the BullMQ job envelope. Adds `captureTraceparent` and `normalizeTraceparent`, and optional `traceparent` on `JobEnvelope`, `RedisEventMessage` and `RedisEventStreamFields`. Without an active span the field stays empty.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.25.0
+
 ## 3.5.0
 
 ### Minor Changes

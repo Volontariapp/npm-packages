@@ -3,6 +3,7 @@ import { OutboxEntity } from './outbox.entity.js';
 import { randomUUID } from 'crypto';
 import type { JobType } from '../types/job.type.js';
 import { OutboxStatus } from '../index.js';
+import { captureTraceparent } from '../utils/capture-traceparent.js';
 
 export class JobsOutboxEntity<
   K extends JobType = JobType,
@@ -19,6 +20,7 @@ export class JobsOutboxEntity<
     emitter: string;
     emitterId: string;
     traceId?: string;
+    traceparent?: string;
     target: string;
     payload: JobPayload<K>;
     scheduledAt?: Date;
@@ -29,6 +31,7 @@ export class JobsOutboxEntity<
     entity.emitter = props.emitter;
     entity.emitterId = props.emitterId;
     entity.traceId = props.traceId;
+    entity.traceparent = props.traceparent ?? captureTraceparent();
     entity.target = props.target;
     entity.payload = props.payload;
     entity.scheduledAt = props.scheduledAt;

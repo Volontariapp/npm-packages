@@ -1,4 +1,4 @@
-import { OutboxPusher, type EventQueueEntity } from '@volontariapp/database';
+import { OutboxPusher, normalizeTraceparent, type EventQueueEntity } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
 import type { Redis } from 'ioredis';
 
@@ -21,8 +21,18 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
   }
 
   private formatMessage<K extends string, P>(entity: EventQueueEntity<K, P>): string {
-    const { id, type, emitter, emitterId, correlationId, traceId, version, payload, createdAt } =
-      entity;
+    const {
+      id,
+      type,
+      emitter,
+      emitterId,
+      correlationId,
+      traceId,
+      traceparent,
+      version,
+      payload,
+      createdAt,
+    } = entity;
 
     const message: RedisEventMessage<P> = {
       id,
@@ -31,6 +41,7 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
       emitterId,
       correlationId,
       traceId,
+      traceparent: normalizeTraceparent(traceparent),
       version,
       payload: {
         before: payload.before,
@@ -51,6 +62,7 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
       emitterId: entity.emitterId,
       correlationId: entity.correlationId,
       traceId: entity.traceId ?? '',
+      traceparent: entity.traceparent ?? '',
       version: entity.version.toString(),
       createdAt: entity.createdAt.toISOString(),
       payload: JSON.stringify(entity.payload),
@@ -90,6 +102,8 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
         fields.correlationId,
         'traceId',
         fields.traceId,
+        'traceparent',
+        fields.traceparent ?? '',
         'version',
         fields.version,
         'createdAt',

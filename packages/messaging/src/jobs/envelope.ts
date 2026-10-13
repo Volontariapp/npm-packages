@@ -10,4 +10,6 @@ export interface JobEnvelope<T> {
   payload: T;
   emitter: string;
   emitterId: string;
+  /** W3C trace context captured when the job was created. Absent without an active span. */
+  traceparent?: string;
 }

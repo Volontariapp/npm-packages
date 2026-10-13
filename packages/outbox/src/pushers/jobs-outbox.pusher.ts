@@ -1,5 +1,5 @@
 import { Queue, type JobsOptions } from 'bullmq';
-import { OutboxPusher, type JobsOutboxEntity } from '@volontariapp/database';
+import { OutboxPusher, normalizeTraceparent, type JobsOutboxEntity } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
 import type { Redis } from 'ioredis';
 import type { JobEnvelope } from '@volontariapp/messaging';
@@ -54,6 +54,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
         payload: entity.payload,
         emitter: entity.emitter,
         emitterId: entity.emitterId,
+        traceparent: normalizeTraceparent(entity.traceparent),
       };
 
       await queue.add(entity.type, envelope, jobOptions);
@@ -95,6 +96,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
                 payload: entity.payload,
                 emitter: entity.emitter,
                 emitterId: entity.emitterId,
+                traceparent: normalizeTraceparent(entity.traceparent),
               } as JobEnvelope<typeof entity.payload>,
               opts: jobOptions,
             };

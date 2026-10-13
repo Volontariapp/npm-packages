@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/database",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -40,6 +40,7 @@
     "db:down": "docker-compose -f ../../docker-compose.test.yml down"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
     "@volontariapp/bridge": "workspace:*",
     "@volontariapp/config": "workspace:*",
     "@volontariapp/errors": "workspace:*",
@@ -53,6 +54,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "@opentelemetry/core": "^2.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/pg": "^8",

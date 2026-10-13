@@ -90,6 +90,50 @@ describe('OutboxRunner — Jobs (Integration)', () => {
     }
   });
 
+  it('should carry the stored traceparent into the BullMQ job envelope', async () => {
+    // Arrange
+    const jobId = '00000000-0000-0000-0001-000000000102';
+    const target = 'runner-test-queue-traceparent';
+    const traceparent = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+    await modelRepo.save(
+      modelRepo.create({
+        id: jobId,
+        type: 'user.process',
+        emitter: 'ms-user',
+        emitterId: '00000000-0000-0000-0000-000000000000',
+        target,
+        traceparent,
+        status: OutboxStatus.PENDING,
+        payload: { userId: 'u-job-trace' },
+        attempts: 0,
+        scheduledAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as Partial<JobsOutboxModel>),
+    );
+
+    const harness = new JobOutboxRunnerHarness(testRepo, redis, logger);
+
+    // Act
+    harness.start();
+    await waitForStatus(modelRepo, [jobId], OutboxStatus.COMPLETED);
+    await harness.stop();
+
+    // Assert
+    const queue = new Queue(target, { connection: testRedisOptions });
+    try {
+      const job = await queue.getJob(jobId);
+      expect(job?.data).toEqual({
+        emitter: 'ms-user',
+        emitterId: '00000000-0000-0000-0000-000000000000',
+        payload: { userId: 'u-job-trace' },
+        traceparent,
+      });
+    } finally {
+      await queue.close();
+    }
+  });
+
   it('should process multiple jobs targeting different BullMQ queues', async () => {
     // Arrange
     const targets = ['queue-alpha', 'queue-beta', 'queue-gamma'];

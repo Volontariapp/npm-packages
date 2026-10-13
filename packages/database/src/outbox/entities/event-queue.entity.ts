@@ -4,6 +4,7 @@ import type { EventType } from '../types/event.type.js';
 import type { Streams } from '@volontariapp/shared';
 import { randomUUID } from 'crypto';
 import { OutboxStatus } from '../types/outbox.status.js';
+import { captureTraceparent } from '../utils/capture-traceparent.js';
 
 export class EventQueueEntity<
   K extends EventType = EventType,
@@ -27,6 +28,7 @@ export class EventQueueEntity<
     emitter: string;
     emitterId: string;
     traceId?: string;
+    traceparent?: string;
     correlationId?: string;
     payload: EventPayload<K>;
     targetServices: Streams[];
@@ -37,6 +39,7 @@ export class EventQueueEntity<
     entity.emitter = props.emitter;
     entity.emitterId = props.emitterId;
     entity.traceId = props.traceId;
+    entity.traceparent = props.traceparent ?? captureTraceparent();
     entity.correlationId = props.correlationId ?? randomUUID();
     entity.payload = { after: props.payload };
     entity.targetServices = props.targetServices;

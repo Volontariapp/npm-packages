@@ -7,6 +7,7 @@ export * from './entities/index.js';
 export * from './interfaces/index.js';
 export * from './models/index.js';
 export * from './types/index.js';
+export * from './utils/index.js';
 export * from './writers/index.js';
 export * from './dispatchers/index.js';
 export * from './pushers/index.js';
