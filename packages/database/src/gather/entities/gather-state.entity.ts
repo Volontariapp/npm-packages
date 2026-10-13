@@ -1,10 +1,12 @@
 import { BaseEntity } from '../../core/base.entity.js';
-import { GatherEventState } from '../types/gather-event-state.interface.js';
+import type { GatherEventState } from '../types/gather-event-state.interface.js';
 import type { EventMessagingType, EventRegistry } from '@volontariapp/messaging';
 
 export class GatherStateMetadata<TKey extends EventMessagingType = EventMessagingType> {
   emitterId?: string;
   traceId?: string;
+  /** W3C trace context of the trigger event, replayed on the completion event. Stored in the jsonb column. */
+  traceparent?: string;
   payload?: EventRegistry[TKey];
 }
 

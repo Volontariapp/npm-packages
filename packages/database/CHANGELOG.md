@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.0
+
+### Minor Changes
+
+- Add optional `traceparent` to `GatherStateMetadata` (jsonb `gather_state.metadata`, no migration), so a gather completion event can replay the trace context of the trigger event.
+
 ## 3.6.0
 
 ### Minor Changes
