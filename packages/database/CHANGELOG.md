@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.0
+
+### Minor Changes
+
+- Add nullable `traceparent` (varchar(55), W3C trace context) to `OutboxModel` and its interfaces, shared by `jobs_outbox` and `event_queue`. `traceId` is kept for compatibility.
+
 ## 3.4.32
 
 ### Patch Changes

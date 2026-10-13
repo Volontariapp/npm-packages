@@ -12,6 +12,7 @@ export interface IOutboxEntity<T extends OutboxType> {
   updatedAt?: Date;
   createdAt: Date;
   traceId?: string;
+  traceparent?: string;
 }
 export interface IOutboxModel<T extends OutboxType> {
   id: string;
@@ -24,4 +25,5 @@ export interface IOutboxModel<T extends OutboxType> {
   updatedAt?: Date;
   createdAt: Date;
   traceId?: string;
+  traceparent?: string;
 }
