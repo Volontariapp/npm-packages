@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+### Minor Changes
+
+- `initTracing`: configurable sampling (`ParentBased(TraceIdRatioBased)`, option `sampleRatio` or `OTEL_TRACES_SAMPLER_ARG`, default 1), `deployment.environment` resource attribute (option `environment` or `DD_ENV`, omitted when unset), and a SIGTERM handler that flushes the SDK without `process.exit(0)`, so NestJS shutdown hooks can finish. When no other SIGTERM listener exists the signal is sent again after the flush, so the process still exits.
+
 ## 2.1.8
 
 ### Patch Changes
