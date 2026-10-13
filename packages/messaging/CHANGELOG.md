@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.24.0
+
+### Minor Changes
+
+- IFallbackDeleteEventJobPayload now carries a required `userRole` so that a replayed FALLBACK_DELETE_EVENT job can re-check event ownership through EventService.delete(id, actorId, actorRole). Producers must set it; consumers must reject jobs that lack it.
+
 ## 2.23.1
 
 ### Patch Changes
