@@ -4,6 +4,8 @@ import type { EventType } from '../types/event.type.js';
 import type { Streams } from '@volontariapp/shared';
 import { randomUUID } from 'crypto';
 import { OutboxStatus } from '../types/outbox.status.js';
+import { captureTraceparent, normalizeTraceparent } from '../utils/capture-traceparent.js';
+import type { EventTraceContext } from '../interfaces/outbox.interfaces.js';
 
 export class EventQueueEntity<
   K extends EventType = EventType,
@@ -27,6 +29,7 @@ export class EventQueueEntity<
     emitter: string;
     emitterId: string;
     traceId?: string;
+    traceparent?: string;
     correlationId?: string;
     payload: EventPayload<K>;
     targetServices: Streams[];
@@ -37,6 +40,7 @@ export class EventQueueEntity<
     entity.emitter = props.emitter;
     entity.emitterId = props.emitterId;
     entity.traceId = props.traceId;
+    entity.traceparent = normalizeTraceparent(props.traceparent) ?? captureTraceparent();
     entity.correlationId = props.correlationId ?? randomUUID();
     entity.payload = { after: props.payload };
     entity.targetServices = props.targetServices;
@@ -46,5 +50,29 @@ export class EventQueueEntity<
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
     return entity;
+  }
+
+  /**
+   * Creates an event triggered by another one (post-processor, saga step).
+   * `traceId`, `traceparent` and `correlationId` are copied from `source`, so
+   * a caller cannot forget one. Use `createEvent` for the first event of a
+   * chain, where the trace context is captured from the active span instead.
+   */
+  static createFollowUp<K extends EventType = EventType>(
+    source: EventTraceContext,
+    props: {
+      type: K;
+      emitter: string;
+      emitterId: string;
+      payload: EventPayload<K>;
+      targetServices: Streams[];
+    },
+  ): EventQueueEntity<K> {
+    return EventQueueEntity.createEvent<K>({
+      ...props,
+      traceId: source.traceId,
+      traceparent: source.traceparent,
+      correlationId: source.correlationId,
+    });
   }
 }

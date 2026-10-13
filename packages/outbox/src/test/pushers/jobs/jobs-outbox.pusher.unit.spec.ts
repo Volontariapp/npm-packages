@@ -74,6 +74,27 @@ describe('JobsOutboxPusher (Unit)', () => {
       );
     });
 
+    it('should carry the traceparent in the job envelope', async () => {
+      // Arrange
+      const traceparent = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+      const entity = makeJobsOutboxEvent({
+        id: '1',
+        type: 'test.job',
+        target: 'test-service',
+        traceparent,
+      });
+
+      // Act
+      await pusher.pushElement(entity);
+
+      // Assert
+      expect(addSpy).toHaveBeenCalledWith(
+        'test.job',
+        expect.objectContaining({ traceparent }),
+        expect.objectContaining({ jobId: '1' }),
+      );
+    });
+
     it('should include delay if scheduledAt is in the future', async () => {
       // Arrange
       const futureDate = new Date(Date.now() + 10000);
@@ -153,6 +174,33 @@ describe('JobsOutboxPusher (Unit)', () => {
         expect.objectContaining({
           name: 'job.1',
           opts: expect.objectContaining({ jobId: '1' }),
+        }),
+      );
+    });
+
+    it('should carry the traceparent of each job in the bulk envelopes', async () => {
+      // Arrange
+      const traceparent = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+      const entities = [
+        makeJobsOutboxEvent({ id: '1', type: 'job.1', target: 'service-a', traceparent }),
+        makeJobsOutboxEvent({ id: '2', type: 'job.2', target: 'service-a' }),
+      ];
+
+      // Act
+      await pusher.pushBulkElement(entities);
+
+      // Assert
+      const [jobs] = addBulkSpy.mock.calls[0];
+      expect(jobs).toContainEqual(
+        expect.objectContaining({
+          name: 'job.1',
+          data: expect.objectContaining({ traceparent }),
+        }),
+      );
+      expect(jobs).toContainEqual(
+        expect.objectContaining({
+          name: 'job.2',
+          data: expect.not.objectContaining({ traceparent: expect.any(String) }),
         }),
       );
     });

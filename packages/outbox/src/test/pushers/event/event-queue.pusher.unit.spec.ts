@@ -69,6 +69,8 @@ describe('EventQueuePusher (Unit)', () => {
         entity.correlationId,
         'traceId',
         entity.traceId ?? '',
+        'traceparent',
+        entity.traceparent ?? '',
         'version',
         entity.version.toString(),
         'createdAt',
@@ -96,6 +98,8 @@ describe('EventQueuePusher (Unit)', () => {
         entity.correlationId,
         'traceId',
         entity.traceId ?? '',
+        'traceparent',
+        entity.traceparent ?? '',
         'version',
         entity.version.toString(),
         'createdAt',
@@ -193,6 +197,46 @@ describe('EventQueuePusher (Unit)', () => {
       expect(pipelineSpy).toHaveBeenCalledTimes(1);
       expect(xaddSpy).toHaveBeenCalledTimes(4);
       expect(execSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('traceparent', () => {
+    const TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+
+    const pushAndGetXaddArgs = async (traceparent: string | undefined) => {
+      const entity = makeEventQueueEvent({
+        id: 'evt-trace-1',
+        targetServices: [Streams.SOCIAL_POSTS],
+        traceparent,
+      });
+      const mockPipeline = makePipelineMock();
+      mockPipeline.exec.mockResolvedValue([]);
+      pipelineSpy.mockReturnValue(mockPipeline);
+      const xaddSpy = jest.spyOn(mockPipeline, 'xadd');
+
+      await pusher.pushElement(entity);
+
+      return xaddSpy.mock.calls[0];
+    };
+
+    it('should carry the traceparent in the stream fields and in the event JSON', async () => {
+      // Act
+      const xaddArgs = await pushAndGetXaddArgs(TRACEPARENT);
+
+      // Assert
+      expect(xaddArgs[xaddArgs.indexOf('traceparent') + 1]).toBe(TRACEPARENT);
+      const event = JSON.parse(xaddArgs[xaddArgs.length - 1] as string) as Record<string, unknown>;
+      expect(event.traceparent).toBe(TRACEPARENT);
+    });
+
+    it('should always write the traceparent, as an empty string when absent', async () => {
+      // Act
+      const xaddArgs = await pushAndGetXaddArgs(undefined);
+
+      // Assert
+      expect(xaddArgs[xaddArgs.indexOf('traceparent') + 1]).toBe('');
+      const event = JSON.parse(xaddArgs[xaddArgs.length - 1] as string) as Record<string, unknown>;
+      expect(event.traceparent).toBe('');
     });
   });
 

@@ -19,5 +19,7 @@ export class OutboxEntity<T extends OutboxType = OutboxType>
 
   traceId?: string;
 
+  traceparent?: string;
+
   emitterId!: string;
 }
