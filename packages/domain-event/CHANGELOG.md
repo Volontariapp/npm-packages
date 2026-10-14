@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.11.0
+
+### Minor Changes
+
+- Storage Wave 2 implementation:
+  - shared: add StorageStream enum (outbox success/failure, file scanned/rejected, attachment rejected) and event/user replacement streams
+  - domain-post: add post_media entity & model, PostMediaStatus, PostMediaScanStatus, reader visibility filtering, and updateMediaScanStatus
+  - domain-event: add cover_file_id & cover_status (CoverStatus enum), idempotent creation, and updateCover with event.cover_replaced outbox emission
+  - domain-user: add avatar_file_id, updateAvatar with user.avatar_replaced outbox emission, and deprecate logoPath
+  - errors-nest: add storage domain errors (FILE_NOT_FOUND, STORAGE_ATTACHMENT_FAILED, STORAGE_TIMEOUT, INVALID_FILE_ATTACHMENT)
+  - storage-client: new package providing NestJS StorageClientService, StorageClientModule, WithMetadata typing, and ConfirmFileAttachment helper
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.15.0
+  - @volontariapp/errors-nest@0.14.0
+  - @volontariapp/database@3.10.3
+  - @volontariapp/messaging@2.25.3
+  - @volontariapp/outbox@0.10.7
+
 ## 3.10.9
 
 ### Patch Changes

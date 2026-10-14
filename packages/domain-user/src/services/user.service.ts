@@ -120,13 +120,24 @@ export class UserService {
       this.userRepository.update(id.value, {
         pseudo: input.pseudo,
         bio: input.bio,
-        logoPath: input.logoPath,
+        avatarFileId: input.avatarFileId,
         rna: input.rna,
         passwordHash,
       }),
     );
     if (!updatedUser) {
       this.logger.warn(`User with id ${id.value} not found for update`);
+      throw USER_NOT_FOUND(id.value);
+    }
+    return updatedUser;
+  }
+
+  async updateAvatar(id: UserId, avatarFileId: string | null): Promise<UserEntity> {
+    const updatedUser = await this.db(`updating avatar for user with id ${id.value}`, () =>
+      this.userRepository.updateAvatar(id.value, avatarFileId),
+    );
+    if (!updatedUser) {
+      this.logger.warn(`User with id ${id.value} not found for avatar update`);
       throw USER_NOT_FOUND(id.value);
     }
     return updatedUser;

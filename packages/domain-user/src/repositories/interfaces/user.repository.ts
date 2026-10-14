@@ -7,6 +7,7 @@ export interface IUserRepository {
   findAll(limit?: number, offset?: number): Promise<[UserEntity[], number]>;
   create(user: Partial<UserEntity>): Promise<UserEntity>;
   update(id: string, data: Partial<UserEntity>): Promise<UserEntity | null>;
+  updateAvatar(id: string, newAvatarFileId: string | null): Promise<UserEntity | null>;
   delete(id: string): Promise<boolean>;
   requestDeletionWithUserDeleted(id: string): Promise<UserEntity | null>;
   finalizeDeletion(id: string): Promise<boolean>;

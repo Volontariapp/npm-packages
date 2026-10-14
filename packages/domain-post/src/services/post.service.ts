@@ -3,11 +3,11 @@ import type { PaginatedResult } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
 import { DATABASE_ERROR, POST_ALREADY_EXISTS, POST_NOT_FOUND } from '@volontariapp/errors-nest';
 import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariapp/errors';
-import type { IPostRepository } from '../repositories/index.js';
+import type { IPostRepository, CreatePostWithMediaOptions } from '../repositories/index.js';
 import { SagaStatus, UserRoles } from '@volontariapp/shared';
 import { PostgresPostRepository } from '../repositories/index.js';
-
 import { PostEntity } from '../entities/index.js';
+import type { PostMediaScanStatus } from '../enums/index.js';
 
 @Injectable()
 export class PostService {
@@ -15,9 +15,12 @@ export class PostService {
 
   constructor(@Inject(PostgresPostRepository) private readonly postRepository: IPostRepository) {}
 
-  async findById(id: string): Promise<PostEntity> {
+  async findById(id: string, readerId?: string, relations?: string[]): Promise<PostEntity> {
     try {
-      const post = await this.postRepository.findById(id);
+      const rels = relations ?? (readerId ? ['media'] : undefined);
+      const post = rels
+        ? await this.postRepository.findById(id, rels, readerId)
+        : await this.postRepository.findById(id);
       if (!post) {
         throw POST_NOT_FOUND(id);
       }
@@ -30,9 +33,11 @@ export class PostService {
     }
   }
 
-  async findByAuthorId(authorId: string): Promise<PostEntity[]> {
+  async findByAuthorId(authorId: string, relations?: string[]): Promise<PostEntity[]> {
     try {
-      return await this.postRepository.findByAuthorId(authorId);
+      return relations
+        ? await this.postRepository.findByAuthorId(authorId, relations)
+        : await this.postRepository.findByAuthorId(authorId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
@@ -41,9 +46,11 @@ export class PostService {
     }
   }
 
-  async findAll(): Promise<PostEntity[]> {
+  async findAll(relations?: string[]): Promise<PostEntity[]> {
     try {
-      return await this.postRepository.findAll();
+      return relations
+        ? await this.postRepository.findAll(relations)
+        : await this.postRepository.findAll();
     } catch (error: unknown) {
       const err = error as Error;
       this.logger.error('Failed to fetch posts', err);
@@ -55,9 +62,10 @@ export class PostService {
     page: number,
     limit: number,
     authorId?: string,
+    readerId?: string,
   ): Promise<PaginatedResult<PostEntity>> {
     try {
-      return await this.postRepository.listPaginated(page, limit, authorId);
+      return await this.postRepository.listPaginated(page, limit, authorId, readerId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;
@@ -66,7 +74,18 @@ export class PostService {
     }
   }
 
-  async create(data: Partial<PostEntity>): Promise<PostEntity> {
+  async search(searchTerm: string, readerId?: string): Promise<PostEntity[]> {
+    try {
+      return await this.postRepository.search(searchTerm, readerId);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to search posts with term: ${searchTerm}`, err);
+      throw DATABASE_ERROR(`searching posts with term: ${searchTerm}`, err.message);
+    }
+  }
+
+  async create(data: Partial<PostEntity> & CreatePostWithMediaOptions): Promise<PostEntity> {
     try {
       this.logger.log(`Creating post: ${String(data.title)}`);
 
@@ -75,6 +94,10 @@ export class PostService {
       if (isBaseError(error)) throw error;
 
       if (isDatabaseDriverError(error) && error.code === '23505') {
+        const detail = (error as { detail?: string }).detail;
+        if (detail?.includes('Key (id)')) {
+          throw POST_ALREADY_EXISTS(`id: ${String(data.id)}`);
+        }
         throw POST_ALREADY_EXISTS(data.title ?? 'Unknown');
       }
 
@@ -92,7 +115,7 @@ export class PostService {
   ): Promise<PostEntity> {
     try {
       if (actorId && actorRole !== UserRoles.ADMIN) {
-        const post = await this.findById(id);
+        const post = await this.findById(id, actorId);
         if (post.authorId !== actorId) {
           throw new ForbiddenError('You are not the author of this post');
         }
@@ -113,6 +136,28 @@ export class PostService {
       const err = error as Error;
       this.logger.error(`Failed to update post: ${id}`, err);
       throw DATABASE_ERROR(`updating post: ${id}`, err.message);
+    }
+  }
+
+  async updateMediaScanStatus(
+    postId: string,
+    fileId: string,
+    scanStatus: PostMediaScanStatus,
+  ): Promise<PostEntity> {
+    try {
+      this.logger.log(
+        `Updating media scan status for post ${postId}, file ${fileId} -> ${scanStatus}`,
+      );
+      const updated = await this.postRepository.updateMediaScanStatus(postId, fileId, scanStatus);
+      if (!updated) {
+        throw POST_NOT_FOUND(postId);
+      }
+      return updated;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to update media scan status for post ${postId}`, err);
+      throw DATABASE_ERROR(`updating media scan status for post: ${postId}`, err.message);
     }
   }
 
@@ -137,7 +182,7 @@ export class PostService {
       this.logger.log(`Deleting post: ${id}`);
 
       if (actorId && actorRole !== UserRoles.ADMIN) {
-        const post = await this.findById(id);
+        const post = await this.findById(id, actorId);
         if (post.authorId !== actorId) {
           throw new ForbiddenError('You are not the author of this post');
         }

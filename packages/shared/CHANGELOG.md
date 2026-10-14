@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.15.0
+
+### Minor Changes
+
+- Storage Wave 2 implementation:
+  - shared: add StorageStream enum (outbox success/failure, file scanned/rejected, attachment rejected) and event/user replacement streams
+  - domain-post: add post_media entity & model, PostMediaStatus, PostMediaScanStatus, reader visibility filtering, and updateMediaScanStatus
+  - domain-event: add cover_file_id & cover_status (CoverStatus enum), idempotent creation, and updateCover with event.cover_replaced outbox emission
+  - domain-user: add avatar_file_id, updateAvatar with user.avatar_replaced outbox emission, and deprecate logoPath
+  - errors-nest: add storage domain errors (FILE_NOT_FOUND, STORAGE_ATTACHMENT_FAILED, STORAGE_TIMEOUT, INVALID_FILE_ATTACHMENT)
+  - storage-client: new package providing NestJS StorageClientService, StorageClientModule, WithMetadata typing, and ConfirmFileAttachment helper
+
 ## 0.14.0
 
 ### Minor Changes

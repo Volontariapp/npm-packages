@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { EventType, EventState } from '@volontariapp/contracts';
+import { EventType, EventState, CoverStatus } from '@volontariapp/contracts';
 import { SagaStatus } from '@volontariapp/shared';
 import { TagModel } from './tag.model.js';
 import { RequirementModel } from './requirement.model.js';
@@ -78,6 +78,21 @@ export class EventModel {
 
   @Column({ type: 'int', default: 0 })
   maxParticipants!: number;
+
+  @Column({ name: 'cover_file_id', type: 'uuid', nullable: true })
+  coverFileId?: string | null;
+
+  @Column({
+    name: 'cover_status',
+    type: 'enum',
+    enum: CoverStatus,
+    default: CoverStatus.COVER_STATUS_NONE,
+    transformer: {
+      to: (value: number | string) => (typeof value === 'number' ? value.toString() : value),
+      from: (value: string) => (typeof value === 'string' ? parseInt(value, 10) : value),
+    },
+  })
+  coverStatus!: CoverStatus;
 
   @ManyToMany(() => TagModel, (tag) => tag.events)
   @JoinTable({ name: 'event_tags' })

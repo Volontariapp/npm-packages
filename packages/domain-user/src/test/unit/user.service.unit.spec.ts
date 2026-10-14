@@ -355,19 +355,19 @@ describe('UserService (Unit)', () => {
         ).toEqual(['user-1', { rna: 'W111111111' }]);
       });
 
-      it('should allow partial update with only logoPath', async () => {
+      it('should allow partial update with only avatarFileId', async () => {
         // ARRANGE
-        const updated = UserFactory.build({ logoPath: '/new/logo.png' });
+        const updated = UserFactory.build({ avatarFileId: 'avatar-uuid-1' });
         mockRepository.update.mockResolvedValue(updated);
 
         // ACT
         const result = await service.update(
           new UserId('user-1'),
-          new UpdateUserInput({ logoPath: '/new/logo.png' }),
+          new UpdateUserInput({ avatarFileId: 'avatar-uuid-1' }),
         );
 
         // ASSERT
-        expect(result.logoPath).toBe('/new/logo.png');
+        expect(result.avatarFileId).toBe('avatar-uuid-1');
       });
 
       it('should not validate when no RNA change provided', async () => {

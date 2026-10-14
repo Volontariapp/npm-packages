@@ -17,7 +17,9 @@ export class UserEntity {
   id!: string;
   email!: string;
   pseudo!: string;
+  /** @deprecated Use `avatarFileId`. */
   logoPath?: string;
+  avatarFileId?: string | null;
   rna?: string;
   bio?: string;
   role!: UserRoles;

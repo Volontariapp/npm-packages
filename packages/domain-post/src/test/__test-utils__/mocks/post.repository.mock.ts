@@ -8,6 +8,7 @@ export const createPostRepositoryMock = (): jest.Mocked<IPostRepository> => ({
   create: jest.fn(),
   createWithPostCreated: jest.fn(),
   update: jest.fn(),
+  updateMediaScanStatus: jest.fn(),
   delete: jest.fn(),
   deleteWithPostDeleted: jest.fn(),
   deleteByAuthorId: jest.fn(),

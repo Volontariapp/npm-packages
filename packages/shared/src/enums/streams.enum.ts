@@ -8,6 +8,7 @@ export enum UserStream {
   USER_DELETED_STORAGE = 'user:deleted:storage',
   USER_DELETION_SUCCESS = 'user:deletion:success',
   USER_BADGE_AWARDED = 'user:badge_awarded',
+  USER_AVATAR_REPLACED = 'user:avatar_replaced',
 }
 
 export enum EventStream {
@@ -19,6 +20,7 @@ export enum EventStream {
   EVENT_REQUIREMENTS = 'event:requirements',
   EVENT_SUCCESSFULLY_CREATED = 'event:successfully_created',
   EVENT_FINISHED = 'event:finished',
+  EVENT_COVER_REPLACED = 'event:cover_replaced',
 }
 
 export enum PostStream {
@@ -46,6 +48,14 @@ export enum SocialStream {
   EVENT_SOCIAL_UNWISHED = 'event-social-unwished',
 }
 
+export enum StorageStream {
+  STORAGE_JOB_OUTBOX_SUCCESS = 'storage:job:outbox:success',
+  STORAGE_JOB_OUTBOX_FAILURE = 'storage:job:outbox:failure',
+  STORAGE_FILE_SCANNED = 'storage:file_scanned',
+  STORAGE_FILE_REJECTED = 'storage:file_rejected',
+  STORAGE_ATTACHMENT_REJECTED = 'storage:attachment_rejected',
+}
+
 export enum WebsocketStream {
   WS_USER_CREATED_FEEDBACK = 'ws:user-created-feedback',
   WS_USER_DELETED_FEEDBACK = 'ws:user-deleted-feedback',
@@ -63,7 +73,14 @@ export const Streams = {
   ...EventStream,
   ...PostStream,
   ...SocialStream,
+  ...StorageStream,
   ...WebsocketStream,
 } as const;
 
-export type Streams = UserStream | EventStream | PostStream | SocialStream | WebsocketStream;
+export type Streams =
+  | UserStream
+  | EventStream
+  | PostStream
+  | SocialStream
+  | StorageStream
+  | WebsocketStream;

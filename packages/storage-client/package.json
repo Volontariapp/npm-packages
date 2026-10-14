@@ -1,0 +1,64 @@
+{
+  "name": "@volontariapp/storage-client",
+  "version": "0.2.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volontariapp/npm-packages.git"
+  },
+  "description": "NestJS gRPC client for ms-storage ConfirmFileAttachment and storage operations",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/",
+    "test": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
+  },
+  "devDependencies": {
+    "@grpc/grpc-js": "^1.12.0",
+    "@jest/globals": "^30.3.0",
+    "@nestjs/common": "^11.1.18",
+    "@nestjs/core": "^11.1.18",
+    "@nestjs/microservices": "^11.1.14",
+    "@nestjs/testing": "^11.1.18",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.3.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "ts-jest": "^29.4.9",
+    "typescript": "5.7.3"
+  },
+  "peerDependencies": {
+    "@grpc/grpc-js": "^1.12.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/microservices": "^11.0.0",
+    "rxjs": "^7.8.2"
+  },
+  "dependencies": {
+    "@volontariapp/contracts": "workspace:*",
+    "@volontariapp/contracts-nest": "workspace:*",
+    "@volontariapp/errors": "workspace:*",
+    "@volontariapp/errors-nest": "workspace:*",
+    "@volontariapp/logger": "workspace:*"
+  }
+}
