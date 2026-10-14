@@ -9,7 +9,7 @@ import {
   INVALID_DATE_PARAMETERS,
 } from '@volontariapp/errors-nest';
 import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariapp/errors';
-import { EventState } from '@volontariapp/contracts';
+import { EventState, CoverStatus } from '@volontariapp/contracts';
 import { SagaStatus, UserRoles } from '@volontariapp/shared';
 import type { IEventRepository } from '../repositories/interfaces/event.repository.js';
 import { PostgresEventRepository } from '../repositories/postgres-event.repository.js';
@@ -72,12 +72,58 @@ export class EventService {
       if (isBaseError(error)) throw error;
 
       if (isDatabaseDriverError(error) && error.code === '23505') {
+        const detail = (error as { detail?: string }).detail;
+        if (detail?.includes('Key (id)')) {
+          throw EVENT_ALREADY_EXISTS(`id: ${String(data.id)}`);
+        }
         throw EVENT_ALREADY_EXISTS(data.name ?? 'Unknown');
       }
 
       const err = error as Error;
       this.logger.error('Failed to create event', err);
       throw DATABASE_ERROR('creating event', err.message);
+    }
+  }
+
+  async updateCover(
+    eventId: string,
+    newCoverFileId: string | null,
+    userId: string,
+  ): Promise<EventEntity> {
+    try {
+      this.logger.log(`Updating cover for event ${eventId} with file ${String(newCoverFileId)}`);
+      const updated = await this.eventRepository.updateCover(eventId, newCoverFileId, userId);
+      if (!updated) {
+        throw EVENT_NOT_FOUND(eventId);
+      }
+      return updated;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to update cover for event: ${eventId}`, err);
+      throw DATABASE_ERROR(`updating cover for event: ${eventId}`, err.message);
+    }
+  }
+
+  async applyCoverResult(
+    eventId: string,
+    fileId: string,
+    status: CoverStatus,
+  ): Promise<EventEntity> {
+    try {
+      this.logger.log(
+        `Applying cover result for event ${eventId}, file ${fileId} -> ${String(status)}`,
+      );
+      const updated = await this.eventRepository.applyCoverResult(eventId, fileId, status);
+      if (!updated) {
+        throw EVENT_NOT_FOUND(eventId);
+      }
+      return updated;
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to apply cover result for event: ${eventId}`, err);
+      throw DATABASE_ERROR(`applying cover result for event: ${eventId}`, err.message);
     }
   }
 

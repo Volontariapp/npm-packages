@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.14.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.15.0
+  - @volontariapp/errors-nest@0.14.0
+  - @volontariapp/database@3.10.3
+  - @volontariapp/messaging@2.25.3
+  - @volontariapp/outbox@0.10.7
+  - @volontariapp/bridge-nest@0.3.21
+
 ## 0.14.9
 
 ### Patch Changes

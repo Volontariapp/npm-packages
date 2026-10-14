@@ -1,5 +1,5 @@
 import type { EventEntity } from '../../entities/event.entity.js';
-import type { EventType, EventState } from '@volontariapp/contracts';
+import type { EventType, EventState, CoverStatus } from '@volontariapp/contracts';
 import type { PaginatedEventsVO } from '../../index.js';
 import type { SearchAdvancedVO } from '../../index.js';
 
@@ -9,6 +9,16 @@ export interface IEventRepository {
   create(event: Partial<EventEntity>): Promise<EventEntity>;
   createWithEventCreated(event: Partial<EventEntity>): Promise<EventEntity>;
   update(id: string, data: Partial<EventEntity>): Promise<EventEntity | null>;
+  updateCover(
+    eventId: string,
+    newCoverFileId: string | null,
+    userId: string,
+  ): Promise<EventEntity | null>;
+  applyCoverResult(
+    eventId: string,
+    fileId: string,
+    status: CoverStatus,
+  ): Promise<EventEntity | null>;
   changeStateWithEventFinished(id: string, state: EventState): Promise<EventEntity | null>;
   delete(id: string): Promise<boolean>;
   deleteWithEventDeleted(id: string): Promise<boolean>;

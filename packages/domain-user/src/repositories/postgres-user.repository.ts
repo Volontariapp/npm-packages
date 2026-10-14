@@ -4,7 +4,7 @@ import type { Repository } from '@volontariapp/database';
 import { BaseRepository, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
 import { EventQueueRepository } from '@volontariapp/outbox';
 import { UserEventMessagingType } from '@volontariapp/messaging';
-import type { IUserDeleledPayload } from '@volontariapp/messaging';
+import type { IUserDeleledPayload, IUserAvatarReplacedPayload } from '@volontariapp/messaging';
 import { Streams } from '@volontariapp/shared';
 import type { DeepPartial } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
@@ -164,15 +164,70 @@ export class PostgresUserRepository
     return user ? user.passwordHash : null;
   }
 
-  public override async update(id: string, data: Partial<UserEntity>): Promise<UserEntity | null> {
-    const { passwordHash, ...otherData } = data;
+  async updateAvatar(id: string, newAvatarFileId: string | null): Promise<UserEntity | null> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const model = await queryRunner.manager
+        .createQueryBuilder(this.modelClass, 'user')
+        .setLock('pessimistic_write')
+        .where('user.id = :id', { id })
+        .getOne();
 
-    const entity = await super.update(id, otherData);
+      if (!model) return null;
+
+      const oldFileId = model.avatarFileId ?? undefined;
+      const normalizedNewFileId = newAvatarFileId ?? undefined;
+
+      if (oldFileId === normalizedNewFileId) {
+        return this.toEntity(model);
+      }
+
+      await queryRunner.manager
+        .createQueryBuilder()
+        .update(this.modelClass)
+        .set({
+          avatarFileId: normalizedNewFileId ?? null,
+        })
+        .where('id = :id', { id })
+        .execute();
+
+      const payload: IUserAvatarReplacedPayload = {
+        userId: model.id,
+        newFileId: normalizedNewFileId,
+        oldFileId,
+      };
+
+      const eventQueueEntity =
+        EventQueueEntity.createEvent<UserEventMessagingType.USER_AVATAR_REPLACED>({
+          type: UserEventMessagingType.USER_AVATAR_REPLACED,
+          emitter: 'ms-user',
+          emitterId: model.id,
+          payload,
+          targetServices: [Streams.USER_AVATAR_REPLACED],
+        });
+
+      const eventQueueRepo = new EventQueueRepository<UserEventMessagingType.USER_AVATAR_REPLACED>(
+        queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
+      );
+      await eventQueueRepo.create(eventQueueEntity);
+
+      model.avatarFileId = normalizedNewFileId ?? null;
+      return this.toEntity(model);
+    });
+  }
+
+  public override async update(id: string, data: Partial<UserEntity>): Promise<UserEntity | null> {
+    const { passwordHash, avatarFileId, ...otherData } = data;
+
+    let entity = await super.update(id, otherData);
 
     if (passwordHash != null && entity) {
       await this.repository.update(this.buildIdWhere(id), {
         passwordHash,
       } as QueryDeepPartialEntity<UserModel>);
+    }
+
+    if (avatarFileId !== undefined && entity) {
+      entity = await this.updateAvatar(id, avatarFileId ?? null);
     }
 
     return entity;

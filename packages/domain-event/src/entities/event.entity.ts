@@ -1,4 +1,4 @@
-import type { EventType, EventState } from '@volontariapp/contracts';
+import { type EventType, type EventState, CoverStatus } from '@volontariapp/contracts';
 import type { SagaStatus } from '@volontariapp/shared';
 import type { EventLocation } from '../value-objects/event-location.value-object.js';
 import type { RequirementEntity } from './requirement.entity.js';
@@ -21,6 +21,8 @@ export class EventEntity {
   organizerId!: string;
   createdAt!: Date;
   updatedAt!: Date;
+  coverFileId?: string | null;
+  coverStatus: CoverStatus = CoverStatus.COVER_STATUS_NONE;
 
   requirements?: RequirementEntity[];
   tags?: TagEntity[];

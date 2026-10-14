@@ -15,7 +15,7 @@ export class UserRna {
 export class UpdateUserInput {
   readonly pseudo?: string;
   readonly bio?: string;
-  readonly logoPath?: string;
+  readonly avatarFileId?: string | null;
   readonly rna?: string;
   readonly previousPassword?: string;
   readonly newPassword?: string;
@@ -23,14 +23,14 @@ export class UpdateUserInput {
   constructor(data: {
     pseudo?: string;
     bio?: string;
-    logoPath?: string;
+    avatarFileId?: string | null;
     rna?: string;
     previousPassword?: string;
     newPassword?: string;
   }) {
     this.pseudo = data.pseudo;
     this.bio = data.bio;
-    this.logoPath = data.logoPath;
+    this.avatarFileId = data.avatarFileId;
     this.rna = data.rna;
     this.previousPassword = data.previousPassword;
     this.newPassword = data.newPassword;

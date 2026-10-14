@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
 import type { Repository } from '@volontariapp/database';
 import { BaseRepository, ILike, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
 import { EventQueueRepository } from '@volontariapp/outbox';
+import { ForbiddenError } from '@volontariapp/errors';
 import { EventModel } from '../models/event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { Streams } from '@volontariapp/shared';
@@ -12,8 +14,9 @@ import {
   IEventCreatedPayload,
   IEventDeletedPayload,
   IEventFinishedPayload,
+  IEventCoverReplacedPayload,
 } from '@volontariapp/messaging';
-import { EventType, EventState } from '@volontariapp/contracts';
+import { EventType, EventState, CoverStatus } from '@volontariapp/contracts';
 import { PaginatedEventsVO } from '../value-objects/paginated-events.value-object.js';
 import { SearchAdvancedVO } from '../value-objects/search-advanced.value-object.js';
 
@@ -49,21 +52,65 @@ export class PostgresEventRepository
 
   async createWithEventCreated(data: Partial<EventEntity>): Promise<EventEntity> {
     return this.executeInTransaction(async (queryRunner) => {
+      const eventId = data.id ?? randomUUID();
+      data.id = eventId;
+      if (data.coverStatus === undefined) {
+        data.coverStatus = data.coverFileId
+          ? CoverStatus.COVER_STATUS_PENDING
+          : CoverStatus.COVER_STATUS_NONE;
+      }
+
       const modelData = this.toModel(data);
-      const eventModel = queryRunner.manager.create(this.modelClass, modelData);
-      const savedEventModel = await queryRunner.manager.save(this.modelClass, eventModel);
-      const savedEventEntity = this.toEntity(savedEventModel);
+      modelData.id = eventId;
+
+      const insertResult = await queryRunner.manager
+        .createQueryBuilder()
+        .insert()
+        .into(this.modelClass)
+        .values(modelData)
+        .orIgnore()
+        .returning('*')
+        .execute();
+
+      const insertedRows = insertResult.raw as EventModel[];
+
+      if (insertedRows.length === 0) {
+        const existing = await queryRunner.manager.findOne(this.modelClass, {
+          where: { id: eventId },
+          relations: ['tags', 'requirements'],
+        });
+        if (!existing) {
+          throw new Error(`Event with id ${eventId} failed to insert but was not found`);
+        }
+        if (existing.organizerId !== data.organizerId) {
+          throw new ForbiddenError('You are not the organizer of this event');
+        }
+        return this.toEntity(existing);
+      }
+
+      if (
+        (data.tags && data.tags.length > 0) ||
+        (data.requirements && data.requirements.length > 0)
+      ) {
+        const fullModel = queryRunner.manager.create(this.modelClass, modelData);
+        fullModel.id = eventId;
+        await queryRunner.manager.save(this.modelClass, fullModel);
+      }
+
+      const finalModel = await queryRunner.manager.findOne(this.modelClass, {
+        where: { id: eventId },
+        relations: ['tags', 'requirements'],
+      });
+      const savedEventEntity = this.toEntity(finalModel ?? insertedRows[0]);
 
       const payload: IEventCreatedPayload = {
         eventId: savedEventEntity.id,
         userId: savedEventEntity.organizerId,
         localisationName: savedEventEntity.localisationName,
+        coverFileId: savedEventEntity.coverFileId ?? undefined,
       };
 
-      const eventQueueEntity: EventQueueEntity<
-        EventEventMessagingType.EVENT_CREATED,
-        IEventCreatedPayload
-      > = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_CREATED>({
+      const eventQueueEntity = EventQueueEntity.createEvent<EventEventMessagingType.EVENT_CREATED>({
         type: EventEventMessagingType.EVENT_CREATED,
         emitter: 'ms-event',
         emitterId: savedEventEntity.organizerId,
@@ -77,6 +124,97 @@ export class PostgresEventRepository
       await eventQueueRepo.create(eventQueueEntity);
 
       return savedEventEntity;
+    });
+  }
+
+  async updateCover(
+    eventId: string,
+    newCoverFileId: string | null,
+    userId: string,
+  ): Promise<EventEntity | null> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const raw = await queryRunner.manager
+        .createQueryBuilder(this.modelClass, 'event')
+        .setLock('pessimistic_write')
+        .where('event.id = :id', { id: eventId })
+        .getOne();
+
+      if (!raw) return null;
+
+      const oldCoverFileId = raw.coverFileId ?? undefined;
+      const normalizedNewFileId = newCoverFileId ?? undefined;
+
+      if (oldCoverFileId === normalizedNewFileId) {
+        return this.toEntity(raw);
+      }
+
+      const newCoverStatus = normalizedNewFileId
+        ? CoverStatus.COVER_STATUS_PENDING
+        : CoverStatus.COVER_STATUS_NONE;
+
+      await queryRunner.manager
+        .createQueryBuilder()
+        .update(this.modelClass)
+        .set({
+          coverFileId: normalizedNewFileId ?? null,
+          coverStatus: newCoverStatus,
+        })
+        .where('id = :id', { id: eventId })
+        .execute();
+
+      raw.coverFileId = normalizedNewFileId ?? null;
+      raw.coverStatus = newCoverStatus;
+
+      const payload: IEventCoverReplacedPayload = {
+        eventId,
+        userId,
+        newFileId: normalizedNewFileId,
+        oldFileId: oldCoverFileId,
+      };
+
+      const eventQueueEntity =
+        EventQueueEntity.createEvent<EventEventMessagingType.EVENT_COVER_REPLACED>({
+          type: EventEventMessagingType.EVENT_COVER_REPLACED,
+          emitter: 'ms-event',
+          emitterId: userId,
+          payload,
+          targetServices: [Streams.EVENT_COVER_REPLACED],
+        });
+
+      const eventQueueRepo = new EventQueueRepository<EventEventMessagingType.EVENT_COVER_REPLACED>(
+        queryRunner.manager.getRepository<EventQueueModel>(EventQueueModel),
+      );
+      await eventQueueRepo.create(eventQueueEntity);
+
+      return this.toEntity(raw);
+    });
+  }
+
+  async applyCoverResult(
+    eventId: string,
+    fileId: string,
+    status: CoverStatus,
+  ): Promise<EventEntity | null> {
+    return this.executeInTransaction(async (queryRunner) => {
+      const event = await queryRunner.manager.findOne(this.modelClass, {
+        where: { id: eventId },
+      });
+
+      if (!event) return null;
+
+      if (event.coverFileId !== fileId) {
+        return this.toEntity(event);
+      }
+
+      await queryRunner.manager
+        .createQueryBuilder()
+        .update(this.modelClass)
+        .set({ coverStatus: status })
+        .where('id = :id AND cover_file_id = :fileId', { id: eventId, fileId })
+        .execute();
+
+      event.coverStatus = status;
+      return this.toEntity(event);
     });
   }
 

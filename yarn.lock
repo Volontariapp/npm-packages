@@ -4143,7 +4143,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/contracts-nest@workspace:packages/contracts-nest":
+"@volontariapp/contracts-nest@workspace:*, @volontariapp/contracts-nest@workspace:packages/contracts-nest":
   version: 0.0.0-use.local
   resolution: "@volontariapp/contracts-nest@workspace:packages/contracts-nest"
   dependencies:
@@ -4609,6 +4609,36 @@ __metadata:
   resolution: "@volontariapp/shared@workspace:packages/shared"
   dependencies:
     typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@volontariapp/storage-client@workspace:packages/storage-client":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/storage-client@workspace:packages/storage-client"
+  dependencies:
+    "@grpc/grpc-js": "npm:^1.12.0"
+    "@jest/globals": "npm:^30.3.0"
+    "@nestjs/common": "npm:^11.1.18"
+    "@nestjs/core": "npm:^11.1.18"
+    "@nestjs/microservices": "npm:^11.1.14"
+    "@nestjs/testing": "npm:^11.1.18"
+    "@types/jest": "npm:^30.0.0"
+    "@volontariapp/contracts": "workspace:*"
+    "@volontariapp/contracts-nest": "workspace:*"
+    "@volontariapp/errors": "workspace:*"
+    "@volontariapp/errors-nest": "workspace:*"
+    "@volontariapp/logger": "workspace:*"
+    jest: "npm:^30.3.0"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.2"
+    ts-jest: "npm:^29.4.9"
+    typescript: "npm:5.7.3"
+  peerDependencies:
+    "@grpc/grpc-js": ^1.12.0
+    "@nestjs/common": ^11.0.0
+    "@nestjs/core": ^11.0.0
+    "@nestjs/microservices": ^11.0.0
+    rxjs: ^7.8.2
   languageName: unknown
   linkType: soft
 

@@ -26,7 +26,11 @@ export class UserModel {
   bio?: string;
 
   @Column({ type: 'varchar', nullable: true, name: 'logo_path' })
+  /** @deprecated Use avatarFileId */
   logoPath?: string;
+
+  @Column({ type: 'uuid', nullable: true, name: 'avatar_file_id' })
+  avatarFileId?: string | null;
 
   @Column({ type: 'varchar', nullable: true })
   rna?: string;

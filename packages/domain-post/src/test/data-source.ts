@@ -1,6 +1,6 @@
 import type { Repository } from '@volontariapp/database';
 import { DataSource } from 'typeorm';
-import { PostModel, CommentModel } from '../models/index.js';
+import { PostModel, PostMediaModel, CommentModel } from '../models/index.js';
 import { registerPostMappings } from '../models/mapper.js';
 
 import { EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
@@ -38,7 +38,7 @@ export const testDataSource = new DataSource({
   username: 'user',
   password: 'password',
   database: 'ms_post',
-  entities: [PostModel, CommentModel, EventQueueModel, JobsOutboxModel],
+  entities: [PostModel, PostMediaModel, CommentModel, EventQueueModel, JobsOutboxModel],
   migrations: await loadMigrations(),
   synchronize: false,
   logging: false,

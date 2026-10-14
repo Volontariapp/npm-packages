@@ -1,16 +1,19 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
 import { SagaStatus } from '@volontariapp/shared';
+import { PostMediaStatus } from '../enums/index.js';
+import type { PostMediaModel } from './post-media.model.js';
 
 @Entity('posts')
 export class PostModel {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid' })
   id!: string;
 
   @Column({ type: 'uuid' })
@@ -35,4 +38,16 @@ export class PostModel {
   })
   @Index()
   saga_status!: SagaStatus;
+
+  @Column({
+    name: 'media_status',
+    type: 'varchar',
+    length: 32,
+    default: PostMediaStatus.NONE,
+  })
+  @Index()
+  media_status!: PostMediaStatus;
+
+  @OneToMany('PostMediaModel', 'post', { cascade: true })
+  media?: PostMediaModel[];
 }

@@ -1,4 +1,6 @@
 import type { SagaStatus } from '@volontariapp/shared';
+import { PostMediaStatus } from '../enums/index.js';
+import type { PostMediaEntity } from './post-media.entity.js';
 
 export class PostEntity {
   id!: string;
@@ -9,4 +11,6 @@ export class PostEntity {
   createdAt!: Date;
   updatedAt!: Date;
   eventId?: string;
+  media_status: PostMediaStatus = PostMediaStatus.NONE;
+  media?: PostMediaEntity[];
 }
