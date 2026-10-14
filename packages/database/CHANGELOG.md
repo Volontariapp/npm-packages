@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.9.0
+
+### Minor Changes
+
+- `OutboxConsumer.processItems` opens a `PRODUCER` span `outbox <type>` for each row it publishes, as a child of the `traceparent` carried by the row (attributes `type`, `emitter`, `outbox.id`), so the hop through the outbox and the time spent waiting in the queue appear in the trace of the request that caused it. `TraceScope` gets an optional `kind` (default `CONSUMER`). An empty batch opens no span; a row without a `traceparent` gets a root span.
+
 ## 3.8.0
 
 ### Minor Changes

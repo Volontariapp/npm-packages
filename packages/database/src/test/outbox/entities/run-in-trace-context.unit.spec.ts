@@ -64,6 +64,17 @@ describe('runInTraceContext (Unit)', () => {
       });
     });
 
+    it('should let the caller choose the span kind', async () => {
+      // Act
+      await runInTraceContext(
+        { traceparent: SAMPLED_TRACEPARENT, name: 'outbox x', kind: SpanKind.PRODUCER },
+        () => Promise.resolve(),
+      );
+
+      // Assert
+      expect(finished('outbox x').kind).toBe(SpanKind.PRODUCER);
+    });
+
     it('should make the new span the active one inside the callback', async () => {
       // Act
       const inside = await runInTraceContext(

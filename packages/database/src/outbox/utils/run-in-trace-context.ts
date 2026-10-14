@@ -19,6 +19,8 @@ export interface TraceScope {
   /** Span name, e.g. `job user.cleanup` or `event user.created`. */
   name: string;
   attributes?: Attributes;
+  /** `CONSUMER` by default; `PRODUCER` for a step that publishes (the outbox). */
+  kind?: SpanKind;
 }
 
 /**
@@ -50,7 +52,11 @@ export async function runInTraceContext<T>(scope: TraceScope, fn: () => Promise<
   const parent = parentContext(scope.traceparent);
   const span = trace
     .getTracer(TRACER_NAME)
-    .startSpan(scope.name, { kind: SpanKind.CONSUMER, attributes: scope.attributes }, parent);
+    .startSpan(
+      scope.name,
+      { kind: scope.kind ?? SpanKind.CONSUMER, attributes: scope.attributes },
+      parent,
+    );
 
   try {
     return await context.with(trace.setSpan(parent, span), fn);
@@ -78,7 +84,7 @@ export async function runBatchInTraceContext<T>(
   const messageSpans = scopes.map((scope) =>
     tracer.startSpan(
       scope.name,
-      { kind: SpanKind.CONSUMER, attributes: scope.attributes },
+      { kind: scope.kind ?? SpanKind.CONSUMER, attributes: scope.attributes },
       parentContext(scope.traceparent),
     ),
   );
