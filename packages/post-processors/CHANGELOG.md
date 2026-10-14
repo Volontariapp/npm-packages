@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.3.2
+
+### Patch Changes
+
+- Reduce log noise and implement exponential backoff for outbox and stream polling
+
+- Updated dependencies []:
+  - @volontariapp/database@3.10.0
+  - @volontariapp/health-check@1.0.8
+  - @volontariapp/outbox@0.10.4
+
 ## 3.3.1
 
 ### Patch Changes

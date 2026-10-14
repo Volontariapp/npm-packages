@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.10.0
+
+### Minor Changes
+
+- Reduce log noise and implement exponential backoff for outbox and stream polling
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@3.3.0
+  - @volontariapp/bridge@1.0.8
+
 ## 3.9.0
 
 ### Minor Changes
