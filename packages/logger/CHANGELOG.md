@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- Add status attribute to JSON log payload matching level for native Datadog status resolution
+
 ## 0.3.0
 
 ### Minor Changes

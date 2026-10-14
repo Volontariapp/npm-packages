@@ -87,6 +87,7 @@ export class Logger {
       const payload = {
         timestamp,
         level,
+        status: level,
         context: contextOverride,
         message: parsedMessage,
         ...meta,
