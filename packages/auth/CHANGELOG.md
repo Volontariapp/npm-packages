@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.3.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.4.0
+  - @volontariapp/errors@0.6.5
+  - @volontariapp/errors-nest@0.13.5
+
 ## 3.3.19
 
 ### Patch Changes

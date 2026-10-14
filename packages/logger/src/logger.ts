@@ -13,6 +13,20 @@ export interface LoggerConfig {
 }
 
 export class Logger {
+  private static defaultConfig: Partial<LoggerConfig> = {};
+
+  public static setDefaultConfig(config: Partial<LoggerConfig>): void {
+    Logger.defaultConfig = { ...Logger.defaultConfig, ...config };
+  }
+
+  public static getDefaultConfig(): Partial<LoggerConfig> {
+    return { ...Logger.defaultConfig };
+  }
+
+  public static resetDefaultConfig(): void {
+    Logger.defaultConfig = {};
+  }
+
   private readonly context: string;
   private readonly format: 'json' | 'text';
   private readonly minLevel: LogLevel;
@@ -27,10 +41,11 @@ export class Logger {
   };
 
   constructor(config?: LoggerConfig) {
-    this.context = config?.context ?? 'App';
-    this.format = config?.format ?? 'text';
-    this.minLevel = config?.minLevel ?? 'debug';
-    this.masker = config?.masking === false ? undefined : new Masker(config?.masking);
+    const merged = { ...Logger.defaultConfig, ...config };
+    this.context = merged.context ?? 'App';
+    this.format = merged.format ?? 'text';
+    this.minLevel = merged.minLevel ?? 'debug';
+    this.masker = merged.masking === false ? undefined : new Masker(merged.masking);
   }
 
   public log(message: unknown, ...optionalParams: unknown[]): void {

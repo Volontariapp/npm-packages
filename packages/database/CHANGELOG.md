@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.10.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.4.0
+  - @volontariapp/bridge@1.0.10
+  - @volontariapp/config@3.3.2
+  - @volontariapp/errors@0.6.5
+  - @volontariapp/messaging@2.25.2
+
 ## 3.10.1
 
 ### Patch Changes

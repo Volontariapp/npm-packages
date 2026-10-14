@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.10.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.4.0
+  - @volontariapp/contracts@4.3.16
+  - @volontariapp/database@3.10.2
+  - @volontariapp/errors@0.6.5
+  - @volontariapp/errors-nest@0.13.5
+  - @volontariapp/outbox@0.10.6
+  - @volontariapp/messaging@2.25.2
+
 ## 3.10.8
 
 ### Patch Changes

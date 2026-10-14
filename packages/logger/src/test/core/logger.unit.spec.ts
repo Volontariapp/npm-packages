@@ -24,6 +24,7 @@ describe('Logger', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    Logger.resetDefaultConfig();
   });
 
   describe('JSON Format', () => {
@@ -111,6 +112,49 @@ describe('Logger', () => {
 
       expect(consoleLogSpy).not.toHaveBeenCalled();
       expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Default Config (Global)', () => {
+    it('should inherit global default format when instantiating new Logger without format', () => {
+      Logger.setDefaultConfig({ format: 'json', minLevel: 'info' });
+      const logger = new Logger({ context: 'InheritedContext' });
+
+      logger.info('Hello from inherited config');
+
+      expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+      const payload = JSON.parse((consoleLogSpy.mock.calls[0] as string[])[0]) as LogPayload;
+      expect(payload).toMatchObject({
+        level: 'info',
+        status: 'info',
+        context: 'InheritedContext',
+        message: 'Hello from inherited config',
+      });
+    });
+
+    it('should allow instance config to override global default config', () => {
+      Logger.setDefaultConfig({ format: 'json' });
+      const logger = new Logger({ format: 'text', context: 'OverrideContext' });
+
+      logger.info('Hello text override');
+
+      expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+      const output = (consoleLogSpy.mock.calls[0] as string[])[0];
+      expect(output).toContain('[OverrideContext]');
+      expect(output).toContain('Hello text override');
+    });
+
+    it('should reset default config with resetDefaultConfig', () => {
+      Logger.setDefaultConfig({ format: 'json' });
+      Logger.resetDefaultConfig();
+      expect(Logger.getDefaultConfig()).toEqual({});
+
+      const logger = new Logger({ context: 'ResetContext' });
+      logger.info('Default text again');
+
+      expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+      const output = (consoleLogSpy.mock.calls[0] as string[])[0];
+      expect(output).toContain('[ResetContext]');
     });
   });
 });

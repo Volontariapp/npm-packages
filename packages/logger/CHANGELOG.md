@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- feat(logger): add static setDefaultConfig, getDefaultConfig and resetDefaultConfig to allow global configuration inheritance
+
 ## 0.3.1
 
 ### Patch Changes
