@@ -49,6 +49,8 @@ export const getTestRepository = <T extends object>(ModelClass: new () => T): Re
 export const initializeTestDb = async (): Promise<void> => {
   if (!testDataSource.isInitialized) {
     await testDataSource.initialize();
+    await testDataSource.dropDatabase();
+    await testDataSource.runMigrations();
   }
 
   registerUserMappings();

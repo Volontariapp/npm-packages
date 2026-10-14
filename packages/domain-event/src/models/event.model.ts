@@ -1,6 +1,6 @@
 import {
   Entity,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   Column,
   ManyToMany,
   JoinTable,
@@ -20,7 +20,7 @@ export interface PointGeoJSON {
 
 @Entity('events')
 export class EventModel {
-  @PrimaryColumn({ type: 'uuid' })
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   @Column({ type: 'varchar', length: 255 })
