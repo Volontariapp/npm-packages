@@ -289,7 +289,7 @@ export abstract class BaseRepository<
     try {
       const result = await work(queryRunner);
       await queryRunner.commitTransaction();
-      this.logger.debug('Transaction committed');
+      this.logger.verbose('Transaction committed');
       return result;
     } catch (error: unknown) {
       await queryRunner.rollbackTransaction();

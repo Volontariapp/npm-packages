@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- Reduce log noise and implement exponential backoff for outbox and stream polling
+
 ## 3.2.3
 
 ### Patch Changes

@@ -25,7 +25,7 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
   async fetchPendingItems(): Promise<TOutboxEntity[]> {
     const tableName = this.repository.metadata.tableName;
 
-    this.logger.debug('Fetching pending outbox items', { tableName, batchSize: this.batchSize });
+    this.logger.verbose('Fetching pending outbox items', { tableName, batchSize: this.batchSize });
 
     return this.repository.executeInTransaction(async (queryRunner) => {
       const updateResult = await queryRunner.manager

@@ -298,18 +298,14 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
     )) as RedisStreamRawResponse | null;
 
     if (!rawResult || rawResult.length === 0) {
-      this.logger.warn('No raw entries received', {
-        idToRead,
-        readPending: this.readPending,
-        args,
-      });
+      this.logger.debug('No entries in stream (idle)');
       if (idToRead === '0') this.readPending = false;
       return;
     }
 
     const rawEntries = rawResult[0][1];
     if (rawEntries.length === 0) {
-      this.logger.warn('No raw entries received');
+      this.logger.debug('Stream returned empty batch');
       if (idToRead === '0') this.readPending = false;
       return;
     }

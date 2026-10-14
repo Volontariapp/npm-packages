@@ -53,15 +53,30 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
   }
 
   private async runLoop(signal: AbortSignal): Promise<void> {
+    const maxIdleMs = this.config.maxIdleIntervalMs ?? 5000;
+    let consecutiveEmpty = 0;
+
     try {
       while (!signal.aborted) {
         const processedItems = await this.runCycle();
+
         if (processedItems === 0) {
-          await setTimeout(this.config.batchIntervalMs, undefined, { signal });
+          consecutiveEmpty++;
+          // Exponential backoff: base × 2^(n-1), capped at maxIdleIntervalMs
+          const delay = Math.min(
+            this.config.batchIntervalMs * Math.pow(2, consecutiveEmpty - 1),
+            maxIdleMs,
+          );
+          await setTimeout(delay, undefined, { signal });
+        } else {
+          consecutiveEmpty = 0;
         }
       }
     } catch (error: unknown) {
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (
+        (error instanceof Error && error.name === 'AbortError') ||
+        (error as { code?: string }).code === 'ABORT_ERR'
+      ) {
         this.logger.debug('Outbox runner wait interrupted by stop');
       } else {
         this.logger.error('Critical error in outbox runner loop', { error });
