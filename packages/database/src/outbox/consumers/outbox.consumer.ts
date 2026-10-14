@@ -1,3 +1,4 @@
+import { SpanKind } from '@opentelemetry/api';
 import { InvalidOutboxSizeError } from '@volontariapp/errors';
 import type { BaseRepository } from '../../core/base.repository.js';
 import type { OutboxEntity } from '../entities/outbox.entity.js';
@@ -6,6 +7,7 @@ import type { OutboxModel } from '../models/outbox.model.js';
 import type { Logger } from '@volontariapp/logger';
 import type { OutboxDispatcher } from '../dispatchers/outbox.dispatcher.js';
 import type { OutboxPusher } from '../pushers/outbox.pusher.js';
+import { runInTraceContext } from '../utils/run-in-trace-context.js';
 
 export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   constructor(
@@ -96,9 +98,21 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
   async processItems(entities: TOutboxEntity[]): Promise<void> {
     for (const item of entities) {
       try {
-        this.logger.info(`Pushing outbox item ${item.id.toString()}`);
-        await this.outboxPusher.pushElement(item);
-        await this.outboxDispatcher.markAsCompleted(item);
+        // A child of the trace carried by the row, so the hop through the outbox (and the
+        // wait since the row was written) shows up in the trace of the request that caused it.
+        await runInTraceContext(
+          {
+            traceparent: item.traceparent,
+            name: `outbox ${item.type}`,
+            kind: SpanKind.PRODUCER,
+            attributes: { type: item.type, emitter: item.emitter, 'outbox.id': item.id },
+          },
+          async () => {
+            this.logger.info(`Pushing outbox item ${item.id.toString()}`);
+            await this.outboxPusher.pushElement(item);
+            await this.outboxDispatcher.markAsCompleted(item);
+          },
+        );
       } catch (error) {
         this.logger.error(`Error pushing outbox item ${item.id.toString()}`, { error });
         await this.outboxDispatcher.markAsFailed(
