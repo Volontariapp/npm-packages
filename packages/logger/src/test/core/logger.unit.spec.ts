@@ -37,6 +37,7 @@ describe('Logger', () => {
 
       expect(payload).toMatchObject({
         level: 'debug',
+        status: 'debug',
         context: 'TestContext',
         message: 'A debug message',
       });
