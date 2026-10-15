@@ -1,6 +1,12 @@
 import { EntityType } from '../enums/entity-type.enum.js';
 
-export const COMMON_ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
+export const COMMON_ALLOWED_MIME_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+] as const;
 
 export const ALLOWED_MIME_TYPES_BY_ENTITY: Record<EntityType, readonly string[]> = {
   [EntityType.USER_AVATAR]: [...COMMON_ALLOWED_MIME_TYPES],

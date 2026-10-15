@@ -104,6 +104,8 @@ describe('Domain Storage Unit Tests', () => {
       expect(COMMON_ALLOWED_MIME_TYPES).toContain('image/jpeg');
       expect(COMMON_ALLOWED_MIME_TYPES).toContain('image/png');
       expect(COMMON_ALLOWED_MIME_TYPES).toContain('image/webp');
+      expect(COMMON_ALLOWED_MIME_TYPES).toContain('image/heic');
+      expect(COMMON_ALLOWED_MIME_TYPES).toContain('image/heif');
 
       expect(ALLOWED_MIME_TYPES_BY_ENTITY.BADGE_ICON).not.toContain('image/svg+xml');
       expect(ALLOWED_MIME_TYPES_BY_ENTITY.USER_AVATAR).not.toContain('image/svg+xml');

@@ -1,9 +1,6 @@
-import { EntityType } from '../enums/entity-type.enum.js';
+import type { EntityType } from '../enums/entity-type.enum.js';
 import { InvalidFileExtensionException } from '../exceptions/invalid-file-extension.exception.js';
-import {
-  ALLOWED_MIME_TYPES_BY_ENTITY,
-  GLOBAL_ALLOWED_MIME_TYPES,
-} from './mime-type.constants.js';
+import { ALLOWED_MIME_TYPES_BY_ENTITY, GLOBAL_ALLOWED_MIME_TYPES } from './mime-type.constants.js';
 
 export class MimeType {
   private readonly value: string;
@@ -37,8 +34,8 @@ export class MimeType {
     return this.value;
   }
 
-  public equals(other: MimeType): boolean {
-    if (!other || !(other instanceof MimeType)) {
+  public equals(other: unknown): boolean {
+    if (!(other instanceof MimeType)) {
       return false;
     }
     return this.value === other.getValue();

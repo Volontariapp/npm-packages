@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.11
+
+### Patch Changes
+
+- Add Apple HEIC/HEIF media format support to common validation policies; release storage infrastructure pipeline package with S3 operations, presigned POST signer, magic bytes detection, clamd antivirus client, and sharp image transformer.
+
 ## 0.11.10
 
 ### Patch Changes
