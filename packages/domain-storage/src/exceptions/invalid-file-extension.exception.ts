@@ -1,5 +1,5 @@
 import { BadRequestError } from '@volontariapp/errors';
-import { EntityType } from '../enums/entity-type.enum.js';
+import type { EntityType } from '../enums/entity-type.enum.js';
 
 export class InvalidFileExtensionException extends BadRequestError {
   constructor(mimeType: string, entityType?: EntityType | string) {
