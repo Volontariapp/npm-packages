@@ -28,22 +28,22 @@ const collectSpecifiers = (entry: string): { files: Set<string>; packages: Set<s
 };
 
 describe('Root entry point', () => {
-  const { files, packages } = collectSpecifiers(resolve(SRC_DIR, 'index.ts'));
+  const { files } = collectSpecifiers(resolve(SRC_DIR, 'index.ts'));
 
-  it('does not load typeorm, which is only an optional peer for ./models', () => {
+  it('re-exports models and repositories from root', () => {
+    const reachedModels = [...files].filter((file) => file.includes('/models/'));
+    expect(reachedModels.length).toBeGreaterThan(0);
+
+    const reachedRepos = [...files].filter((file) => file.includes('/repositories/'));
+    expect(reachedRepos.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Helpers entry point', () => {
+  const { packages } = collectSpecifiers(resolve(SRC_DIR, 'helpers/index.ts'));
+
+  it('does not load typeorm, keeping helpers pure for consumers without db', () => {
     expect(packages.has('typeorm')).toBe(false);
     expect(packages.has('reflect-metadata')).toBe(false);
-  });
-
-  it('does not reach the models', () => {
-    const reached = [...files].filter((file) => file.includes('/models/'));
-    expect(reached).toEqual([]);
-  });
-
-  it('does not reach the repositories, which depend on typeorm and the outbox', () => {
-    const reached = [...files].filter((file) => file.includes('/repositories/'));
-    expect(reached).toEqual([]);
-    expect(packages.has('@volontariapp/database')).toBe(false);
-    expect(packages.has('@volontariapp/outbox')).toBe(false);
   });
 });

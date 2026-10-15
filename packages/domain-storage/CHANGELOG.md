@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.12
+
+### Patch Changes
+
+- Export models and repositories from root entry point, add ./helpers subpath export
+
 ## 0.11.11
 
 ### Patch Changes
