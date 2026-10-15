@@ -31,9 +31,10 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
     "test": "node --experimental-vm-modules $(yarn bin jest)",
-    "test:unit": "node --experimental-vm-modules $(yarn bin jest) --testPathIgnorePatterns=\"int.spec.ts\"",
-    "test:integration": "node --experimental-vm-modules $(yarn bin jest) --testMatch=\"**/*.int.spec.ts\"",
-    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
+    "test:unit": "node --experimental-vm-modules $(yarn bin jest)",
+    "test:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --runInBand",
+    "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\"",
+    "test:coverage:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --runInBand"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1136.0",
