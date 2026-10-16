@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.4.0
+
+### Minor Changes
+
+- Add the gateway storage module types (GenerateUploadUrlRequest, ConfirmUploadRequest, GetFileMetadataRequest, FileMetadataDTO and the web responses) shared between api-gateway and the front-end.
+
 ## 4.3.16
 
 ### Patch Changes

@@ -13,3 +13,7 @@ export * from './post/response/index.js';
 // Social Module
 export * from './social/request/index.js';
 export * from './social/response/index.js';
+
+// Storage Module
+export * from './storage/request/index.js';
+export * from './storage/response/index.js';
