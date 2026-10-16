@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.5.0
+
+### Minor Changes
+
+- Export the storage module from the package root so that the front-end can import the EntityType, FileStatus, ScanStatus, ValidationMode and RejectionReason enums used by the gateway storage requests and responses.
+
 ## 4.4.0
 
 ### Minor Changes
