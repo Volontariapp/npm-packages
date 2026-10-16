@@ -10,7 +10,7 @@ import {
   EntityType,
 } from '@volontariapp/contracts-nest';
 import { Logger } from '@volontariapp/logger';
-import { isBaseError } from '@volontariapp/errors';
+import { GrpcStatus, isBaseError } from '@volontariapp/errors';
 import { STORAGE_ATTACHMENT_FAILED, STORAGE_TIMEOUT } from '@volontariapp/errors-nest';
 import { DEFAULT_STORAGE_TIMEOUT_MS, STORAGE_CLIENT_OPTIONS } from '../constants.js';
 import type {
@@ -18,7 +18,7 @@ import type {
   StorageClientOptions,
   WithMetadata,
 } from '../interfaces/index.js';
-import { isGrpcError } from '../errors/index.js';
+import { isGrpcError, relayStorageError } from '../errors/index.js';
 
 @Injectable()
 export class StorageClientService implements OnModuleInit {
@@ -65,7 +65,19 @@ export class StorageClientService implements OnModuleInit {
         throw error;
       }
       const grpcErr = isGrpcError(error) ? error : undefined;
-      const message = grpcErr?.details ?? (error instanceof Error ? error.message : String(error));
+      const relayed = grpcErr === undefined ? undefined : relayStorageError(grpcErr);
+      if (relayed !== undefined) {
+        this.logger.warn(
+          `ConfirmFileAttachment refused for entity ${command.entityId}: ${relayed.code}`,
+        );
+        throw relayed;
+      }
+      const message =
+        grpcErr === undefined
+          ? error instanceof Error
+            ? error.message
+            : String(error)
+          : `${GrpcStatus[grpcErr.code] ?? String(grpcErr.code)}: ${grpcErr.details}`;
       this.logger.error(`ConfirmFileAttachment failed for entity ${command.entityId}: ${message}`);
       throw STORAGE_ATTACHMENT_FAILED(command.entityId, message);
     }

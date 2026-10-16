@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- Relay the business errors of ms-storage (file not found, attachment refused...) with their own status and code instead of wrapping them in STORAGE_ATTACHMENT_FAILED (500). Transport failures keep their existing codes, so the asynchronous fallback of ms-post and ms-event is unchanged. The reason of STORAGE_ATTACHMENT_FAILED now starts with the gRPC status name (for example "UNAVAILABLE: ..."). Add the isStorageUnavailable helper and the StorageUnavailableError (503) for consumers without an asynchronous fallback, such as the avatar of ms-user.
+
 ## 0.2.2
 
 ### Patch Changes
