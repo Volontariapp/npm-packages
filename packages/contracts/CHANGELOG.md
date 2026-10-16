@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.6.0
+
+### Minor Changes
+
+- Add the optional avatarUrl field to UserWeb and UserPublicWeb. The api-gateway computes it from avatarFileId, so clients can read the avatar URL from the typed profile responses instead of declaring a local type.
+
 ## 4.5.0
 
 ### Minor Changes
