@@ -28,10 +28,14 @@ export interface BadgeWeb extends Omit<Badge, 'awardedAt'> {
 
 export interface UserWeb extends Omit<User, 'badges'> {
   badges: BadgeWeb[];
+  /** Public URL of the avatar, computed by the gateway from avatarFileId. Absent when there is none. */
+  avatarUrl?: string;
 }
 
 export interface UserPublicWeb extends Omit<UserPublic, 'badges'> {
   badges: BadgeWeb[];
+  /** Public URL of the avatar, computed by the gateway from avatarFileId. Absent when there is none. */
+  avatarUrl?: string;
 }
 
 export interface UserWebResponse {
