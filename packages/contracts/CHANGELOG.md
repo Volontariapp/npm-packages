@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.7.0
+
+### Minor Changes
+
+- Add media (PostMediaWeb) and mediaStatus (PostMediaStatusWeb) to PostWeb. The api-gateway computes media[].url from fileId and omits it until mediaStatus is READY.
+
 ## 4.6.0
 
 ### Minor Changes
