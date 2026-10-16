@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0
+
+### Minor Changes
+
+- Expose the EntityType enum through the new @volontariapp/domain-storage/enums subpath so consumers that cannot load the package root (it pulls typeorm models) can call the helpers, for example buildPublicFileUrl in the api-gateway.
+
 ## 0.11.14
 
 ### Patch Changes
