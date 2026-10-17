@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.27.0
+
+### Minor Changes
+
+- Ajout de l'evenement user.impact_score_credited (payload { userId, eventId, scoreIncrement }), de son type WebSocket (payload { eventId, scoreIncrement }), de son mapping evenement vers WebSocket et du stream Streams.USER_IMPACT_SCORE_CREDITED, pour notifier un utilisateur que son score d'impact a ete credite.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.16.0
+
 ## 2.26.0
 
 ### Minor Changes

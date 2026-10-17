@@ -9,6 +9,7 @@ export enum UserEventMessagingType {
   USER_BADGE_ICON_REPLACED = 'user.badge_icon_replaced',
   USER_BADGE_DELETED = 'user.badge_deleted',
   USER_BADGE_AWARDED = 'user.badge_awarded',
+  USER_IMPACT_SCORE_CREDITED = 'user.impact_score_credited',
   USER_CREATION_SUCCESSFULL = 'user.creation_successfull',
   USER_CREATION_FAILED = 'user.creation_failed',
   USER_DELETION_SUCCESSFULL = 'user.deletion_successfull',
@@ -28,6 +29,13 @@ export interface IBadgePayload {
 export interface IUserBadgeAwardedPayload {
   userId: string;
   badges: IBadgePayload[];
+}
+
+/** Score d'impact credite a un participant quand l'evenement `eventId` se termine. */
+export interface IUserImpactScoreCreditedPayload {
+  userId: string;
+  eventId: string;
+  scoreIncrement: number;
 }
 
 export interface IUserPayload {

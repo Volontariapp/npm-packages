@@ -9,4 +9,6 @@ export const USER_EVENT_TO_WS_EVENT_MAPPING = {
   [UserEventMessagingType.USER_DELETION_SUCCESSFULL]: UserWebsocketMessagingType.USER_DELETED,
   [UserEventMessagingType.USER_DELETION_FAILED]: UserWebsocketMessagingType.USER_DELETION_FAILED,
   [UserEventMessagingType.USER_BADGE_AWARDED]: UserWebsocketMessagingType.USER_BADGE_AWARDED,
+  [UserEventMessagingType.USER_IMPACT_SCORE_CREDITED]:
+    UserWebsocketMessagingType.USER_IMPACT_SCORE_CREDITED,
 } as const;
