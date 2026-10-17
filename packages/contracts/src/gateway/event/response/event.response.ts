@@ -1,12 +1,19 @@
 import type { Event, Tag, Requirement } from '../../../event/event.js';
 import type { PaginationResponse } from '../../../common/pagination.js';
 
+/** Processing state of the cover photo of an event, as exposed by the gateway. */
+export type CoverStatusWeb = 'NONE' | 'PENDING' | 'READY' | 'REJECTED';
+
 /**
  * REST-friendly Event DTO with Date objects
  */
-export interface EventDTO extends Omit<Event, 'startAt' | 'endAt'> {
+export interface EventDTO extends Omit<Event, 'startAt' | 'endAt' | 'coverStatus'> {
   startAt?: Date;
   endAt?: Date;
+  /** Name of the status (the gRPC client delivers enums by name); absent means NONE. */
+  coverStatus?: CoverStatusWeb;
+  /** Public URL computed by the gateway from coverFileId. Absent until coverStatus is READY. */
+  coverUrl?: string;
 }
 
 export interface EventWebResponse {
