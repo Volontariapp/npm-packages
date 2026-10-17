@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.26.0
+
+### Minor Changes
+
+- event.finished transporte awardedImpactScore pour crediter le score d'impact des participants. Ajout du modele ImpactScoreCreditModel (table impact_score_credits) pour dedupliquer le credit par couple (evenement, participant).
+
 ## 2.25.8
 
 ### Patch Changes
