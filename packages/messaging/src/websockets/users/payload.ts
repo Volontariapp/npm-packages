@@ -18,3 +18,7 @@ export interface IUserDeletionFailedWebsocketPayload
 export interface IUserBadgeAwardedWebsocketPayload {
   badges: IBadgePayload[];
 }
+export interface IUserImpactScoreCreditedWebsocketPayload {
+  eventId: string;
+  scoreIncrement: number;
+}

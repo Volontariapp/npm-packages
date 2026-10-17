@@ -27,6 +27,7 @@ import type {
   IBadgeIconReplacedPayload,
   IBadgeDeletedPayload,
   IUserBadgeAwardedPayload,
+  IUserImpactScoreCreditedPayload,
 } from './user/payloads.js';
 
 import { SocialEventMessagingType } from './social/payloads.js';
@@ -136,6 +137,7 @@ export interface EventRegistry {
   [UserEventMessagingType.USER_BADGE_ICON_REPLACED]: IBadgeIconReplacedPayload;
   [UserEventMessagingType.USER_BADGE_DELETED]: IBadgeDeletedPayload;
   [UserEventMessagingType.USER_BADGE_AWARDED]: IUserBadgeAwardedPayload;
+  [UserEventMessagingType.USER_IMPACT_SCORE_CREDITED]: IUserImpactScoreCreditedPayload;
   [UserEventMessagingType.USER_CREATION_SUCCESSFULL]: IUserCreationSuccessfullPayload;
   [UserEventMessagingType.USER_CREATION_FAILED]: IUserCreationFailedPayload;
   [UserEventMessagingType.USER_DELETION_SUCCESSFULL]: IUserDeletionSuccessfullPayload;

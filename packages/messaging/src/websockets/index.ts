@@ -19,6 +19,7 @@ import type {
   IUserDeletedWebsocketPayload,
   IUserDeletionFailedWebsocketPayload,
   IUserBadgeAwardedWebsocketPayload,
+  IUserImpactScoreCreditedWebsocketPayload,
 } from './users/index.js';
 import { UserWebsocketMessagingType } from './users/index.js';
 import type {
@@ -58,6 +59,7 @@ export interface WebsocketEventRegistry {
   [UserWebsocketMessagingType.USER_CREATION_FAILED]: IUserCreationFailedWebsocketPayload;
   [UserWebsocketMessagingType.USER_DELETION_FAILED]: IUserDeletionFailedWebsocketPayload;
   [UserWebsocketMessagingType.USER_BADGE_AWARDED]: IUserBadgeAwardedWebsocketPayload;
+  [UserWebsocketMessagingType.USER_IMPACT_SCORE_CREDITED]: IUserImpactScoreCreditedWebsocketPayload;
 
   [PostWebsocketMessagingType.POST_CREATED]: IPostCreatedWebsocketPayload;
   [PostWebsocketMessagingType.POST_DELETED]: IPostDeletedWebsocketPayload;

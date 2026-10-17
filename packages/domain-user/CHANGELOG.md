@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.12.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.16.0
+  - @volontariapp/messaging@2.27.0
+  - @volontariapp/auth@3.3.22
+  - @volontariapp/database@3.10.10
+  - @volontariapp/outbox@0.10.14
+
 ## 2.12.0
 
 ### Minor Changes
