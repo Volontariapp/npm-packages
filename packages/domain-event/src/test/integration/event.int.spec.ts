@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import { EventState, EventType } from '@volontariapp/contracts';
+import { EventQueueModel } from '@volontariapp/database';
 import {
   testDataSource,
   initializeTestDb,
@@ -284,6 +285,36 @@ describe('PostgresEventRepository (Integration)', () => {
 
       // Assert
       expect(result).toBe(false);
+    });
+  });
+
+  // ─── changeStateWithEventFinished ─────────────────────────────────────────
+
+  describe('changeStateWithEventFinished()', () => {
+    it('should write an event.finished outbox row carrying the awarded impact score', async () => {
+      // Arrange
+      const created = await eventRepository.create(
+        EventFactory.buildInput({
+          type: EventType.EVENT_TYPE_ECOLOGY,
+          awardedImpactScore: 40,
+        }),
+      );
+
+      // Act
+      await eventRepository.changeStateWithEventFinished(
+        created.id,
+        EventState.EVENT_STATE_FINISHED,
+      );
+
+      // Assert
+      const rows = await testDataSource.getRepository(EventQueueModel).find();
+      const finishedRows = rows.filter((row) => row.type === 'event.finished');
+      expect(finishedRows).toHaveLength(1);
+      expect(finishedRows[0]?.payload.after).toMatchObject({
+        eventId: created.id,
+        eventType: EventType.EVENT_TYPE_ECOLOGY,
+        awardedImpactScore: 40,
+      });
     });
   });
 

@@ -46,6 +46,8 @@ export interface IUserEventDeletionFailedPayload extends IUserIdPayload {
 }
 export interface IEventFinishedPayload extends IEventIdPayload {
   eventType: EventType;
+  /** Score d'impact crédité à chaque participant, lu sur l'événement à la transition vers FINISHED. */
+  awardedImpactScore: number;
 }
 
 export interface IEventGeocodedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}

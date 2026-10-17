@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.12.0
+
+### Minor Changes
+
+- event.finished transporte awardedImpactScore pour crediter le score d'impact des participants. Ajout du modele ImpactScoreCreditModel (table impact_score_credits) pour dedupliquer le credit par couple (evenement, participant).
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.26.0
+  - @volontariapp/database@3.10.9
+  - @volontariapp/outbox@0.10.13
+
 ## 3.11.5
 
 ### Patch Changes

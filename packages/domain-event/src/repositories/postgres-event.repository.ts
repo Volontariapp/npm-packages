@@ -300,6 +300,7 @@ export class PostgresEventRepository
       const payload: IEventFinishedPayload = {
         eventId: savedEntity.id,
         eventType: savedEntity.type,
+        awardedImpactScore: savedEntity.awardedImpactScore,
       };
 
       const eventQueueEntity: EventQueueEntity<
