@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.8.0
+
+### Minor Changes
+
+- contracts: add `CoverStatusWeb` and `coverUrl` to the gateway `EventDTO`. `coverStatus` is now the status name (`NONE`, `PENDING`, `READY`, `REJECTED`) and `coverUrl` is absent until the cover is READY.
+
 ## 4.7.0
 
 ### Minor Changes
