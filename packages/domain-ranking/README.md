@@ -7,7 +7,7 @@ Domaine du classement personnalisé des événements et des posts (`ms-ranking`)
 
 | Dossier | Rôle |
 | :--- | :--- |
-| `constants/` | Poids, seuils et versions de formule (`FORMULA_VERSION`, `FEED_FORMULA_VERSION`). Toute modification d'un poids incrémente la version. |
+| `constants/formulas/` | **Un fichier par formule** (score d'un événement, proximité, imminence, popularité, score d'un post, affinité d'auteur, fraîcheur, diversité, mélange sémantique, codes d'explication, pénalités `PASS`) et `FORMULA_VERSION` / `FEED_FORMULA_VERSION`. Toute modification d'un poids incrémente la version. Les autres constantes (valeurs par défaut, seaux, rétention, pagination) sont des fichiers de `constants/`. |
 | `enums/` | Types de liste, sources, codes d'explication, seaux, origines. |
 | `entities/` | Entités du domaine (une par table), sans dépendance à TypeORM. |
 | `models/` | Modèles TypeORM des tables `ranking_*` et `registerRankingMappings()` (appelé à l'import du paquet, comme `domain-post`). |
