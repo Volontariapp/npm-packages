@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.1
+
+### Patch Changes
+
+- Export the ranking folder from the package index so that the ranking messages, enums and service names are importable from the package root.
+
 ## 3.4.0
 
 ### Minor Changes
