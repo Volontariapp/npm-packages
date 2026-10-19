@@ -10,4 +10,5 @@ export * from './google/protobuf/timestamp.js';
 export * from './social/index.js';
 export * from './social/grpc-helpers.js';
 export * from './storage/index.js';
+export * from './ranking/index.js';
 
