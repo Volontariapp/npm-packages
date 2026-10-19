@@ -17,3 +17,7 @@ export * from './social/response/index.js';
 // Storage Module
 export * from './storage/request/index.js';
 export * from './storage/response/index.js';
+
+// Ranking Module
+export * from './ranking/request/index.js';
+export * from './ranking/response/index.js';

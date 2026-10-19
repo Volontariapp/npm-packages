@@ -17,3 +17,7 @@ message ListCommentsResponse {
 message DeleteCommentResponse {
   bool success = 1;
 }
+
+message ListCommentsByAuthorResponse {
+  repeated Comment comments = 1;
+}

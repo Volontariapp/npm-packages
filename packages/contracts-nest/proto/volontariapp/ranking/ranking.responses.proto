@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package volontariapp.ranking;
+
+import "volontariapp/ranking/ranking.proto";
+
+// One page of a ranked list, shared by the events and the feed responses.
+message RankingPage {
+  repeated RankingItem items = 1;
+  RankingSource source = 2;
+  // ISO 8601.
+  string computed_at = 3;
+  string list_version = 4;
+  string next_cursor = 5;
+  // Based on the rank in the list, not on the page length.
+  bool has_more = 6;
+  // A recomputation has been requested.
+  bool stale = 7;
+  // The list was recomputed since the cursor was issued.
+  bool version_changed = 8;
+  int32 total_count = 9;
+}
+
+message GetRankingEventsResponse {
+  RankingPage page = 1;
+}
+
+message GetRankingFeedResponse {
+  RankingPage page = 1;
+}
+
+message RequestRankingRefreshResponse {
+  bool accepted = 1;
+  bool refresh_throttled = 2;
+}
+
+message UpdateUserLocationResponse {
+  bool accepted = 1;
+}
+
+message RecordEventFeedbackResponse {
+  int32 recorded = 1;
+}
