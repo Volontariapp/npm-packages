@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "@nestjs/typeorm": "^11.0.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@volontariapp/testing": "workspace:*",
@@ -52,6 +53,20 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@volontariapp/crypto": "workspace:*"
+    "@nestjs/common": "^11.0.1",
+    "@volontariapp/crypto": "workspace:*",
+    "@volontariapp/database": "workspace:*"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28"
+  },
+  "peerDependenciesMeta": {
+    "reflect-metadata": {
+      "optional": true
+    },
+    "typeorm": {
+      "optional": true
+    }
   }
 }

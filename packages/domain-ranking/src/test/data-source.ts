@@ -1,7 +1,33 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import type { Repository } from '@volontariapp/database';
 import { EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
-import { RANKING_MODELS } from '../models/index.js';
+import { RANKING_MODELS, registerRankingMappings } from '../models/index.js';
+import {
+  PostgresRankingEventFeedbackRepository,
+  PostgresRankingEventMentionRepository,
+  PostgresRankingEventWishRepository,
+  PostgresRankingLikeLogRepository,
+  PostgresRankingLocationRepository,
+  PostgresRankingPostScoreRepository,
+  PostgresRankingRateBucketRepository,
+  PostgresRankingRequestRepository,
+  PostgresRankingRunRepository,
+  PostgresRankingScoreRepository,
+} from '../repositories/index.js';
+import { RankingPurgeService } from '../services/index.js';
+import {
+  RankingEventFeedbackModel,
+  RankingEventMentionModel,
+  RankingEventWishModel,
+  RankingLikeLogModel,
+  RankingPostScoreModel,
+  RankingRateBucketModel,
+  RankingRequestModel,
+  RankingRunModel,
+  RankingScoreModel,
+  RankingUserLocationModel,
+} from '../models/index.js';
 
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -43,12 +69,34 @@ export const testDataSource = new DataSource({
   logging: false,
 });
 
+// The test data source comes from the typeorm copy installed next to this package, the
+// repositories expect the one of @volontariapp/database: same cast as domain-post.
+export const getTestRepository = <T extends object>(ModelClass: new () => T): Repository<T> =>
+  testDataSource.getRepository(ModelClass) as unknown as Repository<T>;
+
 export const initializeTestDb = async (): Promise<void> => {
   if (!testDataSource.isInitialized) {
     await testDataSource.initialize();
     await testDataSource.dropDatabase();
     await testDataSource.runMigrations();
   }
+  registerRankingMappings();
+};
+
+/** Every repository of the domain on the test database. */
+export const buildTestRepositories = () => {
+  const runs = new PostgresRankingRunRepository(getTestRepository(RankingRunModel));
+  const scores = new PostgresRankingScoreRepository(getTestRepository(RankingScoreModel));
+  const postScores = new PostgresRankingPostScoreRepository(getTestRepository(RankingPostScoreModel));
+  const requests = new PostgresRankingRequestRepository(getTestRepository(RankingRequestModel));
+  const likeLog = new PostgresRankingLikeLogRepository(getTestRepository(RankingLikeLogModel));
+  const feedback = new PostgresRankingEventFeedbackRepository(getTestRepository(RankingEventFeedbackModel));
+  const wishes = new PostgresRankingEventWishRepository(getTestRepository(RankingEventWishModel));
+  const mentions = new PostgresRankingEventMentionRepository(getTestRepository(RankingEventMentionModel));
+  const locations = new PostgresRankingLocationRepository(getTestRepository(RankingUserLocationModel));
+  const buckets = new PostgresRankingRateBucketRepository(getTestRepository(RankingRateBucketModel));
+  const purge = new RankingPurgeService(runs, scores, postScores, requests, likeLog, feedback, wishes, mentions, locations, buckets);
+  return { runs, scores, postScores, requests, likeLog, feedback, wishes, mentions, locations, buckets, purge };
 };
 
 export const closeTestDb = async (): Promise<void> => {

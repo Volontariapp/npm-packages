@@ -1,14 +1,21 @@
 import { randomUUID } from 'node:crypto';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { RankingRateBucketRepository, RateBucketName } from '../../index.js';
-import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
+import { RateBucketName } from '../../index.js';
+import type { PostgresRankingRateBucketRepository } from '../../index.js';
+import {
+  buildTestRepositories,
+  closeTestDb,
+  initializeTestDb,
+  testDataSource,
+  truncateAll,
+} from '../data-source.js';
 
 describe('Rate buckets (Integration)', () => {
-  let buckets: RankingRateBucketRepository;
+  let buckets: PostgresRankingRateBucketRepository;
 
   beforeAll(async () => {
     await initializeTestDb();
-    buckets = new RankingRateBucketRepository(testDataSource);
+    buckets = buildTestRepositories().buckets;
   });
 
   afterAll(async () => {

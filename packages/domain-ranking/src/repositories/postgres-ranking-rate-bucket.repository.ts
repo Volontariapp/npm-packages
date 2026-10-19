@@ -1,10 +1,17 @@
-import type { DataSource } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import type { Repository } from '@volontariapp/database';
+import { BaseRepository } from '@volontariapp/database';
+import type { TransactionManager } from './sql.js';
 import {
   BUCKET_WINDOW_SECONDS,
   LOCATION_BUCKET_CAPACITY,
   REFRESH_BUCKET_CAPACITY,
 } from '../constants/index.js';
+import { RankingRateBucketEntity } from '../entities/index.js';
 import { RateBucketName } from '../enums/index.js';
+import { RankingRateBucketModel } from '../models/index.js';
+import type { IRankingRateBucketRepository } from './interfaces/index.js';
 import type { Queryable } from './sql.js';
 import { rowsOf } from './sql.js';
 
@@ -13,18 +20,21 @@ import { rowsOf } from './sql.js';
  * casts are mandatory: without them PostgreSQL infers integers and 5 / 60 is 0, so a bucket
  * would never refill.
  */
-export class RankingRateBucketRepository {
-  constructor(private readonly dataSource: DataSource) {}
+@Injectable()
+export class PostgresRankingRateBucketRepository
+  extends BaseRepository<RankingRateBucketModel, RankingRateBucketEntity>
+  implements IRankingRateBucketRepository
+{
+  constructor(
+    @InjectRepository(RankingRateBucketModel)
+    repository: Repository<RankingRateBucketModel>,
+  ) {
+    super(repository, RankingRateBucketEntity, RankingRateBucketModel);
+  }
 
-  /** true when a token was taken (allowed), false when the bucket is empty (limited). */
   async tryConsume(
-    params: {
-      userId: string;
-      bucket: RateBucketName;
-      capacity: number;
-      windowSeconds: number;
-    },
-    executor: Queryable = this.dataSource.manager,
+    params: { userId: string; bucket: RateBucketName; capacity: number; windowSeconds: number },
+    executor: Queryable = this.repository.manager,
   ): Promise<boolean> {
     const rows = rowsOf<{ tokens: string }>(
       await executor.query(
@@ -41,7 +51,6 @@ export class RankingRateBucketRepository {
     return rows.length > 0;
   }
 
-  /** POST /ranking/refresh: 5 per minute, shared by the events and the posts. */
   tryConsumeRefresh(userId: string, executor?: Queryable): Promise<boolean> {
     return this.tryConsume(
       {
@@ -54,7 +63,6 @@ export class RankingRateBucketRepository {
     );
   }
 
-  /** PUT /ranking/location: 1 per minute. */
   tryConsumeLocation(userId: string, executor?: Queryable): Promise<boolean> {
     return this.tryConsume(
       {
@@ -65,5 +73,13 @@ export class RankingRateBucketRepository {
       },
       executor,
     );
+  }
+
+  async purgeByUser(
+    userId: string,
+    manager: TransactionManager = this.repository.manager,
+  ): Promise<number> {
+    const result = await manager.delete(RankingRateBucketModel, { userId });
+    return result.affected ?? 0;
   }
 }

@@ -1,9 +1,16 @@
-import type { DataSource, EntityManager } from 'typeorm';
+import type { BaseRepository } from '@volontariapp/database';
 
-/** Anything that can run SQL: the data source or the manager of a transaction. */
-export type Queryable = Pick<EntityManager, 'query'>;
+/**
+ * The manager of a transaction, as BaseRepository hands it out. Derived from its signature so
+ * that the types stay those of the typeorm copy used by @volontariapp/database (a second copy
+ * installed next to this package would make the classes incompatible).
+ */
+export type TransactionManager = Parameters<
+  Parameters<BaseRepository<Record<string, unknown>, object>['executeInTransaction']>[0]
+>[0]['manager'];
 
-export type Transactional = DataSource | EntityManager;
+/** Anything that can run SQL: the manager of the repository or the one of a transaction. */
+export type Queryable = Pick<TransactionManager, 'query'>;
 
 /**
  * TypeORM returns the rows of a SELECT or INSERT, but `[rows, affectedCount]` for an UPDATE or
@@ -21,3 +28,6 @@ export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0
 export const uniqueUuids = (ids: readonly string[]): string[] => [
   ...new Set(ids.filter((id) => UUID_PATTERN.test(id))),
 ];
+
+export const countMap = (rows: ReadonlyArray<{ id: string; total: string }>): Map<string, number> =>
+  new Map(rows.map((row) => [row.id, Number(row.total)]));

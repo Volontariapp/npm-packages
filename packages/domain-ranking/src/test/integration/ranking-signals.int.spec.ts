@@ -1,40 +1,40 @@
 import { randomBytes, randomUUID } from 'node:crypto';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import {
-  EventFeedbackRepository,
-  EventMentionRepository,
-  EventWishRepository,
   FeedbackBatchTooLargeError,
   MAX_FEEDBACK_ITEMS,
-  RankingLikeLogRepository,
-  RankingLocationRepository,
-  RankingPurgeRepository,
-  RankingRateBucketRepository,
-  RankingRequestRepository,
-  createRankingRepositories,
   decryptLocation,
   encryptLocation,
   roundToKilometer,
 } from '../../index.js';
-import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
+import type {
+  PostgresRankingEventFeedbackRepository,
+  PostgresRankingEventMentionRepository,
+  PostgresRankingEventWishRepository,
+  PostgresRankingLikeLogRepository,
+  PostgresRankingLocationRepository,
+} from '../../index.js';
+import {
+  buildTestRepositories,
+  closeTestDb,
+  initializeTestDb,
+  testDataSource,
+  truncateAll,
+} from '../data-source.js';
 
 const minutesAgo = (minutes: number): Date => new Date(Date.now() - minutes * 60_000);
 const daysAgo = (days: number): Date => new Date(Date.now() - days * 86_400_000);
 
 describe('Ranking signals (Integration)', () => {
-  let feedback: EventFeedbackRepository;
-  let wishes: EventWishRepository;
-  let mentions: EventMentionRepository;
-  let likeLog: RankingLikeLogRepository;
-  let locations: RankingLocationRepository;
+  let feedback: PostgresRankingEventFeedbackRepository;
+  let wishes: PostgresRankingEventWishRepository;
+  let mentions: PostgresRankingEventMentionRepository;
+  let likeLog: PostgresRankingLikeLogRepository;
+  let locations: PostgresRankingLocationRepository;
 
   beforeAll(async () => {
     await initializeTestDb();
-    feedback = new EventFeedbackRepository(testDataSource);
-    wishes = new EventWishRepository(testDataSource);
-    mentions = new EventMentionRepository(testDataSource);
-    likeLog = new RankingLikeLogRepository(testDataSource);
-    locations = new RankingLocationRepository(testDataSource);
+    ({ feedback, wishes, mentions, likeLog, locations } = buildTestRepositories());
   });
 
   afterAll(async () => {
@@ -109,8 +109,8 @@ describe('Ranking signals (Integration)', () => {
       const user = randomUUID();
       await wishes.add(user, event);
 
-      await wishes.remove(user, event);
-      await wishes.remove(user, event);
+      await wishes.removeWish(user, event);
+      await wishes.removeWish(user, event);
 
       expect((await wishes.countByEvents([event])).get(event)).toBeUndefined();
     });
@@ -301,7 +301,7 @@ describe('Ranking signals (Integration)', () => {
       const paris = { lat: 48.856614, lng: 2.352222 };
 
       await locations.save(userId, encryptLocation(userId, paris, key));
-      const stored = await locations.find(userId);
+      const stored = await locations.findByUser(userId);
 
       expect(stored).not.toBeNull();
       expect(stored?.encrypted.toString('utf8')).not.toContain('48.85');
@@ -317,7 +317,7 @@ describe('Ranking signals (Integration)', () => {
 
       await locations.save(userId, encryptLocation(userId, { lat: 2, lng: 2 }, key));
 
-      const stored = await locations.find(userId);
+      const stored = await locations.findByUser(userId);
       expect(decryptLocation(userId, stored?.encrypted ?? Buffer.alloc(0), key).lat).toBeCloseTo(2, 1);
       expect(await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_user_location`)).toEqual([
         { total: 1 },
@@ -325,28 +325,28 @@ describe('Ranking signals (Integration)', () => {
     });
 
     it('should answer null without position', async () => {
-      expect(await locations.find(randomUUID())).toBeNull();
+      expect(await locations.findByUser(randomUUID())).toBeNull();
     });
   });
 
   describe('account purge', () => {
     it('should remove every row of the user and nothing of the others', async () => {
-      const repositories = createRankingRepositories(testDataSource);
+      const repositories = buildTestRepositories();
       const user = randomUUID();
       const other = randomUUID();
       const key = randomBytes(32);
       const seed = async (userId: string): Promise<void> => {
         await repositories.requests.requestCompute({ userId, listKind: 'EVENT', reason: 'USER_CREATED', force: false, ttlSeconds: 120 });
-        await repositories.lists.replaceEventList({
+        await repositories.scores.replaceList({
           userId,
           startedAt: await repositories.requests.databaseClock(),
-          items: [{ id: randomUUID(), score: 0.5, structuralScore: 0.5, semanticScore: null, rank: 1, reasons: [] }],
+          items: [{ eventId: randomUUID(), score: 0.5, structuralScore: 0.5, semanticScore: null, rank: 1, reasons: [] }],
           run: { source: 'STRUCTURAL_ONLY', formulaVersion: 1, reason: 'ON_DEMAND', candidateCount: 1, jevScoredCount: 0, durationMs: 1 },
         });
-        await repositories.lists.replacePostList({
+        await repositories.postScores.replaceList({
           userId,
           startedAt: await repositories.requests.databaseClock(),
-          items: [{ id: randomUUID(), authorId: randomUUID(), origin: 'FOLLOWED', score: 0.5, structuralScore: 0.5, semanticScore: null, rank: 1, reasons: [] }],
+          items: [{ postId: randomUUID(), authorId: randomUUID(), origin: 'FOLLOWED', score: 0.5, structuralScore: 0.5, semanticScore: null, rank: 1, reasons: [] }],
           run: { source: 'FULL', formulaVersion: 1, reason: 'ON_DEMAND', candidateCount: 1, jevScoredCount: 0, durationMs: 1 },
         });
         await repositories.requests.requestCompute({ userId, listKind: 'POST', reason: 'ON_DEMAND', force: true, ttlSeconds: 120 });
@@ -355,12 +355,12 @@ describe('Ranking signals (Integration)', () => {
         await repositories.wishes.add(userId, randomUUID());
         await repositories.mentions.add({ postId: randomUUID(), eventId: randomUUID(), authorId: userId });
         await repositories.locations.save(userId, encryptLocation(userId, { lat: 1, lng: 1 }, key));
-        await new RankingRateBucketRepository(testDataSource).tryConsumeRefresh(userId);
+        await repositories.buckets.tryConsumeRefresh(userId);
       };
       await seed(user);
       await seed(other);
 
-      const report = await new RankingPurgeRepository(testDataSource).purgeUser(user);
+      const report = await repositories.purge.purgeUser(user);
 
       expect(report).toMatchObject({
         ranking_score: 1,
@@ -402,20 +402,23 @@ describe('Ranking signals (Integration)', () => {
         await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_event_mention WHERE author_id = $1`, [other]),
       ).toEqual([{ total: 1 }]);
     });
-  });
 
-  it('should keep the request deduplication usable through the factory', async () => {
-    const repositories = createRankingRepositories(testDataSource);
+    it('should roll back the whole purge when one table fails', async () => {
+      const repositories = buildTestRepositories();
+      const user = randomUUID();
+      await repositories.wishes.add(user, randomUUID());
+      await repositories.feedback.recordPasses(user, [randomUUID()]);
+      await testDataSource.query('ALTER TABLE ranking_user_location RENAME TO ranking_user_location_tmp');
 
-    const result = await repositories.requests.requestCompute({
-      userId: randomUUID(),
-      listKind: 'EVENT',
-      reason: 'MANUAL',
-      force: true,
-      ttlSeconds: 120,
+      try {
+        await expect(repositories.purge.purgeUser(user)).rejects.toThrow();
+      } finally {
+        await testDataSource.query('ALTER TABLE ranking_user_location_tmp RENAME TO ranking_user_location');
+      }
+
+      expect(
+        await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_event_wish WHERE user_id = $1`, [user]),
+      ).toEqual([{ total: 1 }]);
     });
-
-    expect(result.needsJob).toBe(true);
-    expect(new RankingRequestRepository(testDataSource)).toBeInstanceOf(RankingRequestRepository);
   });
 });

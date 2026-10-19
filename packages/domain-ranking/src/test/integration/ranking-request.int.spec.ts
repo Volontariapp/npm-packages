@@ -1,16 +1,23 @@
 import { randomUUID } from 'node:crypto';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { RankingListKind, RankingRequestRepository } from '../../index.js';
-import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
+import { RankingListKind } from '../../index.js';
+import type { PostgresRankingRequestRepository } from '../../index.js';
+import {
+  buildTestRepositories,
+  closeTestDb,
+  initializeTestDb,
+  testDataSource,
+  truncateAll,
+} from '../data-source.js';
 
 const TTL_SECONDS = 120;
 
 describe('Ranking requests (Integration)', () => {
-  let requests: RankingRequestRepository;
+  let requests: PostgresRankingRequestRepository;
 
   beforeAll(async () => {
     await initializeTestDb();
-    requests = new RankingRequestRepository(testDataSource);
+    requests = buildTestRepositories().requests;
   });
 
   afterAll(async () => {

@@ -19,6 +19,7 @@ export * from './ranking-event-wish.model.js';
 export * from './ranking-event-mention.model.js';
 export * from './ranking-user-location.model.js';
 export * from './ranking-rate-bucket.model.js';
+export * from './mapper.js';
 
 /** Every table of the ranking domain (the standard outbox tables come from @volontariapp/database). */
 export const RANKING_MODELS = [

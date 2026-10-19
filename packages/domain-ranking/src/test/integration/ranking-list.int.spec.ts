@@ -3,15 +3,26 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/glo
 import {
   FORMULA_VERSION,
   PostOrigin,
-  RankingListRepository,
-  RankingRequestRepository,
-  RankingRunRepository,
   RankingRunSource,
   buildPage,
   resolveCursor,
 } from '../../index.js';
-import type { RankedItem, RankedPostItem, RunSummary } from '../../index.js';
-import { closeTestDb, initializeTestDb, testDataSource, truncateAll } from '../data-source.js';
+import type {
+  PostgresRankingPostScoreRepository,
+  PostgresRankingRequestRepository,
+  PostgresRankingRunRepository,
+  PostgresRankingScoreRepository,
+  RankedEventItem,
+  RankedPostItem,
+  RunSummary,
+} from '../../index.js';
+import {
+  buildTestRepositories,
+  closeTestDb,
+  initializeTestDb,
+  testDataSource,
+  truncateAll,
+} from '../data-source.js';
 
 const run = (overrides: Partial<RunSummary> = {}): RunSummary => ({
   source: RankingRunSource.STRUCTURAL_ONLY,
@@ -23,9 +34,9 @@ const run = (overrides: Partial<RunSummary> = {}): RunSummary => ({
   ...overrides,
 });
 
-const items = (count: number): RankedItem[] =>
+const items = (count: number): RankedEventItem[] =>
   Array.from({ length: count }, (_, index) => ({
-    id: randomUUID(),
+    eventId: randomUUID(),
     score: Math.round((1 - index / (count + 1)) * 10_000) / 10_000,
     structuralScore: Math.round((1 - index / (count + 1)) * 10_000) / 10_000,
     semanticScore: null,
@@ -34,15 +45,18 @@ const items = (count: number): RankedItem[] =>
   }));
 
 describe('Ranking lists (Integration)', () => {
-  let lists: RankingListRepository;
-  let runs: RankingRunRepository;
-  let requests: RankingRequestRepository;
+  let scores: PostgresRankingScoreRepository;
+  let postScores: PostgresRankingPostScoreRepository;
+  let runs: PostgresRankingRunRepository;
+  let requests: PostgresRankingRequestRepository;
 
   beforeAll(async () => {
     await initializeTestDb();
-    lists = new RankingListRepository(testDataSource);
-    runs = new RankingRunRepository(testDataSource);
-    requests = new RankingRequestRepository(testDataSource);
+    const repositories = buildTestRepositories();
+    scores = repositories.scores;
+    postScores = repositories.postScores;
+    runs = repositories.runs;
+    requests = repositories.requests;
   });
 
   afterAll(async () => {
@@ -53,8 +67,8 @@ describe('Ranking lists (Integration)', () => {
     await truncateAll();
   });
 
-  const writeEvents = async (userId: string, rankedItems: RankedItem[], startedAt?: string) =>
-    lists.replaceEventList({
+  const writeEvents = async (userId: string, rankedItems: RankedEventItem[], startedAt?: string) =>
+    scores.replaceList({
       userId,
       startedAt: startedAt ?? (await requests.databaseClock()),
       items: rankedItems,
@@ -66,10 +80,10 @@ describe('Ranking lists (Integration)', () => {
     const written = items(5);
 
     const result = await writeEvents(userId, written);
-    const page = await lists.readEventPage({ userId, afterRank: 0, limit: 10 });
+    const page = await scores.readPage({ userId, afterRank: 0, limit: 10 });
 
     expect(result.written).toBe(true);
-    expect(page.items.map((item) => item.id)).toEqual(written.map((item) => item.id));
+    expect(page.items.map((item) => item.eventId)).toEqual(written.map((item) => item.eventId));
     expect(page.items[0]).toMatchObject({ rank: 1, reasons: ['NEAR_YOU', 'TRENDING'], semanticScore: null });
     expect(page.run?.listVersion).toBe(result.listVersion);
     expect(page.run).toMatchObject({ source: 'STRUCTURAL_ONLY', candidateCount: 5, formulaVersion: FORMULA_VERSION });
@@ -81,10 +95,10 @@ describe('Ranking lists (Integration)', () => {
     const replacement = items(2);
 
     const second = await writeEvents(userId, replacement);
-    const page = await lists.readEventPage({ userId, afterRank: 0, limit: 10 });
+    const page = await scores.readPage({ userId, afterRank: 0, limit: 10 });
 
     expect(second.listVersion).not.toBe(first.listVersion);
-    expect(page.items.map((item) => item.id)).toEqual(replacement.map((item) => item.id));
+    expect(page.items.map((item) => item.eventId)).toEqual(replacement.map((item) => item.eventId));
   });
 
   it('should write an empty list (no candidate) and keep the run', async () => {
@@ -92,13 +106,13 @@ describe('Ranking lists (Integration)', () => {
 
     await writeEvents(userId, []);
 
-    const page = await lists.readEventPage({ userId, afterRank: 0, limit: 10 });
+    const page = await scores.readPage({ userId, afterRank: 0, limit: 10 });
     expect(page.run).not.toBeNull();
     expect(page.items).toEqual([]);
   });
 
   it('should return no run for a user without list (cold start)', async () => {
-    const page = await lists.readEventPage({ userId: randomUUID(), afterRank: 0, limit: 10 });
+    const page = await scores.readPage({ userId: randomUUID(), afterRank: 0, limit: 10 });
 
     expect(page.run).toBeNull();
     expect(await runs.freshness({ userId: randomUUID(), listKind: 'EVENT', maxAgeHours: 24, formulaVersion: FORMULA_VERSION })).toBe('MISSING');
@@ -114,8 +128,8 @@ describe('Ranking lists (Integration)', () => {
     const slow = await writeEvents(userId, items(4), slowStart);
 
     expect(slow.written).toBe(false);
-    const page = await lists.readEventPage({ userId, afterRank: 0, limit: 10 });
-    expect(page.items.map((item) => item.id)).toEqual(fastItems.map((item) => item.id));
+    const page = await scores.readPage({ userId, afterRank: 0, limit: 10 });
+    expect(page.items.map((item) => item.eventId)).toEqual(fastItems.map((item) => item.eventId));
   });
 
   it('should serialize two simultaneous writes of the same user and keep one complete list', async () => {
@@ -125,7 +139,7 @@ describe('Ranking lists (Integration)', () => {
 
     await Promise.all([writeEvents(userId, items(3), startA), writeEvents(userId, items(4), startB)]);
 
-    const page = await lists.readEventPage({ userId, afterRank: 0, limit: 10 });
+    const page = await scores.readPage({ userId, afterRank: 0, limit: 10 });
     expect([3, 4]).toContain(page.items.length);
     expect(page.items.map((item) => item.rank)).toEqual(
       Array.from({ length: page.items.length }, (_, index) => index + 1),
@@ -164,14 +178,14 @@ describe('Ranking lists (Integration)', () => {
     await writeEvents(userId, initial);
 
     await expect(
-      lists.replaceEventList(
+      scores.replaceList(
         { userId, startedAt: await requests.databaseClock(), items: items(1), run: run() },
         () => Promise.reject(new Error('job write failed')),
       ),
     ).rejects.toThrow('job write failed');
 
-    const page = await lists.readEventPage({ userId, afterRank: 0, limit: 10 });
-    expect(page.items.map((item) => item.id)).toEqual(initial.map((item) => item.id));
+    const page = await scores.readPage({ userId, afterRank: 0, limit: 10 });
+    expect(page.items.map((item) => item.eventId)).toEqual(initial.map((item) => item.eventId));
   });
 
   it('should page by cursor with no overlap and no gap, and detect a new version', async () => {
@@ -179,10 +193,10 @@ describe('Ranking lists (Integration)', () => {
     const written = await writeEvents(userId, items(45)).then(() => 'ok');
     expect(written).toBe('ok');
 
-    const first = await lists.readEventPage({ userId, afterRank: 0, limit: 21 });
+    const first = await scores.readPage({ userId, afterRank: 0, limit: 21 });
     const firstPage = buildPage(first.items, 20, first.run?.listVersion ?? '');
     const resolved = resolveCursor(firstPage.nextCursor, first.run?.listVersion ?? '');
-    const second = await lists.readEventPage({ userId, afterRank: resolved.lastRank, limit: 21 });
+    const second = await scores.readPage({ userId, afterRank: resolved.lastRank, limit: 21 });
     const secondPage = buildPage(second.items, 20, first.run?.listVersion ?? '');
 
     expect([...firstPage.items, ...secondPage.items].map((item) => item.rank)).toEqual(
@@ -191,7 +205,7 @@ describe('Ranking lists (Integration)', () => {
     expect(secondPage.hasMore).toBe(true);
 
     await writeEvents(userId, items(45));
-    const newRun = await runs.find(userId, 'EVENT');
+    const newRun = await runs.findByKey(userId, 'EVENT');
     expect(resolveCursor(firstPage.nextCursor, newRun?.listVersion ?? '').versionChanged).toBe(true);
   });
 
@@ -200,17 +214,17 @@ describe('Ranking lists (Integration)', () => {
     const written = items(4);
     await writeEvents(userId, written);
 
-    await lists.updateEventRanks(userId, [
-      { eventId: written[3]?.id ?? '', rank: 2 },
-      { eventId: written[1]?.id ?? '', rank: 4 },
+    await scores.updateRanks(userId, [
+      { eventId: written[3]?.eventId ?? '', rank: 2 },
+      { eventId: written[1]?.eventId ?? '', rank: 4 },
     ]);
 
-    const page = await lists.readEventPage({ userId, afterRank: 0, limit: 10 });
-    expect(page.items.map((item) => item.id)).toEqual([
-      written[0]?.id,
-      written[3]?.id,
-      written[2]?.id,
-      written[1]?.id,
+    const page = await scores.readPage({ userId, afterRank: 0, limit: 10 });
+    expect(page.items.map((item) => item.eventId)).toEqual([
+      written[0]?.eventId,
+      written[3]?.eventId,
+      written[2]?.eventId,
+      written[1]?.eventId,
     ]);
   });
 
@@ -218,22 +232,23 @@ describe('Ranking lists (Integration)', () => {
     it('should write and read the post feed with its authors and origins', async () => {
       const userId = randomUUID();
       const authorId = randomUUID();
-      const posts: RankedPostItem[] = items(3).map((item, index) => ({
+      const posts: RankedPostItem[] = items(3).map(({ eventId, ...item }, index) => ({
         ...item,
+        postId: eventId,
         authorId,
         origin: index === 2 ? PostOrigin.GLOBAL : PostOrigin.FOLLOWED,
       }));
 
-      await lists.replacePostList({
+      await postScores.replaceList({
         userId,
         startedAt: await requests.databaseClock(),
         items: posts,
         run: run({ source: RankingRunSource.COLD_START }),
       });
-      const page = await lists.readPostPage({ userId, afterRank: 0, limit: 10 });
+      const page = await postScores.readPage({ userId, afterRank: 0, limit: 10 });
 
-      expect(page.items.map((item) => [item.id, item.authorId, item.origin])).toEqual(
-        posts.map((item) => [item.id, authorId, item.origin]),
+      expect(page.items.map((item) => [item.postId, item.authorId, item.origin])).toEqual(
+        posts.map((item) => [item.postId, authorId, item.origin]),
       );
       expect(page.run?.source).toBe('COLD_START');
     });
@@ -242,7 +257,7 @@ describe('Ranking lists (Integration)', () => {
       const userId = randomUUID();
       await writeEvents(userId, items(2));
 
-      const postPage = await lists.readPostPage({ userId, afterRank: 0, limit: 10 });
+      const postPage = await postScores.readPage({ userId, afterRank: 0, limit: 10 });
 
       expect(postPage.run).toBeNull();
     });
@@ -283,14 +298,14 @@ describe('Ranking lists (Integration)', () => {
       expect(await runs.freshness({ userId, listKind: 'EVENT', maxAgeHours: 24, formulaVersion: FORMULA_VERSION })).toBe('STALE');
       expect(await runs.freshness({ userId, listKind: 'EVENT', maxAgeHours: 48, formulaVersion: FORMULA_VERSION })).toBe('FRESH');
       expect(await runs.freshness({ userId, listKind: 'EVENT', maxAgeHours: 48, formulaVersion: FORMULA_VERSION + 1 })).toBe('STALE');
-      expect((await lists.readEventPage({ userId, afterRank: 0, limit: 10 })).items).toHaveLength(2);
+      expect((await scores.readPage({ userId, afterRank: 0, limit: 10 })).items).toHaveLength(2);
     });
 
     it('should list the active users by cursor, most recent first, without OFFSET', async () => {
       const users = Array.from({ length: 5 }, () => randomUUID());
       for (const userId of users) await writeEvents(userId, items(1));
       await writeEvents(randomUUID(), []);
-      await lists.replacePostList({
+      await postScores.replaceList({
         userId: randomUUID(),
         startedAt: await requests.databaseClock(),
         items: [],

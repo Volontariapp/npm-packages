@@ -10,10 +10,11 @@ Domaine du classement personnalisé des événements et des posts (`ms-ranking`)
 | `constants/` | Poids, seuils et versions de formule (`FORMULA_VERSION`, `FEED_FORMULA_VERSION`). Toute modification d'un poids incrémente la version. |
 | `services/` | Services **purs**, testables sans infrastructure : score structurel des événements, popularité, score des posts, codes d'explication, diversité, score final, curseur opaque, pénalités `PASS`, géographie, chiffrement de la position. |
 | `ports/` | Port `RankingScorer` (scoreur sémantique, Jev) et `NoopRankingScorer`. |
-| `models/` | Modèles TypeORM des tables `ranking_*`. |
-| `repositories/` | Accès PostgreSQL : demandes de calcul (`needs_job`), remplacement atomique des listes, seaux à jetons, signaux (passes, souhaits, mentions, journal de likes), position chiffrée, purge de compte. |
+| `entities/` | Entités du domaine (une par table), sans dépendance à TypeORM. |
+| `models/` | Modèles TypeORM des tables `ranking_*` et `registerRankingMappings()` (appelé à l'import du paquet, comme `domain-post`). |
+| `repositories/` | Un `Postgres...Repository` par table, qui étend `BaseRepository` de `@volontariapp/database` (`@Injectable`, `@InjectRepository`), et leurs interfaces dans `repositories/interfaces/`. Le SQL spécifique (demandes de calcul `needs_job`, remplacement atomique des listes, seaux à jetons, signaux, journal de likes, position chiffrée) vit dans ces dépôts. |
 
-`createRankingRepositories(dataSource)` construit tous les dépôts sur une `DataSource`.
+`RankingPurgeService` (suppression de compte) orchestre la purge des dix tables dans une seule transaction.
 
 ## Points à connaître
 

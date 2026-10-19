@@ -8,3 +8,4 @@ export * from './final-score.js';
 export * from './cursor.js';
 export * from './pass-penalty.js';
 export * from './location-cipher.js';
+export * from './ranking-purge.service.js';
