@@ -4795,6 +4795,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@volontariapp/domain-ranking@workspace:packages/domain-ranking":
+  version: 0.0.0-use.local
+  resolution: "@volontariapp/domain-ranking@workspace:packages/domain-ranking"
+  dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^22.10.7"
+    "@volontariapp/crypto": "workspace:*"
+    "@volontariapp/testing": "workspace:*"
+    jest: "npm:^30.3.0"
+    pg: "npm:^8.20.0"
+    reflect-metadata: "npm:^0.2.2"
+    ts-jest: "npm:^29.4.6"
+    ts-node: "npm:^10.9.2"
+    typeorm: "npm:^0.3.28"
+    typescript: "npm:5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@volontariapp/domain-social@workspace:packages/domain-social":
   version: 0.0.0-use.local
   resolution: "@volontariapp/domain-social@workspace:packages/domain-social"
