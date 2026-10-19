@@ -1,4 +1,4 @@
-# @volontariapp/domain-ranking
+# Changelog
 
 ## 0.1.0
 
