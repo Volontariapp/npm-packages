@@ -7,7 +7,7 @@ import {
   PROXIMITY_DECAY_KM,
 } from '../constants/index.js';
 import type { EventType } from '../enums/index.js';
-import { clamp, jaccard, normalizeTags, roundScore } from './math.js';
+import { clamp, jaccard, normalizeTags, roundScore } from '../helpers/math.helpers.js';
 
 const MS_PER_DAY = 86_400_000;
 

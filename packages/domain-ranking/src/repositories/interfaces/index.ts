@@ -7,3 +7,4 @@ export * from './ranking-rate-bucket.repository.js';
 export * from './ranking-signals.repository.js';
 export * from './ranking-like-log.repository.js';
 export * from './ranking-location.repository.js';
+export * from './purgeable.repository.js';

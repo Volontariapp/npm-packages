@@ -9,7 +9,7 @@ import {
   POST_RECENCY_SCALE_HOURS,
   POST_WEIGHTS,
 } from '../constants/index.js';
-import { clamp, roundScore } from './math.js';
+import { clamp, roundScore } from '../helpers/math.helpers.js';
 
 /** Relation between a post and an event of the user. */
 export type EventTieState = 'NONE' | 'FUTURE_WISHED' | 'FUTURE_JOINED' | 'PAST_JOINED';

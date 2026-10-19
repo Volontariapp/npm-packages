@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { NoopRankingScorer, RankingScorerUnavailableError } from '../../index.js';
+import { NoopRankingScorer, RankingScorerUnavailableException } from '../../index.js';
 import type { RankingScorer } from '../../index.js';
 
 describe('NoopRankingScorer', () => {
@@ -15,9 +15,9 @@ describe('NoopRankingScorer', () => {
   });
 
   it('should expose an error type for the fallback', () => {
-    const error = new RankingScorerUnavailableError();
+    const error = new RankingScorerUnavailableException();
 
     expect(error).toBeInstanceOf(Error);
-    expect(error.name).toBe('RankingScorerUnavailableError');
+    expect(error.code).toBe('RANKING_SCORER_UNAVAILABLE');
   });
 });

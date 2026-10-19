@@ -1,7 +1,7 @@
 import { randomBytes, randomUUID } from 'node:crypto';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import {
-  FeedbackBatchTooLargeError,
+  FeedbackBatchTooLargeException,
   MAX_FEEDBACK_ITEMS,
   decryptLocation,
   encryptLocation,
@@ -52,7 +52,7 @@ describe('Ranking signals (Integration)', () => {
 
       expect(await feedback.recordPasses(userId, fifty)).toBe(50);
       await expect(feedback.recordPasses(userId, [...fifty, randomUUID()])).rejects.toThrow(
-        FeedbackBatchTooLargeError,
+        FeedbackBatchTooLargeException,
       );
     });
 

@@ -1,6 +1,6 @@
 import { PASS_MAX_PENALTY, PASS_TAG_PENALTY, PASS_TYPE_PENALTY } from '../constants/index.js';
 import type { EventType } from '../enums/index.js';
-import { normalizeTags } from './math.js';
+import { normalizeTags } from '../helpers/math.helpers.js';
 
 export interface PoolItem {
   id: string;

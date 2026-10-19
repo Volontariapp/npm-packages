@@ -4,7 +4,7 @@ import {
   POPULARITY_PRIOR_WISHES,
   POPULARITY_WEIGHTS,
 } from '../constants/index.js';
-import { clamp } from './math.js';
+import { clamp } from '../helpers/math.helpers.js';
 
 export interface PopularityInput {
   /** Active wishes (table ranking_event_wish). */

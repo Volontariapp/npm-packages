@@ -7,8 +7,8 @@ import {
   REASON_THRESHOLDS,
 } from '../constants/index.js';
 import { EventRankingReason, PostRankingReason } from '../enums/index.js';
-import type { EventScoreComponents } from './event-score.js';
-import type { EventTieState, PostScoreComponents } from './post-score.js';
+import type { EventScoreComponents } from './event-score.policy.js';
+import type { EventTieState, PostScoreComponents } from './post-score.policy.js';
 
 interface ReasonCandidate<TReason extends string> {
   reason: TReason;

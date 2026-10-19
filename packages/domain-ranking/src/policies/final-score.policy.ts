@@ -1,5 +1,4 @@
-import { DIVERSITY_WINDOW } from '../constants/index.js';
-import { roundScore } from './math.js';
+import { roundScore } from '../helpers/math.helpers.js';
 
 /** Final score: a weighted blend when the semantic score exists, the structural score otherwise. */
 export const blendScores = (
@@ -47,21 +46,3 @@ export const assignRanks = <T extends { id: string; score: number }>(
     .sort((left, right) => right.score - left.score || left.id.localeCompare(right.id))
     .slice(0, limit)
     .map((candidate, index) => ({ ...candidate, rank: index + 1 }));
-
-/**
- * Greedy diversity pass on a sorted list: a post is postponed when the DIVERSITY_WINDOW posts
- * kept just before it have the same author. When only one author remains, nothing is dropped.
- */
-export const diversifyByAuthor = <T extends { authorId: string }>(sorted: readonly T[]): T[] => {
-  const pending = [...sorted];
-  const kept: T[] = [];
-  while (pending.length > 0) {
-    const recent = kept.slice(-DIVERSITY_WINDOW);
-    const blocked = (item: T): boolean =>
-      recent.length === DIVERSITY_WINDOW && recent.every((other) => other.authorId === item.authorId);
-    const index = pending.findIndex((item) => !blocked(item));
-    const next = pending.splice(index === -1 ? 0 : index, 1).at(0);
-    if (next) kept.push(next);
-  }
-  return kept;
-};

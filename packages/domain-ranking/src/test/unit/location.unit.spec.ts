@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { describe, it, expect } from '@jest/globals';
 import { encrypt } from '@volontariapp/crypto';
 import {
-  InvalidLocationCipherError,
+  InvalidLocationCipherException,
   decryptLocation,
   encryptLocation,
   hasMovedFar,
@@ -72,7 +72,7 @@ describe('location cipher', () => {
   it('should refuse a ciphertext moved to another user', () => {
     const stored = encryptLocation('user-1', PARIS, KEY);
 
-    expect(() => decryptLocation('user-2', stored, KEY)).toThrow(InvalidLocationCipherError);
+    expect(() => decryptLocation('user-2', stored, KEY)).toThrow(InvalidLocationCipherException);
   });
 
   it('should refuse another key', () => {

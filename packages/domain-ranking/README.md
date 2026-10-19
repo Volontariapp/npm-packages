@@ -8,13 +8,15 @@ Domaine du classement personnalisé des événements et des posts (`ms-ranking`)
 | Dossier | Rôle |
 | :--- | :--- |
 | `constants/` | Poids, seuils et versions de formule (`FORMULA_VERSION`, `FEED_FORMULA_VERSION`). Toute modification d'un poids incrémente la version. |
-| `services/` | Services **purs**, testables sans infrastructure : score structurel des événements, popularité, score des posts, codes d'explication, diversité, score final, curseur opaque, pénalités `PASS`, géographie, chiffrement de la position. |
-| `ports/` | Port `RankingScorer` (scoreur sémantique, Jev) et `NoopRankingScorer`. |
+| `enums/` | Types de liste, sources, codes d'explication, seaux, origines. |
 | `entities/` | Entités du domaine (une par table), sans dépendance à TypeORM. |
 | `models/` | Modèles TypeORM des tables `ranking_*` et `registerRankingMappings()` (appelé à l'import du paquet, comme `domain-post`). |
-| `repositories/` | Un `Postgres...Repository` par table, qui étend `BaseRepository` de `@volontariapp/database` (`@Injectable`, `@InjectRepository`), et leurs interfaces dans `repositories/interfaces/`. Le SQL spécifique (demandes de calcul `needs_job`, remplacement atomique des listes, seaux à jetons, signaux, journal de likes, position chiffrée) vit dans ces dépôts. |
-
-`RankingPurgeService` (suppression de compte) orchestre la purge des dix tables dans une seule transaction.
+| `repositories/` | Un `Postgres...Repository` par table, qui étend `BaseRepository` de `@volontariapp/database` (`@Injectable`, `@InjectRepository`), et leurs interfaces dans `repositories/interfaces/`. Le SQL spécifique y vit. |
+| `services/` | Uniquement des classes de service `@Injectable`, une par fichier, au-dessus des interfaces de repository (journalisation et erreurs `DATABASE_ERROR` comme dans les autres domaines) : demandes de calcul, runs, listes, limites de débit, passes, souhaits, mentions, journal de likes, position chiffrée, purge de compte. |
+| `policies/` | Règles de score **pures**, testables sans infrastructure : événements, popularité, posts, codes d'explication, score final, diversité, pénalités `PASS`. |
+| `helpers/` | Fonctions utilitaires : maths, géographie, curseur opaque, chiffrement de la position, conversion des erreurs de base. |
+| `exceptions/` | Exceptions du domaine (`BadRequestError`, `InternalServerError`). |
+| `ports/` | Port `RankingScorer` (scoreur sémantique, Jev) et `NoopRankingScorer`. |
 
 ## Points à connaître
 

@@ -5,18 +5,12 @@ import { BaseRepository } from '@volontariapp/database';
 import type { TransactionManager } from './sql.js';
 import { MAX_FEEDBACK_ITEMS } from '../constants/index.js';
 import { RankingEventFeedbackEntity } from '../entities/index.js';
+import { FeedbackBatchTooLargeException } from '../exceptions/index.js';
 import { FeedbackAction } from '../enums/index.js';
 import { RankingEventFeedbackModel } from '../models/index.js';
 import type { IRankingEventFeedbackRepository } from './interfaces/index.js';
 import type { Queryable } from './sql.js';
 import { countMap, rowsOf, uniqueUuids } from './sql.js';
-
-export class FeedbackBatchTooLargeError extends Error {
-  constructor(size: number) {
-    super(`A feedback batch holds ${String(MAX_FEEDBACK_ITEMS)} items at most, got ${String(size)}`);
-    this.name = 'FeedbackBatchTooLargeError';
-  }
-}
 
 /** Swipes to the left (PASS): exclusion for a cooldown and input of the popularity. */
 @Injectable()
@@ -36,7 +30,7 @@ export class PostgresRankingEventFeedbackRepository
     eventIds: readonly string[],
     executor: Queryable = this.repository.manager,
   ): Promise<number> {
-    if (eventIds.length > MAX_FEEDBACK_ITEMS) throw new FeedbackBatchTooLargeError(eventIds.length);
+    if (eventIds.length > MAX_FEEDBACK_ITEMS) throw new FeedbackBatchTooLargeException(eventIds.length);
     const ids = uniqueUuids(eventIds);
     if (ids.length === 0) return 0;
     const rows = rowsOf<unknown>(

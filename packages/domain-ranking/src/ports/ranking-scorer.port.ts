@@ -17,14 +17,6 @@ export interface TasteSummary {
   history: readonly RankingCandidate[];
 }
 
-/** The scorer is not reachable or refused the request: the caller falls back to the structural score. */
-export class RankingScorerUnavailableError extends Error {
-  constructor(message = 'Ranking scorer unavailable') {
-    super(message);
-    this.name = 'RankingScorerUnavailableError';
-  }
-}
-
 /** Port of the semantic scorer (Jev). The domain does not know its transport. */
 export interface RankingScorer {
   /** Probability (0 to 1) per eventId. A candidate absent from the map was not evaluated. */
@@ -32,11 +24,4 @@ export interface RankingScorer {
     taste: TasteSummary,
     candidates: readonly RankingCandidate[],
   ): Promise<ReadonlyMap<string, number>>;
-}
-
-/** Evaluates nothing: every list is structural only. For tests, local runs without a key and T1. */
-export class NoopRankingScorer implements RankingScorer {
-  score(): Promise<ReadonlyMap<string, number>> {
-    return Promise.resolve(new Map<string, number>());
-  }
 }
