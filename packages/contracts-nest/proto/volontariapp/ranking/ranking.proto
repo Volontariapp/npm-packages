@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package volontariapp.ranking;
+
+enum RankingListKind {
+  RANKING_LIST_KIND_UNSPECIFIED = 0;
+  RANKING_LIST_KIND_EVENT = 1;
+  RANKING_LIST_KIND_POST = 2;
+}
+
+enum RankingSource {
+  RANKING_SOURCE_UNSPECIFIED = 0;
+  RANKING_SOURCE_FULL = 1;
+  RANKING_SOURCE_STRUCTURAL_ONLY = 2;
+  // Post feed without any personal candidate.
+  RANKING_SOURCE_COLD_START = 3;
+}
+
+// Explanation codes, at most two per item.
+enum RankingReason {
+  RANKING_REASON_UNSPECIFIED = 0;
+  RANKING_REASON_FRIEND_INVOLVED = 1;
+  RANKING_REASON_NEAR_YOU = 2;
+  RANKING_REASON_MATCHES_INTERESTS = 3;
+  RANKING_REASON_STARTING_SOON = 4;
+  RANKING_REASON_TRENDING = 5;
+  RANKING_REASON_FOLLOWED_AUTHOR = 6;
+  RANKING_REASON_FRIEND_AUTHOR = 7;
+  RANKING_REASON_ENGAGED_AUTHOR = 8;
+  RANKING_REASON_LINKED_EVENT_WISHED = 9;
+  RANKING_REASON_LINKED_EVENT_JOINED = 10;
+  RANKING_REASON_RECENT = 11;
+}
+
+enum FeedbackAction {
+  FEEDBACK_ACTION_UNSPECIFIED = 0;
+  FEEDBACK_ACTION_PASS = 1;
+}
+
+message RankingItem {
+  // Event id or post id depending on the list kind.
+  string id = 1;
+  double score = 2;
+  int32 rank = 3;
+  repeated RankingReason reasons = 4;
+  double structural_score = 5;
+  optional double semantic_score = 6;
+}

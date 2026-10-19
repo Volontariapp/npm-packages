@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package volontariapp.ranking;
+
+import "volontariapp/ranking/ranking.proto";
+
+message RequestRankingRefreshCommand {
+  RankingListKind list_kind = 1;
+}
+
+message UpdateUserLocationCommand {
+  double lat = 1;
+  double lng = 2;
+}
+
+message EventFeedbackItem {
+  string event_id = 1;
+  FeedbackAction action = 2;
+}
+
+// At most 50 items.
+message RecordEventFeedbackCommand {
+  repeated EventFeedbackItem items = 1;
+}

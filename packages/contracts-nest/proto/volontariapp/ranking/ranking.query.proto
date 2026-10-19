@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package volontariapp.ranking;
+
+// The cursor is opaque and encodes (listVersion, lastRank).
+message GetRankingEventsQuery {
+  string cursor = 1;
+  int32 limit = 2;
+}
+
+message GetRankingFeedQuery {
+  string cursor = 1;
+  int32 limit = 2;
+}
