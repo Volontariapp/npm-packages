@@ -36,6 +36,12 @@ import type {
 } from './event/payloads.js';
 import { StorageJobType } from './storage/payloads.js';
 import type { IScanFilePayload, ICleanupFilesPayload } from './storage/payloads.js';
+import { RankingJobType } from './ranking/payloads.js';
+import type {
+  IComputeUserRankingPayload,
+  IComputeUserFeedPayload,
+  IFanoutRankingPayload,
+} from './ranking/payloads.js';
 import { PostJobType } from './post/payloads.js';
 import type { IPublishPostPayload } from './post/payloads.js';
 
@@ -45,6 +51,7 @@ export const JobMessagingType = {
   ...EventsJobType,
   ...PostJobType,
   ...StorageJobType,
+  ...RankingJobType,
 } as const;
 
 export type JobMessagingType = (typeof JobMessagingType)[keyof typeof JobMessagingType];
@@ -57,6 +64,9 @@ export interface JobRegistry {
   [JobMessagingType.PUBLISH_POST]: IPublishPostPayload;
   [JobMessagingType.SCAN_FILE]: IScanFilePayload;
   [JobMessagingType.CLEANUP_FILES]: ICleanupFilesPayload;
+  [JobMessagingType.COMPUTE_USER_RANKING]: IComputeUserRankingPayload;
+  [JobMessagingType.COMPUTE_USER_FEED]: IComputeUserFeedPayload;
+  [JobMessagingType.FANOUT_RANKING]: IFanoutRankingPayload;
   [JobMessagingType.FALLBACK_GET_MY_FOLLOWS]: IFallbackGetMyFollowsJobPayload;
   [JobMessagingType.FALLBACK_GET_MY_FOLLOWERS]: IFallbackGetMyFollowersJobPayload;
   [JobMessagingType.FALLBACK_GET_POST_LIKERS]: IFallbackGetPostLikersJobPayload;
@@ -94,4 +104,6 @@ export * from './post/payloads.js';
 export * from './post/queue.js';
 export * from './storage/payloads.js';
 export * from './storage/queue.js';
+export * from './ranking/payloads.js';
+export * from './ranking/queue.js';
 export * from './envelope.js';
