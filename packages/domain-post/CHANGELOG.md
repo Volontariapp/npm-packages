@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.9.0
+
+### Minor Changes
+
+- Add the ranking foundation: ranking streams and USER_DELETED_RANKING (shared), ranking jobs, queues, purge events and the RANKING_READY notification (messaging), the ranking target of user.deleted (domain-user), the ListRecentPostsByAuthors, ListPostsByIds and ListCommentsByAuthor reads (domain-post) and GRPC_MICROSERVICES.RANKING (contracts-nest).
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.28.0
+  - @volontariapp/database@3.10.12
+  - @volontariapp/outbox@0.10.16
+
 ## 3.8.8
 
 ### Patch Changes

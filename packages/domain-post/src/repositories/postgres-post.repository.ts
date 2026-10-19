@@ -21,7 +21,25 @@ import {
 import { PostModel, PostMediaModel, CommentModel } from '../models/index.js';
 import { PostEntity } from '../entities/index.js';
 import { PostMediaStatus, PostMediaScanStatus } from '../enums/index.js';
-import type { IPostRepository, CreatePostWithMediaOptions } from './interfaces/index.js';
+import {
+  MAX_AUTHOR_IDS_PER_READ,
+  MAX_POSTS_BY_IDS,
+  MAX_RECENT_POSTS_PER_READ,
+} from '../constants/index.js';
+import type {
+  IPostRepository,
+  CreatePostWithMediaOptions,
+  ListRecentPostsByAuthorsOptions,
+} from './interfaces/index.js';
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const VISIBLE_MEDIA_STATUSES = [PostMediaStatus.NONE, PostMediaStatus.READY];
+
+const validUniqueUuids = (ids: string[], cap: number): string[] =>
+  [...new Set(ids)].filter((id) => UUID_PATTERN.test(id)).slice(0, cap);
+
+const clampLimit = (value: number | undefined, cap: number): number =>
+  value !== undefined && value > 0 ? Math.min(value, cap) : cap;
 
 @Injectable()
 export class PostgresPostRepository
@@ -336,6 +354,77 @@ export class PostgresPostRepository
         await queryRunner.manager.delete(this.modelClass, { authorId });
       }
       return postIds.length;
+    });
+  }
+
+  /**
+   * Recent visible posts for the ranking feed, newest first. The per-author cap is applied
+   * before the global cap. `createdAt` is a `timestamp` without time zone written by the
+   * database clock, hence the `::timestamptz` cast on `since` (compared in the session zone).
+   */
+  async listRecentByAuthors(options: ListRecentPostsByAuthorsOptions): Promise<PostEntity[]> {
+    const authorIds = options.allAuthors
+      ? []
+      : validUniqueUuids(options.authorIds, MAX_AUTHOR_IDS_PER_READ);
+    if (!options.allAuthors && authorIds.length === 0) return [];
+
+    const limit = clampLimit(options.limit, MAX_RECENT_POSTS_PER_READ);
+    const perAuthorLimit = clampLimit(options.perAuthorLimit, MAX_RECENT_POSTS_PER_READ);
+
+    const params: unknown[] = [VISIBLE_MEDIA_STATUSES];
+    const filters = ['p.media_status = ANY($1)'];
+    if (!options.allAuthors) {
+      params.push(authorIds);
+      filters.push(`p."authorId" = ANY($${String(params.length)}::uuid[])`);
+    }
+    if (options.since) {
+      params.push(options.since.toISOString());
+      filters.push(`p."createdAt" >= $${String(params.length)}::timestamptz`);
+    }
+    params.push(perAuthorLimit, limit);
+    const perAuthorParam = `$${String(params.length - 1)}`;
+    const limitParam = `$${String(params.length)}`;
+
+    const rows = await this.repository.query<Array<{ id: string }>>(
+      `SELECT ranked.id FROM (
+         SELECT p.id, p."createdAt",
+                ROW_NUMBER() OVER (
+                  PARTITION BY p."authorId" ORDER BY p."createdAt" DESC, p.id DESC
+                ) AS rn
+         FROM posts p
+         WHERE ${filters.join(' AND ')}
+       ) ranked
+       WHERE ranked.rn <= ${perAuthorParam}
+       ORDER BY ranked."createdAt" DESC, ranked.id DESC
+       LIMIT ${limitParam}`,
+      params,
+    );
+    return this.loadInOrder(rows.map((row) => row.id));
+  }
+
+  /** Visible posts among the given ids: absent, hidden or malformed ids are ignored. */
+  async listByIds(ids: string[]): Promise<PostEntity[]> {
+    const validIds = validUniqueUuids(ids, MAX_POSTS_BY_IDS);
+    if (validIds.length === 0) return [];
+
+    const models = await this.repository.find({
+      where: { id: In(validIds), media_status: In(VISIBLE_MEDIA_STATUSES) },
+      relations: ['media'],
+      order: { createdAt: 'DESC', id: 'DESC' },
+    });
+    return models.map((model) => this.toEntity(model));
+  }
+
+  private async loadInOrder(ids: string[]): Promise<PostEntity[]> {
+    if (ids.length === 0) return [];
+    const models = await this.repository.find({
+      where: { id: In(ids) },
+      relations: ['media'],
+    });
+    const byId = new Map(models.map((model) => [model.id, model]));
+    return ids.flatMap((id) => {
+      const model = byId.get(id);
+      return model ? [this.toEntity(model)] : [];
     });
   }
 }

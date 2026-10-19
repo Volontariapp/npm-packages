@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.0
+
+### Minor Changes
+
+- Add the ranking foundation: ranking streams and USER_DELETED_RANKING (shared), ranking jobs, queues, purge events and the RANKING_READY notification (messaging), the ranking target of user.deleted (domain-user), the ListRecentPostsByAuthors, ListPostsByIds and ListCommentsByAuthor reads (domain-post) and GRPC_MICROSERVICES.RANKING (contracts-nest).
+
 ## 0.16.0
 
 ### Minor Changes

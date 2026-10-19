@@ -14,7 +14,7 @@ import {
   ICommentCreatedPayload,
   ICommentDeletedPayload,
 } from '@volontariapp/messaging';
-import { DELETED_COMMENT_PLACEHOLDER } from '../constants/index.js';
+import { DELETED_COMMENT_PLACEHOLDER, MAX_COMMENTS_BY_AUTHOR } from '../constants/index.js';
 import { CommentModel } from '../models/index.js';
 import { CommentEntity } from '../entities/index.js';
 import { ICommentRepository } from './interfaces/index.js';
@@ -118,5 +118,24 @@ export class PostgresCommentRepository
       },
     );
     return result.affected ?? 0;
+  }
+
+  /** Recent comments of an author, newest first. `since` is compared in the session zone. */
+  async listByAuthor(authorId: string, since?: Date, limit?: number): Promise<CommentEntity[]> {
+    const cappedLimit =
+      limit !== undefined && limit > 0 ? Math.min(limit, MAX_COMMENTS_BY_AUTHOR) : MAX_COMMENTS_BY_AUTHOR;
+    const qb = this.repository
+      .createQueryBuilder('comment')
+      .where('comment.authorId = :authorId', { authorId })
+      .orderBy('comment.createdAt', 'DESC')
+      .addOrderBy('comment.id', 'DESC')
+      .limit(cappedLimit);
+    if (since) {
+      qb.andWhere('comment.createdAt >= CAST(:since AS timestamptz)', {
+        since: since.toISOString(),
+      });
+    }
+    const models = await qb.getMany();
+    return models.map((model) => this.toEntity(model));
   }
 }

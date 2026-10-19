@@ -43,6 +43,16 @@ export class CommentService {
     }
   }
 
+  async listByAuthor(authorId: string, since?: Date, limit?: number): Promise<CommentEntity[]> {
+    try {
+      return await this.commentRepository.listByAuthor(authorId, since, limit);
+    } catch (error: unknown) {
+      const err = error as Error;
+      this.logger.error(`Failed to list comments of author ${authorId}`, err);
+      throw DATABASE_ERROR('listing comments by author', err.message);
+    }
+  }
+
   async create(data: Partial<CommentEntity>): Promise<CommentEntity> {
     try {
       this.logger.log(`Creating comment on post: ${String(data.postId)}`);

@@ -113,6 +113,7 @@ export class PostgresUserRepository
           Streams.USER_DELETED_POST,
           Streams.USER_DELETED_EVENT,
           Streams.USER_DELETED_STORAGE,
+          Streams.USER_DELETED_RANKING,
         ],
       });
 

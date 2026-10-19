@@ -11,6 +11,7 @@ import type {
   IFallbackCreateTagWebsocketPayload,
   IFallbackUpdateTagWebsocketPayload,
   IFallbackDeleteTagWebsocketPayload,
+  IRankingReadyWebsocketPayload,
 } from './events/index.js';
 import { EventWebsocketMessagingType } from './events/index.js';
 import type {
@@ -44,6 +45,8 @@ export interface WebsocketEventRegistry {
   [EventWebsocketMessagingType.EVENT_DELETED]: IEventDeletedWebsocketPayload;
   [EventWebsocketMessagingType.EVENT_CREATION_FAILED]: IEventCreationFailedWebsocketPayload;
   [EventWebsocketMessagingType.EVENT_DELETION_FAILED]: IEventDeletionFailedWebsocketPayload;
+
+  [EventWebsocketMessagingType.RANKING_READY]: IRankingReadyWebsocketPayload;
 
   [EventWebsocketMessagingType.FALLBACK_CREATE_EVENT]: IFallbackCreateEventWebsocketPayload;
   [EventWebsocketMessagingType.FALLBACK_UPDATE_EVENT]: IFallbackUpdateEventWebsocketPayload;

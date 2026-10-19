@@ -15,4 +15,6 @@ export const createPostRepositoryMock = (): jest.Mocked<IPostRepository> => ({
   search: jest.fn(),
   listPaginated: jest.fn(),
   purgePostsByAuthor: jest.fn(),
+  listRecentByAuthors: jest.fn(),
+  listByIds: jest.fn(),
 });

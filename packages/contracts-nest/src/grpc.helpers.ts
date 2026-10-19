@@ -29,6 +29,8 @@ export enum GRPC_SERVICES {
   EVENT_POST_LINK_COMMAND_SERVICE = 'EventPostLinkCommandService',
   EVENT_POST_LINK_QUERY_SERVICE = 'EventPostLinkQueryService',
   STORAGE_SERVICE = 'StorageService',
+  RANKING_QUERY_SERVICE = 'RankingQueryService',
+  RANKING_COMMAND_SERVICE = 'RankingCommandService',
 }
 
 export enum GRPC_MICROSERVICES {
@@ -37,6 +39,7 @@ export enum GRPC_MICROSERVICES {
   EVENT = 'EVENT',
   SOCIAL = 'SOCIAL',
   STORAGE = 'STORAGE',
+  RANKING = 'RANKING',
 }
 
 export const GRPC_SERVICES_CONFIG = {
@@ -64,6 +67,11 @@ export const GRPC_SERVICES_CONFIG = {
     package: 'volontariapp.storage',
     protoFileName: 'storage.services.proto',
     domain: 'storage',
+  },
+  RANKING: {
+    package: 'volontariapp.ranking',
+    protoFileName: 'ranking.services.proto',
+    domain: 'ranking',
   },
 };
 

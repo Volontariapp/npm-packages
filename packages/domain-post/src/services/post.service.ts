@@ -3,7 +3,11 @@ import type { PaginatedResult } from '@volontariapp/database';
 import { Logger } from '@volontariapp/logger';
 import { DATABASE_ERROR, POST_ALREADY_EXISTS, POST_NOT_FOUND } from '@volontariapp/errors-nest';
 import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariapp/errors';
-import type { IPostRepository, CreatePostWithMediaOptions } from '../repositories/index.js';
+import type {
+  IPostRepository,
+  CreatePostWithMediaOptions,
+  ListRecentPostsByAuthorsOptions,
+} from '../repositories/index.js';
 import { SagaStatus, UserRoles } from '@volontariapp/shared';
 import { PostgresPostRepository } from '../repositories/index.js';
 import { PostEntity } from '../entities/index.js';
@@ -71,6 +75,26 @@ export class PostService {
       const err = error as Error;
       this.logger.error(`Failed to list posts with pagination`, err);
       throw DATABASE_ERROR(`listing posts with pagination`, err.message);
+    }
+  }
+
+  async listRecentByAuthors(options: ListRecentPostsByAuthorsOptions): Promise<PostEntity[]> {
+    try {
+      return await this.postRepository.listRecentByAuthors(options);
+    } catch (error: unknown) {
+      const err = error as Error;
+      this.logger.error('Failed to list recent posts by authors', err);
+      throw DATABASE_ERROR('listing recent posts by authors', err.message);
+    }
+  }
+
+  async listByIds(ids: string[]): Promise<PostEntity[]> {
+    try {
+      return await this.postRepository.listByIds(ids);
+    } catch (error: unknown) {
+      const err = error as Error;
+      this.logger.error('Failed to list posts by ids', err);
+      throw DATABASE_ERROR('listing posts by ids', err.message);
     }
   }
 
