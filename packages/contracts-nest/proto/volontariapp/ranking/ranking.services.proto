@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package volontariapp.ranking;
+
+import "volontariapp/ranking/ranking.command.proto";
+import "volontariapp/ranking/ranking.query.proto";
+import "volontariapp/ranking/ranking.responses.proto";
+
+service RankingQueryService {
+  rpc GetRankingEvents (GetRankingEventsQuery) returns (GetRankingEventsResponse) {}
+  rpc GetRankingFeed (GetRankingFeedQuery) returns (GetRankingFeedResponse) {}
+}
+
+service RankingCommandService {
+  rpc RequestRankingRefresh (RequestRankingRefreshCommand) returns (RequestRankingRefreshResponse) {}
+  rpc UpdateUserLocation (UpdateUserLocationCommand) returns (UpdateUserLocationResponse) {}
+  rpc RecordEventFeedback (RecordEventFeedbackCommand) returns (RecordEventFeedbackResponse) {}
+}

@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.4.1
+
+### Patch Changes
+
+- Export the ranking folder from the package index so that the ranking messages, enums and service names are importable from the package root.
+
+## 3.4.0
+
+### Minor Changes
+
+- Add the ranking foundation: ranking streams and USER_DELETED_RANKING (shared), ranking jobs, queues, purge events and the RANKING_READY notification (messaging), the ranking target of user.deleted (domain-user), the ListRecentPostsByAuthors, ListPostsByIds and ListCommentsByAuthor reads (domain-post) and GRPC_MICROSERVICES.RANKING (contracts-nest).
+
+## 3.3.9
+
+### Patch Changes
+
+- Auto-generated proto typings update for both pure contracts and NestJS integration.
+
 ## 3.3.8
 
 ### Patch Changes

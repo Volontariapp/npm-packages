@@ -13,6 +13,9 @@ export const JOB_TO_EVENT_MAPPING: Partial<Record<JobMessagingType, EventEventMe
   [JobMessagingType.FALLBACK_CREATE_TAG]: EventEventMessagingType.FALLBACK_CREATE_TAG,
   [JobMessagingType.FALLBACK_UPDATE_TAG]: EventEventMessagingType.FALLBACK_UPDATE_TAG,
   [JobMessagingType.FALLBACK_DELETE_TAG]: EventEventMessagingType.FALLBACK_DELETE_TAG,
+  // One notification type for both lists: the mapping is per job type, not per reason.
+  [JobMessagingType.COMPUTE_USER_RANKING]: EventEventMessagingType.RANKING_READY,
+  [JobMessagingType.COMPUTE_USER_FEED]: EventEventMessagingType.RANKING_READY,
 };
 
 export function getEventForJob(jobType: JobMessagingType | string): EventEventMessagingType {
@@ -30,6 +33,8 @@ export const EVENT_EVENT_TO_WS_EVENT_MAPPING = {
   [EventEventMessagingType.EVENT_CREATION_FAILED]: EventWebsocketMessagingType.EVENT_CREATION_FAILED,
   [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: EventWebsocketMessagingType.EVENT_DELETED,
   [EventEventMessagingType.EVENT_DELETION_FAILED]: EventWebsocketMessagingType.EVENT_DELETION_FAILED,
+
+  [EventEventMessagingType.RANKING_READY]: EventWebsocketMessagingType.RANKING_READY,
 
   [EventEventMessagingType.FALLBACK_CREATE_EVENT]:
     EventWebsocketMessagingType.FALLBACK_CREATE_EVENT,

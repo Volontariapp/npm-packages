@@ -77,11 +77,18 @@ import type {
   IUserStorageDeletionFailedPayload,
 } from './storage/payloads.js';
 
+import { RankingEventMessagingType } from './ranking/payloads.js';
+import type {
+  IUserRankingDeletedPayload,
+  IUserRankingDeletionFailedPayload,
+} from './ranking/payloads.js';
+
 import { CommonEventMessagingType } from './common/payloads.js';
 import type { IFeedbackEventPayload, IJobAuditPayload } from './common/payloads.js';
 
 import type { JobMessagingType } from '../jobs/index.js';
 import type { JobRegistry } from '../jobs/index.js';
+import type { IRankingComputePayload } from '../jobs/ranking/payloads.js';
 
 export interface EventRegistry {
   // Event
@@ -95,6 +102,7 @@ export interface EventRegistry {
   [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: IEventDeletionSuccessfullPayload;
   [EventEventMessagingType.USER_EVENT_DELETED]: IUserEventDeletedPayload;
   [EventEventMessagingType.USER_EVENT_DELETION_FAILED]: IUserEventDeletionFailedPayload;
+  [EventEventMessagingType.RANKING_READY]: IFeedbackEventPayload<IRankingComputePayload>;
 
   [EventEventMessagingType.EVENT_GEOCODED]: IEventGeocodedPayload;
   [EventEventMessagingType.EVENT_GEOCODING_FAILED]: IEventGeocodingFailedPayload;
@@ -184,6 +192,10 @@ export interface EventRegistry {
   [StorageEventMessagingType.USER_STORAGE_DELETED]: IUserStorageDeletedPayload;
   [StorageEventMessagingType.USER_STORAGE_DELETION_FAILED]: IUserStorageDeletionFailedPayload;
 
+  // Ranking
+  [RankingEventMessagingType.USER_RANKING_DELETED]: IUserRankingDeletedPayload;
+  [RankingEventMessagingType.USER_RANKING_DELETION_FAILED]: IUserRankingDeletionFailedPayload;
+
   // WS
 }
 
@@ -193,6 +205,7 @@ export const EventMessagingType = {
   ...SocialEventMessagingType,
   ...PostEventMessagingType,
   ...StorageEventMessagingType,
+  ...RankingEventMessagingType,
   ...CommonEventMessagingType,
 } as const;
 
@@ -203,6 +216,7 @@ export * from './user/payloads.js';
 export * from './social/payloads.js';
 export * from './post/payloads.js';
 export * from './storage/payloads.js';
+export * from './ranking/payloads.js';
 export * from './common/payloads.js';
 
 export * from './utils.js';

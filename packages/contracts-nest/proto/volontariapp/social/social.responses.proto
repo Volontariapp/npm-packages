@@ -175,3 +175,8 @@ message GetRecommendedEventIdsResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
+
+message AdminGetRecommendedEventIdsResponse {
+  repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}

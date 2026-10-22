@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package volontariapp.post;
 
+import "google/protobuf/timestamp.proto";
 import "volontariapp/common/pagination.proto";
 
 
@@ -12,4 +13,21 @@ message GetPostQuery {
 message ListPostsQuery {
   volontariapp.common.PaginationRequest pagination = 1;
   optional string author_id = 2;
+}
+
+message ListRecentPostsByAuthorsQuery {
+  // Capped at 200 server side.
+  repeated string author_ids = 1;
+  // When true, author_ids is ignored (cold start and complement).
+  bool all_authors = 2;
+  google.protobuf.Timestamp since = 3;
+  // Prevents a prolific author from starving the others.
+  int32 per_author_limit = 4;
+  // Capped at 300 server side.
+  int32 limit = 5;
+}
+
+message ListPostsByIdsQuery {
+  // Capped at 100, absent ids are ignored, order is not guaranteed.
+  repeated string ids = 1;
 }

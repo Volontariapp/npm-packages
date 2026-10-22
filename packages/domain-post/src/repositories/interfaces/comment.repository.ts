@@ -14,4 +14,5 @@ export interface ICommentRepository {
     limit: number,
   ): Promise<PaginatedResult<CommentEntity>>;
   anonymizeCommentsByAuthor(authorId: string): Promise<number>;
+  listByAuthor(authorId: string, since?: Date, limit?: number): Promise<CommentEntity[]>;
 }

@@ -6,6 +6,34 @@
 
 - feat(post-processors): add BaseStorageEntityResultPostProcessor for standardized handling of storage result events
 
+## 3.3.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.28.1
+  - @volontariapp/database@3.10.13
+  - @volontariapp/outbox@0.10.17
+
+## 3.3.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.17.0
+  - @volontariapp/messaging@2.28.0
+  - @volontariapp/database@3.10.12
+  - @volontariapp/outbox@0.10.16
+
+## 3.3.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.27.1
+  - @volontariapp/database@3.10.11
+  - @volontariapp/outbox@0.10.15
+
 ## 3.3.12
 
 ### Patch Changes

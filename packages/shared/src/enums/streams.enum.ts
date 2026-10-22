@@ -6,6 +6,7 @@ export enum UserStream {
   USER_DELETED_POST = 'user:deleted:post',
   USER_DELETED_EVENT = 'user:deleted:event',
   USER_DELETED_STORAGE = 'user:deleted:storage',
+  USER_DELETED_RANKING = 'user:deleted:ranking',
   USER_DELETION_SUCCESS = 'user:deletion:success',
   USER_BADGE_AWARDED = 'user:badge_awarded',
   USER_IMPACT_SCORE_CREDITED = 'user:impact_score_credited',
@@ -57,6 +58,11 @@ export enum StorageStream {
   STORAGE_ATTACHMENT_REJECTED = 'storage:attachment_rejected',
 }
 
+export enum RankingStream {
+  RANKING_JOB_OUTBOX_SUCCESS = 'ranking:job:outbox:success',
+  RANKING_JOB_OUTBOX_FAILURE = 'ranking:job:outbox:failure',
+}
+
 export enum WebsocketStream {
   WS_USER_CREATED_FEEDBACK = 'ws:user-created-feedback',
   WS_USER_DELETED_FEEDBACK = 'ws:user-deleted-feedback',
@@ -75,6 +81,7 @@ export const Streams = {
   ...PostStream,
   ...SocialStream,
   ...StorageStream,
+  ...RankingStream,
   ...WebsocketStream,
 } as const;
 
@@ -84,4 +91,5 @@ export type Streams =
   | PostStream
   | SocialStream
   | StorageStream
+  | RankingStream
   | WebsocketStream;

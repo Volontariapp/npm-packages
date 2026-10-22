@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.8.2
+
+### Patch Changes
+
+- Export the ranking folder from the package index so that the ranking messages, enums and service names are importable from the package root.
+
+## 4.8.1
+
+### Patch Changes
+
+- Auto-generated proto typings update for both pure contracts and NestJS integration.
+
 ## 4.8.0
 
 ### Minor Changes

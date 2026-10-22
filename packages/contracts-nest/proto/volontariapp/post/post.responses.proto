@@ -34,3 +34,11 @@ message DeletePostResponse {
 message DeleteMyPostsResponse {
   bool success = 1;
 }
+
+message ListRecentPostsByAuthorsResponse {
+  repeated Post posts = 1;
+}
+
+message ListPostsByIdsResponse {
+  repeated Post posts = 1;
+}

@@ -9,6 +9,9 @@ export enum EventEventMessagingType {
   USER_EVENT_DELETED = 'user_event.deleted',
   USER_EVENT_DELETION_FAILED = 'user_event.deletion_failed',
 
+  // Emitted once a ranking computation (events or posts) is done for a user: WS notification.
+  RANKING_READY = 'ranking.ready',
+
   EVENT_GEOCODED = 'event.geocoded',
   EVENT_GEOCODING_FAILED = 'event.geocoding_failed',
 
