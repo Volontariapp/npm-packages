@@ -94,12 +94,13 @@ describe('post score', () => {
       expect(structuralPostScore(components, false)).toBeCloseTo(0.35 + 0.3 * 0.25 + 0.35, 4);
     });
 
-    it('should demote by a single factor of 0.6 a post already liked or commented', () => {
+    it('should drop to 0 a post already liked or commented', () => {
       const components = postScoreComponents(build({ followed: true }));
       const normal = structuralPostScore(components, false);
       const demoted = structuralPostScore(components, true);
 
-      expect(demoted).toBeCloseTo(normal * 0.6, 3);
+      expect(normal).toBeGreaterThan(0);
+      expect(demoted).toBe(0);
     });
 
     it('should stay between 0 and 1', () => {

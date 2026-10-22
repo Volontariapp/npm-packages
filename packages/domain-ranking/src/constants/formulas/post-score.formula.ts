@@ -7,4 +7,4 @@ export const POST_WEIGHTS = {
 /** Event tie of a post whose event is past and was attended. */
 export const EVENT_TIE_PAST_JOINED = 0.5;
 /** Single factor applied to a post already liked or commented. */
-export const ENGAGED_POST_DEMOTION = 0.6;
+export const ENGAGED_POST_DEMOTION = 0;

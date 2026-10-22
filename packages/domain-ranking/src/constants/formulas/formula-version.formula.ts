@@ -4,4 +4,4 @@
  * (docs/matching/05 section 2, 11 section 5, 13 section 2).
  */
 export const FORMULA_VERSION = 1;
-export const FEED_FORMULA_VERSION = 1;
+export const FEED_FORMULA_VERSION = 2;
