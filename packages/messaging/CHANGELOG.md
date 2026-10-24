@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.29.0
+
+### Minor Changes
+
+- feat(messaging): add storage websocket event types, payloads and registry mappings
+
+  Expose StorageWebsocketMessagingType enum (FILE_SCANNED, FILE_REJECTED, ATTACHMENT_REJECTED)
+  Define websocket payloads: IStorageFileScannedWebsocketPayload, IStorageFileRejectedWebsocketPayload, IStorageAttachmentRejectedWebsocketPayload
+  Map storage domain events to websocket events via STORAGE_EVENT_TO_WS_EVENT_MAPPING
+  Register storage events into WebsocketEventRegistry and aggregate into WebsocketMessagingType
+
 ## 2.28.1
 
 ### Patch Changes
