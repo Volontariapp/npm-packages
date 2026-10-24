@@ -34,10 +34,17 @@ import type {
   IPostUnlikedWebsocketPayload,
 } from './posts/index.js';
 import { PostWebsocketMessagingType } from './posts/index.js';
+import type {
+  IStorageFileScannedWebsocketPayload,
+  IStorageFileRejectedWebsocketPayload,
+  IStorageAttachmentRejectedWebsocketPayload,
+} from './storage/index.js';
+import { StorageWebsocketMessagingType } from './storage/index.js';
 
 export * from './events/index.js';
 export * from './posts/index.js';
 export * from './users/index.js';
+export * from './storage/index.js';
 export * from './common/index.js';
 
 export interface WebsocketEventRegistry {
@@ -72,12 +79,17 @@ export interface WebsocketEventRegistry {
   [PostWebsocketMessagingType.COMMENT_DELETED]: ICommentDeletedWebsocketPayload;
   [PostWebsocketMessagingType.POST_LIKED]: IPostLikedWebsocketPayload;
   [PostWebsocketMessagingType.POST_UNLIKED]: IPostUnlikedWebsocketPayload;
+
+  [StorageWebsocketMessagingType.FILE_SCANNED]: IStorageFileScannedWebsocketPayload;
+  [StorageWebsocketMessagingType.FILE_REJECTED]: IStorageFileRejectedWebsocketPayload;
+  [StorageWebsocketMessagingType.ATTACHMENT_REJECTED]: IStorageAttachmentRejectedWebsocketPayload;
 }
 
 export const WebsocketMessagingType = {
   ...EventWebsocketMessagingType,
   ...UserWebsocketMessagingType,
   ...PostWebsocketMessagingType,
+  ...StorageWebsocketMessagingType,
 } as const;
 
 export type WebsocketMessagingType =
