@@ -1,6 +1,10 @@
 # Changelog
 
-## 3.3.16
+## 3.4.0
+
+### Minor Changes
+
+- feat(post-processors): add BaseStorageEntityResultPostProcessor for standardized handling of storage result events
 
 ### Patch Changes
 
