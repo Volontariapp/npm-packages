@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.0
+
+### Minor Changes
+
+- feat(monitoring): add custom metrics helper (counter, upDownCounter, histogram, gauge)
+
 ## 2.3.0
 
 ### Minor Changes
