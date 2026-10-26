@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0
+
+### Minor Changes
+
+- feat(monitoring): redact sensitive attributes in auto-instrumentations
+
 ## 2.2.2
 
 ### Patch Changes
