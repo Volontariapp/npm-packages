@@ -19,6 +19,36 @@ export interface TracingOptions {
   environment?: string;
 }
 
+/**
+ * Serializes Redis command statements to retain only the command name,
+ * ensuring no sensitive arguments (tokens, user payload, PII) leak into span attributes.
+ */
+export function sanitizeRedisCommand(cmdName: string): string {
+  return cmdName;
+}
+
+/**
+ * Builds configuration map for auto-instrumentations, locking down sensitive attributes:
+ * - PostgreSQL: enhancedDatabaseReporting disabled to prevent capturing parameter values ($1, $2...).
+ * - Redis & IORedis: dbStatementSerializer sanitizes command statement to command name only.
+ * - FS & DNS: disabled to minimize trace overhead.
+ */
+export function buildInstrumentationConfig() {
+  return {
+    '@opentelemetry/instrumentation-fs': { enabled: false },
+    '@opentelemetry/instrumentation-dns': { enabled: false },
+    '@opentelemetry/instrumentation-pg': {
+      enhancedDatabaseReporting: false,
+    },
+    '@opentelemetry/instrumentation-ioredis': {
+      dbStatementSerializer: sanitizeRedisCommand,
+    },
+    '@opentelemetry/instrumentation-redis': {
+      dbStatementSerializer: sanitizeRedisCommand,
+    },
+  };
+}
+
 export function initTracing(options: TracingOptions): NodeSDK {
   const exporterUrl =
     options.exporterUrl ?? process.env['OTEL_EXPORTER_OTLP_ENDPOINT'] ?? 'http://localhost:4317';
@@ -42,10 +72,7 @@ export function initTracing(options: TracingOptions): NodeSDK {
     traceExporter,
     metricReader,
     instrumentations: [
-      getNodeAutoInstrumentations({
-        '@opentelemetry/instrumentation-fs': { enabled: false },
-        '@opentelemetry/instrumentation-dns': { enabled: false },
-      }),
+      getNodeAutoInstrumentations(buildInstrumentationConfig()),
     ],
   });
 
