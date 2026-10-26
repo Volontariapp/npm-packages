@@ -20,10 +20,11 @@ export interface TracingOptions {
 }
 
 /**
- * Serializes Redis command statements to retain only the command name,
- * ensuring no sensitive arguments (tokens, user payload, PII) leak into span attributes.
+ * Serializes Redis command statements to retain only the command name.
+ * The second parameter (_cmdArgs) is intentionally discarded to prevent
+ * sensitive arguments (tokens, user payload, PII) from leaking into span attributes.
  */
-export function sanitizeRedisCommand(cmdName: string): string {
+export function sanitizeRedisCommand(cmdName: string, _cmdArgs?: unknown): string {
   return cmdName;
 }
 

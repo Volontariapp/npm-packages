@@ -37,9 +37,7 @@ describe('tracing instrumentation config (Unit)', () => {
       expect(typeof redisSerializer).toBe('function');
 
       // Verify that passing sensitive command arguments returns only the command name
-      // @ts-expect-error - testing serializer with command arguments
       expect(ioRedisSerializer('XADD', ['storage:file_scanned', '*', 'fileId', 'secret-uuid'])).toBe('XADD');
-      // @ts-expect-error - testing serializer with command arguments
       expect(redisSerializer('SET', ['session:token_123', 'bearer_secret'])).toBe('SET');
     });
   });
