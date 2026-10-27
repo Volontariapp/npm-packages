@@ -1,4 +1,4 @@
-# Dependabot PRs carry docker-and-e2e (required by the CI). Source: Volontariapp/ci-tools templates/dependabot.
+# Dependabot PRs carry docker-e2e and docker-and-e2e (the latter is required by the CI). Source: Volontariapp/ci-tools templates/dependabot.
 version: 2
 updates:
   - package-ecosystem: "npm"
@@ -9,6 +9,7 @@ updates:
     labels:
       - "dependencies"
       - "docker-and-e2e"
+      - "docker-e2e"
     schedule:
       interval: "daily"
     commit-message:
@@ -33,6 +34,7 @@ updates:
     labels:
       - "dependencies"
       - "docker-and-e2e"
+      - "docker-e2e"
     schedule:
       interval: "weekly"
     commit-message:
