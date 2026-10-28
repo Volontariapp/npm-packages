@@ -28,12 +28,12 @@
     "eslint": "9.18.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "3.4.2",
-    "typeorm": "^0.3.28",
+    "prettier": "3.9.10",
+    "typeorm": "^0.3.31",
     "typescript": "5.7.3"
   },
   "resolutions": {
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.31"
   },
   "dependencies": {
     "@volontariapp/shared": "workspace:^"
