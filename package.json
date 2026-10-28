@@ -23,17 +23,17 @@
     "release:ci": "bash scripts/ci-package-publish.sh"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.30.0",
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3",
     "eslint": "9.18.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "prettier": "3.4.2",
-    "typeorm": "^0.3.28",
+    "lint-staged": "^17.6.0",
+    "prettier": "3.9.10",
+    "typeorm": "^1.1.2",
     "typescript": "5.7.3"
   },
   "resolutions": {
-    "typeorm": "^0.3.28"
+    "typeorm": "^1.1.2"
   },
   "dependencies": {
     "@volontariapp/shared": "workspace:^"
