@@ -1,4 +1,5 @@
-# Dependabot PRs carry docker-e2e and docker-and-e2e (the latter is required by the CI). Source: Volontariapp/ci-tools templates/dependabot.
+# Generated from Volontariapp/ci-tools templates/dependabot by sync-dependabot.yml: do not edit here.
+# Dependabot PRs carry docker-e2e and docker-and-e2e (the latter is required by the CI).
 version: 2
 updates:
   - package-ecosystem: "npm"
@@ -16,6 +17,17 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+    ignore:
+      # Held on the Node 24 / NestJS 11 line used by every @volontariapp/* package (peer ranges ^11).
+      # Lift these once npm-packages is migrated and published for the next line.
+      - dependency-name: "@nestjs/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       # A single pull request per week for every version update (majors and @volontariapp/* included):
       # the E2E suite runs once instead of once per dependency.
