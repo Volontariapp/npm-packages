@@ -34,7 +34,8 @@
   },
   "resolutions": {
     "typeorm": "^0.3.31",
-    "protobufjs@npm:8.0.0": "npm:8.0.1"
+    "protobufjs@npm:8.0.0": "npm:8.0.1",
+    "ioredis@npm:5.10.1": "npm:5.11.1"
   },
   "dependencies": {
     "@volontariapp/shared": "workspace:^"
