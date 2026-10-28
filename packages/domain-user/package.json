@@ -51,7 +51,7 @@
     "@volontariapp/shared": "workspace:*"
   },
   "devDependencies": {
-    "@nestjs/typeorm": "^11.0.1",
+    "@nestjs/typeorm": "^11.0.3",
     "@volontariapp/testing": "workspace:*",
     "reflect-metadata": "^0.2.2",
     "ts-node": "^10.9.2",
