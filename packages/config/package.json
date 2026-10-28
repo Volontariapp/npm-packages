@@ -33,20 +33,20 @@
     "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.5.1",
-    "jest": "^30.3.0",
-    "ts-jest": "^29.4.9",
-    "typescript": "5.7.3"
+    "@types/node": "^26.6.5",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15",
+    "typescript": "7.0.2"
   },
   "dependencies": {
     "@volontariapp/logger": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
-    "ioredis": "^5.10.1",
-    "neo4j-driver": "^6.0.1",
+    "ioredis": "^6.0.0",
+    "neo4j-driver": "^6.2.0",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.28"
+    "typeorm": "^1.1.2"
   }
 }

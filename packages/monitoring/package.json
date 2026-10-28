@@ -33,23 +33,23 @@
     "test": "node --experimental-vm-modules $(yarn bin jest)"
   },
   "dependencies": {
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.75.0",
-    "@opentelemetry/core": "^2.6.1",
-    "@opentelemetry/exporter-metrics-otlp-grpc": "^0.212.0",
-    "@opentelemetry/exporter-trace-otlp-grpc": "^0.212.0",
-    "@opentelemetry/resources": "^2.5.1",
-    "@opentelemetry/sdk-metrics": "^2.5.1",
-    "@opentelemetry/sdk-node": "^0.217.0",
+    "@opentelemetry/api": "^1.10.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.82.0",
+    "@opentelemetry/core": "^3.0.0",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "^0.300.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.300.0",
+    "@opentelemetry/resources": "^3.0.0",
+    "@opentelemetry/sdk-metrics": "^3.0.0",
+    "@opentelemetry/sdk-node": "^0.300.0",
     "@opentelemetry/sdk-trace-base": "^2.7.1",
-    "@opentelemetry/semantic-conventions": "^1.34.0",
+    "@opentelemetry/semantic-conventions": "^1.43.0",
     "@volontariapp/logger": "workspace:*"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@types/jest": "^30.0.0",
-    "jest": "^30.3.0",
-    "ts-jest": "^29.4.9",
-    "typescript": "5.7.3"
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15",
+    "typescript": "7.0.2"
   }
 }
