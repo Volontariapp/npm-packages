@@ -33,7 +33,8 @@
     "typescript": "5.7.3"
   },
   "resolutions": {
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.28",
+    "protobufjs@npm:8.0.0": "npm:8.0.1"
   },
   "dependencies": {
     "@volontariapp/shared": "workspace:^"
