@@ -28,13 +28,14 @@
     "eslint": "9.18.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "3.4.2",
-    "typeorm": "^0.3.28",
+    "prettier": "3.9.10",
+    "typeorm": "^0.3.31",
     "typescript": "5.7.3"
   },
   "resolutions": {
-    "typeorm": "^0.3.28",
-    "protobufjs@npm:8.0.0": "npm:8.0.1"
+    "typeorm": "^0.3.31",
+    "protobufjs@npm:8.0.0": "npm:8.0.1",
+    "ioredis@npm:5.10.1": "npm:5.11.1"
   },
   "dependencies": {
     "@volontariapp/shared": "workspace:^"
