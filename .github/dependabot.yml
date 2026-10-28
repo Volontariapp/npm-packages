@@ -3,10 +3,8 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directories:
-      - "/"
-      - "/packages/*"
-    open-pull-requests-limit: 2
+    directory: "/"
+    open-pull-requests-limit: 3
     labels:
       - "dependencies"
       - "docker-and-e2e"
@@ -32,10 +30,16 @@ updates:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
     groups:
-      # A single pull request per week for every version update (majors and @volontariapp/* included):
-      # the E2E suite runs once instead of once per dependency.
+      # Minor and patch updates (@volontariapp/* included) land in one weekly PR that can be merged on its own.
       dependencies:
         applies-to: version-updates
+        update-types: ["minor", "patch"]
+        patterns:
+          - "*"
+      # Major updates share one separate PR so a breaking major never blocks the weekly one.
+      majors:
+        applies-to: version-updates
+        update-types: ["major"]
         patterns:
           - "*"
       # Security updates keep their own pull request so they are never held back by a risky major bump.
