@@ -34,10 +34,10 @@
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@types/jest": "^30.0.0",
     "eslint": "9.18.0",
-    "jest": "^30.3.0",
+    "jest": "^30.5.2",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "5.7.3"

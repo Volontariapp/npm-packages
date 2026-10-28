@@ -39,17 +39,17 @@
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@nestjs/typeorm": "^11.0.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@volontariapp/testing": "workspace:*",
-    "jest": "^30.3.0",
+    "jest": "^30.5.2",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typeorm": "^0.3.28",
+    "typeorm": "^1.1.2",
     "typescript": "5.7.3"
   },
   "dependencies": {
