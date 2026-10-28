@@ -32,6 +32,18 @@ updates:
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # Runtime libraries wrapped by @volontariapp/* packages: their majors move together with npm-packages
+      # (typeorm 1.x contradicts the ~0.3 range of @volontariapp/bridge, @opentelemetry/core 3 needs @opentelemetry/api >=1.10).
+      - dependency-name: "typeorm"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "bullmq"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "redis"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "ioredis"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@opentelemetry/core"
+        update-types: ["version-update:semver-major"]
     groups:
       # Minor and patch updates (@volontariapp/* included) land in one weekly PR that can be merged on its own.
       dependencies:
