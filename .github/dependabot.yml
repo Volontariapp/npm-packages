@@ -3,7 +3,9 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/"
+    directories:
+      - "/"
+      - "/packages/*"
     open-pull-requests-limit: 3
     labels:
       - "dependencies"
@@ -36,14 +38,23 @@ updates:
       # (typeorm 1.x contradicts the ~0.3 range of @volontariapp/bridge, @opentelemetry/core 3 needs @opentelemetry/api >=1.10).
       - dependency-name: "typeorm"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "bullmq"
-        update-types: ["version-update:semver-major"]
       - dependency-name: "redis"
         update-types: ["version-update:semver-major"]
       - dependency-name: "ioredis"
         update-types: ["version-update:semver-major"]
       - dependency-name: "@opentelemetry/core"
         update-types: ["version-update:semver-major"]
+      # Wrapped by published @volontariapp/* packages: see MONOREPO_HOLD in render-dependabot.py.
+      - dependency-name: "@opentelemetry/sdk-node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@opentelemetry/exporter-*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@opentelemetry/auto-instrumentations-node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "bullmq"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "sharp"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       # Minor and patch updates (@volontariapp/* included) land in one weekly PR that can be merged on its own.
       dependencies:
