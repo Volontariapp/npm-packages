@@ -27,9 +27,9 @@
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
-    "@eslint/js": "9.18.0",
+    "@eslint/js": "10.0.1",
     "eslint-plugin-import": "^2.32.0",
-    "typescript-eslint": "8.20.0"
+    "typescript-eslint": "8.72.0"
   },
   "peerDependencies": {
     "eslint": ">=9.0.0",
@@ -37,6 +37,6 @@
   },
   "devDependencies": {
     "eslint": "9.18.0",
-    "typescript": "5.7.3"
+    "typescript": "5.9.3"
   }
 }

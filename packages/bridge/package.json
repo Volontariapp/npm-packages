@@ -35,23 +35,23 @@
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@types/jest": "^30.0.0",
     "@types/pg": "^8",
-    "jest": "^30.3.0",
-    "ts-jest": "^29.4.9",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15",
     "ts-node": "^10.9.2",
-    "typescript": "5.7.3"
+    "typescript": "5.9.3"
   },
   "dependencies": {
     "@types/geojson": "^7946.0.16",
     "@volontariapp/config": "workspace:*",
     "@volontariapp/errors": "workspace:^",
     "@volontariapp/logger": "workspace:*",
-    "ioredis": "^5.10.1",
-    "neo4j-driver": "^6.0.1",
-    "pg": "^8.20.0",
+    "ioredis": "^6.0.0",
+    "neo4j-driver": "^6.2.0",
+    "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.28"
+    "typeorm": "^1.1.2"
   }
 }

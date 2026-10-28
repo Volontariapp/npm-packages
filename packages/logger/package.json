@@ -34,15 +34,15 @@
     "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
   },
   "dependencies": {
-    "@opentelemetry/api": "^1.9.0"
+    "@opentelemetry/api": "^1.10.0"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.5.2",
+    "@types/node": "^22.20.5",
     "@volontariapp/testing": "workspace:*",
-    "jest": "^30.3.0",
-    "ts-jest": "^29.4.9",
-    "typescript": "5.7.3"
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15",
+    "typescript": "5.9.3"
   }
 }

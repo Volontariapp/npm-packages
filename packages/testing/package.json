@@ -33,10 +33,10 @@
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
-    "@jest/globals": "^30.3.0"
+    "@jest/globals": "^30.5.2"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "typescript": "5.7.3"
+    "typescript": "5.9.3"
   }
 }
