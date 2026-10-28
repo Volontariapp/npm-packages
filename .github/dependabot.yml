@@ -18,14 +18,17 @@ updates:
       prefix: "chore"
       include: "scope"
     ignore:
-      # Held on the Node 24 / NestJS 11 line used by every @volontariapp/* package (peer ranges ^11).
+      # Held on the Node 24 / NestJS 11 line used by every @volontariapp/* package (peer ranges ^11);
+      # typescript, eslint and @eslint/js also hold minors (typescript-eslint via @volontariapp/eslint-config needs typescript <5.8).
       # Lift these once npm-packages is migrated and published for the next line.
       - dependency-name: "@nestjs/*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "eslint"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
     groups:
