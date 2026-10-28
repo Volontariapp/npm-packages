@@ -5,26 +5,27 @@ updates:
     directories:
       - "/"
       - "/packages/*"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "docker-and-e2e"
       - "docker-e2e"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
     commit-message:
       prefix: "chore"
       include: "scope"
     groups:
-      npm-security:
-        applies-to: security-updates
+      # A single pull request per week for every version update (majors and @volontariapp/* included):
+      # the E2E suite runs once instead of once per dependency.
+      dependencies:
+        applies-to: version-updates
         patterns:
           - "*"
-      npm-minor-patch:
-        applies-to: version-updates
-        update-types:
-          - "minor"
-          - "patch"
+      # Security updates keep their own pull request so they are never held back by a risky major bump.
+      npm-security:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -36,7 +37,7 @@ updates:
       - "docker-and-e2e"
       - "docker-e2e"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "ci"
     groups:
