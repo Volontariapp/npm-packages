@@ -50,9 +50,9 @@
     "@nestjs/microservices": "^10.0.0 || ^11.0.0"
   },
   "devDependencies": {
-    "@golevelup/ts-jest": "^0.6.1",
+    "@golevelup/ts-jest": "^3.0.0",
     "@grpc/grpc-js": "^1.12.0",
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/microservices": "^11.0.0",
@@ -63,7 +63,7 @@
     "@types/node": "^24.1.0",
     "@types/supertest": "^7.2.0",
     "@volontariapp/testing": "workspace:*",
-    "jest": "^30.3.0",
+    "jest": "^30.5.2",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
     "typescript": "5.7.3"

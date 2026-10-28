@@ -53,7 +53,7 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@opentelemetry/core": "^2.6.1",
     "@opentelemetry/sdk-trace-base": "^2.7.1",
     "@opentelemetry/sdk-trace-node": "^2.7.1",
@@ -63,7 +63,7 @@
     "@volontariapp/testing": "workspace:*",
     "bullmq": "^5.76.5",
     "ioredis": "^5.10.1",
-    "jest": "^30.3.0",
+    "jest": "^30.5.2",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "5.7.3"

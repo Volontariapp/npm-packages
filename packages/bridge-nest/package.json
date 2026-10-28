@@ -35,12 +35,12 @@
     "test:watch": "node --experimental-vm-modules $(yarn bin jest) --watch"
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@nestjs/common": "^11.1.18",
     "@nestjs/core": "^11.1.18",
     "@nestjs/testing": "^11.1.18",
     "@types/jest": "^30.0.0",
-    "jest": "^30.3.0",
+    "jest": "^30.5.2",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.28",

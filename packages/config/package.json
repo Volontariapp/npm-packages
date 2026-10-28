@@ -33,10 +33,10 @@
     "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
   },
   "devDependencies": {
-    "@jest/globals": "^30.3.0",
+    "@jest/globals": "^30.5.2",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.5.1",
-    "jest": "^30.3.0",
+    "jest": "^30.5.2",
     "ts-jest": "^29.4.9",
     "typescript": "5.7.3"
   },
