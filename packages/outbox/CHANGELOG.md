@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.19
+
+### Patch Changes
+
+- [#276](https://github.com/Volontariapp/npm-packages/pull/276) [`3b40ad8`](https://github.com/Volontariapp/npm-packages/commit/3b40ad8cbcfd747a24fdf0186247f2ce14e821bc) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - Trace async hops as a chain instead of siblings of the original request. `continueTraceparent` returns the active span when it belongs to the trace of the message, so the outbox pushers parent the stream message or job on the `outbox` span, and `EventQueueEntity.createFollowUp` parents the follow-up event on the post-processor span. A batch post-processor keeps the previous behaviour (its root span lives in another trace), so a message never leaves the trace of its request.
+
+- Updated dependencies [[`3b40ad8`](https://github.com/Volontariapp/npm-packages/commit/3b40ad8cbcfd747a24fdf0186247f2ce14e821bc)]:
+  - @volontariapp/database@3.11.0
+
 ## 0.10.18
 
 ### Patch Changes

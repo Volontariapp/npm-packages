@@ -1,4 +1,4 @@
-import { OutboxPusher, type EventQueueEntity } from '@volontariapp/database';
+import { OutboxPusher, continueTraceparent, type EventQueueEntity } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
 import type { Redis } from 'ioredis';
 
@@ -20,19 +20,16 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
     super();
   }
 
-  private formatMessage<K extends string, P>(entity: EventQueueEntity<K, P>): string {
-    const {
-      id,
-      type,
-      emitter,
-      emitterId,
-      correlationId,
-      traceId,
-      traceparent,
-      version,
-      payload,
-      createdAt,
-    } = entity;
+  /**
+   * The message continues the trace of the row from the active outbox span, so the
+   * consumer is a child of the `outbox` span and not a sibling of it.
+   */
+  private formatMessage<K extends string, P>(
+    entity: EventQueueEntity<K, P>,
+    traceparent: string | undefined,
+  ): string {
+    const { id, type, emitter, emitterId, correlationId, traceId, version, payload, createdAt } =
+      entity;
 
     const message: RedisEventMessage<P> = {
       id,
@@ -54,7 +51,8 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
   }
 
   private createStreamFields(entity: EventQueueEntity<string, unknown>): RedisEventStreamFields {
-    const eventJson = this.formatMessage(entity);
+    const traceparent = continueTraceparent(entity.traceparent);
+    const eventJson = this.formatMessage(entity, traceparent);
     return {
       id: entity.id,
       type: entity.type,
@@ -62,7 +60,7 @@ export class EventQueuePusher extends OutboxPusher<EventQueueEntity<string, unkn
       emitterId: entity.emitterId,
       correlationId: entity.correlationId,
       traceId: entity.traceId ?? '',
-      traceparent: entity.traceparent ?? '',
+      traceparent: traceparent ?? '',
       version: entity.version.toString(),
       createdAt: entity.createdAt.toISOString(),
       payload: JSON.stringify(entity.payload),
