@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-ranking",
-  "version": "0.2.1",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
