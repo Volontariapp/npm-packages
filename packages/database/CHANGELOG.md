@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.11.1
+
+### Patch Changes
+
+- [`9719a9d`](https://github.com/Volontariapp/npm-packages/commit/9719a9d9efff3ffbdbfbecd6d469880155825134) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - Keep the work done by a batch post-processor in the trace of its first message. The `batch` span created by `runBatchInTraceContext` is now a child of the first message span instead of a root in a trace of its own, so follow-up events (`createFollowUp`) and jobs written inside the handler chain under the step that emits them. The other messages of the batch keep their own span and a link to the batch span.
+
 ## 3.11.0
 
 ### Minor Changes

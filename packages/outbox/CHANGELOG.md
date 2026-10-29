@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.20
+
+### Patch Changes
+
+- Updated dependencies [[`9719a9d`](https://github.com/Volontariapp/npm-packages/commit/9719a9d9efff3ffbdbfbecd6d469880155825134)]:
+  - @volontariapp/database@3.11.1
+
 ## 0.10.19
 
 ### Patch Changes

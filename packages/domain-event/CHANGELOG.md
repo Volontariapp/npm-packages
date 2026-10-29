@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.12.7
+
+### Patch Changes
+
+- Updated dependencies [[`9719a9d`](https://github.com/Volontariapp/npm-packages/commit/9719a9d9efff3ffbdbfbecd6d469880155825134)]:
+  - @volontariapp/database@3.11.1
+  - @volontariapp/outbox@0.10.20
+
 ## 3.12.6
 
 ### Patch Changes
