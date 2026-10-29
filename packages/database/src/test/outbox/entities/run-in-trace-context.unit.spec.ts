@@ -186,6 +186,37 @@ describe('runInTraceContext (Unit)', () => {
       expect(batch.attributes['messaging.batch.message_count']).toBe(2);
     });
 
+    it('should make the batch span a child of the first message span', async () => {
+      // Act
+      await runBatchInTraceContext('batch events', scopes, () => Promise.resolve());
+
+      // Assert
+      const batch = finished('batch events');
+      const first = finished('event a');
+      expect(batch.spanContext().traceId).toBe(TRACE_ID_HEX);
+      expect(batch.parentSpanContext?.spanId).toBe(first.spanContext().spanId);
+    });
+
+    it('should let work done in a single-message batch stay in the trace of that message', async () => {
+      // Act
+      const captured = await runBatchInTraceContext('batch events', [scopes[0]], () =>
+        Promise.resolve(captureTraceparent()),
+      );
+
+      // Assert
+      const batch = finished('batch events');
+      expect(captured?.split('-')[1]).toBe(TRACE_ID_HEX);
+      expect(captured?.split('-')[2]).toBe(batch.spanContext().spanId);
+    });
+
+    it('should keep an empty batch span as a root', async () => {
+      // Act
+      await runBatchInTraceContext('batch events', [], () => Promise.resolve());
+
+      // Assert
+      expect(finished('batch events').parentSpanContext).toBeUndefined();
+    });
+
     it('should mark every span as failed and rethrow when the batch fails', async () => {
       // Arrange
       const failure = new Error('batch exploded');

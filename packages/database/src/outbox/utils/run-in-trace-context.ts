@@ -74,6 +74,11 @@ export async function runInTraceContext<T>(scope: TraceScope, fn: () => Promise<
  * `fn`. A batch handler receives every message in one call, so the message
  * spans last as long as the batch; they exist to show the step in the trace of
  * each message.
+ *
+ * The batch span is a child of the first message span, so what `fn` does (calls,
+ * writes, follow-up events and jobs) stays in the trace of that message instead of
+ * starting a trace of its own. The other messages of the batch keep their message
+ * span and a link: the work is one, so it can sit in only one trace.
  */
 export async function runBatchInTraceContext<T>(
   batchName: string,
@@ -89,11 +94,19 @@ export async function runBatchInTraceContext<T>(
     ),
   );
   const links: Link[] = messageSpans.map((span) => ({ context: span.spanContext() }));
-  const batchSpan = tracer.startSpan(batchName, {
-    kind: SpanKind.CONSUMER,
-    attributes: { 'messaging.batch.message_count': scopes.length },
-    links,
-  });
+  const batchParent =
+    scopes.length === 0
+      ? context.active()
+      : trace.setSpan(parentContext(scopes[0].traceparent), messageSpans[0]);
+  const batchSpan = tracer.startSpan(
+    batchName,
+    {
+      kind: SpanKind.CONSUMER,
+      attributes: { 'messaging.batch.message_count': scopes.length },
+      links,
+    },
+    batchParent,
+  );
   const allSpans = [batchSpan, ...messageSpans];
 
   try {

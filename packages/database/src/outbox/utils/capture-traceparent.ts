@@ -24,8 +24,8 @@ function traceIdOf(traceparent: string): string | undefined {
  * instead of a sibling of it under the original request.
  *
  * Falls back to `origin` when there is no active span or when the active span
- * belongs to another trace (the root span of a batch, which only links to its
- * messages), so a message never leaves the trace of the request that caused it.
+ * belongs to another trace (the batch span, for a message that is not the first
+ * of its batch), so a message never leaves the trace of the request that caused it.
  * Returns `undefined` when `origin` is missing: the caller decides what to capture.
  */
 export function continueTraceparent(origin: string | null | undefined): string | undefined {

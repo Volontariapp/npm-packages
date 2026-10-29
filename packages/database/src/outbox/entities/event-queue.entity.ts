@@ -60,8 +60,9 @@ export class EventQueueEntity<
    * Creates an event triggered by another one (post-processor, saga step).
    * `traceId` and `correlationId` are copied from `source`, so a caller cannot
    * forget one. `traceparent` continues the trace of `source`: it is the active
-   * span when that span is in the same trace (a single post-processor), else
-   * the one of `source` (a batch, whose root span is in its own trace). Use
+   * span when that span is in the same trace (a single post-processor, or the first
+   * message of a batch), else the one of `source` (the other messages of a batch,
+   * whose work runs in the trace of the first one). Use
    * `createEvent` for the first event of a chain, where the trace context is
    * captured from the active span instead.
    */
