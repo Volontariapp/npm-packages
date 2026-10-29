@@ -3,6 +3,7 @@ import { ROOT_CONTEXT, context, propagation } from '@opentelemetry/api';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import {
   captureTraceparent,
+  continueTraceparent,
   normalizeTraceparent,
 } from '../../../outbox/utils/capture-traceparent.js';
 import { EventQueueEntity } from '../../../outbox/entities/event-queue.entity.js';
@@ -93,6 +94,50 @@ describe('traceparent capture (Unit)', () => {
     });
   });
 
+  describe('continueTraceparent', () => {
+    const SAME_TRACE_ORIGIN = `00-0af7651916cd43dd8448eb211c80319c-1111111111111111-01`;
+
+    it('should return the active span when it belongs to the trace of the origin', () => {
+      // Arrange
+      withActiveSpan();
+
+      // Act
+      const traceparent = continueTraceparent(SAME_TRACE_ORIGIN);
+
+      // Assert
+      expect(traceparent).toBe(SAMPLED_TRACEPARENT);
+    });
+
+    it('should keep the origin when the active span belongs to another trace', () => {
+      // Arrange
+      withActiveSpan();
+
+      // Act
+      const traceparent = continueTraceparent(EXPLICIT_TRACEPARENT);
+
+      // Assert
+      expect(traceparent).toBe(EXPLICIT_TRACEPARENT);
+    });
+
+    it('should keep the origin without an active span', () => {
+      // Arrange
+      withoutActiveSpan();
+
+      // Act & Assert
+      expect(continueTraceparent(SAME_TRACE_ORIGIN)).toBe(SAME_TRACE_ORIGIN);
+    });
+
+    it('should return undefined when the origin is missing, whatever the active span', () => {
+      // Arrange
+      withActiveSpan();
+
+      // Act & Assert
+      expect(continueTraceparent(undefined)).toBeUndefined();
+      expect(continueTraceparent(null)).toBeUndefined();
+      expect(continueTraceparent('')).toBeUndefined();
+    });
+  });
+
   describe('EventQueueEntity.createFollowUp', () => {
     const makeProps = () => ({
       type: 'user.badge_awarded',
@@ -122,7 +167,7 @@ describe('traceparent capture (Unit)', () => {
       expect(entity.traceparent).toBe(EXPLICIT_TRACEPARENT);
     });
 
-    it('should not replace the source traceparent with the active span of the consumer', () => {
+    it('should not replace the source traceparent with an active span of another trace', () => {
       // Arrange
       withActiveSpan();
 
@@ -134,6 +179,23 @@ describe('traceparent capture (Unit)', () => {
 
       // Assert
       expect(entity.traceparent).toBe(EXPLICIT_TRACEPARENT);
+    });
+
+    it('should parent the follow-up on the active span of the same trace', () => {
+      // Arrange
+      withActiveSpan();
+
+      // Act
+      const entity = EventQueueEntity.createFollowUp(
+        {
+          correlationId: CORRELATION_ID,
+          traceparent: '00-0af7651916cd43dd8448eb211c80319c-1111111111111111-01',
+        },
+        makeProps(),
+      );
+
+      // Assert
+      expect(entity.traceparent).toBe(SAMPLED_TRACEPARENT);
     });
 
     it('should store no traceparent when the source message had none', () => {

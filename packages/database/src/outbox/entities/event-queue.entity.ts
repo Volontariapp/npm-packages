@@ -4,7 +4,11 @@ import type { EventType } from '../types/event.type.js';
 import type { Streams } from '@volontariapp/shared';
 import { randomUUID } from 'crypto';
 import { OutboxStatus } from '../types/outbox.status.js';
-import { captureTraceparent, normalizeTraceparent } from '../utils/capture-traceparent.js';
+import {
+  captureTraceparent,
+  continueTraceparent,
+  normalizeTraceparent,
+} from '../utils/capture-traceparent.js';
 import type { EventTraceContext } from '../interfaces/outbox.interfaces.js';
 
 export class EventQueueEntity<
@@ -54,9 +58,12 @@ export class EventQueueEntity<
 
   /**
    * Creates an event triggered by another one (post-processor, saga step).
-   * `traceId`, `traceparent` and `correlationId` are copied from `source`, so
-   * a caller cannot forget one. Use `createEvent` for the first event of a
-   * chain, where the trace context is captured from the active span instead.
+   * `traceId` and `correlationId` are copied from `source`, so a caller cannot
+   * forget one. `traceparent` continues the trace of `source`: it is the active
+   * span when that span is in the same trace (a single post-processor), else
+   * the one of `source` (a batch, whose root span is in its own trace). Use
+   * `createEvent` for the first event of a chain, where the trace context is
+   * captured from the active span instead.
    */
   static createFollowUp<K extends EventType = EventType>(
     source: EventTraceContext,
@@ -71,7 +78,7 @@ export class EventQueueEntity<
     return EventQueueEntity.createEvent<K>({
       ...props,
       traceId: source.traceId,
-      traceparent: source.traceparent,
+      traceparent: continueTraceparent(source.traceparent),
       correlationId: source.correlationId,
     });
   }

@@ -13,6 +13,33 @@ export function captureTraceparent(): string | undefined {
   return carrier.traceparent;
 }
 
+function traceIdOf(traceparent: string): string | undefined {
+  return traceparent.split('-')[1];
+}
+
+/**
+ * Traceparent to store on a message that continues the one received from
+ * `origin`: the active span when it belongs to the same trace, so the next hop
+ * is a child of the step that emits it (outbox span, post-processor span)
+ * instead of a sibling of it under the original request.
+ *
+ * Falls back to `origin` when there is no active span or when the active span
+ * belongs to another trace (the root span of a batch, which only links to its
+ * messages), so a message never leaves the trace of the request that caused it.
+ * Returns `undefined` when `origin` is missing: the caller decides what to capture.
+ */
+export function continueTraceparent(origin: string | null | undefined): string | undefined {
+  const source = normalizeTraceparent(origin);
+  if (source === undefined) {
+    return undefined;
+  }
+  const active = captureTraceparent();
+  if (active !== undefined && traceIdOf(active) === traceIdOf(source)) {
+    return active;
+  }
+  return source;
+}
+
 /**
  * "No trace context" has three spellings: `undefined` (not set), `null` (a
  * nullable column read back from Postgres) and `''` (the Redis Stream wire
