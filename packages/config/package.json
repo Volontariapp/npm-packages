@@ -35,18 +35,18 @@
   "devDependencies": {
     "@jest/globals": "^30.3.0",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.5.1",
+    "@types/node": "^22.20.5",
     "jest": "^30.3.0",
-    "ts-jest": "^29.4.9",
+    "ts-jest": "^29.4.15",
     "typescript": "5.7.3"
   },
   "dependencies": {
     "@volontariapp/logger": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
-    "ioredis": "^5.10.1",
-    "neo4j-driver": "^6.0.1",
+    "ioredis": "^5.11.1",
+    "neo4j-driver": "^6.2.0",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.31"
   }
 }

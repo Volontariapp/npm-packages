@@ -28,12 +28,17 @@
     "eslint": "9.18.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "3.4.2",
-    "typeorm": "^0.3.28",
+    "prettier": "3.9.10",
+    "typeorm": "^0.3.31",
     "typescript": "5.7.3"
   },
   "resolutions": {
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.31",
+    "protobufjs@npm:8.0.0": "npm:8.4.1",
+    "ioredis@npm:5.10.1": "npm:5.11.1",
+    "multer@npm:2.4.0": "npm:2.5.0",
+    "protobufjs@npm:8.0.1": "npm:8.4.1",
+    "@opentelemetry/propagator-jaeger@npm:2.7.1": "npm:2.9.0"
   },
   "dependencies": {
     "@volontariapp/shared": "workspace:^"

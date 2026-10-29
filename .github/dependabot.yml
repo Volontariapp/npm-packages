@@ -1,0 +1,91 @@
+# Generated from Volontariapp/ci-tools templates/dependabot by sync-dependabot.yml: do not edit here.
+# Dependabot PRs carry docker-e2e and docker-and-e2e (the latter is required by the CI).
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/packages/*"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "docker-and-e2e"
+      - "docker-e2e"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    ignore:
+      # Held on the Node 24 / NestJS 11 line used by every @volontariapp/* package (peer ranges ^11);
+      # typescript, eslint and @eslint/js also hold minors (typescript-eslint via @volontariapp/eslint-config needs typescript <5.8),
+      # and @opentelemetry/api too (@opentelemetry/core requests >=1.0.0 <1.10.0).
+      # Lift these once npm-packages is migrated and published for the next line.
+      - dependency-name: "@nestjs/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@opentelemetry/api"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # Runtime libraries wrapped by @volontariapp/* packages: their majors move together with npm-packages
+      # (typeorm 1.x contradicts the ~0.3 range of @volontariapp/bridge, @opentelemetry/core 3 needs @opentelemetry/api >=1.10).
+      - dependency-name: "typeorm"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "redis"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "ioredis"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@opentelemetry/core"
+        update-types: ["version-update:semver-major"]
+      # Wrapped by published @volontariapp/* packages: see MONOREPO_HOLD in render-dependabot.py.
+      - dependency-name: "@opentelemetry/sdk-node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@opentelemetry/exporter-*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "@opentelemetry/auto-instrumentations-node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "bullmq"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "sharp"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      # Minor and patch updates (@volontariapp/* included) land in one weekly PR that can be merged on its own.
+      dependencies:
+        applies-to: version-updates
+        update-types: ["minor", "patch"]
+        patterns:
+          - "*"
+      # Major updates share one separate PR so a breaking major never blocks the weekly one.
+      majors:
+        applies-to: version-updates
+        update-types: ["major"]
+        patterns:
+          - "*"
+      # Security updates keep their own pull request so they are never held back by a risky major bump.
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    open-pull-requests-limit: 1
+    labels:
+      - "dependencies"
+      - "docker-and-e2e"
+      - "docker-e2e"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "ci"
+    groups:
+      github-actions-dependencies:
+        patterns:
+          - "*"

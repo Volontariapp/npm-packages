@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.4.0
+
+### Minor Changes
+
+- feat(post-processors): add BaseStorageEntityResultPostProcessor for standardized handling of storage result events
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.29.0
+  - @volontariapp/database@3.10.14
+  - @volontariapp/outbox@0.10.18
+
 ## 3.3.15
 
 ### Patch Changes
