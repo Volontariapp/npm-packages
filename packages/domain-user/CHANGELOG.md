@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.13.3
+
+### Patch Changes
+
+- Updated dependencies [[`3b40ad8`](https://github.com/Volontariapp/npm-packages/commit/3b40ad8cbcfd747a24fdf0186247f2ce14e821bc)]:
+  - @volontariapp/database@3.11.0
+  - @volontariapp/outbox@0.10.19
+
 ## 2.13.2
 
 ### Patch Changes
