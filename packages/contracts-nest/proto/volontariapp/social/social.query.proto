@@ -160,3 +160,8 @@ message AdminGetRecommendedEventIdsQuery {
   bool only_created_by_friends = 8;
   volontariapp.common.PaginationRequest pagination = 9;
 }
+
+message GetEventAttendeesQuery {
+  string event_id = 1;
+  volontariapp.common.PaginationRequest pagination = 2;
+}
