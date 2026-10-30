@@ -126,6 +126,24 @@ describe('Neo4jParticipationRepository (Integration)', () => {
     });
   });
 
+  describe('isEventCreator()', () => {
+    it('should return true when the user has a CREATED relationship to the event', async () => {
+      await repository.createUserEvent(USER_A, EVENT_1);
+
+      expect(await repository.isEventCreator(USER_A, EVENT_1)).toBe(true);
+    });
+
+    it('should return false when the user did not create the event', async () => {
+      await repository.createUserEvent(USER_A, EVENT_1);
+
+      expect(await repository.isEventCreator(USER_B, EVENT_1)).toBe(false);
+    });
+
+    it('should return false when the event does not exist', async () => {
+      expect(await repository.isEventCreator(USER_A, EVENT_MISSING)).toBe(false);
+    });
+  });
+
   // ─── createParticipation / deleteParticipation (PARTICIPATE) ─────────────
 
   describe('createParticipation() / deleteParticipation()', () => {
