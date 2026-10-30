@@ -82,6 +82,7 @@ service ParticipationCommandService {
   rpc AdminDeleteUserParticipateEvent(AdminDeleteUserParticipateEventCommand) returns (AdminDeleteUserParticipateEventResponse);
   rpc AdminPostUserWishEvent(AdminPostUserWishEventCommand) returns (AdminPostUserWishEventResponse);
   rpc AdminDeleteUserWishEvent(AdminDeleteUserWishEventCommand) returns (AdminDeleteUserWishEventResponse);
+  rpc SetEventAttendance(SetEventAttendanceCommand) returns (SetEventAttendanceResponse);
 }
 
 service ParticipationQueryService {
@@ -90,6 +91,7 @@ service ParticipationQueryService {
   rpc GetUserParticipateEvent(GetUserParticipateEventQuery) returns (GetUserParticipateEventResponse);
   rpc GetUserWishEvent(GetUserWishEventQuery) returns (GetUserWishEventResponse);
   rpc GetEventParticipants(GetEventParticipantsQuery) returns (GetEventParticipantsResponse);
+  rpc GetEventAttendees(GetEventAttendeesQuery) returns (GetEventAttendeesResponse);
   rpc AdminGetUserEvent(AdminGetUserEventQuery) returns (AdminGetUserEventResponse);
   rpc AdminGetUserParticipateEvent(AdminGetUserParticipateEventQuery) returns (AdminGetUserParticipateEventResponse);
   rpc AdminGetUserWishEvent(AdminGetUserWishEventQuery) returns (AdminGetUserWishEventResponse);

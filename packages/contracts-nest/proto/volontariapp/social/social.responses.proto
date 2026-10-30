@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package volontariapp.social;
 
+import "google/protobuf/timestamp.proto";
 import "volontariapp/common/pagination.proto";
 
 message CreateUserNodeResponse {}
@@ -178,5 +179,18 @@ message GetRecommendedEventIdsResponse {
 
 message AdminGetRecommendedEventIdsResponse {
   repeated string ids = 1;
+  volontariapp.common.PaginationResponse pagination = 2;
+}
+
+message SetEventAttendanceResponse {}
+
+message EventAttendee {
+  string user_id = 1;
+  google.protobuf.Timestamp registered_at = 2;
+  optional google.protobuf.Timestamp checked_in_at = 3;
+}
+
+message GetEventAttendeesResponse {
+  repeated EventAttendee attendees = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }

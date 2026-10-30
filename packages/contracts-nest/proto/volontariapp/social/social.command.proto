@@ -153,3 +153,9 @@ message UnlinkPostFromEventCommand {
   string post_id = 1;
   string event_id = 2;
 }
+
+message SetEventAttendanceCommand {
+  string event_id = 1;
+  repeated string checked_user_ids = 2;
+  repeated string unchecked_user_ids = 3;
+}

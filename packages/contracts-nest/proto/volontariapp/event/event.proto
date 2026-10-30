@@ -61,4 +61,5 @@ message Event {
   repeated Requirement requirements = 15;
   optional string cover_file_id = 16;
   CoverStatus cover_status = 17;
+  optional int32 scoring_version = 18;
 }
