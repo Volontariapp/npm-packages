@@ -23,6 +23,7 @@ export class EventEntity {
   updatedAt!: Date;
   coverFileId?: string | null;
   coverStatus: CoverStatus = CoverStatus.COVER_STATUS_NONE;
+  scoringVersion?: number;
 
   requirements?: RequirementEntity[];
   tags?: TagEntity[];

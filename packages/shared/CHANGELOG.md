@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.18.0
+
+### Minor Changes
+
+- Add event points scoring system core:
+  - shared: pure computeEventScoring function, duration tiers alpha, power-law distribution, first attendee capping (+100%), largest remainder method (Hare-Niemeyer), and anti-Sybil protection (N >= 3)
+  - messaging: enrich IEventFinishedPayload with startAt, endAt, maxParticipants, organizerId, scoringVersion; enrich IUserImpactScoreCreditedPayload with role and rank
+  - domain-social: add registeredAt on PARTICIPATE relationship, implement setEventAttendance and getEventAttendees
+  - domain-user: extend ImpactScoreCreditModel with role, rank, formula_version, and event_pool
+  - domain-event: add scoringVersion on EventEntity and EventModel, enrich event.finished payload
+
 ## 0.17.0
 
 ### Minor Changes

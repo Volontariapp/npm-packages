@@ -93,4 +93,43 @@ export abstract class Neo4jBaseRepository {
       await Promise.all([dataSession.close(), countSession.close()]);
     }
   }
+
+  protected async readPaginatedCustom<T>(
+    dataCypher: string,
+    countCypher: string,
+    params: Record<string, unknown>,
+    pagination: PaginationVO,
+    mapper: (record: Neo4jRecord) => T,
+  ): Promise<{ items: T[]; pagination: PaginationResultVO }> {
+    const safePage = pagination.page > 0 ? pagination.page : 1;
+    const safeLimit = pagination.limit > 0 ? pagination.limit : 10;
+    const skip = (safePage - 1) * safeLimit;
+
+    const driver = this.provider.getDriver();
+    const dataSession = driver.session();
+    const countSession = driver.session();
+
+    try {
+      const [dataResult, countResult] = await Promise.all([
+        dataSession.run(dataCypher, {
+          ...params,
+          skip: neo4j.int(skip),
+          limit: neo4j.int(safeLimit),
+        }),
+        countSession.run(countCypher, params),
+      ]);
+
+      const items = dataResult.records.map((r) => mapper(r as Neo4jRecord));
+      const total = toSafeInt(countResult.records[0]?.get('total'));
+      const totalPages = Math.ceil(total / safeLimit);
+
+      const paginationResponse = new PaginationResultVO(safePage, safeLimit, total, totalPages);
+
+      return { items, pagination: paginationResponse };
+    } catch (error: unknown) {
+      throw DATABASE_QUERY_ERROR((error as Error).message);
+    } finally {
+      await Promise.all([dataSession.close(), countSession.close()]);
+    }
+  }
 }

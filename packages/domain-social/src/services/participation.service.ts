@@ -27,6 +27,7 @@ import { SocialEventMapper } from '../mappers/social-event.mapper.js';
 import { UserId, EventId } from '../value-objects/ids.vo.js';
 import { PaginationVO } from '../value-objects/pagination.vo.js';
 import { PaginatedIdsVO } from '../index.js';
+import { PaginatedAttendeesVO } from '../value-objects/paginated-attendees.vo.js';
 
 @Injectable()
 export class ParticipationService {
@@ -49,7 +50,7 @@ export class ParticipationService {
       await this.repository.createEventNode(event);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to create social event node: ${eventId.value}`, error as Error);
+      this.logger.error(`Failed to create social event node: ${eventId.value}`, error);
       throw DATABASE_ERROR('creating social event node', (error as Error).message);
     }
   }
@@ -61,7 +62,7 @@ export class ParticipationService {
       await this.repository.createEventsBatch(events);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to create social events batch`, error as Error);
+      this.logger.error(`Failed to create social events batch`, error);
       throw DATABASE_ERROR('creating social events batch', (error as Error).message);
     }
   }
@@ -76,7 +77,7 @@ export class ParticipationService {
       await this.repository.deleteEventNode(event);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to delete social event node: ${eventId.value}`, error as Error);
+      this.logger.error(`Failed to delete social event node: ${eventId.value}`, error);
       throw DATABASE_ERROR('deleting social event node', (error as Error).message);
     }
   }
@@ -89,7 +90,7 @@ export class ParticipationService {
       await this.repository.deleteEventsBatch(ids);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to delete social events batch`, error as Error);
+      this.logger.error(`Failed to delete social events batch`, error);
       throw DATABASE_ERROR('deleting social events batch', (error as Error).message);
     }
   }
@@ -100,7 +101,7 @@ export class ParticipationService {
       return await this.repository.eventExists(event);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to check event existence: ${eventId.value}`, error as Error);
+      this.logger.error(`Failed to check event existence: ${eventId.value}`, error);
       throw DATABASE_ERROR('checking social event existence', (error as Error).message);
     }
   }
@@ -116,10 +117,7 @@ export class ParticipationService {
       await this.repository.createUserEvent(user, event);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(
-        `Failed to set event creator: ${userId.value} -> ${eventId.value}`,
-        error as Error,
-      );
+      this.logger.error(`Failed to set event creator: ${userId.value} -> ${eventId.value}`, error);
       throw DATABASE_ERROR('setting event creator', (error as Error).message);
     }
   }
@@ -137,7 +135,7 @@ export class ParticipationService {
       if (isBaseError(error)) throw error;
       this.logger.error(
         `Failed to remove event creator: ${userId.value} -> ${eventId.value}`,
-        error as Error,
+        error,
       );
       throw DATABASE_ERROR('removing event creator', (error as Error).message);
     }
@@ -163,7 +161,7 @@ export class ParticipationService {
       if (isBaseError(error)) throw error;
       this.logger.error(
         `Failed to create participation: ${userId.value} -> ${eventId.value}`,
-        error as Error,
+        error,
       );
       throw DATABASE_ERROR('creating event participation', (error as Error).message);
     }
@@ -185,7 +183,7 @@ export class ParticipationService {
       if (isBaseError(error)) throw error;
       this.logger.error(
         `Failed to delete participation: ${userId.value} -> ${eventId.value}`,
-        error as Error,
+        error,
       );
       throw DATABASE_ERROR('deleting event participation', (error as Error).message);
     }
@@ -197,7 +195,7 @@ export class ParticipationService {
       return await this.repository.getUserEvents(user, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get events for user: ${userId.value}`, error as Error);
+      this.logger.error(`Failed to get events for user: ${userId.value}`, error);
       throw DATABASE_ERROR('fetching user created events', (error as Error).message);
     }
   }
@@ -208,7 +206,7 @@ export class ParticipationService {
       return await this.repository.getUserParticipations(user, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get participations for user: ${userId.value}`, error as Error);
+      this.logger.error(`Failed to get participations for user: ${userId.value}`, error);
       throw DATABASE_ERROR('fetching user participations', (error as Error).message);
     }
   }
@@ -219,7 +217,7 @@ export class ParticipationService {
       return await this.repository.getEventParticipants(event, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get participants for event: ${eventId.value}`, error as Error);
+      this.logger.error(`Failed to get participants for event: ${eventId.value}`, error);
       throw DATABASE_ERROR('fetching event participants', (error as Error).message);
     }
   }
@@ -265,10 +263,7 @@ export class ParticipationService {
       }
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(
-        `Failed to create wish: ${userId.value} -> ${eventId.value}`,
-        error as Error,
-      );
+      this.logger.error(`Failed to create wish: ${userId.value} -> ${eventId.value}`, error);
       throw DATABASE_ERROR('creating event wish', (error as Error).message);
     }
   }
@@ -314,10 +309,7 @@ export class ParticipationService {
       }
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(
-        `Failed to delete wish: ${userId.value} -> ${eventId.value}`,
-        error as Error,
-      );
+      this.logger.error(`Failed to delete wish: ${userId.value} -> ${eventId.value}`, error);
       throw DATABASE_ERROR('deleting event wish', (error as Error).message);
     }
   }
@@ -328,8 +320,39 @@ export class ParticipationService {
       return await this.repository.getUserWishes(user, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(`Failed to get wishes for user: ${userId.value}`, error as Error);
+      this.logger.error(`Failed to get wishes for user: ${userId.value}`, error);
       throw DATABASE_ERROR('fetching user wishes', (error as Error).message);
+    }
+  }
+
+  async setEventAttendance(
+    eventId: EventId,
+    checkedUserIds: string[],
+    uncheckedUserIds: string[],
+  ): Promise<void> {
+    try {
+      this.logger.log(
+        `Setting event attendance for event ${eventId.value}: ${String(checkedUserIds.length)} checked, ${String(uncheckedUserIds.length)} unchecked`,
+      );
+      await this.repository.setEventAttendance(eventId.value, checkedUserIds, uncheckedUserIds);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to set attendance for event: ${eventId.value}`, error);
+      throw DATABASE_ERROR('setting event attendance', (error as Error).message);
+    }
+  }
+
+  async getEventAttendees(
+    eventId: EventId,
+    pagination: PaginationVO,
+  ): Promise<PaginatedAttendeesVO> {
+    const event = SocialEventMapper.toEntity(eventId);
+    try {
+      return await this.repository.getEventAttendees(event, pagination);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to get attendees for event: ${eventId.value}`, error);
+      throw DATABASE_ERROR('fetching event attendees', (error as Error).message);
     }
   }
 
@@ -350,10 +373,7 @@ export class ParticipationService {
       return await this.repository.getRecommendedEventIds(userId.value, filters, pagination);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
-      this.logger.error(
-        `Failed to get recommended events for user: ${userId.value}`,
-        error as Error,
-      );
+      this.logger.error(`Failed to get recommended events for user: ${userId.value}`, error);
       throw DATABASE_ERROR('fetching recommended events', (error as Error).message);
     }
   }
