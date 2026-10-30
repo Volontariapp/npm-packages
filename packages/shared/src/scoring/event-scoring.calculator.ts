@@ -21,13 +21,61 @@ export function computeDurationAlpha(durationHours: number): number {
 }
 
 /**
+ * Répartit `pool` proportionnellement à `weights` (décroissants) en bornant chaque part à
+ * FIRST_ATTENDEE_MAX_RATIO x moyenne. L'excédent des parts plafonnées est redistribué au prorata
+ * des poids des rangs non encore plafonnés ; on répète tant qu'une part dépasse le plafond.
+ * La somme des parts reste égale à `pool` et le résultat est non croissant par rang.
+ */
+function capSharesToMaxRatio(weights: readonly number[], pool: number): number[] {
+  const count = weights.length;
+  const cap = (FIRST_ATTENDEE_MAX_RATIO * pool) / count;
+  const capped: boolean[] = weights.map(() => false);
+  const shares: number[] = weights.map(() => 0);
+
+  for (;;) {
+    let cappedCount = 0;
+    let uncappedWeights = 0;
+    for (let i = 0; i < count; i += 1) {
+      if (capped[i]) {
+        cappedCount += 1;
+      } else {
+        uncappedWeights += weights[i];
+      }
+    }
+    if (uncappedWeights <= 0) {
+      break;
+    }
+
+    const remaining = pool - cappedCount * cap;
+    let newlyCapped = false;
+    for (let i = 0; i < count; i += 1) {
+      if (capped[i]) {
+        shares[i] = cap;
+        continue;
+      }
+      shares[i] = remaining * (weights[i] / uncappedWeights);
+      if (shares[i] > cap) {
+        capped[i] = true;
+        newlyCapped = true;
+      }
+    }
+    if (!newlyCapped) {
+      break;
+    }
+  }
+
+  return shares;
+}
+
+/**
  * Calcule la distribution des points d'un événement (docs/scoring/03-formule.md).
  * Applique :
  * 1. Paliers de durée alpha
  * 2. Facteur de remplissage (1 + N/beta) borné
  * 3. Prime du créateur avec garde anti-Sybil (N >= 3)
  * 4. Décroissance en loi de puissance selon l'ordre d'inscription (e = 0.3)
- * 5. Plafonnement du premier inscrit à +100% de la moyenne avec redistribution
+ * 5. Plafonnement de CHAQUE rang à +100% de la moyenne (2 x pool / N) avec redistribution
+ *    proportionnelle aux poids des rangs non plafonnés, répétée jusqu'à stabilité (water-filling)
  * 6. Méthode du plus grand reste (Hare-Niemeyer) pour que la somme égale strictement le pool
  */
 export function computeEventScoring(params: ComputeEventScoringParams): EventScoringResult {
@@ -102,35 +150,12 @@ export function computeEventScoring(params: ComputeEventScoringParams): EventSco
   // Loi de puissance w_i = 1 / (i^e)
   const exponent = params.exponent ?? EXPONENT_DEFAULT;
   const weights: number[] = [];
-  let sumWeights = 0;
   for (let i = 1; i <= N; i += 1) {
-    const w = 1 / Math.pow(i, exponent);
-    weights.push(w);
-    sumWeights += w;
+    weights.push(1 / Math.pow(i, exponent));
   }
 
-  // Parts fractionnaires initiales
-  const shares: number[] = weights.map((w) => pool * (w / sumWeights));
-
-  // Plafonnement du premier inscrit à +100% de la moyenne (2 * average)
-  const avg = pool / N;
-  const maxFirstShare = FIRST_ATTENDEE_MAX_RATIO * avg;
-  if (shares[0] > maxFirstShare) {
-    const excess = shares[0] - maxFirstShare;
-    shares[0] = maxFirstShare;
-
-    // Redistribution proportionnelle de l'excédent sur les rangs 2 à N
-    let remainingWeightsSum = 0;
-    for (let i = 1; i < N; i += 1) {
-      remainingWeightsSum += weights[i];
-    }
-
-    if (remainingWeightsSum > 0) {
-      for (let i = 1; i < N; i += 1) {
-        shares[i] += excess * (weights[i] / remainingWeightsSum);
-      }
-    }
-  }
+  // Parts fractionnaires avec plafonnement de chaque rang (water-filling)
+  const shares = capSharesToMaxRatio(weights, pool);
 
   // Méthode du plus grand reste (Hare-Niemeyer) pour garantir somme(P_i) == pool
   const floorShares: number[] = shares.map((s) => Math.floor(s));

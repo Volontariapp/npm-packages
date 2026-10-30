@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.16.0
+
+### Minor Changes
+
+- shared: the scoring calculator now caps every rank at 2 x average (water-filling redistribution) instead of only the first, so points are non-increasing by rank and still sum to the pool. domain-social: add `ParticipationService.isEventCreator(userId, eventId)` backed by a single Cypher lookup.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.18.1
+  - @volontariapp/database@3.11.4
+  - @volontariapp/messaging@2.30.1
+  - @volontariapp/outbox@0.10.23
+
 ## 0.15.0
 
 ### Minor Changes

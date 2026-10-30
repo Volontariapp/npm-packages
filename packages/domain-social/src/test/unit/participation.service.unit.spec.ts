@@ -177,6 +177,56 @@ describe('ParticipationService (Unit)', () => {
     });
   });
 
+  // ─── isEventCreator ───────────────────────────────────────────────────────
+
+  describe('isEventCreator()', () => {
+    it('should return true when the user created the event', async () => {
+      const userEntity = SocialUserFactory.build({ userId: 'user-1' });
+      const eventEntity = SocialEventFactory.build({ eventId: 'event-1' });
+      const isEventCreatorSpy = jest
+        .spyOn(mockRepository, 'isEventCreator')
+        .mockResolvedValue(true);
+
+      const result = await service.isEventCreator(
+        UserIdFactory.build('user-1'),
+        EventIdFactory.build('event-1'),
+      );
+
+      expect(result).toBe(true);
+      expect(isEventCreatorSpy).toHaveBeenCalledWith(userEntity, eventEntity);
+    });
+
+    it('should return false when the user did not create the event', async () => {
+      jest.spyOn(mockRepository, 'isEventCreator').mockResolvedValue(false);
+
+      const result = await service.isEventCreator(
+        UserIdFactory.build('user-2'),
+        EventIdFactory.build('event-1'),
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false for an unknown event', async () => {
+      jest.spyOn(mockRepository, 'isEventCreator').mockResolvedValue(false);
+
+      const result = await service.isEventCreator(
+        UserIdFactory.build('user-1'),
+        EventIdFactory.build('event-missing'),
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should throw DATABASE_ERROR on a generic repository failure', async () => {
+      jest.spyOn(mockRepository, 'isEventCreator').mockRejectedValue(new Error('Query failed'));
+
+      await expect(
+        service.isEventCreator(UserIdFactory.build('user-1'), EventIdFactory.build('event-1')),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
   // ─── setEventCreator ──────────────────────────────────────────────────────
 
   describe('setEventCreator()', () => {

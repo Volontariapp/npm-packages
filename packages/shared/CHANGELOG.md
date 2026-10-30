@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.1
+
+### Patch Changes
+
+- shared: the scoring calculator now caps every rank at 2 x average (water-filling redistribution) instead of only the first, so points are non-increasing by rank and still sum to the pool. domain-social: add `ParticipationService.isEventCreator(userId, eventId)` backed by a single Cypher lookup.
+
 ## 0.18.0
 
 ### Minor Changes

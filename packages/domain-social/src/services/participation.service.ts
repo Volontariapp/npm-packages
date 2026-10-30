@@ -106,6 +106,21 @@ export class ParticipationService {
     }
   }
 
+  async isEventCreator(userId: UserId, eventId: EventId): Promise<boolean> {
+    const user = SocialUserMapper.toEntity(userId);
+    const event = SocialEventMapper.toEntity(eventId);
+    try {
+      return await this.repository.isEventCreator(user, event);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to check event creator: user ${userId.value} -> event ${eventId.value}`,
+        error,
+      );
+      throw DATABASE_ERROR('checking event creator', (error as Error).message);
+    }
+  }
+
   async setEventCreator(userId: UserId, eventId: EventId): Promise<void> {
     const user = SocialUserMapper.toEntity(userId);
     const event = SocialEventMapper.toEntity(eventId);

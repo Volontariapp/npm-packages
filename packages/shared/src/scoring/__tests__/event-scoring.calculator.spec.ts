@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { computeEventScoring, computeDurationAlpha } from '../event-scoring.calculator.js';
+import { buildScoringParams, SCORING_START_AT } from './event-scoring.factory.js';
 
 void describe('computeDurationAlpha', () => {
   void it('returns 1.0 for <= 2 hours', () => {
@@ -150,36 +151,91 @@ void describe('computeEventScoring', () => {
     assert.equal(points[19], 223);
   });
 
-  void it('enforces capping at +100% of average on large events (Festival: N=200, beta=200, alpha=4.0)', () => {
-    const endAt = new Date('2026-11-03T10:00:00Z'); // 48h -> alpha = 4.0
-    const attendees = Array.from({ length: 200 }, (_, i) => ({
-      userId: `u-${String(i + 1).padStart(3, '0')}`,
-      registeredAt: new Date(startAt.getTime() - (200 - i) * 60000),
-    }));
-
-    const result = computeEventScoring({
-      attendees,
-      startAt,
-      endAt,
-      maxParticipants: 200,
-      organizerId: 'org-1',
-    });
+  void it('caps every rank at +100% of average on large events (Festival: N=200, beta=200, alpha=4.0)', () => {
+    const result = computeEventScoring(buildScoringParams(200, 200, 48));
 
     // P = 200 * 100 * 4.0 * 2 = 160 000
     assert.equal(result.pool, 160000);
     assert.equal(result.organizerPoints, 1200);
 
     const points = result.participants.map((p) => p.points);
-    const sum = points.reduce((a, b) => a + b, 0);
-    assert.equal(sum, 160000);
-
-    const avg = 160000 / 200; // 800
-    // Capping at +100% -> max 2 * avg = 1600
-    assert.ok(
-      points[0] <= 2 * avg,
-      `First attendee points (${String(points[0])}) should be <= 1600`,
+    assert.equal(
+      points.reduce((a, b) => a + b, 0),
+      160000,
     );
-    assert.equal(points[0], 2 * avg);
+
+    const cap = 2 * (160000 / 200); // 1600
+    assert.ok(Math.max(...points) <= cap, 'no rank may exceed 2 x average');
+    // Ranks 1 to 6 tie at the cap
+    for (let i = 0; i < 6; i += 1) {
+      assert.equal(points[i], 1600, `rank ${String(i + 1)}`);
+    }
+    // Reference values (+-1 for rounding)
+    assert.ok(Math.abs(points[9] - 1420) <= 1, `rank 10 = ${String(points[9])}`);
+    assert.ok(Math.abs(points[199] - 578) <= 1, `rank 200 = ${String(points[199])}`);
+  });
+
+  void it('matches Case 3 (Nettoyage): 24h, N=50, beta=50, alpha=2.5 (rank 1 at cap)', () => {
+    const result = computeEventScoring(buildScoringParams(50, 50, 24));
+    const points = result.participants.map((p) => p.points);
+
+    assert.equal(result.pool, 25000);
+    assert.ok(Math.abs(points[0] - 1000) <= 1, `rank 1 = ${String(points[0])}`);
+    assert.ok(Math.abs(points[2] - 849) <= 1, `rank 3 = ${String(points[2])}`);
+    assert.ok(Math.abs(points[9] - 591) <= 1, `rank 10 = ${String(points[9])}`);
+    assert.ok(Math.abs(points[49] - 365) <= 1, `rank 50 = ${String(points[49])}`);
+  });
+
+  void it('keeps points non-increasing by rank and the sum equal to the pool for many N and alphas', () => {
+    const durations = [1, 3, 10, 48];
+    const counts = [2, 3, 5, 10, 20, 50, 100, 150, 200, 250];
+    for (const duration of durations) {
+      for (const count of counts) {
+        for (const maxParticipants of [count, count * 4, 0]) {
+          const result = computeEventScoring(buildScoringParams(count, maxParticipants, duration));
+          const points = result.participants.map((p) => p.points);
+          const label = `N=${String(count)} beta=${String(maxParticipants)} d=${String(duration)}h`;
+
+          assert.equal(
+            points.reduce((a, b) => a + b, 0),
+            result.pool,
+            `sum ${label}`,
+          );
+          const cap = Math.ceil((2 * result.pool) / count);
+          for (let i = 0; i < points.length; i += 1) {
+            assert.ok(points[i] <= cap, `cap ${label} rank ${String(i + 1)}`);
+            if (i > 0) {
+              assert.ok(points[i] <= points[i - 1], `monotone ${label} rank ${String(i + 1)}`);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  void it('pays the organizer only from N = 3 (threshold)', () => {
+    assert.equal(computeEventScoring(buildScoringParams(1, 5, 1)).organizerPoints, 0);
+    assert.equal(computeEventScoring(buildScoringParams(2, 5, 1)).organizerPoints, 0);
+    // N=3, beta=5, alpha=1.0 -> round(150 * 1.0 * (1 + 3/5)) = 240
+    assert.equal(computeEventScoring(buildScoringParams(3, 5, 1)).organizerPoints, 240);
+  });
+
+  void it('orders attendees by registeredAt then userId', () => {
+    const result = computeEventScoring({
+      attendees: [
+        { userId: 'b', registeredAt: '2026-10-25T10:00:00Z' },
+        { userId: 'c', registeredAt: '2026-10-24T10:00:00Z' },
+        { userId: 'a', registeredAt: '2026-10-25T10:00:00Z' },
+      ],
+      startAt: SCORING_START_AT,
+      endAt: new Date('2026-11-01T12:00:00Z'),
+      maxParticipants: 5,
+    });
+
+    assert.deepEqual(
+      result.participants.map((p) => p.userId),
+      ['c', 'a', 'b'],
+    );
   });
 
   void it('excludes organizer from participant prize pool if present in attendees', () => {
