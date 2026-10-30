@@ -79,6 +79,9 @@ export class EventModel {
   @Column({ type: 'int', default: 0 })
   maxParticipants!: number;
 
+  @Column({ name: 'scoring_version', type: 'int', nullable: true })
+  scoringVersion?: number | null;
+
   @Column({ name: 'cover_file_id', type: 'uuid', nullable: true })
   coverFileId?: string | null;
 

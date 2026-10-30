@@ -18,6 +18,22 @@ export class ImpactScoreCreditModel {
   @Column({ type: 'int' })
   score!: number;
 
+  /** Rôle au sein de l'événement : PARTICIPANT ou ORGANIZER. */
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  role?: string;
+
+  /** Rang d'inscription parmi les présents. Nullable pour l'organisateur. */
+  @Column({ type: 'int', nullable: true })
+  rank?: number;
+
+  /** Version de la formule appliquée lors du calcul. */
+  @Column({ type: 'int', name: 'formula_version', nullable: true })
+  formulaVersion?: number;
+
+  /** Prize pool total de l'événement pour audit. */
+  @Column({ type: 'int', name: 'event_pool', nullable: true })
+  eventPool?: number;
+
   @ManyToOne('UserModel', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: UserModel;

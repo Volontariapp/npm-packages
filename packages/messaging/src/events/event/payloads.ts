@@ -51,6 +51,11 @@ export interface IEventFinishedPayload extends IEventIdPayload {
   eventType: EventType;
   /** Score d'impact crédité à chaque participant, lu sur l'événement à la transition vers FINISHED. */
   awardedImpactScore: number;
+  startAt?: string;
+  endAt?: string;
+  maxParticipants?: number;
+  organizerId?: string;
+  scoringVersion?: number;
 }
 
 export interface IEventGeocodedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
@@ -58,14 +63,12 @@ export interface IEventGeocodedPayload extends IEventIdPayload, Partial<IUserIdP
 export interface IEventGeocodingFailedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 export interface IEventCreationSuccessfullPayload
-  extends IEventIdPayload,
-    Partial<IUserIdPayload> {}
+  extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 export interface IEventCreationFailedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 export interface IEventDeletionSuccessfullPayload
-  extends IEventIdPayload,
-    Partial<IUserIdPayload> {}
+  extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 export interface IEventDeletionFailedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 
@@ -77,12 +80,10 @@ export interface IFallbackUpdateEventPayload extends IEventIdPayload, Partial<IU
 export interface IFallbackDeleteEventPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 export interface IFallbackChangeEventStatePayload
-  extends IEventIdPayload,
-    Partial<IUserIdPayload> {}
+  extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 export interface IFallbackManageRequirementsPayload
-  extends IEventIdPayload,
-    Partial<IUserIdPayload> {}
+  extends IEventIdPayload, Partial<IUserIdPayload> {}
 
 export interface IFallbackCreateTagPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 

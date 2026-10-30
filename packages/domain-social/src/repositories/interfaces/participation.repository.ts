@@ -1,6 +1,7 @@
 import type { SocialUserEntity } from '../../entities/social-user.entity.js';
 import type { SocialEventEntity } from '../../entities/social-event.entity.js';
 import type { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
+import type { PaginatedAttendeesVO } from '../../value-objects/paginated-attendees.vo.js';
 import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 export interface IParticipationRepository {
@@ -21,6 +22,15 @@ export interface IParticipationRepository {
   getUserParticipations(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getUserWishes(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getEventParticipants(event: SocialEventEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  setEventAttendance(
+    eventId: string,
+    checkedUserIds: string[],
+    uncheckedUserIds: string[],
+  ): Promise<void>;
+  getEventAttendees(
+    event: SocialEventEntity,
+    pagination: PaginationVO,
+  ): Promise<PaginatedAttendeesVO>;
   getRecommendedEventIds(
     userId: string,
     filters: {

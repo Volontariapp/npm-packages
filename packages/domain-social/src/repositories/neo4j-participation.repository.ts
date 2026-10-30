@@ -1,4 +1,5 @@
 import { PaginatedIdsVO } from '../value-objects/paginated-ids.vo.js';
+import { EventAttendeeVO, PaginatedAttendeesVO } from '../value-objects/paginated-attendees.vo.js';
 import { SocialUserEntity } from '../entities/social-user.entity.js';
 import { SocialEventEntity } from '../entities/social-event.entity.js';
 import { PaginationVO } from '../value-objects/pagination.vo.js';
@@ -92,7 +93,8 @@ export class Neo4jParticipationRepository
     await this.write(
       `MATCH (u:SocialUser {userId: $userId})
        MATCH (e:SocialEvent {eventId: $eventId})
-       MERGE (u)-[:PARTICIPATE]->(e)`,
+       MERGE (u)-[r:PARTICIPATE]->(e)
+       ON CREATE SET r.registeredAt = datetime()`,
       { userId: userModel.id.value, eventId: eventModel.id.value },
     );
   }
@@ -208,6 +210,69 @@ export class Neo4jParticipationRepository
       { eventId: eventModel.id.value },
       pagination,
     );
+  }
+
+  async setEventAttendance(
+    eventId: string,
+    checkedUserIds: string[],
+    uncheckedUserIds: string[],
+  ): Promise<void> {
+    if (checkedUserIds.length > 0) {
+      await this.write(
+        `MATCH (u:SocialUser)-[r:PARTICIPATE]->(e:SocialEvent {eventId: $eventId})
+         WHERE u.userId IN $checkedUserIds
+         SET r.checkedInAt = datetime()`,
+        { eventId, checkedUserIds },
+      );
+    }
+    if (uncheckedUserIds.length > 0) {
+      await this.write(
+        `MATCH (u:SocialUser)-[r:PARTICIPATE]->(e:SocialEvent {eventId: $eventId})
+         WHERE u.userId IN $uncheckedUserIds
+         REMOVE r.checkedInAt`,
+        { eventId, uncheckedUserIds },
+      );
+    }
+  }
+
+  async getEventAttendees(
+    event: SocialEventEntity,
+    pagination: PaginationVO,
+  ): Promise<PaginatedAttendeesVO> {
+    const eventModel = SocialEventMapper.toModel(event);
+    const dataCypher = `
+      MATCH (u:SocialUser)-[r:PARTICIPATE]->(:SocialEvent {eventId: $eventId})
+      WHERE r.checkedInAt IS NOT NULL
+      RETURN u.userId AS userId,
+             case when r.registeredAt is null then '1970-01-01T00:00:00Z' else toString(r.registeredAt) end AS registeredAt,
+             toString(r.checkedInAt) AS checkedInAt
+      ORDER BY r.registeredAt ASC, u.userId ASC
+      SKIP $skip LIMIT $limit
+    `;
+    const countCypher = `
+      MATCH (u:SocialUser)-[r:PARTICIPATE]->(:SocialEvent {eventId: $eventId})
+      WHERE r.checkedInAt IS NOT NULL
+      RETURN count(u) AS total
+    `;
+
+    const result = await this.readPaginatedCustom(
+      dataCypher,
+      countCypher,
+      { eventId: eventModel.id.value },
+      pagination,
+      (record) => {
+        const userId = record.get('userId') as string;
+        const registeredAtStr = record.get('registeredAt') as string;
+        const checkedInAtStr = record.get('checkedInAt') as string | null;
+        return new EventAttendeeVO(
+          userId,
+          new Date(registeredAtStr),
+          checkedInAtStr ? new Date(checkedInAtStr) : undefined,
+        );
+      },
+    );
+
+    return new PaginatedAttendeesVO(result.items, result.pagination);
   }
 
   async getRecommendedEventIds(

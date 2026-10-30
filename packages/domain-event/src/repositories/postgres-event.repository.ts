@@ -54,11 +54,9 @@ export class PostgresEventRepository
     return this.executeInTransaction(async (queryRunner) => {
       const eventId = data.id ?? randomUUID();
       data.id = eventId;
-      if (data.coverStatus === undefined) {
-        data.coverStatus = data.coverFileId
-          ? CoverStatus.COVER_STATUS_PENDING
-          : CoverStatus.COVER_STATUS_NONE;
-      }
+      data.coverStatus ??= data.coverFileId
+        ? CoverStatus.COVER_STATUS_PENDING
+        : CoverStatus.COVER_STATUS_NONE;
 
       const modelData = this.toModel(data);
       modelData.id = eventId;
@@ -301,6 +299,11 @@ export class PostgresEventRepository
         eventId: savedEntity.id,
         eventType: savedEntity.type,
         awardedImpactScore: savedEntity.awardedImpactScore,
+        startAt: savedEntity.startAt.toISOString(),
+        endAt: savedEntity.endAt.toISOString(),
+        maxParticipants: savedEntity.maxParticipants,
+        organizerId: savedEntity.organizerId,
+        scoringVersion: savedEntity.scoringVersion,
       };
 
       const eventQueueEntity: EventQueueEntity<

@@ -31,11 +31,13 @@ export interface IUserBadgeAwardedPayload {
   badges: IBadgePayload[];
 }
 
-/** Score d'impact credite a un participant quand l'evenement `eventId` se termine. */
+/** Score d'impact credite a un participant ou organisateur quand l'evenement `eventId` se termine. */
 export interface IUserImpactScoreCreditedPayload {
   userId: string;
   eventId: string;
   scoreIncrement: number;
+  role?: 'PARTICIPANT' | 'ORGANIZER';
+  rank?: number;
 }
 
 export interface IUserPayload {
