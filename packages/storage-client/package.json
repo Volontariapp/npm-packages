@@ -34,7 +34,7 @@
     "test:coverage": "node --experimental-vm-modules $(yarn bin jest) --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\""
   },
   "devDependencies": {
-    "@grpc/grpc-js": "^1.14.6",
+    "@grpc/grpc-js": "^1.14.7",
     "@jest/globals": "^30.3.0",
     "@nestjs/common": "^11.2.8",
     "@nestjs/core": "^11.2.8",
@@ -48,7 +48,7 @@
     "typescript": "5.7.3"
   },
   "peerDependencies": {
-    "@grpc/grpc-js": "^1.14.6",
+    "@grpc/grpc-js": "^1.14.7",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/microservices": "^11.0.0",

@@ -42,7 +42,7 @@
     "@opentelemetry/sdk-metrics": "^2.5.1",
     "@opentelemetry/sdk-node": "^0.217.0",
     "@opentelemetry/sdk-trace-base": "^2.7.1",
-    "@opentelemetry/semantic-conventions": "^1.43.0",
+    "@opentelemetry/semantic-conventions": "^1.44.0",
     "@volontariapp/logger": "workspace:*"
   },
   "devDependencies": {
