@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.9.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.7.0
+  - @volontariapp/database@3.11.5
+  - @volontariapp/errors-nest@0.14.1
+  - @volontariapp/outbox@0.10.24
+
 ## 3.9.7
 
 ### Patch Changes

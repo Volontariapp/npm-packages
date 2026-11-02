@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.4.6
+
+### Patch Changes
+
+- Stop sending events to the DLQ when the failure comes from the infrastructure. `@volontariapp/errors` exposes the `isInfrastructureError` helper. `BatchPostProcessor` and `SinglePostProcessor` no longer ack a message nor count a retry attempt on an infrastructure error (database or Redis unreachable, timeout): the message stays pending and is retried later. Business errors keep the current behavior (retries, then DLQ). Also fixes the pending messages never being re-read after Redis was unreachable during the `XREADGROUP` call.
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.7.0
+  - @volontariapp/database@3.11.5
+  - @volontariapp/health-check@1.0.11
+  - @volontariapp/outbox@0.10.24
+
 ## 3.4.5
 
 ### Patch Changes

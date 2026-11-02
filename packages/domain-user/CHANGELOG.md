@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.14.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.7.0
+  - @volontariapp/auth@3.3.26
+  - @volontariapp/crypto@0.3.14
+  - @volontariapp/database@3.11.5
+  - @volontariapp/errors-nest@0.14.1
+  - @volontariapp/outbox@0.10.24
+
 ## 2.14.1
 
 ### Patch Changes

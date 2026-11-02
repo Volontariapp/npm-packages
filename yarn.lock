@@ -5019,7 +5019,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@volontariapp/errors@workspace:packages/errors"
   dependencies:
+    "@jest/globals": "npm:^30.3.0"
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^22.20.5"
     "@volontariapp/logger": "workspace:*"
+    jest: "npm:^30.3.0"
+    ts-jest: "npm:^29.4.15"
     typescript: "npm:5.7.3"
   languageName: unknown
   linkType: soft
@@ -5207,6 +5212,7 @@ __metadata:
     "@types/node": "npm:^22.20.5"
     "@volontariapp/contracts": "workspace:*"
     "@volontariapp/database": "workspace:*"
+    "@volontariapp/errors": "workspace:*"
     "@volontariapp/health-check": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"

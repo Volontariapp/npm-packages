@@ -5,6 +5,7 @@ export * from './classes/test-base-post-processor.class.js';
 export * from './classes/e2e-single-post-processor.class.js';
 export * from './classes/e2e-batch-post-processor.class.js';
 export * from './factories/test-event.factory.js';
+export * from './factories/infrastructure-error.factory.js';
 export * from './enums/test-messaging.enum.js';
 export * from './mocks/redis-call.mock.js';
 export * from './helpers/wait.helper.js';

@@ -11,6 +11,7 @@ import type { ParseResult, RedisStreamEntry, RedisStreamRawResponse } from '../.
 import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 import { RetryHelper } from '../helpers/retry.helper.js';
 import { DEFAULT_POST_PROCESSOR_CONFIG } from '../../constants/index.js';
+import { isInfrastructureError } from '@volontariapp/errors';
 import { OptionsValidator } from '../validators/options-validator.js';
 import { CircuitBreaker } from '../validators/circuit-breaker.js';
 import type { EventMessagingType } from '@volontariapp/messaging';
@@ -23,6 +24,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   protected readonly blockingRedis: Redis;
   private isRunning = false;
   private readPending = true;
+  private readPendingDueAt: number | null = null;
   private claimTimeout: NodeJS.Timeout | null = null;
   private retryLoopTimeout: NodeJS.Timeout | null = null;
   private dlqSyncTimeout: NodeJS.Timeout | null = null;
@@ -208,6 +210,40 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   }
 
   /**
+   * Keeps messages pending after an infrastructure error (database or Redis unavailable):
+   * no acknowledgement, no retry attempt counted, no DLQ. The failure is not caused by the
+   * message itself, so it must not consume its retry budget.
+   */
+  protected deferInfrastructureRetry(messageIds: string[], error: Error): void {
+    for (const messageId of messageIds) {
+      this.logger.warn('Infrastructure error, message kept pending', {
+        streamName: this.options.streamName,
+        messageId,
+        error,
+      });
+    }
+    this.scheduleReadPending();
+  }
+
+  /**
+   * Plans a re-read of the pending messages. Kept in memory on purpose: it must work when
+   * Redis itself is the failing component.
+   */
+  private scheduleReadPending(): void {
+    this.readPendingDueAt = Date.now() + this.options.claimIntervalMs;
+  }
+
+  /**
+   * Re-reads the pending messages when the delay planned by scheduleReadPending is over.
+   */
+  private releaseReadPendingWhenDue(): void {
+    if (this.readPendingDueAt !== null && Date.now() >= this.readPendingDueAt) {
+      this.readPendingDueAt = null;
+      this.readPending = true;
+    }
+  }
+
+  /**
    * Acknowledges a message in the consumer group.
    */
   protected async acknowledge(messageId: string): Promise<void> {
@@ -276,6 +312,9 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
         this.logger.error('Error in post-processor consumption cycle', { error });
+        if (isInfrastructureError(error)) {
+          this.scheduleReadPending();
+        }
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
@@ -512,6 +551,8 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
    * Processes messages from the retry queue.
    */
   private async processRetryQueue(): Promise<void> {
+    this.releaseReadPendingWhenDue();
+
     if (!this.circuitBreaker.isAllowed()) {
       this.logger.warn('Circuit breaker is OPEN. Skipping retry queue processing.');
       return;
