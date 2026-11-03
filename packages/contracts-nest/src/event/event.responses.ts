@@ -5,6 +5,7 @@
 // source: volontariapp/event/event.responses.proto
 
 /* eslint-disable */
+import { PaginationResponse } from "../common/pagination.js";
 import { Event, Requirement, Tag } from "./event.js";
 
 /** Unique Responses for Command Service */
@@ -35,7 +36,9 @@ export interface GetEventResponse {
 
 export interface SearchEventsResponse {
   events: Event[];
+  /** Deprecated: use pagination.total. Kept for wire compatibility. */
   totalCount: number;
+  pagination: PaginationResponse | undefined;
 }
 
 export interface GetEventsByIdsResponse {
@@ -45,17 +48,23 @@ export interface GetEventsByIdsResponse {
 
 export interface GetUserCreatedEventsResponse {
   events: Event[];
+  /** Deprecated: use pagination.total. Kept for wire compatibility. */
   totalCount: number;
+  pagination: PaginationResponse | undefined;
 }
 
 export interface GetUserParticipatedEventsResponse {
   events: Event[];
+  /** Deprecated: use pagination.total. Kept for wire compatibility. */
   totalCount: number;
+  pagination: PaginationResponse | undefined;
 }
 
 export interface GetUserWishedEventsResponse {
   events: Event[];
+  /** Deprecated: use pagination.total. Kept for wire compatibility. */
   totalCount: number;
+  pagination: PaginationResponse | undefined;
 }
 
 export interface ListRequirementsResponse {

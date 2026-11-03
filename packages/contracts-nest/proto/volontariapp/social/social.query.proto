@@ -126,6 +126,7 @@ message GetEventRelatedToPostQuery {
 }
 
 message GetEventsRelatedToPostsQuery {
+  // At most 100 post ids per call.
   repeated string post_ids = 1;
 }
 
@@ -164,4 +165,15 @@ message AdminGetRecommendedEventIdsQuery {
 message GetEventAttendeesQuery {
   string event_id = 1;
   volontariapp.common.PaginationRequest pagination = 2;
+}
+
+message CountEventParticipantsQuery {
+  // At most 100 event ids per call.
+  repeated string event_ids = 1;
+}
+
+message GetPostsLikeSummaryQuery {
+  // At most 100 post ids per call. The user for liked_by_me is the caller
+  // (internal token), as for GetUserLikes.
+  repeated string post_ids = 1;
 }

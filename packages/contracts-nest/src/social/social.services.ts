@@ -57,6 +57,7 @@ import {
   AdminGetUserPostsQuery,
   AdminGetUserWishEventQuery,
   AdminGetWhoBlockedMeQuery,
+  CountEventParticipantsQuery,
   GetEventAttendeesQuery,
   GetEventParticipantsQuery,
   GetEventPostsQuery,
@@ -68,6 +69,7 @@ import {
   GetMyFollowersQuery,
   GetMyFollowsQuery,
   GetPostLikersQuery,
+  GetPostsLikeSummaryQuery,
   GetRecommendedEventIdsQuery,
   GetSocialEventQuery,
   GetSocialPostQuery,
@@ -104,6 +106,7 @@ import {
   AdminPostUserOwnResponse,
   AdminPostUserParticipateEventResponse,
   AdminPostUserWishEventResponse,
+  CountEventParticipantsResponse,
   CreateEventNodeResponse,
   CreatePostNodeResponse,
   CreateUserNodeResponse,
@@ -130,6 +133,7 @@ import {
   GetMyFollowsResponse,
   GetPostLikersResponse,
   GetPostNodeResponse,
+  GetPostsLikeSummaryResponse,
   GetRecommendedEventIdsResponse,
   GetUserEventResponse,
   GetUserLikesResponse,
@@ -557,6 +561,8 @@ export interface InteractionQueryServiceClient {
 
   getPostLikers(request: GetPostLikersQuery): Observable<GetPostLikersResponse>;
 
+  getPostsLikeSummary(request: GetPostsLikeSummaryQuery): Observable<GetPostsLikeSummaryResponse>;
+
   adminGetUserLikes(request: AdminGetUserLikesQuery): Observable<AdminGetUserLikesResponse>;
 }
 
@@ -569,6 +575,10 @@ export interface InteractionQueryServiceController {
     request: GetPostLikersQuery,
   ): Promise<GetPostLikersResponse> | Observable<GetPostLikersResponse> | GetPostLikersResponse;
 
+  getPostsLikeSummary(
+    request: GetPostsLikeSummaryQuery,
+  ): Promise<GetPostsLikeSummaryResponse> | Observable<GetPostsLikeSummaryResponse> | GetPostsLikeSummaryResponse;
+
   adminGetUserLikes(
     request: AdminGetUserLikesQuery,
   ): Promise<AdminGetUserLikesResponse> | Observable<AdminGetUserLikesResponse> | AdminGetUserLikesResponse;
@@ -576,7 +586,7 @@ export interface InteractionQueryServiceController {
 
 export function InteractionQueryServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getUserLikes", "getPostLikers", "adminGetUserLikes"];
+    const grpcMethods: string[] = ["getUserLikes", "getPostLikers", "getPostsLikeSummary", "adminGetUserLikes"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("InteractionQueryService", method)(constructor.prototype[method], method, descriptor);
@@ -743,6 +753,8 @@ export interface ParticipationQueryServiceClient {
 
   getEventParticipants(request: GetEventParticipantsQuery): Observable<GetEventParticipantsResponse>;
 
+  countEventParticipants(request: CountEventParticipantsQuery): Observable<CountEventParticipantsResponse>;
+
   getEventAttendees(request: GetEventAttendeesQuery): Observable<GetEventAttendeesResponse>;
 
   adminGetUserEvent(request: AdminGetUserEventQuery): Observable<AdminGetUserEventResponse>;
@@ -783,6 +795,13 @@ export interface ParticipationQueryServiceController {
   getEventParticipants(
     request: GetEventParticipantsQuery,
   ): Promise<GetEventParticipantsResponse> | Observable<GetEventParticipantsResponse> | GetEventParticipantsResponse;
+
+  countEventParticipants(
+    request: CountEventParticipantsQuery,
+  ):
+    | Promise<CountEventParticipantsResponse>
+    | Observable<CountEventParticipantsResponse>
+    | CountEventParticipantsResponse;
 
   getEventAttendees(
     request: GetEventAttendeesQuery,
@@ -826,6 +845,7 @@ export function ParticipationQueryServiceControllerMethods() {
       "getUserParticipateEvent",
       "getUserWishEvent",
       "getEventParticipants",
+      "countEventParticipants",
       "getEventAttendees",
       "adminGetUserEvent",
       "adminGetUserParticipateEvent",

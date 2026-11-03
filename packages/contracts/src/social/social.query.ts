@@ -129,6 +129,7 @@ export interface GetEventRelatedToPostQuery {
 }
 
 export interface GetEventsRelatedToPostsQuery {
+  /** At most 100 post ids per call. */
   postIds: string[];
 }
 
@@ -167,4 +168,17 @@ export interface AdminGetRecommendedEventIdsQuery {
 export interface GetEventAttendeesQuery {
   eventId: string;
   pagination: PaginationRequest | undefined;
+}
+
+export interface CountEventParticipantsQuery {
+  /** At most 100 event ids per call. */
+  eventIds: string[];
+}
+
+export interface GetPostsLikeSummaryQuery {
+  /**
+   * At most 100 post ids per call. The user for liked_by_me is the caller
+   * (internal token), as for GetUserLikes.
+   */
+  postIds: string[];
 }
