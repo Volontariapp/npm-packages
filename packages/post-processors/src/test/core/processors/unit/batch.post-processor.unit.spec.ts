@@ -7,6 +7,7 @@ import { CircuitBreakerState } from '../../../../enums/circuit-breaker-state.enu
 import {
   TestBatchPostProcessor,
   makeTestEvent,
+  makeInfrastructureError,
   TestMessagingStream,
   TestMessagingGroup,
   TestMessagingConsumer,
@@ -134,6 +135,64 @@ describe('BatchPostProcessor — Unit', () => {
       expect(zaddCalls.length).toBeGreaterThanOrEqual(2);
       expect(zaddCalls.some((c) => String(c[2]) === '1-0')).toBe(true);
       expect(zaddCalls.some((c) => String(c[2]) === '2-0')).toBe(true);
+    });
+  });
+
+  describe('Infrastructure errors', () => {
+    it('should keep every batch item pending without counting a retry, sending to DLQ or acknowledging', async () => {
+      mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
+        { messageId: '1-0', event: makeTestEvent('evt-1') },
+        { messageId: '2-0', event: makeTestEvent('evt-2') },
+      ]);
+
+      const incrSpy = jest.spyOn(redisMock, 'incr');
+      const xaddSpy = jest.spyOn(redisMock, 'xadd');
+      const acknowledgeSpy = jest.spyOn(processor, 'acknowledge');
+
+      processor.processError = makeInfrastructureError();
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      expect(incrSpy).not.toHaveBeenCalled();
+      expect(xaddSpy).not.toHaveBeenCalled();
+      expect(acknowledgeSpy).not.toHaveBeenCalled();
+      expect(callMock.mock.calls.filter((c) => c[0] === 'XACK')).toHaveLength(0);
+    });
+
+    it('should re-read and process the pending batch once the infrastructure is back, without restart', async () => {
+      const entries = [
+        { messageId: '1-0', event: makeTestEvent('evt-1') },
+        { messageId: '2-0', event: makeTestEvent('evt-2') },
+      ];
+      let acknowledged = false;
+      callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
+        if (command === 'XGROUP') return 'OK';
+        if (command === 'XACK') {
+          acknowledged = true;
+          return 1;
+        }
+        if (command === 'SET') return 'OK';
+        if (command === 'DEL') return 1;
+        if (command === 'XREADGROUP') {
+          const readsPendingEntries = args[args.length - 1] === '0';
+          if (readsPendingEntries && !acknowledged) {
+            return formatEventsToXreadgroupResponse(TestMessagingStream.TEST_STREAM, entries);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 20));
+          return [];
+        }
+        return null;
+      });
+
+      const processSpy = jest.spyOn(processor, 'processEvents');
+      processSpy.mockRejectedValueOnce(makeInfrastructureError());
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(processSpy).toHaveBeenCalledTimes(2);
+      expect(acknowledged).toBe(true);
+      expect(processor.processedBatches).toHaveLength(1);
     });
   });
 

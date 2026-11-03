@@ -10,6 +10,7 @@ import {
   TestMessagingGroup,
   TestMessagingConsumer,
   TestEventId,
+  makeInfrastructureError,
   mockRedisCall,
   mockRedisXreadgroup,
   formatEventsToXreadgroupResponse,
@@ -274,6 +275,98 @@ describe('SinglePostProcessor — Unit', () => {
         `retry-queue:post-processor:${TestMessagingGroup.TEST_GROUP}`,
       );
       expect(zaddSpy.mock.calls[0]?.[2]).toBe(TestEventId.MSG_PENDING);
+    });
+  });
+
+  describe('Infrastructure errors', () => {
+    it('should keep the message pending without counting a retry, sending to DLQ or acknowledging', async () => {
+      const mockEvent = makeTestEvent(TestEventId.DEFAULT);
+      mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
+        { messageId: TestEventId.MSG_PENDING, event: mockEvent },
+      ]);
+
+      const incrSpy = jest.spyOn(redisMock, 'incr');
+      const xaddSpy = jest.spyOn(redisMock, 'xadd');
+      const acknowledgeSpy = jest.spyOn(processor, 'acknowledge');
+
+      processor.processError = makeInfrastructureError();
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      expect(incrSpy).not.toHaveBeenCalled();
+      expect(xaddSpy).not.toHaveBeenCalled();
+      expect(acknowledgeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should re-read and process the pending message once the infrastructure is back, without restart', async () => {
+      const mockEvent = makeTestEvent(TestEventId.DEFAULT);
+      let acknowledged = false;
+      callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
+        if (command === 'XGROUP') return 'OK';
+        if (command === 'XACK') {
+          acknowledged = true;
+          return 1;
+        }
+        if (command === 'SET') return 'OK';
+        if (command === 'DEL') return 1;
+        if (command === 'XREADGROUP') {
+          const readsPendingEntries = args[args.length - 1] === '0';
+          if (readsPendingEntries && !acknowledged) {
+            return formatEventsToXreadgroupResponse(TestMessagingStream.TEST_STREAM, [
+              { messageId: TestEventId.MSG_PENDING, event: mockEvent },
+            ]);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 20));
+          return [];
+        }
+        return null;
+      });
+
+      const processSpy = jest.spyOn(processor, 'processEvent');
+      processSpy.mockRejectedValueOnce(makeInfrastructureError());
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(processSpy).toHaveBeenCalledTimes(2);
+      expect(acknowledged).toBe(true);
+      expect(processor.processedEvents).toHaveLength(1);
+    });
+
+    it('should re-read the pending messages after Redis was unreachable during the read itself', async () => {
+      const mockEvent = makeTestEvent(TestEventId.DEFAULT);
+      let acknowledged = false;
+      let failedPendingReads = 0;
+      callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
+        if (command === 'XGROUP') return 'OK';
+        if (command === 'XACK') {
+          acknowledged = true;
+          return 1;
+        }
+        if (command === 'SET') return 'OK';
+        if (command === 'DEL') return 1;
+        if (command === 'XREADGROUP') {
+          const readsPendingEntries = args[args.length - 1] === '0';
+          if (readsPendingEntries && failedPendingReads === 0) {
+            failedPendingReads++;
+            throw makeInfrastructureError();
+          }
+          if (readsPendingEntries && !acknowledged) {
+            return formatEventsToXreadgroupResponse(TestMessagingStream.TEST_STREAM, [
+              { messageId: TestEventId.MSG_PENDING, event: mockEvent },
+            ]);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 20));
+          return [];
+        }
+        return null;
+      });
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      expect(processor.processedEvents).toHaveLength(1);
+      expect(acknowledged).toBe(true);
     });
   });
 });

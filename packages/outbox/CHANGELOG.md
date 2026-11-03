@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.7.0
+  - @volontariapp/database@3.11.5
+
 ## 0.10.23
 
 ### Patch Changes

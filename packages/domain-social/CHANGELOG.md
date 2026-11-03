@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.16.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.7.0
+  - @volontariapp/bridge-nest@0.3.22
+  - @volontariapp/database@3.11.5
+  - @volontariapp/errors-nest@0.14.1
+  - @volontariapp/outbox@0.10.24
+
 ## 0.16.0
 
 ### Minor Changes
