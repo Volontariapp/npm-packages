@@ -67,8 +67,10 @@ describe('Users Trigger (Integration)', () => {
       },
     });
     // NOTE: postgres returns snake_case columns if we don't alias them or use typeorm, and here we use raw query
+    // user:created opens the user creation gather of ws-service (WebSocket notification)
     expect((event as unknown as { target_services: Streams[] }).target_services).toEqual([
       Streams.SOCIAL_USER,
+      Streams.USER_CREATED,
     ]);
     expect(event.status).toBe('PENDING');
   });
