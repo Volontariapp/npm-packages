@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.15.1
+
+### Patch Changes
+
+- Decrypt user emails on multi-row reads. BaseRepository.toEntities maps through the mapper directly and bypassed the toEntity override that decrypts the email, so findAll, findPage, findByIds (and saveMany) returned the encrypted value. PostgresUserRepository now overrides toEntities to go through toEntity.
+
 ## 2.15.0
 
 ### Minor Changes
