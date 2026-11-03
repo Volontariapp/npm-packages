@@ -2,6 +2,7 @@ import type { SocialUserEntity } from '../../entities/social-user.entity.js';
 import type { SocialEventEntity } from '../../entities/social-event.entity.js';
 import type { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
 import type { PaginatedAttendeesVO } from '../../value-objects/paginated-attendees.vo.js';
+import type { EventParticipantCountVO } from '../../value-objects/batch-results.vo.js';
 import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 export interface IParticipationRepository {
@@ -23,6 +24,12 @@ export interface IParticipationRepository {
   getUserParticipations(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getUserWishes(user: SocialUserEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
   getEventParticipants(event: SocialEventEntity, pagination: PaginationVO): Promise<PaginatedIdsVO>;
+  /**
+   * Une seule requete: nombre de participants par evenement (meme definition que le total de
+   * getEventParticipants). Ids dedoublonnes, vides ignores, plafonnes a MAX_SOCIAL_BATCH_IDS;
+   * un evenement sans participant renvoie 0.
+   */
+  countParticipantsByEventIds(eventIds: string[]): Promise<EventParticipantCountVO[]>;
   setEventAttendance(
     eventId: string,
     checkedUserIds: string[],

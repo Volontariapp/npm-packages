@@ -78,6 +78,7 @@ export class Neo4jRelationshipRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:FOLLOW]->(u:SocialUser)
        RETURN u.userId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:FOLLOW]->(u:SocialUser)
        RETURN count(u) AS total`,
@@ -91,6 +92,7 @@ export class Neo4jRelationshipRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})<-[:FOLLOW]-(u:SocialUser)
        RETURN u.userId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})<-[:FOLLOW]-(u:SocialUser)
        RETURN count(u) AS total`,
@@ -104,6 +106,7 @@ export class Neo4jRelationshipRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:BLOCK]->(u:SocialUser)
        RETURN u.userId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:BLOCK]->(u:SocialUser)
        RETURN count(u) AS total`,
@@ -117,6 +120,7 @@ export class Neo4jRelationshipRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})<-[:BLOCK]-(u:SocialUser)
        RETURN u.userId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})<-[:BLOCK]-(u:SocialUser)
        RETURN count(u) AS total`,

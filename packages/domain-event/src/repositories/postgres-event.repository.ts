@@ -2,13 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import type { Repository } from '@volontariapp/database';
-import { BaseRepository, ILike, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
+import {
+  BaseRepository,
+  ILike,
+  In,
+  EventQueueEntity,
+  EventQueueModel,
+} from '@volontariapp/database';
 import { EventQueueRepository } from '@volontariapp/outbox';
 import { ForbiddenError } from '@volontariapp/errors';
 import { EventModel } from '../models/event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { Streams } from '@volontariapp/shared';
 import { IEventRepository } from './interfaces/event.repository.js';
+import { MAX_EVENT_IDS_PER_LOOKUP } from '../constants.js';
 import {
   EventEventMessagingType,
   IEventCreatedPayload,
@@ -37,6 +44,19 @@ export class PostgresEventRepository
       return this.findWithRelations({ id }, relations);
     }
     return super.findById(id);
+  }
+
+  override async findByIds(ids: string[], relations: string[] = []): Promise<EventEntity[]> {
+    const unique = [...new Set(ids.filter((id) => id.length > 0))].slice(
+      0,
+      MAX_EVENT_IDS_PER_LOOKUP,
+    );
+    if (unique.length === 0) return [];
+    const models = await this.repository.find({
+      where: { id: In(unique) },
+      ...(relations.length > 0 ? { relations } : {}),
+    });
+    return this.toEntities(models);
   }
 
   async findAll(relations: string[] = []): Promise<EventEntity[]> {
@@ -363,8 +383,11 @@ export class PostgresEventRepository
       query.andWhere(`ST_DWithin(event.location::geography, ${origin}::geography, :radius)`);
       query.setParameter('radius', radiusInMeters);
       query.orderBy(`ST_Distance(event.location::geography, ${origin}::geography)`, 'ASC');
+      // Departage deterministe: sans id, deux evenements a egale distance changent de page
+      query.addOrderBy('event.id', 'ASC');
     } else {
       query.orderBy('event.createdAt', 'DESC');
+      query.addOrderBy('event.id', 'DESC');
     }
 
     if (params.types && params.types.length > 0) {

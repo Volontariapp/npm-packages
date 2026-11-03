@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { PostgresUserRepository } from '../repositories/postgres-user.repository.js';
-import type { IUserRepository } from '../repositories/index.js';
+import type { IUserRepository, UserPageQuery } from '../repositories/index.js';
 import { UserEntity } from '../entities/user.entity.js';
 import { isBaseError } from '@volontariapp/errors';
 import { calculateHash, verifyPassword, hashPassword } from '@volontariapp/crypto';
@@ -96,6 +96,35 @@ export class UserService {
       this.userRepository.findAll(pagination?.limit, pagination?.offset),
     );
     return new UserListResult(users, total);
+  }
+
+  /**
+   * Page ordonnee par id, statuts exclus filtres en SQL avant LIMIT/OFFSET: `total` ne compte
+   * que les utilisateurs retenus.
+   */
+  async findPage(
+    pagination?: PaginationInput,
+    excludeStatuses?: UserPageQuery['excludeStatuses'],
+  ): Promise<UserListResult> {
+    const [users, total] = await this.db('finding users page', () =>
+      this.userRepository.findPage({
+        limit: pagination?.limit,
+        offset: pagination?.offset,
+        excludeStatuses,
+      }),
+    );
+    return new UserListResult(users, total);
+  }
+
+  /**
+   * Lecture par lot en une requete (badges inclus). Les ids inconnus sont absents du resultat;
+   * au plus MAX_USER_IDS_PER_LOOKUP ids sont lus.
+   */
+  async findByIds(ids: UserId[]): Promise<UserEntity[]> {
+    if (ids.length === 0) return [];
+    return this.db(`finding ${ids.length.toString()} users by ids`, () =>
+      this.userRepository.findByIds(ids.map((id) => id.value)),
+    );
   }
 
   async update(id: UserId, input: UpdateUserInput): Promise<UserEntity> {

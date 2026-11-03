@@ -7,5 +7,6 @@ export const createInteractionRepositoryMock = (): jest.Mocked<IInteractionRepos
     deleteLike: jest.fn(),
     getUserLikes: jest.fn(),
     getPostLikers: jest.fn(),
+    getPostsLikeSummary: jest.fn(),
     likeExists: jest.fn(),
   }) as unknown as jest.Mocked<IInteractionRepository>;

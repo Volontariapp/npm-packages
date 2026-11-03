@@ -175,6 +175,7 @@ export class Neo4jPublicationRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:OWN]->(p:SocialPost)
        RETURN p.postId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:OWN]->(p:SocialPost)
        RETURN count(p) AS total`,
@@ -188,6 +189,7 @@ export class Neo4jPublicationRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:FOLLOW]->(followed:SocialUser)-[:OWN]->(p:SocialPost)
        RETURN DISTINCT p.postId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:FOLLOW]->(followed:SocialUser)-[:OWN]->(p:SocialPost)
        RETURN count(DISTINCT p) AS total`,
