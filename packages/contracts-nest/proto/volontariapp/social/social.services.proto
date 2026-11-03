@@ -66,6 +66,7 @@ service InteractionCommandService {
 service InteractionQueryService {
   rpc GetUserLikes(GetUserLikesQuery) returns (GetUserLikesResponse);
   rpc GetPostLikers(GetPostLikersQuery) returns (GetPostLikersResponse);
+  rpc GetPostsLikeSummary(GetPostsLikeSummaryQuery) returns (GetPostsLikeSummaryResponse);
   rpc AdminGetUserLikes(AdminGetUserLikesQuery) returns (AdminGetUserLikesResponse);
 }
 
@@ -91,6 +92,7 @@ service ParticipationQueryService {
   rpc GetUserParticipateEvent(GetUserParticipateEventQuery) returns (GetUserParticipateEventResponse);
   rpc GetUserWishEvent(GetUserWishEventQuery) returns (GetUserWishEventResponse);
   rpc GetEventParticipants(GetEventParticipantsQuery) returns (GetEventParticipantsResponse);
+  rpc CountEventParticipants(CountEventParticipantsQuery) returns (CountEventParticipantsResponse);
   rpc GetEventAttendees(GetEventAttendeesQuery) returns (GetEventAttendeesResponse);
   rpc AdminGetUserEvent(AdminGetUserEventQuery) returns (AdminGetUserEventResponse);
   rpc AdminGetUserParticipateEvent(AdminGetUserParticipateEventQuery) returns (AdminGetUserParticipateEventResponse);

@@ -194,3 +194,27 @@ message GetEventAttendeesResponse {
   repeated EventAttendee attendees = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
+
+message EventParticipantCount {
+  string event_id = 1;
+  // Number of registered participants. The implicit creator is NOT counted
+  // (same semantics as GetEventParticipantsResponse.pagination.total).
+  int32 participant_count = 2;
+}
+
+message CountEventParticipantsResponse {
+  // One entry per requested event id (0 when the event has no participant).
+  repeated EventParticipantCount counts = 1;
+}
+
+message PostLikeSummary {
+  string post_id = 1;
+  int32 like_count = 2;
+  // Whether the calling user (internal token) likes this post.
+  bool liked_by_me = 3;
+}
+
+message GetPostsLikeSummaryResponse {
+  // One entry per requested post id (like_count 0 when never liked).
+  repeated PostLikeSummary summaries = 1;
+}

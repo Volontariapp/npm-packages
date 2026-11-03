@@ -6,14 +6,34 @@
 
 /* eslint-disable */
 
+/**
+ * Pagination parameters shared by every paginated list RPC.
+ *
+ * Conventions:
+ * - Pages are 1-based: the first page is page = 1.
+ * - An absent PaginationRequest message means server defaults (page 1, limit 10).
+ * - A field left at 0 (or negative) is unspecified and falls back to its default.
+ * - The api-gateway caps limit at 100. The microservices accept up to 1000
+ *   for now (temporary), so internal callers must not rely on that headroom.
+ */
 export interface PaginationRequest {
+  /** 1-based page number. Default 1. */
   page: number;
+  /**
+   * Page size. Default 10, maximum 100 at the gateway (1000 at the microservices,
+   * temporary). 0 is unspecified and means the default.
+   */
   limit: number;
 }
 
+/** Pagination metadata returned with every paginated list response. */
 export interface PaginationResponse {
+  /** Total number of items matching the query, across all pages. */
   total: number;
+  /** Effective 1-based page number served. */
   page: number;
+  /** Effective page size applied (after defaults and caps). */
   limit: number;
+  /** Total number of pages for the effective limit. */
   totalPages: number;
 }
