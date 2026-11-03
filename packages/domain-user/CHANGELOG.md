@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.16.0
+
+### Minor Changes
+
+- The user.created trigger now also targets the `user:created` stream (`ARRAY['social:user', 'user:created']`), the same convention as user.deleted. ws-service opens its user creation gather from that stream; without it the feedback of ms-social was ignored and the WebSocket `user.created` notification was never sent. `users.trigger.sql` is aligned on `USERS_TRIGGER` (payload wrapped in `after`). Consumers must re-apply `USERS_TRIGGER` in a migration (ms-user `1792400000000-RefreshUserCreatedTrigger`).
+
 ## 2.15.1
 
 ### Patch Changes
