@@ -13,6 +13,7 @@ import type { PaginatedIdsVO } from '../value-objects/paginated-ids.vo.js';
 import { SocialUserMapper } from '../mappers/social-user.mapper.js';
 import { SocialPostMapper } from '../mappers/social-post.mapper.js';
 import { UserId, PostId } from '../value-objects/ids.vo.js';
+import type { PostLikeSummaryVO } from '../value-objects/batch-results.vo.js';
 import { PaginationVO } from '../value-objects/pagination.vo.js';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -144,6 +145,24 @@ export class InteractionService {
       if (isBaseError(error)) throw error;
       this.logger.error(`Failed to get likers for post: ${postId.value}`, error as Error);
       throw DATABASE_ERROR('fetching post likers', (error as Error).message);
+    }
+  }
+
+  /** Like count et liked_by_me de plusieurs posts en une requete (plafond MAX_SOCIAL_BATCH_IDS). */
+  async getPostsLikeSummary(userId: UserId, postIds: PostId[]): Promise<PostLikeSummaryVO[]> {
+    if (postIds.length === 0) return [];
+    try {
+      return await this.repository.getPostsLikeSummary(
+        userId.value,
+        postIds.map((id) => id.value),
+      );
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to get like summary for ${String(postIds.length)} posts`,
+        error,
+      );
+      throw DATABASE_ERROR('fetching posts like summary', (error as Error).message);
     }
   }
 }

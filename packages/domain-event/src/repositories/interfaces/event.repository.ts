@@ -5,6 +5,12 @@ import type { SearchAdvancedVO } from '../../index.js';
 
 export interface IEventRepository {
   findById(id: string, relations?: string[]): Promise<EventEntity | null>;
+  /**
+   * Une seule requete pour tous les ids (relations optionnelles, comme `findById`).
+   * Ids en double ou vides ignores, au plus MAX_EVENT_IDS_PER_LOOKUP ids lus sans exception;
+   * les ids inconnus sont absents du resultat, aucun ordre garanti.
+   */
+  findByIds(ids: string[], relations?: string[]): Promise<EventEntity[]>;
   findAll(relations?: string[]): Promise<EventEntity[]>;
   create(event: Partial<EventEntity>): Promise<EventEntity>;
   createWithEventCreated(event: Partial<EventEntity>): Promise<EventEntity>;

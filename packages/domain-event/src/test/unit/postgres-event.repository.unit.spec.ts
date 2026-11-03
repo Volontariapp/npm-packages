@@ -5,6 +5,8 @@ import type { EventModel } from '../../models/event.model.js';
 import type { SelectQueryBuilder } from 'typeorm';
 import { EventType, EventState } from '@volontariapp/contracts';
 import { createMock } from '@volontariapp/testing';
+import { In } from '@volontariapp/database';
+import { MAX_EVENT_IDS_PER_LOOKUP } from '../../constants.js';
 
 describe('PostgresEventRepository (Unit)', () => {
   let repository: PostgresEventRepository;
@@ -16,6 +18,7 @@ describe('PostgresEventRepository (Unit)', () => {
     queryBuilderMock.andWhere.mockReturnThis();
     queryBuilderMock.setParameter.mockReturnThis();
     queryBuilderMock.orderBy.mockReturnThis();
+    queryBuilderMock.addOrderBy.mockReturnThis();
     queryBuilderMock.getMany.mockResolvedValue([]);
 
     typeOrmRepositoryMock = createMock<ConstructorParameters<typeof PostgresEventRepository>[0]>();
@@ -67,9 +70,8 @@ describe('PostgresEventRepository (Unit)', () => {
     it('should build query with basic parameters and return PaginatedEventsVO', async () => {
       queryBuilderMock.getManyAndCount.mockResolvedValue([[], 0]);
 
-      const { SearchAdvancedVO } = await import(
-        '../../value-objects/search-advanced.value-object.js'
-      );
+      const { SearchAdvancedVO } =
+        await import('../../value-objects/search-advanced.value-object.js');
       const params = new SearchAdvancedVO(
         undefined,
         undefined,
@@ -90,6 +92,7 @@ describe('PostgresEventRepository (Unit)', () => {
 
       expect(typeOrmRepositoryMock.createQueryBuilder).toHaveBeenCalledWith('event');
       expect(queryBuilderMock.orderBy).toHaveBeenCalledWith('event.createdAt', 'DESC');
+      expect(queryBuilderMock.addOrderBy).toHaveBeenCalledWith('event.id', 'DESC');
       expect(queryBuilderMock.andWhere).toHaveBeenCalledWith('event.name ILIKE :searchTerm', {
         searchTerm: '%test%',
       });
@@ -103,6 +106,64 @@ describe('PostgresEventRepository (Unit)', () => {
       expect(result.total).toBe(0);
       expect(result.page).toBe(2);
       expect(result.limit).toBe(15);
+    });
+
+    it('should order by distance then id ASC when an area is given', async () => {
+      queryBuilderMock.getManyAndCount.mockResolvedValue([[], 0]);
+      const { SearchAdvancedVO } =
+        await import('../../value-objects/search-advanced.value-object.js');
+      const params = new SearchAdvancedVO({ lat: 48.85, lng: 2.35, radiusInMeters: 5000 });
+
+      await repository.searchAdvanced(params);
+
+      expect(queryBuilderMock.orderBy).toHaveBeenCalledWith(
+        expect.stringContaining('ST_Distance'),
+        'ASC',
+      );
+      expect(queryBuilderMock.addOrderBy).toHaveBeenCalledWith('event.id', 'ASC');
+      expect(queryBuilderMock.orderBy).not.toHaveBeenCalledWith('event.createdAt', 'DESC');
+    });
+  });
+
+  describe('findByIds', () => {
+    it('should load all ids in a single query with relations', async () => {
+      typeOrmRepositoryMock.find.mockResolvedValue([]);
+
+      await repository.findByIds(['a', 'b'], ['tags']);
+
+      expect(typeOrmRepositoryMock.find).toHaveBeenCalledTimes(1);
+      expect(typeOrmRepositoryMock.find).toHaveBeenCalledWith({
+        where: { id: In(['a', 'b']) },
+        relations: ['tags'],
+      });
+    });
+
+    it('should omit relations when none are requested', async () => {
+      typeOrmRepositoryMock.find.mockResolvedValue([]);
+
+      await repository.findByIds(['a']);
+
+      expect(typeOrmRepositoryMock.find).toHaveBeenCalledWith({ where: { id: In(['a']) } });
+    });
+
+    it('should return [] without querying for an empty input', async () => {
+      expect(await repository.findByIds([])).toEqual([]);
+      expect(await repository.findByIds([''])).toEqual([]);
+      expect(typeOrmRepositoryMock.find).not.toHaveBeenCalled();
+    });
+
+    it('should dedupe and cap at MAX_EVENT_IDS_PER_LOOKUP without throwing', async () => {
+      typeOrmRepositoryMock.find.mockResolvedValue([]);
+      const ids = Array.from(
+        { length: MAX_EVENT_IDS_PER_LOOKUP + 20 },
+        (_, i) => `e-${i.toString()}`,
+      );
+
+      await repository.findByIds([...ids, 'e-0']);
+
+      expect(typeOrmRepositoryMock.find).toHaveBeenCalledWith({
+        where: { id: In(ids.slice(0, MAX_EVENT_IDS_PER_LOOKUP)) },
+      });
     });
   });
 });

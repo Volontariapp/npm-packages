@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.15.0
+
+### Minor Changes
+
+- Ordered and bounded pagination, plus batch lookups. database: `paginate` normalizes page and limit (page < 1 becomes 1, limit < 1 becomes DEFAULT_PAGE_LIMIT, limit > MAX_PAGE_LIMIT is capped) and orders by primary key when no order is given. domain-user: `findPage` filters statuses in SQL before LIMIT/OFFSET and `findByIds` loads badges in one query. domain-event: `searchAdvanced` breaks ties by id and `findByIds` is added. domain-post: posts and comments order by createdAt DESC then id DESC. domain-social: every paginated Cypher query has a deterministic ORDER BY, and `countParticipantsByEventIds` and `getPostsLikeSummary` read in batches.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.12.0
+  - @volontariapp/outbox@0.10.26
+
 ## 2.14.3
 
 ### Patch Changes

@@ -14,6 +14,7 @@ import { PostgresBadgeRepository } from '../../repositories/postgres-badge.repos
 import { UserFactory } from '../__test-utils__/factories/user.factory.js';
 import { BadgeFactory } from '../__test-utils__/factories/badge.factory.js';
 import { UserEntity } from '../../entities/user.entity.js';
+import { UserStatus } from '../../entities/user-status.enum.js';
 import { hashPassword } from '@volontariapp/crypto';
 
 describe('PostgresUserRepository (Integration)', () => {
@@ -184,6 +185,52 @@ describe('PostgresUserRepository (Integration)', () => {
 
       // Assert
       expect(result).toBeNull();
+    });
+  });
+
+  // ─── findPage / findByIds ─────────────────────────────────────────────────
+
+  describe('findPage()', () => {
+    it('should exclude statuses before LIMIT/OFFSET and count only retained rows', async () => {
+      const kept = [await createTestUser(), await createTestUser(), await createTestUser()];
+      const pending = await createTestUser();
+      await userRepository.requestDeletionWithUserDeleted(pending.id);
+
+      const [first, total] = await userRepository.findPage({
+        limit: 2,
+        offset: 0,
+        excludeStatuses: [UserStatus.PENDING_DELETION],
+      });
+      const [second] = await userRepository.findPage({
+        limit: 2,
+        offset: 2,
+        excludeStatuses: [UserStatus.PENDING_DELETION],
+      });
+
+      expect(total).toBe(3);
+      const ids = [...first, ...second].map((u) => u.id);
+      expect(ids).toHaveLength(3);
+      expect(ids).toEqual([...kept.map((u) => u.id)].sort());
+      expect(ids).not.toContain(pending.id);
+    });
+  });
+
+  describe('findByIds()', () => {
+    it('should load users with their badges in one call', async () => {
+      const a = await createTestUser();
+      const b = await createTestUser();
+      const badge = await badgeRepository.create(BadgeFactory.buildInput());
+      await userRepository.addBadgeToUser(a.id, badge.id);
+
+      const users = await userRepository.findByIds([
+        a.id,
+        b.id,
+        '00000000-0000-0000-0000-000000000000',
+      ]);
+
+      expect(users).toHaveLength(2);
+      const loadedA = users.find((u) => u.id === a.id);
+      expect(loadedA?.badges.map((x) => x.id)).toEqual([badge.id]);
     });
   });
 

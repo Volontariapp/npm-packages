@@ -1,13 +1,14 @@
 import neo4j from 'neo4j-driver';
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import { DATABASE_QUERY_ERROR } from '@volontariapp/errors-nest';
+import { MAX_SOCIAL_BATCH_IDS } from '../../constants.js';
 import { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
 import { PaginationResultVO } from '../../value-objects/pagination-result.vo.js';
 import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 type Neo4jRecord = { get(key: string): unknown };
 
-function toSafeInt(value: unknown): number {
+export function toSafeInt(value: unknown): number {
   if (value == null) return 0;
   if (typeof value === 'number') return value;
   if (typeof value === 'object' && 'toNumber' in value) {
@@ -33,6 +34,11 @@ export abstract class Neo4jBaseRepository {
     } finally {
       await session.close();
     }
+  }
+
+  /** Dedoublonne, retire les ids vides et plafonne a MAX_SOCIAL_BATCH_IDS (sans exception). */
+  protected normalizeBatchIds(ids: string[]): string[] {
+    return [...new Set(ids.filter((id) => id.length > 0))].slice(0, MAX_SOCIAL_BATCH_IDS);
   }
 
   protected async readOne<T>(

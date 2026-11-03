@@ -27,6 +27,7 @@ import { SocialEventMapper } from '../mappers/social-event.mapper.js';
 import { UserId, EventId } from '../value-objects/ids.vo.js';
 import { PaginationVO } from '../value-objects/pagination.vo.js';
 import { PaginatedIdsVO } from '../index.js';
+import type { EventParticipantCountVO } from '../value-objects/batch-results.vo.js';
 import { PaginatedAttendeesVO } from '../value-objects/paginated-attendees.vo.js';
 
 @Injectable()
@@ -234,6 +235,21 @@ export class ParticipationService {
       if (isBaseError(error)) throw error;
       this.logger.error(`Failed to get participants for event: ${eventId.value}`, error);
       throw DATABASE_ERROR('fetching event participants', (error as Error).message);
+    }
+  }
+
+  /** Nombre de participants de plusieurs evenements en une requete (plafond MAX_SOCIAL_BATCH_IDS). */
+  async countParticipantsByEventIds(eventIds: EventId[]): Promise<EventParticipantCountVO[]> {
+    if (eventIds.length === 0) return [];
+    try {
+      return await this.repository.countParticipantsByEventIds(eventIds.map((id) => id.value));
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(
+        `Failed to count participants for ${String(eventIds.length)} events`,
+        error,
+      );
+      throw DATABASE_ERROR('counting event participants', (error as Error).message);
     }
   }
 
