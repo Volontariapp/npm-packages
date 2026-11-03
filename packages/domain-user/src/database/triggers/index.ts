@@ -21,7 +21,7 @@ BEGIN
             'ms-user',
             NEW.id,
             jsonb_build_object('after', jsonb_build_object('id', NEW.id, 'role', NEW.role)),
-            ARRAY['social:user'],
+            ARRAY['social:user', 'user:created'],
             1,
             'PENDING',
             0,
