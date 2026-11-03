@@ -40,6 +40,15 @@ export class PostgresUserRepository
     return entity;
   }
 
+  /**
+   * BaseRepository.toEntities passe directement par le mapper et contourne `toEntity`: sans cette
+   * surcharge, les lectures multiples (findAll, findPage, findByIds, saveMany...) renvoyaient
+   * l'email chiffre au lieu de l'email en clair.
+   */
+  public override toEntities(models: UserModel[]): UserEntity[] {
+    return models.map((model) => this.toEntity(model));
+  }
+
   protected override toModel(entity: Partial<UserEntity>): DeepPartial<UserModel> {
     const model = super.toModel(entity);
     if (entity.email != null) {

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { jest, describe, it, expect, beforeAll, beforeEach, afterEach } from '@jest/globals';
 import type { Repository } from '@volontariapp/database';
 import { DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT } from '@volontariapp/database';
+import { encryptDeterministic } from '@volontariapp/crypto';
 import { In, Not } from 'typeorm';
 import { PostgresUserRepository } from '../../repositories/postgres-user.repository.js';
 import { registerUserMappings } from '../../models/mapper.js';
@@ -117,6 +118,42 @@ describe('PostgresUserRepository (Unit): findPage / findByIds', () => {
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({ where: { id: In(ids.slice(0, MAX_USER_IDS_PER_LOOKUP)) } }),
       );
+    });
+  });
+
+  describe('dechiffrement des emails sur les lectures multiples', () => {
+    // BaseRepository.toEntities passe par le mapper et contourne la surcharge de toEntity qui
+    // dechiffre l'email: sans surcharge de toEntities, ces lectures renvoyaient le chiffre.
+    const EMAILS = ['alice@example.com', 'bob@example.com'];
+
+    const buildEncryptedModels = (): UserModel[] =>
+      EMAILS.map((email) =>
+        UserModelFactory.build({ email: encryptDeterministic(email, TEST_EMAIL_SECRET) }),
+      );
+
+    it('findByIds renvoie les emails en clair', async () => {
+      const models = buildEncryptedModels();
+      jest.spyOn(typeOrmRepo, 'find').mockResolvedValue(models);
+
+      const users = await repository.findByIds(models.map((model) => model.id));
+
+      expect(users.map((user) => user.email)).toEqual(EMAILS);
+    });
+
+    it('findPage renvoie les emails en clair', async () => {
+      jest.spyOn(typeOrmRepo, 'findAndCount').mockResolvedValue([buildEncryptedModels(), 2]);
+
+      const [users] = await repository.findPage({ limit: 10, offset: 0 });
+
+      expect(users.map((user) => user.email)).toEqual(EMAILS);
+    });
+
+    it('findAll renvoie les emails en clair', async () => {
+      jest.spyOn(typeOrmRepo, 'findAndCount').mockResolvedValue([buildEncryptedModels(), 2]);
+
+      const [users] = await repository.findAll(10, 0);
+
+      expect(users.map((user) => user.email)).toEqual(EMAILS);
     });
   });
 });
