@@ -23,7 +23,7 @@ describe('OutboxConsumer (Unit)', () => {
   beforeEach(() => {
     loggerMock = makeLoggerMock();
     const { queryRunnerMock: qrMock } = makeQueryRunnerMock();
-    queryRunnerMock = qrMock as unknown as QueryRunner;
+    queryRunnerMock = qrMock;
 
     repositoryMock = {
       metadata: {
@@ -121,6 +121,31 @@ describe('OutboxConsumer (Unit)', () => {
       );
       expect(executeSpy).toHaveBeenCalled();
       expect(result).toHaveLength(2);
+    });
+
+    it('should return the claimed rows oldest first, then by id (RETURNING order is not guaranteed)', async () => {
+      const row = (id: string, createdAt: string) => ({
+        id,
+        status: OutboxStatus.PENDING,
+        attempts: 0,
+        type: 'test',
+        emitter: 'test',
+        emitterId: '00000000-0000-0000-0000-000000000000',
+        created_at: new Date(createdAt),
+      });
+      const qb = queryRunnerMock.manager.createQueryBuilder();
+      jest.spyOn(qb, 'execute').mockResolvedValueOnce({
+        raw: [
+          row('c', '2026-11-04T09:47:45.158Z'),
+          row('b', '2026-11-04T09:47:45.069Z'),
+          row('a', '2026-11-04T09:47:45.069Z'),
+          row('d', '2026-11-04T09:47:45.090Z'),
+        ],
+      });
+
+      const result = await consumer.fetchPendingItems();
+
+      expect(result.map((item) => item.id)).toEqual(['a', 'b', 'd', 'c']);
     });
   });
 

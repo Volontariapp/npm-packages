@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.17.1
+
+### Patch Changes
+
+- database: the outbox consumer pushes each claimed batch oldest first (then by id), since `UPDATE ... RETURNING` does not keep the order of its sub-select. domain-social: `getRecommendedEventIds` skips SocialEvent nodes without an eventId.
+
+- Updated dependencies []:
+  - @volontariapp/database@3.12.1
+  - @volontariapp/outbox@0.10.27
+
 ## 0.17.0
 
 ### Minor Changes

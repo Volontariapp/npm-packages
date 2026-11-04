@@ -322,7 +322,9 @@ export class Neo4jParticipationRepository
     },
     pagination: PaginationVO,
   ): Promise<PaginatedIdsVO> {
-    const conditions: string[] = [];
+    // A SocialEvent node read while another request deletes it can come back without its
+    // eventId (empty string on the wire), which ms-event rejects in a search: skip such nodes.
+    const conditions: string[] = ["e.eventId IS NOT NULL AND e.eventId <> ''"];
 
     // The base match depends on whether we need to restrict to friends' events
     let baseMatch = 'MATCH (e:SocialEvent)';

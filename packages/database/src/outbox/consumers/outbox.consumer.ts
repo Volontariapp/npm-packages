@@ -49,7 +49,9 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
         .returning('*')
         .execute();
 
-      const rawRows = this.normalizeRows(updateResult.raw);
+      // The ORDER BY of the sub-select does not order `UPDATE ... RETURNING`: sort the claimed
+      // rows so a batch is pushed in the order the rows were written (gap G3).
+      const rawRows = this.sortByCreation(this.normalizeRows(updateResult.raw));
 
       if (rawRows.length === 0) {
         this.logger.debug('No pending outbox items found', { tableName });
@@ -63,6 +65,15 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
 
       return this.repository.toEntities(rawRows);
     });
+  }
+
+  /**
+   * Oldest first, then by id so the order is deterministic. JavaScript dates keep milliseconds
+   * only: rows written within the same millisecond are ordered by id, not by write order.
+   */
+  private sortByCreation(rows: TOutboxModel[]): TOutboxModel[] {
+    const time = (row: TOutboxModel): number => new Date(row.createdAt).getTime();
+    return [...rows].sort((a, b) => time(a) - time(b) || a.id.localeCompare(b.id));
   }
 
   private normalizeRows(result: unknown): TOutboxModel[] {
@@ -108,13 +119,13 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
             attributes: { type: item.type, emitter: item.emitter, 'outbox.id': item.id },
           },
           async () => {
-            this.logger.info(`Pushing outbox item ${item.id.toString()}`);
+            this.logger.info(`Pushing outbox item ${item.id}`);
             await this.outboxPusher.pushElement(item);
             await this.outboxDispatcher.markAsCompleted(item);
           },
         );
       } catch (error) {
-        this.logger.error(`Error pushing outbox item ${item.id.toString()}`, { error });
+        this.logger.error(`Error pushing outbox item ${item.id}`, { error });
         await this.outboxDispatcher.markAsFailed(
           item,
           error instanceof Error ? error.message : String(error),
@@ -127,7 +138,7 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
     this.logger.debug('Marking outbox items as completed', { ids: entities.map((e) => e.id) });
     for (const item of entities) {
       if (item.status !== OutboxStatus.PROCESSING) {
-        this.logger.warn(`Skipping outbox item ${item.id.toString()}`, { status: item.status });
+        this.logger.warn(`Skipping outbox item ${item.id}`, { status: item.status });
         continue;
       }
       await this.outboxDispatcher.markAsCompleted(item);

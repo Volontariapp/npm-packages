@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.4.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.12.1
+  - @volontariapp/outbox@0.10.27
+
 ## 3.4.8
 
 ### Patch Changes
