@@ -40,7 +40,7 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
               SELECT "id"
               FROM "${tableName}"
               WHERE "status" = :pending
-              ORDER BY "created_at" ASC
+              ORDER BY "created_at" ASC, "id" ASC
               LIMIT :limit
               FOR UPDATE SKIP LOCKED
             )`,
@@ -49,8 +49,9 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
         .returning('*')
         .execute();
 
-      // The ORDER BY of the sub-select does not order `UPDATE ... RETURNING`: sort the claimed
-      // rows so a batch is pushed in the order the rows were written (gap G3).
+      // The ORDER BY of the sub-select picks the batch but does not order `UPDATE ... RETURNING`:
+      // sort the claimed rows with the same key so a batch is pushed in write order (a deletion
+      // pushed before the creation of the same entity was seen in the E2E scenarios).
       const rawRows = this.sortByCreation(this.normalizeRows(updateResult.raw));
 
       if (rawRows.length === 0) {
@@ -68,12 +69,14 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
   }
 
   /**
-   * Oldest first, then by id so the order is deterministic. JavaScript dates keep milliseconds
-   * only: rows written within the same millisecond are ordered by id, not by write order.
+   * Oldest first, then by id: the same key as the ORDER BY of the claim. JavaScript dates keep
+   * milliseconds only, so rows written within the same millisecond are ordered by id, not by
+   * write order. `createdAt` is wrapped in `new Date` because a raw row may carry an ISO string
+   * when the pg type parser is overridden, even though the model types it as a Date.
    */
   private sortByCreation(rows: TOutboxModel[]): TOutboxModel[] {
-    const time = (row: TOutboxModel): number => new Date(row.createdAt).getTime();
-    return [...rows].sort((a, b) => time(a) - time(b) || a.id.localeCompare(b.id));
+    const createdAtMs = (row: TOutboxModel): number => new Date(row.createdAt).getTime();
+    return [...rows].sort((a, b) => createdAtMs(a) - createdAtMs(b) || a.id.localeCompare(b.id));
   }
 
   private normalizeRows(result: unknown): TOutboxModel[] {

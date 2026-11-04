@@ -11,6 +11,7 @@ import { makeLoggerMock, type LoggerMock } from '../../utils/helpers/logger-mock
 import { makeQueryRunnerMock } from '../../utils/helpers/query-runner-mock.helper.js';
 import { makeOutboxPusherMock } from '../../utils/helpers/outbox-pusher-mock.helper.js';
 import type { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
+import { makeOutboxRawRow } from '../../utils/factories/outbox-raw-row.factory.js';
 
 describe('OutboxConsumer (Unit)', () => {
   let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;
@@ -124,28 +125,33 @@ describe('OutboxConsumer (Unit)', () => {
     });
 
     it('should return the claimed rows oldest first, then by id (RETURNING order is not guaranteed)', async () => {
-      const row = (id: string, createdAt: string) => ({
-        id,
-        status: OutboxStatus.PENDING,
-        attempts: 0,
-        type: 'test',
-        emitter: 'test',
-        emitterId: '00000000-0000-0000-0000-000000000000',
-        created_at: new Date(createdAt),
-      });
-      const qb = queryRunnerMock.manager.createQueryBuilder();
-      jest.spyOn(qb, 'execute').mockResolvedValueOnce({
+      const queryBuilder = queryRunnerMock.manager.createQueryBuilder();
+      jest.spyOn(queryBuilder, 'execute').mockResolvedValueOnce({
         raw: [
-          row('c', '2026-11-04T09:47:45.158Z'),
-          row('b', '2026-11-04T09:47:45.069Z'),
-          row('a', '2026-11-04T09:47:45.069Z'),
-          row('d', '2026-11-04T09:47:45.090Z'),
+          makeOutboxRawRow('c', new Date('2026-11-04T09:47:45.158Z')),
+          makeOutboxRawRow('b', new Date('2026-11-04T09:47:45.069Z')),
+          makeOutboxRawRow('a', new Date('2026-11-04T09:47:45.069Z')),
+          makeOutboxRawRow('d', new Date('2026-11-04T09:47:45.090Z')),
         ],
       });
 
       const result = await consumer.fetchPendingItems();
 
       expect(result.map((item) => item.id)).toEqual(['a', 'b', 'd', 'c']);
+    });
+
+    it('should also sort rows whose created_at comes back as an ISO string', async () => {
+      const queryBuilder = queryRunnerMock.manager.createQueryBuilder();
+      jest.spyOn(queryBuilder, 'execute').mockResolvedValueOnce({
+        raw: [
+          makeOutboxRawRow('late', '2026-11-04T09:47:45.158Z'),
+          makeOutboxRawRow('early', '2026-11-04T09:47:45.069Z'),
+        ],
+      });
+
+      const result = await consumer.fetchPendingItems();
+
+      expect(result.map((item) => item.id)).toEqual(['early', 'late']);
     });
   });
 
