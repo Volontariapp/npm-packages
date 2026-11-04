@@ -15,6 +15,7 @@ import {
 } from '../index.js';
 import {
   buildAttachmentRejectedEvent,
+  buildCleanupFilesJob,
   buildFileRejectedEvent,
   buildFileScannedEvent,
   buildScanFileJob,
@@ -43,6 +44,22 @@ describe('file outbox builders', () => {
       expect(job.type).toBe(StorageJobType.SCAN_FILE);
       expect(job.target).toBe(StorageQueue.STORAGE);
       expect(job.payload).toEqual({ fileId: 'file-1' });
+      expect(job.emitter).toBe(FILE_OUTBOX_EMITTER);
+      expect(job.emitterId).toBe('owner-1');
+      expect(job.status).toBe(OutboxStatus.PENDING);
+      expect(job.scheduledAt?.getTime()).toBeGreaterThanOrEqual(before);
+    });
+  });
+
+  describe('buildCleanupFilesJob()', () => {
+    it('targets the storage queue with an empty payload and is schedulable immediately', () => {
+      const before = Date.now();
+
+      const job = buildCleanupFilesJob('owner-1');
+
+      expect(job.type).toBe(StorageJobType.CLEANUP_FILES);
+      expect(job.target).toBe(StorageQueue.STORAGE);
+      expect(job.payload).toEqual({});
       expect(job.emitter).toBe(FILE_OUTBOX_EMITTER);
       expect(job.emitterId).toBe('owner-1');
       expect(job.status).toBe(OutboxStatus.PENDING);

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0
+
+### Minor Changes
+
+- Add the purge of orphaned files: `releaseForOwner` now writes a `storage.cleanup_files` job in the same transaction when at least one file is released, and `IFileRepository` / `PostgresFileRepository` gain `listPurgeCandidates(limit)` and `markDeleted(fileIds)` (plus `FilePurgeCandidate` and `MAX_PURGE_BATCH_SIZE`).
+
 ## 0.12.18
 
 ### Patch Changes
