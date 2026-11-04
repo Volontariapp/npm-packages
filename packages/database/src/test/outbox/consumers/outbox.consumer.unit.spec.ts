@@ -11,6 +11,7 @@ import { makeLoggerMock, type LoggerMock } from '../../utils/helpers/logger-mock
 import { makeQueryRunnerMock } from '../../utils/helpers/query-runner-mock.helper.js';
 import { makeOutboxPusherMock } from '../../utils/helpers/outbox-pusher-mock.helper.js';
 import type { OutboxPusher } from '../../../outbox/pushers/outbox.pusher.js';
+import { makeOutboxRawRow } from '../../utils/factories/outbox-raw-row.factory.js';
 
 describe('OutboxConsumer (Unit)', () => {
   let consumer: OutboxConsumer<OutboxModel, OutboxEntity>;
@@ -23,7 +24,7 @@ describe('OutboxConsumer (Unit)', () => {
   beforeEach(() => {
     loggerMock = makeLoggerMock();
     const { queryRunnerMock: qrMock } = makeQueryRunnerMock();
-    queryRunnerMock = qrMock as unknown as QueryRunner;
+    queryRunnerMock = qrMock;
 
     repositoryMock = {
       metadata: {
@@ -121,6 +122,36 @@ describe('OutboxConsumer (Unit)', () => {
       );
       expect(executeSpy).toHaveBeenCalled();
       expect(result).toHaveLength(2);
+    });
+
+    it('should return the claimed rows oldest first, then by id (RETURNING order is not guaranteed)', async () => {
+      const queryBuilder = queryRunnerMock.manager.createQueryBuilder();
+      jest.spyOn(queryBuilder, 'execute').mockResolvedValueOnce({
+        raw: [
+          makeOutboxRawRow('c', new Date('2026-11-04T09:47:45.158Z')),
+          makeOutboxRawRow('b', new Date('2026-11-04T09:47:45.069Z')),
+          makeOutboxRawRow('a', new Date('2026-11-04T09:47:45.069Z')),
+          makeOutboxRawRow('d', new Date('2026-11-04T09:47:45.090Z')),
+        ],
+      });
+
+      const result = await consumer.fetchPendingItems();
+
+      expect(result.map((item) => item.id)).toEqual(['a', 'b', 'd', 'c']);
+    });
+
+    it('should also sort rows whose created_at comes back as an ISO string', async () => {
+      const queryBuilder = queryRunnerMock.manager.createQueryBuilder();
+      jest.spyOn(queryBuilder, 'execute').mockResolvedValueOnce({
+        raw: [
+          makeOutboxRawRow('late', '2026-11-04T09:47:45.158Z'),
+          makeOutboxRawRow('early', '2026-11-04T09:47:45.069Z'),
+        ],
+      });
+
+      const result = await consumer.fetchPendingItems();
+
+      expect(result.map((item) => item.id)).toEqual(['early', 'late']);
     });
   });
 

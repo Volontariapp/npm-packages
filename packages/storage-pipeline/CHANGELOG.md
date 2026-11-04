@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/domain-storage@0.12.18
+
 ## 0.3.21
 
 ### Patch Changes
