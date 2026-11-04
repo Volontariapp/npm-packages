@@ -1,5 +1,51 @@
 # Changelog
 
+## 2.16.0
+
+### Minor Changes
+
+- The user.created trigger now also targets the `user:created` stream (`ARRAY['social:user', 'user:created']`), the same convention as user.deleted. ws-service opens its user creation gather from that stream; without it the feedback of ms-social was ignored and the WebSocket `user.created` notification was never sent. `users.trigger.sql` is aligned on `USERS_TRIGGER` (payload wrapped in `after`). Consumers must re-apply `USERS_TRIGGER` in a migration (ms-user `1792400000000-RefreshUserCreatedTrigger`).
+
+## 2.15.1
+
+### Patch Changes
+
+- Decrypt user emails on multi-row reads. BaseRepository.toEntities maps through the mapper directly and bypassed the toEntity override that decrypts the email, so findAll, findPage, findByIds (and saveMany) returned the encrypted value. PostgresUserRepository now overrides toEntities to go through toEntity.
+
+## 2.15.0
+
+### Minor Changes
+
+- Ordered and bounded pagination, plus batch lookups. database: `paginate` normalizes page and limit (page < 1 becomes 1, limit < 1 becomes DEFAULT_PAGE_LIMIT, limit > MAX_PAGE_LIMIT is capped) and orders by primary key when no order is given. domain-user: `findPage` filters statuses in SQL before LIMIT/OFFSET and `findByIds` loads badges in one query. domain-event: `searchAdvanced` breaks ties by id and `findByIds` is added. domain-post: posts and comments order by createdAt DESC then id DESC. domain-social: every paginated Cypher query has a deterministic ORDER BY, and `countParticipantsByEventIds` and `getPostsLikeSummary` read in batches.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.12.0
+  - @volontariapp/outbox@0.10.26
+
+## 2.14.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.8.4
+  - @volontariapp/messaging@2.30.2
+  - @volontariapp/database@3.11.6
+  - @volontariapp/outbox@0.10.25
+
+## 2.14.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/errors@0.7.0
+  - @volontariapp/auth@3.3.26
+  - @volontariapp/crypto@0.3.14
+  - @volontariapp/database@3.11.5
+  - @volontariapp/errors-nest@0.14.1
+  - @volontariapp/outbox@0.10.24
+
 ## 2.14.1
 
 ### Patch Changes

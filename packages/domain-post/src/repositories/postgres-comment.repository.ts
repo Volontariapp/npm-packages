@@ -40,7 +40,7 @@ export class PostgresCommentRepository
       { page, limit },
       {
         where: { postId },
-        order: { createdAt: 'DESC' },
+        order: { createdAt: 'DESC', id: 'DESC' },
       },
     );
   }
@@ -123,7 +123,9 @@ export class PostgresCommentRepository
   /** Recent comments of an author, newest first. `since` is compared in the session zone. */
   async listByAuthor(authorId: string, since?: Date, limit?: number): Promise<CommentEntity[]> {
     const cappedLimit =
-      limit !== undefined && limit > 0 ? Math.min(limit, MAX_COMMENTS_BY_AUTHOR) : MAX_COMMENTS_BY_AUTHOR;
+      limit !== undefined && limit > 0
+        ? Math.min(limit, MAX_COMMENTS_BY_AUTHOR)
+        : MAX_COMMENTS_BY_AUTHOR;
     const qb = this.repository
       .createQueryBuilder('comment')
       .where('comment.authorId = :authorId', { authorId })

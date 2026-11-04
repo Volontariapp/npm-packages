@@ -281,3 +281,29 @@ export interface GetEventAttendeesResponse {
   attendees: EventAttendee[];
   pagination: PaginationResponse | undefined;
 }
+
+export interface EventParticipantCount {
+  eventId: string;
+  /**
+   * Number of registered participants. The implicit creator is NOT counted
+   * (same semantics as GetEventParticipantsResponse.pagination.total).
+   */
+  participantCount: number;
+}
+
+export interface CountEventParticipantsResponse {
+  /** One entry per requested event id (0 when the event has no participant). */
+  counts: EventParticipantCount[];
+}
+
+export interface PostLikeSummary {
+  postId: string;
+  likeCount: number;
+  /** Whether the calling user (internal token) likes this post. */
+  likedByMe: boolean;
+}
+
+export interface GetPostsLikeSummaryResponse {
+  /** One entry per requested post id (like_count 0 when never liked). */
+  summaries: PostLikeSummary[];
+}

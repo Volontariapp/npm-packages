@@ -8,7 +8,8 @@ import { SocialEventMapper } from '../mappers/social-event.mapper.js';
 import type { IParticipationRepository } from '../repositories/interfaces/participation.repository.js';
 import { Injectable, Inject } from '@nestjs/common';
 import { NestNeo4jProvider, NEST_NEO4J_PROVIDER } from '@volontariapp/bridge-nest';
-import { Neo4jBaseRepository } from './base/neo4j-base.repository.js';
+import { Neo4jBaseRepository, toSafeInt } from './base/neo4j-base.repository.js';
+import { EventParticipantCountVO } from '../value-objects/batch-results.vo.js';
 
 @Injectable()
 export class Neo4jParticipationRepository
@@ -171,6 +172,7 @@ export class Neo4jParticipationRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:CREATED]->(e:SocialEvent)
        RETURN e.eventId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:CREATED]->(e:SocialEvent)
        RETURN count(e) AS total`,
@@ -185,8 +187,9 @@ export class Neo4jParticipationRepository
   ): Promise<PaginatedIdsVO> {
     const userModel = SocialUserMapper.toModel(user);
     return this.readPaginated(
-      `MATCH (:SocialUser {userId: $userId})-[:PARTICIPATE]->(e:SocialEvent)
+      `MATCH (:SocialUser {userId: $userId})-[r:PARTICIPATE]->(e:SocialEvent)
        RETURN e.eventId AS id
+       ORDER BY coalesce(r.registeredAt, datetime('1970-01-01T00:00:00Z')) DESC, id ASC
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:PARTICIPATE]->(e:SocialEvent)
        RETURN count(e) AS total`,
@@ -200,6 +203,7 @@ export class Neo4jParticipationRepository
     return this.readPaginated(
       `MATCH (:SocialUser {userId: $userId})-[:WISH_TO_PARTICIPATE]->(e:SocialEvent)
        RETURN e.eventId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (:SocialUser {userId: $userId})-[:WISH_TO_PARTICIPATE]->(e:SocialEvent)
        RETURN count(e) AS total`,
@@ -214,13 +218,31 @@ export class Neo4jParticipationRepository
   ): Promise<PaginatedIdsVO> {
     const eventModel = SocialEventMapper.toModel(event);
     return this.readPaginated(
-      `MATCH (u:SocialUser)-[:PARTICIPATE]->(:SocialEvent {eventId: $eventId})
+      `MATCH (u:SocialUser)-[r:PARTICIPATE]->(:SocialEvent {eventId: $eventId})
        RETURN u.userId AS id
+       ORDER BY coalesce(r.registeredAt, datetime('1970-01-01T00:00:00Z')) DESC, id ASC
        SKIP $skip LIMIT $limit`,
       `MATCH (u:SocialUser)-[:PARTICIPATE]->(:SocialEvent {eventId: $eventId})
        RETURN count(u) AS total`,
       { eventId: eventModel.id.value },
       pagination,
+    );
+  }
+
+  async countParticipantsByEventIds(eventIds: string[]): Promise<EventParticipantCountVO[]> {
+    const ids = this.normalizeBatchIds(eventIds);
+    if (ids.length === 0) return [];
+    // Meme definition que le total de getEventParticipants: relations PARTICIPATE entrantes
+    return this.read(
+      `UNWIND $eventIds AS id
+       OPTIONAL MATCH (u:SocialUser)-[:PARTICIPATE]->(:SocialEvent {eventId: id})
+       RETURN id AS eventId, count(u) AS participantCount`,
+      { eventIds: ids },
+      (r) =>
+        new EventParticipantCountVO(
+          r.get('eventId') as string,
+          toSafeInt(r.get('participantCount')),
+        ),
     );
   }
 
@@ -352,6 +374,7 @@ export class Neo4jParticipationRepository
       ${whereClause}
       WITH DISTINCT e
       RETURN e.eventId AS id
+      ORDER BY id
       SKIP $skip LIMIT $limit
     `;
 

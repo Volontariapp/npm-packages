@@ -85,6 +85,7 @@ export class Neo4jEventPostLinkRepository
     return this.readPaginated(
       `MATCH (p:SocialPost)-[:LINK_TO_EVENT]->(:SocialEvent {eventId: $eventId})
        RETURN p.postId AS id
+       ORDER BY id
        SKIP $skip LIMIT $limit`,
       `MATCH (p:SocialPost)-[:LINK_TO_EVENT]->(:SocialEvent {eventId: $eventId})
        RETURN count(p) AS total`,

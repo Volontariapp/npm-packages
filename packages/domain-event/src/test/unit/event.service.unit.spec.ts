@@ -689,17 +689,41 @@ describe('EventService (Unit)', () => {
     });
   });
 
+  // ─── findByIds ────────────────────────────────────────────────────────────
+
+  describe('findByIds()', () => {
+    it('should read all ids in one repository call with default relations', async () => {
+      const events = EventFactory.buildMany(2);
+      mockRepository.findByIds.mockResolvedValue(events);
+
+      const result = await service.findByIds(['a', 'b']);
+
+      expect(result).toEqual(events);
+      expect(mockRepository.findByIds).toHaveBeenCalledTimes(1);
+      expect(mockRepository.findByIds).toHaveBeenCalledWith(['a', 'b'], ['requirements', 'tags']);
+    });
+
+    it('should not call the repository for an empty list', async () => {
+      expect(await service.findByIds([])).toEqual([]);
+      expect(mockRepository.findByIds).not.toHaveBeenCalled();
+    });
+
+    it('should throw DATABASE_ERROR when the repository throws', async () => {
+      mockRepository.findByIds.mockRejectedValue(new Error('boom'));
+
+      await expect(service.findByIds(['a'])).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
   // ─── searchAdvanced ───────────────────────────────────────────────────────
 
   describe('searchAdvanced()', () => {
     it('should return paginated events from the repository', async () => {
       // Arrange
-      const { PaginatedEventsVO } = await import(
-        '../../value-objects/paginated-events.value-object.js'
-      );
-      const { SearchAdvancedVO } = await import(
-        '../../value-objects/search-advanced.value-object.js'
-      );
+      const { PaginatedEventsVO } =
+        await import('../../value-objects/paginated-events.value-object.js');
+      const { SearchAdvancedVO } =
+        await import('../../value-objects/search-advanced.value-object.js');
 
       const events = EventFactory.buildMany(2);
       const paginatedResult = new PaginatedEventsVO(events, 2, 1, 10);
@@ -717,9 +741,8 @@ describe('EventService (Unit)', () => {
 
     it('should throw DATABASE_ERROR when the repository throws', async () => {
       // Arrange
-      const { SearchAdvancedVO } = await import(
-        '../../value-objects/search-advanced.value-object.js'
-      );
+      const { SearchAdvancedVO } =
+        await import('../../value-objects/search-advanced.value-object.js');
       mockRepository.searchAdvanced.mockRejectedValue(new Error('Search failed'));
 
       // Act + Assert

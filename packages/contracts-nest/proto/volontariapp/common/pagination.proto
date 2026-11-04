@@ -2,15 +2,30 @@ syntax = "proto3";
 
 package volontariapp.common;
 
-
+// Pagination parameters shared by every paginated list RPC.
+//
+// Conventions:
+// - Pages are 1-based: the first page is page = 1.
+// - An absent PaginationRequest message means server defaults (page 1, limit 10).
+// - A field left at 0 (or negative) is unspecified and falls back to its default.
+// - The api-gateway caps limit at 100. The microservices accept up to 1000
+//   for now (temporary), so internal callers must not rely on that headroom.
 message PaginationRequest {
+  // 1-based page number. Default 1.
   int32 page = 1;
+  // Page size. Default 10, maximum 100 at the gateway (1000 at the microservices,
+  // temporary). 0 is unspecified and means the default.
   int32 limit = 2;
 }
 
+// Pagination metadata returned with every paginated list response.
 message PaginationResponse {
+  // Total number of items matching the query, across all pages.
   int32 total = 1;
+  // Effective 1-based page number served.
   int32 page = 2;
+  // Effective page size applied (after defaults and caps).
   int32 limit = 3;
+  // Total number of pages for the effective limit.
   int32 total_pages = 4;
 }

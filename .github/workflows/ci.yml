@@ -41,3 +41,21 @@ jobs:
           git add submodules/npm-packages
           git commit -m "chore: bump npm-packages submodule" || echo "No changes to commit"
           git push origin main
+
+  notify-ready:
+    needs: [run-pipeline]
+    # `needs:` implies success(): without !failure() a skipped job would skip the notification.
+    if: ${{ !failure() && !cancelled() && github.event_name == 'pull_request' }}
+    # A reusable workflow cannot raise the permissions of its caller.
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    uses: Volontariapp/ci-tools/.github/workflows/pr-ready-notify.yml@main
+    with:
+      channel: backend
+    # ORG_REPO_TOKEN is deliberately NOT passed: this workflow also runs on `labeled`, and a label
+    # set with a personal token would start a full pipeline run (snapshot publication included).
+    secrets:
+      DISCORD_WEBHOOK_BACKEND: ${{ secrets.DISCORD_WEBHOOK_BACKEND }}
+      DISCORD_WEBHOOK_FRONTEND: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}

@@ -4,3 +4,4 @@ export * from './relationship-type.vo.js';
 export * from './pagination-result.vo.js';
 export * from './paginated-ids.vo.js';
 export * from './paginated-attendees.vo.js';
+export * from './batch-results.vo.js';

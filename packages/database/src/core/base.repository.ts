@@ -1,5 +1,6 @@
 import type {
   Repository,
+  FindOptionsOrder,
   FindOptionsWhere,
   ObjectLiteral,
   DeepPartial,
@@ -18,6 +19,12 @@ import type { Constructor } from './mapper.service.js';
 import { databaseMapper } from './mapper.service.js';
 
 export type SearchableFields<T> = Array<keyof T>;
+
+/** Taille de page appliquee quand `limit` est invalide (< 1, NaN, infini). */
+export const DEFAULT_PAGE_LIMIT = 10;
+
+/** Taille de page maximale: toute valeur superieure est ramenee a ce plafond. */
+export const MAX_PAGE_LIMIT = 1000;
 
 export interface PaginationOptions {
   page: number;
@@ -224,15 +231,26 @@ export abstract class BaseRepository<
     return count > 0;
   }
 
+  /**
+   * Pagination par offset (page base 1) avec bornes defensives:
+   * - `page` < 1 ou non fini devient 1 (partie entiere sinon);
+   * - `limit` < 1 ou non fini devient DEFAULT_PAGE_LIMIT, `limit` > MAX_PAGE_LIMIT devient MAX_PAGE_LIMIT;
+   * - sans `options.order`, l'ordre est impose sur les colonnes de cle primaire
+   *   (ASC) pour que deux pages successives ne se chevauchent pas.
+   * La page et la limite retournees sont les valeurs normalisees.
+   */
   async paginate(
     pagination: PaginationOptions,
     options?: FindManyOptions<TModel>,
   ): Promise<PaginatedResult<TEntity>> {
-    const { page, limit } = pagination;
+    const page = this.normalizePage(pagination.page);
+    const limit = this.normalizeLimit(pagination.limit);
     const skip = (page - 1) * limit;
+    const order = this.resolveOrder(options?.order);
 
     const [models, total] = await this.repository.findAndCount({
       ...options,
+      ...(order !== undefined ? { order } : {}),
       skip,
       take: limit,
     });
@@ -318,6 +336,33 @@ export abstract class BaseRepository<
 
   get metadata() {
     return this.repository.metadata;
+  }
+
+  private normalizePage(page: number): number {
+    if (!Number.isFinite(page) || page < 1) return 1;
+    return Math.floor(page);
+  }
+
+  private normalizeLimit(limit: number): number {
+    if (!Number.isFinite(limit) || limit < 1) return DEFAULT_PAGE_LIMIT;
+    return Math.min(Math.floor(limit), MAX_PAGE_LIMIT);
+  }
+
+  /**
+   * Conserve l'ordre fourni; sinon trie sur les colonnes primaires. Retourne
+   * undefined quand l'entite n'a aucune cle primaire (aucun ordre impose).
+   */
+  private resolveOrder(
+    requested: FindOptionsOrder<TModel> | undefined,
+  ): FindOptionsOrder<TModel> | undefined {
+    if (requested !== undefined && Object.keys(requested).length > 0) return requested;
+    const primaryColumns = this.repository.metadata.primaryColumns;
+    if (primaryColumns.length === 0) return requested;
+    const order: Record<string, 'ASC'> = {};
+    for (const column of primaryColumns) {
+      order[column.propertyName] = 'ASC';
+    }
+    return order as FindOptionsOrder<TModel>;
   }
 
   private getDefaultSearchableFields(): SearchableFields<TModel> {

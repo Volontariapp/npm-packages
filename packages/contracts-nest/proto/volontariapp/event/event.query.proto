@@ -26,6 +26,7 @@ message SearchEventsQuery {
 }
 
 message GetEventsByIdsQuery {
+  // At most 100 ids per call.
   repeated string ids = 1;
 }
 

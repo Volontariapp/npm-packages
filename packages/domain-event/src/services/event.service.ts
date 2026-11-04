@@ -45,6 +45,25 @@ export class EventService {
     }
   }
 
+  /**
+   * Lecture par lot en une requete (relations de `findById` par defaut). Les ids inconnus sont
+   * absents du resultat; au plus MAX_EVENT_IDS_PER_LOOKUP ids sont lus.
+   */
+  async findByIds(
+    ids: string[],
+    relations: string[] = ['requirements', 'tags'],
+  ): Promise<EventEntity[]> {
+    if (ids.length === 0) return [];
+    try {
+      return await this.eventRepository.findByIds(ids, relations);
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      const err = error as Error;
+      this.logger.error(`Failed to find ${ids.length.toString()} events by ids`, err);
+      throw DATABASE_ERROR('finding events by ids', err.message);
+    }
+  }
+
   async findAll(): Promise<EventEntity[]> {
     try {
       return await this.eventRepository.findAll();

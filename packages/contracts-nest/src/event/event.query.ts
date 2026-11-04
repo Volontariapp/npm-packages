@@ -29,6 +29,7 @@ export interface SearchEventsQuery {
 }
 
 export interface GetEventsByIdsQuery {
+  /** At most 100 ids per call. */
   ids: string[];
 }
 

@@ -112,7 +112,15 @@ export class PostgresPostRepository
     readerId?: string,
   ): Promise<PaginatedResult<PostEntity>> {
     if (authorId && readerId && authorId === readerId) {
-      return super.paginate({ page, limit }, { where: { authorId }, relations: ['media'] });
+      // Ordre explicite (recent d'abord, id en departage) pour des pages stables
+      return super.paginate(
+        { page, limit },
+        {
+          where: { authorId },
+          relations: ['media'],
+          order: { createdAt: 'DESC', id: 'DESC' },
+        },
+      );
     }
 
     const visibleStatuses = [PostMediaStatus.NONE, PostMediaStatus.READY];
@@ -121,7 +129,8 @@ export class PostgresPostRepository
       .leftJoinAndSelect('post.media', 'media')
       .skip((page - 1) * limit)
       .take(limit)
-      .orderBy('post.createdAt', 'DESC');
+      .orderBy('post.createdAt', 'DESC')
+      .addOrderBy('post.id', 'DESC');
 
     if (authorId) {
       qb.andWhere('post.authorId = :authorId', { authorId });

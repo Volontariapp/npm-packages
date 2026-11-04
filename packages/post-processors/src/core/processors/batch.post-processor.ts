@@ -4,6 +4,7 @@ import type { RedisStreamEntry, ExtractPayload, ParseResult } from '../../types/
 import type { BatchEventItem } from '../../interfaces/index.js';
 import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 import { runBatchInTraceContext } from '@volontariapp/database';
+import { isInfrastructureError } from '@volontariapp/errors';
 
 export abstract class BatchPostProcessor<
   EventType extends EventMessagingType,
@@ -170,6 +171,17 @@ export abstract class BatchPostProcessor<
     error: Error,
     useIdempotency: boolean,
   ): Promise<void> {
+    if (isInfrastructureError(error)) {
+      this.deferInfrastructureRetry(
+        items.map((item) => item.messageId),
+        error,
+      );
+      if (useIdempotency) {
+        await this.releaseIdempotencyLocks(items.map((item) => item.messageId));
+      }
+      return;
+    }
+
     for (const item of items) {
       try {
         const attemptCount = await this.retryHelper.recordRetry(

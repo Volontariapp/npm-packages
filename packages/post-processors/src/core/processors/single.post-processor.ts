@@ -8,6 +8,7 @@ import type {
 import type { ParseResult, RedisStreamEntry } from '../../types/index.js';
 import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 import { runInTraceContext } from '@volontariapp/database';
+import { isInfrastructureError } from '@volontariapp/errors';
 
 type ExtractPayload<T> = T extends EventChangedPayload<infer P> ? P : T;
 
@@ -133,6 +134,11 @@ export abstract class SinglePostProcessor<
     useIdempotency: boolean,
   ): Promise<void> {
     try {
+      if (isInfrastructureError(error)) {
+        this.deferInfrastructureRetry([messageId], error);
+        return;
+      }
+
       const attemptCount = await this.retryHelper.recordRetry(
         this.redis,
         this.options.groupName,

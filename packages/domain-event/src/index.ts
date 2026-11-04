@@ -1,5 +1,7 @@
 import { registerEventMappings } from './models/mappers.js';
 
+export * from './constants.js';
+
 export * from './entities/event.entity.js';
 export * from './entities/tag.entity.js';
 export * from './entities/requirement.entity.js';

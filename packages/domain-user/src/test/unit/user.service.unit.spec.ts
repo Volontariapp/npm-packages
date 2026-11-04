@@ -234,6 +234,57 @@ describe('UserService (Unit)', () => {
     });
   });
 
+  describe('findPage()', () => {
+    it('delegue au repository avec les statuts exclus et renvoie users et total', async () => {
+      const users = UserFactory.buildMany(2);
+      mockRepository.findPage.mockResolvedValue([users, 4]);
+
+      const result = await service.findPage(new PaginationInput(5, 10), [
+        UserStatus.PENDING_DELETION,
+      ]);
+
+      expect(result.users).toEqual(users);
+      expect(result.total).toBe(4);
+      expect(mockRepository.findPage).toHaveBeenCalledWith({
+        limit: 5,
+        offset: 10,
+        excludeStatuses: [UserStatus.PENDING_DELETION],
+      });
+    });
+
+    it('accepte une pagination absente', async () => {
+      mockRepository.findPage.mockResolvedValue([[], 0]);
+
+      await service.findPage();
+
+      expect(mockRepository.findPage).toHaveBeenCalledWith({
+        limit: undefined,
+        offset: undefined,
+        excludeStatuses: undefined,
+      });
+    });
+  });
+
+  describe('findByIds()', () => {
+    it('lit tous les ids en un seul appel repository', async () => {
+      const users = UserFactory.buildMany(2);
+      mockRepository.findByIds.mockResolvedValue(users);
+
+      const result = await service.findByIds([new UserId('a'), new UserId('b')]);
+
+      expect(result).toEqual(users);
+      expect(mockRepository.findByIds).toHaveBeenCalledTimes(1);
+      expect(mockRepository.findByIds).toHaveBeenCalledWith(['a', 'b']);
+    });
+
+    it('ne touche pas au repository pour une liste vide', async () => {
+      const result = await service.findByIds([]);
+
+      expect(result).toEqual([]);
+      expect(mockRepository.findByIds).not.toHaveBeenCalled();
+    });
+  });
+
   // ───────────────────────────────────────────────────────────────────────────
   // findAll()
   // ───────────────────────────────────────────────────────────────────────────

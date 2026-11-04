@@ -1,19 +1,26 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
-import { BaseRepository, EventQueueEntity, EventQueueModel } from '@volontariapp/database';
+import {
+  BaseRepository,
+  EventQueueEntity,
+  EventQueueModel,
+  DEFAULT_PAGE_LIMIT,
+  MAX_PAGE_LIMIT,
+} from '@volontariapp/database';
 import { EventQueueRepository } from '@volontariapp/outbox';
 import { UserEventMessagingType } from '@volontariapp/messaging';
 import type { IUserDeleledPayload, IUserAvatarReplacedPayload } from '@volontariapp/messaging';
 import { Streams } from '@volontariapp/shared';
-import type { DeepPartial } from 'typeorm';
+import { In, Not } from 'typeorm';
+import type { DeepPartial, FindOptionsWhere } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { UserModel } from '../models/user.model.js';
 import { UserEntity } from '../entities/user.entity.js';
 import { UserStatus } from '../entities/user-status.enum.js';
-import { IUserRepository } from './interfaces/user.repository.js';
+import { IUserRepository, UserPageQuery } from './interfaces/user.repository.js';
 import { encryptDeterministic, decrypt } from '@volontariapp/crypto';
-import { EMAIL_ENCRYPTION_SECRET } from '../constants.js';
+import { EMAIL_ENCRYPTION_SECRET, MAX_USER_IDS_PER_LOOKUP } from '../constants.js';
 
 @Injectable()
 export class PostgresUserRepository
@@ -31,6 +38,15 @@ export class PostgresUserRepository
     const entity = super.toEntity(model);
     entity.email = decrypt(model.email, this.emailSecret);
     return entity;
+  }
+
+  /**
+   * BaseRepository.toEntities passe directement par le mapper et contourne `toEntity`: sans cette
+   * surcharge, les lectures multiples (findAll, findPage, findByIds, saveMany...) renvoyaient
+   * l'email chiffre au lieu de l'email en clair.
+   */
+  public override toEntities(models: UserModel[]): UserEntity[] {
+    return models.map((model) => this.toEntity(model));
   }
 
   protected override toModel(entity: Partial<UserEntity>): DeepPartial<UserModel> {
@@ -57,10 +73,54 @@ export class PostgresUserRepository
     return this.findOne({ rna });
   }
 
+  /**
+   * Une seule requete avec les relations de `findById` (badges). Dedoublonne, ignore les
+   * ids vides et plafonne a MAX_USER_IDS_PER_LOOKUP sans lever d'exception.
+   */
+  override async findByIds(ids: Array<string | number>): Promise<UserEntity[]> {
+    const unique = [...new Set(ids.map(String).filter((id) => id.length > 0))].slice(
+      0,
+      MAX_USER_IDS_PER_LOOKUP,
+    );
+    if (unique.length === 0) return [];
+    const models = await this.repository.find({
+      where: { id: In(unique) },
+      relations: ['userBadges', 'userBadges.badge'],
+    });
+    return this.toEntities(models);
+  }
+
+  // Deprecie: ni filtre de statut ni ordre, utiliser `findPage`.
   async findAll(limit?: number, offset?: number): Promise<[UserEntity[], number]> {
     const [models, total] = await this.repository.findAndCount({
       take: limit,
       skip: offset,
+    });
+    return [this.toEntities(models), total];
+  }
+
+  async findPage(query: UserPageQuery): Promise<[UserEntity[], number]> {
+    const requestedLimit = query.limit;
+    const take =
+      requestedLimit === undefined || !Number.isFinite(requestedLimit) || requestedLimit < 1
+        ? DEFAULT_PAGE_LIMIT
+        : Math.min(Math.floor(requestedLimit), MAX_PAGE_LIMIT);
+    const requestedOffset = query.offset;
+    const skip =
+      requestedOffset === undefined || !Number.isFinite(requestedOffset) || requestedOffset < 0
+        ? 0
+        : Math.floor(requestedOffset);
+
+    const where: FindOptionsWhere<UserModel> =
+      query.excludeStatuses !== undefined && query.excludeStatuses.length > 0
+        ? { status: Not(In(query.excludeStatuses)) }
+        : {};
+
+    const [models, total] = await this.repository.findAndCount({
+      where,
+      order: { id: 'ASC' },
+      take,
+      skip,
     });
     return [this.toEntities(models), total];
   }

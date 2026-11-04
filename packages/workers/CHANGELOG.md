@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.4.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.12.0
+  - @volontariapp/outbox@0.10.26
+
+## 1.4.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.30.2
+  - @volontariapp/database@3.11.6
+  - @volontariapp/outbox@0.10.25
+
+## 1.4.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/bridge@1.0.11
+  - @volontariapp/database@3.11.5
+  - @volontariapp/health-check@1.0.11
+  - @volontariapp/outbox@0.10.24
+
 ## 1.4.21
 
 ### Patch Changes
