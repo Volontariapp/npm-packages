@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeEach, afterAll, beforeAll } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  afterAll,
+  beforeAll,
+  jest,
+} from '@jest/globals';
 import { Redis } from 'ioredis';
 import { testRedisOptions } from '../../../redis-config.js';
 import { RetryHelper } from '../../../../core/helpers/retry.helper.js';
@@ -14,6 +23,10 @@ describe('RetryHelper — Integration', () => {
 
   afterAll(async () => {
     await redis.quit();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   beforeEach(async () => {
@@ -102,36 +115,24 @@ describe('RetryHelper — Integration', () => {
     const groupName = 'test-group';
     const messageId1 = '1-0';
     const messageId2 = '2-0';
+    // RetryHelper reads Date.now() both to score and to compare: a manual clock makes the
+    // windows exact. Real timers were flaky on loaded CI runners (message 2 already ready).
+    let now = 1_700_000_000_000;
+    jest.spyOn(Date, 'now').mockImplementation(() => now);
 
-    // Enqueue message 1 with delay (attempt 1 -> delay 100ms)
+    // Attempt 1 -> ready in 100 ms, attempt 2 -> ready in 200 ms
     await helper.enqueueForRetry(redis, groupName, messageId1, 1);
-
-    // Enqueue message 2 with delay (attempt 2 -> delay 200ms)
     await helper.enqueueForRetry(redis, groupName, messageId2, 2);
 
-    // Initially, no messages should be ready because time hasn't passed
-    const ready1 = await helper.getReadyForRetry(redis, groupName);
-    expect(ready1).toHaveLength(0);
+    expect(await helper.getReadyForRetry(redis, groupName)).toHaveLength(0);
 
-    // Wait 120ms (message 1 is ready, message 2 is not)
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 120);
-    });
+    now += 150;
+    expect(await helper.getReadyForRetry(redis, groupName)).toEqual([messageId1]);
+    // A ready message is removed from the queue once returned
+    expect(await helper.getReadyForRetry(redis, groupName)).toHaveLength(0);
 
-    const ready2 = await helper.getReadyForRetry(redis, groupName);
-    expect(ready2).toEqual([messageId1]);
-
-    // Check again immediately, message 1 should have been popped/removed already
-    const ready3 = await helper.getReadyForRetry(redis, groupName);
-    expect(ready3).toHaveLength(0);
-
-    // Wait another 100ms (message 2 is now ready)
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 100);
-    });
-
-    const ready4 = await helper.getReadyForRetry(redis, groupName);
-    expect(ready4).toEqual([messageId2]);
+    now += 100;
+    expect(await helper.getReadyForRetry(redis, groupName)).toEqual([messageId2]);
   });
 
   it('should push failed messages to DLQ stream in a real Redis instance', async () => {
