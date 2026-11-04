@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.0
+
+### Minor Changes
+
+- Add `createDomainMetrics(domain)`: custom metrics named `volontariapp.<domain>.<name>` with name validation and removal of identifier attributes (`userId`, `email`...) to bound Datadog cardinality.
+
 ## 2.4.0
 
 ### Minor Changes
