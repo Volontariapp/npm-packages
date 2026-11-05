@@ -87,14 +87,21 @@ while IFS= read -r PKG_ID; do
   PKG_VER=$(node -p "require('./packages/$PKG_ID/package.json').version")
   LAYER=$(echo "$PLAN" | jq -r ".packages[] | select(.id == \"$PKG_ID\") | .layer")
 
-  echo -e "  ${CYAN}[layer $LAYER] Publishing ${PKG_NAME}@${PKG_VER}…${NC}"
-  (
-    cd "$PROJECT_ROOT/packages/$PKG_ID"
-    yarn npm publish --access public --tag next
-  )
+  # A re-run on the same commit (label added, job re-run) yields the same snapshot version, and
+  # the registry rejects a second publish with a 403. Skip it, but still list the version so the
+  # PR comment keeps its tags.
+  if npm view "${PKG_NAME}@${PKG_VER}" version >/dev/null 2>&1; then
+    echo -e "  ${YELLOW}⟳  SKIP [layer $LAYER] ${PKG_NAME}@${PKG_VER} (already on registry)${NC}"
+  else
+    echo -e "  ${CYAN}[layer $LAYER] Publishing ${PKG_NAME}@${PKG_VER}…${NC}"
+    (
+      cd "$PROJECT_ROOT/packages/$PKG_ID"
+      yarn npm publish --access public --tag next
+    )
+    echo -e "  ${GREEN}✓ ${PKG_NAME}@${PKG_VER}${NC}"
+  fi
 
   echo "${PKG_NAME}@${PKG_VER}" >> "$TAGS_FILE"
-  echo -e "  ${GREEN}✓ ${PKG_NAME}@${PKG_VER}${NC}"
 done < <(echo "$PLAN" | jq -r '.publish_order[]')
 
 # ── Done ─────────────────────────────────────────────────────────────────────
