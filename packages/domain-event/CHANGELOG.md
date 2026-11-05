@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.15.0
+
+### Minor Changes
+
+- SearchAdvancedVO takes excludedOrganizerIds (last optional parameter) and searchAdvanced leaves out the events organized by these users (organizerId NOT IN). Replaces the per-user AdminGetUserEvent calls of the gateway (excludeBlockedUsers) and worker-ranking.
+
 ## 3.14.2
 
 ### Patch Changes

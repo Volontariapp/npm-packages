@@ -428,6 +428,12 @@ export class PostgresEventRepository
       query.andWhere('event.id NOT IN (:...excludedIds)', { excludedIds: params.excludedIds });
     }
 
+    if (params.excludedOrganizerIds && params.excludedOrganizerIds.length > 0) {
+      query.andWhere('event.organizerId NOT IN (:...excludedOrganizerIds)', {
+        excludedOrganizerIds: params.excludedOrganizerIds,
+      });
+    }
+
     if (params.tagSlugs && params.tagSlugs.length > 0) {
       query.leftJoin('event.tags', 'tag');
       query.andWhere('tag.slug IN (:...tagSlugs)', { tagSlugs: params.tagSlugs });
