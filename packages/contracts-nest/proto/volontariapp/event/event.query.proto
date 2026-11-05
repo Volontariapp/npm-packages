@@ -23,6 +23,9 @@ message SearchEventsQuery {
   optional string start_date_to = 10;
   repeated EventState statuses = 11;
   volontariapp.common.PaginationRequest pagination = 12;
+  // Events whose organizer is one of these users are left out (blocked users, the reader's own
+  // events). At most as many ids as `excluded_ids`.
+  repeated string excluded_organizer_ids = 13;
 }
 
 message GetEventsByIdsQuery {

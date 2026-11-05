@@ -6,6 +6,15 @@
 
 - Add Redis Streams metrics (length, pending, dlq_length gauges; retry_attempts, dlq_sent, processed counters) published through `@volontariapp/monitoring`.
 
+## 3.4.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.30.3
+  - @volontariapp/database@3.12.2
+  - @volontariapp/outbox@0.10.28
+
 ## 3.4.9
 
 ### Patch Changes

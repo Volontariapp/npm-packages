@@ -16,6 +16,8 @@ export class SearchAdvancedVO {
     public readonly statuses?: EventState[],
     public readonly page: number = 1,
     public readonly limit: number = 10,
+    /** Events organized by these users are left out (blocked users, the reader's own events). */
+    public readonly excludedOrganizerIds?: string[],
   ) {
     this.validate();
   }

@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.15.0
+
+### Minor Changes
+
+- SearchAdvancedVO takes excludedOrganizerIds (last optional parameter) and searchAdvanced leaves out the events organized by these users (organizerId NOT IN). Replaces the per-user AdminGetUserEvent calls of the gateway (excludeBlockedUsers) and worker-ranking.
+
+## 3.14.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.8.5
+  - @volontariapp/messaging@2.30.3
+  - @volontariapp/database@3.12.2
+  - @volontariapp/outbox@0.10.28
+
 ## 3.14.1
 
 ### Patch Changes

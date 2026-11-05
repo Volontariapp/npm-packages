@@ -495,6 +495,53 @@ describe('PostgresEventRepository (Integration)', () => {
       expect(result.total).toBe(1);
     });
 
+    it('should leave out the events of excludedOrganizerIds', async () => {
+      const blockedOrganizer = '33333333-3333-4333-8333-333333333333';
+      const otherBlockedOrganizer = '44444444-4444-4444-8444-444444444444';
+      await eventRepository.create(
+        EventFactory.buildInput({
+          name: 'Blocked Organizer Meetup',
+          organizerId: blockedOrganizer,
+          state: EventState.EVENT_STATE_PUBLISHED,
+        }),
+      );
+      await eventRepository.create(
+        EventFactory.buildInput({
+          name: 'Other Blocked Meetup',
+          organizerId: otherBlockedOrganizer,
+          state: EventState.EVENT_STATE_PUBLISHED,
+        }),
+      );
+      const kept = await eventRepository.create(
+        EventFactory.buildInput({ name: 'Kept Meetup', state: EventState.EVENT_STATE_PUBLISHED }),
+      );
+
+      const { SearchAdvancedVO } = await import(
+        '../../value-objects/search-advanced.value-object.js'
+      );
+      const params = new SearchAdvancedVO(
+        undefined,
+        undefined,
+        undefined,
+        false,
+        'Meetup',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        1,
+        10,
+        [blockedOrganizer, otherBlockedOrganizer],
+      );
+
+      const result = await eventRepository.searchAdvanced(params);
+
+      expect(result.events.map((event) => event.id)).toEqual([kept.id]);
+      expect(result.total).toBe(1);
+    });
+
     it('should filter correctly with dates and pagination', async () => {
       await eventRepository.create(
         EventFactory.buildInput({ name: 'Past Event', startAt: new Date('2023-01-01') }),
