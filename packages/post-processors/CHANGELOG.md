@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.0
+
+### Minor Changes
+
+- Add Redis Streams metrics (length, pending, dlq_length gauges; retry_attempts, dlq_sent, processed counters) published through `@volontariapp/monitoring`.
+
 ## 3.4.10
 
 ### Patch Changes

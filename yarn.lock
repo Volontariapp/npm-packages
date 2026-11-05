@@ -5136,7 +5136,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@volontariapp/monitoring@workspace:packages/monitoring":
+"@volontariapp/monitoring@workspace:*, @volontariapp/monitoring@workspace:packages/monitoring":
   version: 0.0.0-use.local
   resolution: "@volontariapp/monitoring@workspace:packages/monitoring"
   dependencies:
@@ -5216,6 +5216,7 @@ __metadata:
     "@volontariapp/health-check": "workspace:*"
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
+    "@volontariapp/monitoring": "workspace:*"
     "@volontariapp/outbox": "workspace:*"
     "@volontariapp/shared": "workspace:*"
     "@volontariapp/testing": "workspace:*"

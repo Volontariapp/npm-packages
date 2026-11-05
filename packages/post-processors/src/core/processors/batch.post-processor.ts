@@ -133,6 +133,7 @@ export abstract class BatchPostProcessor<
         () => this.processEvents(items),
       );
       this.circuitBreaker.recordSuccess();
+      this.streamMetrics.recordProcessed(items.length);
 
       // Successfully processed - clear retry data and acknowledge all
       const messageIds = items.map((item) => item.messageId);
@@ -191,6 +192,7 @@ export abstract class BatchPostProcessor<
           error,
           this.options.idempotencyTtlSeconds,
         );
+        this.streamMetrics.recordRetryAttempt();
 
         if (this.retryHelper.shouldRetry(attemptCount)) {
           await this.retryHelper.enqueueForRetry(
