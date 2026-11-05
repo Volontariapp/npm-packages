@@ -758,10 +758,9 @@ export interface ParticipationQueryServiceClient {
   getEventAttendees(request: GetEventAttendeesQuery): Observable<GetEventAttendeesResponse>;
 
   /**
-   * Deprecated (lot 5): callers move to SearchEventsQuery.excluded_organizer_ids of ms-event.
-   * To be removed once no client calls it (then `reserved`).
-   *
-   * @deprecated
+   * Admin and E2E only: reads the CREATED links of a user in the social graph. Never call it on
+   * behalf of a normal user; to leave out the events of some organizers, use
+   * SearchEventsQuery.excluded_organizer_ids of ms-event.
    */
 
   adminGetUserEvent(request: AdminGetUserEventQuery): Observable<AdminGetUserEventResponse>;
@@ -815,8 +814,9 @@ export interface ParticipationQueryServiceController {
   ): Promise<GetEventAttendeesResponse> | Observable<GetEventAttendeesResponse> | GetEventAttendeesResponse;
 
   /**
-   * Deprecated (lot 5): callers move to SearchEventsQuery.excluded_organizer_ids of ms-event.
-   * To be removed once no client calls it (then `reserved`).
+   * Admin and E2E only: reads the CREATED links of a user in the social graph. Never call it on
+   * behalf of a normal user; to leave out the events of some organizers, use
+   * SearchEventsQuery.excluded_organizer_ids of ms-event.
    */
 
   adminGetUserEvent(
