@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/outbox",
-  "version": "0.10.27",
+  "version": "0.10.28",
   "publishConfig": {
     "access": "public",
     "provenance": true
