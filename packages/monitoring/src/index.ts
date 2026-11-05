@@ -11,6 +11,11 @@ export {
   createObservableGauge,
 } from './metrics.js';
 
+export { createDomainMetrics } from './domain-metrics.js';
+export type { DomainMetrics } from './domain-metrics.js';
+export { METRIC_NAME_PREFIX, buildMetricName } from './metric-name.js';
+export { FORBIDDEN_ATTRIBUTE_KEYS, stripHighCardinalityAttributes } from './metric-attributes.js';
+
 export type {
   Meter,
   MetricOptions,

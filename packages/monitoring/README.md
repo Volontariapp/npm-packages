@@ -6,6 +6,23 @@ Package en charge de l'observabilité et du monitoring du cluster de services de
 ## Key Features
 - **OpenTelemetry API** : Implémentation du traçage distribué (Distributed Tracing), permettant de propager et de tracer les requêtes (ex: `X-Correlation-ID`) à travers l'API Gateway, gRPC, et les Workers.
 
+## Métriques custom
+
+Les helpers bruts (`createCounter`, `createHistogram`, `createGauge`...) acceptent n'importe quel nom. Pour toute nouvelle métrique, passer par `createDomainMetrics(domaine)`.
+
+```ts
+import { createDomainMetrics } from '@volontariapp/monitoring';
+
+const outbox = createDomainMetrics('outbox');
+const processed = outbox.counter('jobs_processed', 'Jobs traités par l\'outbox');
+processed.add(1, { status: 'success' }); // volontariapp.outbox.jobs_processed
+```
+
+- **Nom** : `volontariapp.<domaine>.<nom>`. Le domaine est un segment (`outbox`, `redis_streams`) ; le nom est un ou plusieurs segments séparés par des points. Un segment est en minuscules, chiffres et `_`, et commence par une lettre. Un nom invalide lève une erreur au démarrage.
+- **Instruments** : `counter`, `upDownCounter`, `histogram`, `gauge`, `observableGauge`.
+- **Tags `service` et `env`** : ne pas les passer en attribut. Ils viennent de la Resource posée par `initTracing` (`service.name`, `deployment.environment`), que Datadog convertit en tags `service` et `env`.
+- **Cardinalité** : chaque valeur distincte d'un attribut crée une série. Les attributs identifiants (`userId`, `user_id`, `email`, `username`, `sessionId`, `requestId`, `traceId`, `correlationId`) sont retirés avec un avertissement dans les logs. Utiliser des valeurs bornées (`status`, `queue`, `stream`). Le filtre ne s'applique pas aux callbacks de `observableGauge`.
+
 ## Configuration de `initTracing`
 
 | Réglage | Option | Variable d'environnement | Défaut |
