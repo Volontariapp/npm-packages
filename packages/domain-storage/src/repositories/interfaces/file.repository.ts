@@ -7,6 +7,7 @@ import type {
   ConfirmUploadResult,
   CreatePendingFileInput,
   FileAttachmentResult,
+  FilePurgeCandidate,
   RejectScanInput,
   ReleaseFileInput,
   ReleaseForEntityInput,
@@ -67,10 +68,23 @@ export interface IFileRepository {
   /**
    * Account deletion (`user.deleted`): every `PENDING` / `RESERVED` / `ATTACHED` file of the
    * owner to `ORPHANED`, except the platform resources (`BADGE_ICON`). Returns the released ids.
+   * When at least one file is released, a `storage.cleanup_files` job is written in the same
+   * transaction so that the purge runs at once.
    */
   releaseForOwner(input: ReleaseForOwnerInput): Promise<string[]>;
   /**
    * Alias for account deletion: releases all files belonging to ownerId.
    */
   markFilesForDeletionByOwner(ownerId: string): Promise<string[]>;
+
+  /**
+   * `ORPHANED` files whose objects are to be purged, oldest `updated_at` first. `limit` is a
+   * positive integer, at most `MAX_PURGE_BATCH_SIZE`.
+   */
+  listPurgeCandidates(limit: number): Promise<FilePurgeCandidate[]>;
+  /**
+   * `ORPHANED` to `DELETED`, once the objects are deleted (objects first, row after). A file in
+   * any other status is never touched. Returns the ids moved by this call.
+   */
+  markDeleted(fileIds: readonly string[]): Promise<string[]>;
 }

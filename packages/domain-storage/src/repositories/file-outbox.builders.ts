@@ -40,6 +40,19 @@ export const buildScanFileJob = (
     scheduledAt: new Date(),
   });
 
+/** `storage.cleanup_files`: purge of the objects of the `ORPHANED` files (no payload). */
+export const buildCleanupFilesJob = (
+  emitterId: string,
+): JobsOutboxEntity<StorageJobType.CLEANUP_FILES> =>
+  JobsOutboxEntity.createJob<StorageJobType.CLEANUP_FILES>({
+    type: StorageJobType.CLEANUP_FILES,
+    emitter: FILE_OUTBOX_EMITTER,
+    emitterId,
+    target: StorageQueue.STORAGE,
+    payload: {},
+    scheduledAt: new Date(),
+  });
+
 /**
  * An `ATTACHED` row always carries its entity id. A null one breaks that invariant: fail, so
  * the whole transition rolls back instead of emitting a result no consumer can route.

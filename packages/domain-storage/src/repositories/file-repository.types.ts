@@ -123,3 +123,15 @@ export interface ReleaseFileInput {
 export interface ReleaseForOwnerInput {
   ownerId: string;
 }
+
+/** Upper bound of the `limit` of `listPurgeCandidates`: one purge batch. */
+export const MAX_PURGE_BATCH_SIZE = 100;
+
+/** An `ORPHANED` file whose objects the purge job must delete before `markDeleted`. */
+export interface FilePurgeCandidate {
+  id: string;
+  /** Key of the private (quarantine) object, always set. */
+  quarantineKey: string;
+  /** Key of the public object, null when the file never became `CLEAN`. */
+  publicKey: string | null;
+}

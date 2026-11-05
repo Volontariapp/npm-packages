@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from '@volontariapp/database';
 import { BaseRepository, EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
 import type { StorageEventMessagingType, StorageJobType } from '@volontariapp/messaging';
-import { InternalServerError } from '@volontariapp/errors';
+import { BadRequestError, InternalServerError } from '@volontariapp/errors';
 import { EventQueueRepository, JobsOutboxRepository } from '@volontariapp/outbox';
 import { In } from 'typeorm';
 import type { EntityManager } from 'typeorm';
@@ -31,12 +31,14 @@ import type {
 import { getValidationPolicy } from '../policies/get-validation-policy.js';
 import {
   buildAttachmentRejectedEvent,
+  buildCleanupFilesJob,
   buildFileRejectedEvent,
   buildFileScannedEvent,
   buildScanFileJob,
   toAttachmentRejectionReason,
 } from './file-outbox.builders.js';
 import type { IFileRepository } from './interfaces/file.repository.js';
+import { MAX_PURGE_BATCH_SIZE } from './file-repository.types.js';
 import type {
   AttachedRow,
   AttachFromConfirmationEventInput,
@@ -45,6 +47,7 @@ import type {
   ConfirmUploadResult,
   CreatePendingFileInput,
   FileAttachmentResult,
+  FilePurgeCandidate,
   RejectScanInput,
   ReleaseFileInput,
   ReleaseForEntityInput,
@@ -624,27 +627,37 @@ export class PostgresFileRepository
    * file is refused with `storage.attachment_rejected`. Returns the released file ids.
    */
   async releaseForOwner(input: ReleaseForOwnerInput): Promise<string[]> {
-    const [rows] = await this.repository.manager.query<UpdateReturning<{ id: string }>>(
-      `UPDATE files
-       SET status = $1, updated_at = now()
-       WHERE owner_id = $2
-         AND entity_type <> ALL($3::varchar[])
-         AND status IN ($4, $5, $6)
-       RETURNING id`,
-      [
-        FileStatus.ORPHANED,
-        input.ownerId,
-        OWNER_RELEASE_EXCLUDED_ENTITY_TYPES,
-        FileStatus.PENDING,
-        FileStatus.RESERVED,
-        FileStatus.ATTACHED,
-      ],
+    const releasedIds = await this.runInTransaction(
+      'releaseForOwner',
+      input.ownerId,
+      async (manager) => {
+        const [rows] = await manager.query<UpdateReturning<{ id: string }>>(
+          `UPDATE files
+           SET status = $1, updated_at = now()
+           WHERE owner_id = $2
+             AND entity_type <> ALL($3::varchar[])
+             AND status IN ($4, $5, $6)
+           RETURNING id`,
+          [
+            FileStatus.ORPHANED,
+            input.ownerId,
+            OWNER_RELEASE_EXCLUDED_ENTITY_TYPES,
+            FileStatus.PENDING,
+            FileStatus.RESERVED,
+            FileStatus.ATTACHED,
+          ],
+        );
+        if (rows.length > 0) {
+          await this.writeCleanupJob(manager, input.ownerId);
+        }
+        return rows.map((row) => row.id);
+      },
     );
 
     this.logger.log(
-      `releaseForOwner for ${input.ownerId}: ${String(rows.length)} file(s) released`,
+      `releaseForOwner for ${input.ownerId}: ${String(releasedIds.length)} file(s) released`,
     );
-    return rows.map((row) => row.id);
+    return releasedIds;
   }
 
   /**
@@ -652,6 +665,61 @@ export class PostgresFileRepository
    */
   async markFilesForDeletionByOwner(ownerId: string): Promise<string[]> {
     return this.releaseForOwner({ ownerId });
+  }
+
+  /**
+   * `ORPHANED` files to purge, oldest first (`idx_files_orphaned`). The purge deletes their
+   * objects, then calls `markDeleted`.
+   */
+  async listPurgeCandidates(limit: number): Promise<FilePurgeCandidate[]> {
+    if (!Number.isInteger(limit) || limit < 1 || limit > MAX_PURGE_BATCH_SIZE) {
+      throw new BadRequestError(
+        `Purge batch size must be an integer between 1 and ${String(MAX_PURGE_BATCH_SIZE)}.`,
+        'INVALID_PURGE_BATCH_SIZE',
+        { limit, max: MAX_PURGE_BATCH_SIZE },
+      );
+    }
+
+    const rows = await this.repository.manager.query<
+      Array<{ id: string; quarantine_key: string; public_key: string | null }>
+    >(
+      `SELECT id, quarantine_key, public_key
+       FROM files
+       WHERE status = $1
+       ORDER BY updated_at ASC, id ASC
+       LIMIT $2`,
+      [FileStatus.ORPHANED, limit],
+    );
+
+    this.logger.log(`listPurgeCandidates: ${String(rows.length)} file(s) to purge`);
+    return rows.map((row) => ({
+      id: row.id,
+      quarantineKey: row.quarantine_key,
+      publicKey: row.public_key,
+    }));
+  }
+
+  /**
+   * `ORPHANED` to `DELETED` once the objects are gone. `ORPHANED` is absorbing except for this
+   * step: a row in another status is never touched, so a replay is a no-op.
+   */
+  async markDeleted(fileIds: readonly string[]): Promise<string[]> {
+    if (fileIds.length === 0) {
+      return [];
+    }
+
+    const [rows] = await this.repository.manager.query<UpdateReturning<{ id: string }>>(
+      `UPDATE files
+       SET status = $1, updated_at = now()
+       WHERE id = ANY($2::uuid[]) AND status = $3
+       RETURNING id`,
+      [FileStatus.DELETED, [...new Set(fileIds)], FileStatus.ORPHANED],
+    );
+
+    this.logger.log(
+      `markDeleted: ${String(rows.length)} of ${String(fileIds.length)} file(s) marked DELETED`,
+    );
+    return rows.map((row) => row.id);
   }
 
   /**
@@ -766,6 +834,12 @@ export class PostgresFileRepository
     await new JobsOutboxRepository<StorageJobType.SCAN_FILE>(
       manager.getRepository(JobsOutboxModel),
     ).create(buildScanFileJob(fileId, ownerId));
+  }
+
+  private async writeCleanupJob(manager: EntityManager, ownerId: string): Promise<void> {
+    await new JobsOutboxRepository<StorageJobType.CLEANUP_FILES>(
+      manager.getRepository(JobsOutboxModel),
+    ).create(buildCleanupFilesJob(ownerId));
   }
 
   /** Outbox repository bound to the transaction of `manager`, as in `domain-post`. */
