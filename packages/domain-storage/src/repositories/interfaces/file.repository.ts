@@ -57,12 +57,14 @@ export interface IFileRepository {
   ): Promise<FileAttachmentResult[]>;
   /**
    * Release by entity (`*.deleted`, `*.creation_failed`): `RESERVED` / `ATTACHED` files of the
-   * entity to `ORPHANED`, and the entity is written in `released_entities` (tombstone).
+   * entity to `ORPHANED`, and the entity is written in `released_entities` (tombstone). When at
+   * least one file is released, a `storage.cleanup_files` job is written in the same transaction.
    */
   releaseForEntity(input: ReleaseForEntityInput): Promise<ReleaseForEntityResult>;
   /**
    * Release of a named file (`oldFileId` of a `*_replaced` event) from `PENDING`, `RESERVED` or
    * `ATTACHED`. Returns false when nothing matched (replay, other entity, `ORPHANED` absorbing).
+   * When the file is released, a `storage.cleanup_files` job is written in the same transaction.
    */
   releaseFile(input: ReleaseFileInput): Promise<boolean>;
   /**
@@ -76,6 +78,12 @@ export interface IFileRepository {
    * Alias for account deletion: releases all files belonging to ownerId.
    */
   markFilesForDeletionByOwner(ownerId: string): Promise<string[]>;
+
+  /**
+   * Periodic safety net of the purge: writes one `storage.cleanup_files` job (emitter
+   * `emitterId`, a uuid) when at least one file is `ORPHANED`. Returns whether a job was written.
+   */
+  requestPurge(emitterId: string): Promise<boolean>;
 
   /**
    * `ORPHANED` files whose objects are to be purged, oldest `updated_at` first. `limit` is a

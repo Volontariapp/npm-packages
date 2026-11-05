@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.10
+
+### Patch Changes
+
+- domain-storage: releaseForEntity and releaseFile write the storage.cleanup_files job in the same transaction when a file is released (G9), and requestPurge writes it when ORPHANED files are waiting (periodic purge). storage-client: the storage channel is opened at startup and its time to READY is logged, and a ConfirmFileAttachment timeout logs the channel state (G7).
+
 ## 0.3.9
 
 ### Patch Changes

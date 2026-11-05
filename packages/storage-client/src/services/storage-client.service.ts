@@ -1,6 +1,6 @@
-import { Inject, Injectable, OnModuleInit, Optional } from '@nestjs/common';
+import { Inject, Injectable, OnApplicationBootstrap, OnModuleInit, Optional } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
-import { Metadata } from '@grpc/grpc-js';
+import { type Client, connectivityState, Metadata } from '@grpc/grpc-js';
 import { firstValueFrom, throwError, timeout } from 'rxjs';
 import {
   STORAGE_SERVICE_NAME,
@@ -12,7 +12,11 @@ import {
 import { Logger } from '@volontariapp/logger';
 import { GrpcStatus, isBaseError } from '@volontariapp/errors';
 import { STORAGE_ATTACHMENT_FAILED, STORAGE_TIMEOUT } from '@volontariapp/errors-nest';
-import { DEFAULT_STORAGE_TIMEOUT_MS, STORAGE_CLIENT_OPTIONS } from '../constants.js';
+import {
+  DEFAULT_STORAGE_TIMEOUT_MS,
+  STORAGE_CHANNEL_READY_DEADLINE_MS,
+  STORAGE_CLIENT_OPTIONS,
+} from '../constants.js';
 import type {
   ConfirmAttachmentOptions,
   StorageClientOptions,
@@ -21,7 +25,7 @@ import type {
 import { isGrpcError, relayStorageError } from '../errors/index.js';
 
 @Injectable()
-export class StorageClientService implements OnModuleInit {
+export class StorageClientService implements OnModuleInit, OnApplicationBootstrap {
   private readonly logger = new Logger({ context: StorageClientService.name });
   private storageService!: WithMetadata<StorageServiceClient>;
 
@@ -36,6 +40,35 @@ export class StorageClientService implements OnModuleInit {
   onModuleInit() {
     this.storageService =
       this.clientGrpc.getService<WithMetadata<StorageServiceClient>>(STORAGE_SERVICE_NAME);
+  }
+
+  /**
+   * Starts connecting the storage channel at startup instead of on the first call (G7: the first
+   * `ConfirmFileAttachment` of a fresh channel could exceed its deadline). Does not block the
+   * startup; logs how long the channel took to become READY, or its state when it did not.
+   */
+  onApplicationBootstrap(): void {
+    let client: Client;
+    try {
+      client = this.clientGrpc.getClientByServiceName<Client>(STORAGE_SERVICE_NAME);
+    } catch (error) {
+      this.logger.warn(
+        `Storage channel not opened at startup: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return;
+    }
+
+    const startedAt = Date.now();
+    client.waitForReady(startedAt + STORAGE_CHANNEL_READY_DEADLINE_MS, (error?: Error) => {
+      const elapsedMs = Date.now() - startedAt;
+      if (error === undefined) {
+        this.logger.log(`Storage channel READY in ${String(elapsedMs)}ms`);
+        return;
+      }
+      this.logger.warn(
+        `Storage channel not READY after ${String(elapsedMs)}ms (${this.channelState()}): ${error.message}`,
+      );
+    });
   }
 
   async confirmFileAttachment(
@@ -56,7 +89,12 @@ export class StorageClientService implements OnModuleInit {
         this.storageService.confirmFileAttachment(command, metadata).pipe(
           timeout({
             first: timeoutMs,
-            with: () => throwError(() => STORAGE_TIMEOUT(command.entityId, timeoutMs)),
+            with: () => {
+              this.logger.warn(
+                `ConfirmFileAttachment timed out after ${String(timeoutMs)}ms for entity ${command.entityId} (storage channel ${this.channelState()})`,
+              );
+              return throwError(() => STORAGE_TIMEOUT(command.entityId, timeoutMs));
+            },
           }),
         ),
       );
@@ -80,6 +118,19 @@ export class StorageClientService implements OnModuleInit {
           : `${GrpcStatus[grpcErr.code] ?? String(grpcErr.code)}: ${grpcErr.details}`;
       this.logger.error(`ConfirmFileAttachment failed for entity ${command.entityId}: ${message}`);
       throw STORAGE_ATTACHMENT_FAILED(command.entityId, message);
+    }
+  }
+
+  /** Connectivity state of the storage channel, for diagnostics; never connects. */
+  private channelState(): string {
+    try {
+      const state = this.clientGrpc
+        .getClientByServiceName<Client>(STORAGE_SERVICE_NAME)
+        .getChannel()
+        .getConnectivityState(false);
+      return connectivityState[state];
+    } catch {
+      return 'UNKNOWN';
     }
   }
 
