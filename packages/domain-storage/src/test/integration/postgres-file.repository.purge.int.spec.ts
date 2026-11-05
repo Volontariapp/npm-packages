@@ -99,6 +99,148 @@ describe('PostgresFileRepository purge (integration)', () => {
     });
   });
 
+  describe('releaseForEntity() cleanup job (G9)', () => {
+    const entityId = newId();
+
+    it('writes exactly one storage.cleanup_files job when files are released', async () => {
+      await insertFile({ ownerId, entityId, status: FileStatus.ATTACHED });
+      await insertFile({ ownerId, entityId, status: FileStatus.RESERVED });
+
+      const result = await repository.releaseForEntity({ entityType: EntityType.POST, entityId });
+
+      expect(result.releasedFileIds).toHaveLength(2);
+      const jobs = await readJobs();
+      expect(jobs).toHaveLength(1);
+      expect(jobs[0].type).toBe(StorageJobType.CLEANUP_FILES);
+      expect(jobs[0].target).toBe(StorageQueue.STORAGE);
+      expect(jobs[0].payload).toEqual({});
+      expect(jobs[0].emitterId).toBe(entityId);
+    });
+
+    it('writes no job when nothing is released, nor on a replay', async () => {
+      await repository.releaseForEntity({ entityType: EntityType.POST, entityId });
+      expect(await readJobs()).toHaveLength(0);
+
+      await insertFile({ ownerId, entityId, status: FileStatus.ATTACHED });
+      await repository.releaseForEntity({ entityType: EntityType.POST, entityId });
+      await repository.releaseForEntity({ entityType: EntityType.POST, entityId });
+      expect(await readJobs()).toHaveLength(1);
+    });
+
+    it('rolls the release back when the job cannot be written', async () => {
+      const file = await insertFile({ ownerId, entityId, status: FileStatus.ATTACHED });
+      await testDataSource.query('ALTER TABLE jobs_outbox RENAME TO jobs_outbox_tmp');
+      try {
+        await expect(
+          repository.releaseForEntity({ entityType: EntityType.POST, entityId }),
+        ).rejects.toThrow();
+      } finally {
+        await testDataSource.query('ALTER TABLE jobs_outbox_tmp RENAME TO jobs_outbox');
+      }
+
+      expect((await readFile(file.id)).status).toBe(FileStatus.ATTACHED);
+    });
+  });
+
+  describe('releaseFile() cleanup job (G9)', () => {
+    const entityId = newId();
+
+    it('writes exactly one storage.cleanup_files job when the file is released', async () => {
+      const file = await insertFile({
+        ownerId,
+        entityType: EntityType.USER_AVATAR,
+        entityId,
+        status: FileStatus.ATTACHED,
+      });
+
+      const released = await repository.releaseFile({
+        fileId: file.id,
+        entityType: EntityType.USER_AVATAR,
+        entityId,
+        ownerId,
+      });
+
+      expect(released).toBe(true);
+      const jobs = await readJobs();
+      expect(jobs).toHaveLength(1);
+      expect(jobs[0].type).toBe(StorageJobType.CLEANUP_FILES);
+      expect(jobs[0].payload).toEqual({});
+      expect(jobs[0].emitterId).toBe(file.id);
+    });
+
+    it('writes no job when nothing is released, nor on a replay', async () => {
+      const file = await insertFile({
+        ownerId,
+        entityType: EntityType.USER_AVATAR,
+        entityId,
+        status: FileStatus.ATTACHED,
+      });
+      const input = { fileId: file.id, entityType: EntityType.USER_AVATAR, entityId, ownerId };
+
+      await repository.releaseFile({ ...input, newFileId: file.id });
+      expect(await readJobs()).toHaveLength(0);
+
+      await repository.releaseFile(input);
+      await repository.releaseFile(input);
+      expect(await readJobs()).toHaveLength(1);
+    });
+
+    it('rolls the release back when the job cannot be written', async () => {
+      const file = await insertFile({
+        ownerId,
+        entityType: EntityType.USER_AVATAR,
+        entityId,
+        status: FileStatus.ATTACHED,
+      });
+      await testDataSource.query('ALTER TABLE jobs_outbox RENAME TO jobs_outbox_tmp');
+      try {
+        await expect(
+          repository.releaseFile({
+            fileId: file.id,
+            entityType: EntityType.USER_AVATAR,
+            entityId,
+            ownerId,
+          }),
+        ).rejects.toThrow();
+      } finally {
+        await testDataSource.query('ALTER TABLE jobs_outbox_tmp RENAME TO jobs_outbox');
+      }
+
+      expect((await readFile(file.id)).status).toBe(FileStatus.ATTACHED);
+    });
+  });
+
+  describe('requestPurge()', () => {
+    const emitterId = newId();
+
+    it('writes one storage.cleanup_files job when ORPHANED files are waiting', async () => {
+      await fileOf(FileStatus.ORPHANED, new Date('2026-01-01T00:00:00Z'));
+
+      expect(await repository.requestPurge(emitterId)).toBe(true);
+
+      const jobs = await readJobs();
+      expect(jobs).toHaveLength(1);
+      expect(jobs[0].type).toBe(StorageJobType.CLEANUP_FILES);
+      expect(jobs[0].target).toBe(StorageQueue.STORAGE);
+      expect(jobs[0].payload).toEqual({});
+      expect(jobs[0].emitterId).toBe(emitterId);
+    });
+
+    it('writes no job when no file is ORPHANED', async () => {
+      for (const status of [
+        FileStatus.PENDING,
+        FileStatus.RESERVED,
+        FileStatus.ATTACHED,
+        FileStatus.DELETED,
+      ]) {
+        await fileOf(status, new Date('2026-01-01T00:00:00Z'));
+      }
+
+      expect(await repository.requestPurge(emitterId)).toBe(false);
+      expect(await readJobs()).toHaveLength(0);
+    });
+  });
+
   describe('listPurgeCandidates()', () => {
     it('returns only ORPHANED rows, oldest first, limited', async () => {
       const newest = await fileOf(FileStatus.ORPHANED, new Date('2026-03-01T00:00:00Z'));

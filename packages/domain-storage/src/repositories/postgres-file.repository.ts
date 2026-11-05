@@ -533,7 +533,9 @@ export class PostgresFileRepository
    * is kept), then the `RESERVED` / `ATTACHED` files of the entity move to `ORPHANED` with one
    * `UPDATE`. `PENDING` files are not seen here (no `entity_id` yet): the tombstone makes
    * `attachFromConfirmationEvent` release them when their late event arrives. Replaying it
-   * changes nothing. `ORPHANED` and `DELETED` files are never touched. Writes no event.
+   * changes nothing. `ORPHANED` and `DELETED` files are never touched. Writes no event; when at
+   * least one file is released, a `storage.cleanup_files` job (emitter: the entity) is written in
+   * the same transaction so that the purge runs at once (G9).
    */
   async releaseForEntity(input: ReleaseForEntityInput): Promise<ReleaseForEntityResult> {
     const tombstone = ReleasedEntityEntity.create(input);
@@ -564,6 +566,9 @@ export class PostgresFileRepository
           FileStatus.ATTACHED,
         ],
       );
+      if (released.length > 0) {
+        await this.writeCleanupJob(manager, input.entityId);
+      }
       return {
         releasedFileIds: released.map((row) => row.id),
         tombstoneCreated: Array.isArray(inserted.raw) && inserted.raw.length > 0,
@@ -582,8 +587,9 @@ export class PostgresFileRepository
    * `ATTACHED` file must be held by `(entityType, entityId)` (and by `ownerId` when given); a
    * `PENDING` file must belong to `ownerId` and gets the `entity_id`, so that a late confirmation
    * event for it is recognised as released instead of rejected. `ORPHANED` and `DELETED` are
-   * absorbing: they match nothing. Skipped when `newFileId` is the same file. Writes no event.
-   * Returns whether a file was released.
+   * absorbing: they match nothing. Skipped when `newFileId` is the same file. Writes no event;
+   * when the file is released, a `storage.cleanup_files` job (emitter: the file) is written in the
+   * same transaction (G9). Returns whether a file was released.
    */
   async releaseFile(input: ReleaseFileInput): Promise<boolean> {
     if (input.newFileId?.toLowerCase() === input.fileId.toLowerCase()) {
@@ -612,7 +618,11 @@ export class PostgresFileRepository
           FileStatus.PENDING,
         ],
       );
-      return rows.length > 0;
+      if (rows.length === 0) {
+        return false;
+      }
+      await this.writeCleanupJob(manager, input.fileId);
+      return true;
     });
 
     this.logTransition('releaseFile', input.fileId, released);
@@ -665,6 +675,31 @@ export class PostgresFileRepository
    */
   async markFilesForDeletionByOwner(ownerId: string): Promise<string[]> {
     return this.releaseForOwner({ ownerId });
+  }
+
+  /**
+   * Periodic safety net of the purge (doc 07, section 3): writes one `storage.cleanup_files` job
+   * when at least one file is `ORPHANED`, nothing otherwise. Returns whether a job was written.
+   */
+  async requestPurge(emitterId: string): Promise<boolean> {
+    const requested = await this.runInTransaction('requestPurge', emitterId, async (manager) => {
+      const rows = await manager.query<Array<{ id: string }>>(
+        'SELECT id FROM files WHERE status = $1 LIMIT 1',
+        [FileStatus.ORPHANED],
+      );
+      if (rows.length === 0) {
+        return false;
+      }
+      await this.writeCleanupJob(manager, emitterId);
+      return true;
+    });
+
+    this.logger.log(
+      requested
+        ? `requestPurge: cleanup job written (emitter ${emitterId})`
+        : 'requestPurge: no ORPHANED file, no job written',
+    );
+    return requested;
   }
 
   /**

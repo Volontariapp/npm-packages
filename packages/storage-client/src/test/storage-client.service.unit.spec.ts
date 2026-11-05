@@ -1,5 +1,7 @@
 import 'reflect-metadata';
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { connectivityState } from '@grpc/grpc-js';
+import { Logger } from '@volontariapp/logger';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { of, throwError, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,10 +13,13 @@ import {
   type ConfirmFileAttachmentResponse,
 } from '../index.js';
 import type { Metadata } from '@grpc/grpc-js';
+import { STORAGE_CHANNEL_READY_DEADLINE_MS } from '../constants.js';
+import { createGrpcClientMock, type GrpcClientMock } from './mocks/grpc-client.mock.js';
 
 describe('StorageClientService (Unit)', () => {
   let service: StorageClientService;
   let mockClientGrpc: jest.Mocked<ClientGrpc>;
+  let getClientByServiceName: jest.Mock<(name: string) => unknown>;
   let mockStorageService: { confirmFileAttachment: jest.Mock };
 
   beforeEach(() => {
@@ -22,9 +27,10 @@ describe('StorageClientService (Unit)', () => {
       confirmFileAttachment: jest.fn(),
     };
 
+    getClientByServiceName = jest.fn<(name: string) => unknown>();
     mockClientGrpc = {
       getService: jest.fn().mockReturnValue(mockStorageService),
-      getClientByServiceName: jest.fn(),
+      getClientByServiceName,
     } as unknown as jest.Mocked<ClientGrpc>;
 
     service = new StorageClientService(mockClientGrpc, {
@@ -42,7 +48,94 @@ describe('StorageClientService (Unit)', () => {
     });
   });
 
+  describe('onApplicationBootstrap (G7: channel opened at startup)', () => {
+    let grpcClient: GrpcClientMock;
+
+    beforeEach(() => {
+      grpcClient = createGrpcClientMock();
+      getClientByServiceName.mockReturnValue(grpcClient);
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('starts connecting the storage channel without waiting for it', () => {
+      jest.spyOn(Date, 'now').mockReturnValue(1_000);
+
+      service.onApplicationBootstrap();
+
+      expect(getClientByServiceName).toHaveBeenCalledWith(STORAGE_SERVICE_NAME);
+      expect(grpcClient.waitForReady).toHaveBeenCalledTimes(1);
+      const [deadline] = grpcClient.waitForReady.mock.calls[0];
+      expect(deadline).toBe(1_000 + STORAGE_CHANNEL_READY_DEADLINE_MS);
+    });
+
+    it('logs how long the channel took to become READY', () => {
+      const now = jest.spyOn(Date, 'now').mockReturnValue(1_000);
+      const log = jest.spyOn(Logger.prototype, 'log');
+
+      service.onApplicationBootstrap();
+      now.mockReturnValue(1_250);
+      const [, callback] = grpcClient.waitForReady.mock.calls[0];
+      callback();
+
+      expect(log).toHaveBeenCalledWith(expect.stringContaining('READY in 250ms'));
+    });
+
+    it('logs a warning with the channel state when the channel is not READY by the deadline', () => {
+      const now = jest.spyOn(Date, 'now').mockReturnValue(1_000);
+      const warn = jest.spyOn(Logger.prototype, 'warn');
+      grpcClient = createGrpcClientMock(connectivityState.TRANSIENT_FAILURE);
+      getClientByServiceName.mockReturnValue(grpcClient);
+
+      service.onApplicationBootstrap();
+      now.mockReturnValue(1_000 + STORAGE_CHANNEL_READY_DEADLINE_MS);
+      const [, callback] = grpcClient.waitForReady.mock.calls[0];
+      callback(new Error('Failed to connect before the deadline'));
+
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `not READY after ${String(STORAGE_CHANNEL_READY_DEADLINE_MS)}ms (TRANSIENT_FAILURE)`,
+        ),
+      );
+    });
+
+    it('does not fail the startup when the client cannot be acquired', () => {
+      const warn = jest.spyOn(Logger.prototype, 'warn');
+      getClientByServiceName.mockImplementation(() => {
+        throw new Error('no client');
+      });
+
+      expect(() => {
+        service.onApplicationBootstrap();
+      }).not.toThrow();
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('no client'));
+    });
+  });
+
   describe('confirmFileAttachment', () => {
+    it('logs the storage channel state when the call times out', async () => {
+      const warn = jest.spyOn(Logger.prototype, 'warn');
+      getClientByServiceName.mockReturnValue(
+        createGrpcClientMock(connectivityState.CONNECTING),
+      );
+      mockStorageService.confirmFileAttachment.mockReturnValue(
+        timer(200).pipe(map(() => ({ success: true, updatedCount: 1, files: [] }))),
+      );
+
+      await expect(
+        service.confirmFileAttachment(
+          { entityId: 'user-1', entityType: EntityType.ENTITY_TYPE_USER_AVATAR, fileIds: ['f'] },
+          { timeoutMs: 50 },
+        ),
+      ).rejects.toMatchObject({ code: 'STORAGE_TIMEOUT' });
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('timed out after 50ms for entity user-1 (storage channel CONNECTING)'),
+      );
+      warn.mockRestore();
+    });
+
     it('should call gRPC client with command and metadata, returning response', async () => {
       const mockResponse: ConfirmFileAttachmentResponse = {
         success: true,
