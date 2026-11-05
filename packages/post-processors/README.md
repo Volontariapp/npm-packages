@@ -122,6 +122,35 @@ sequenceDiagram
 - **Circuit Breaker** : Interrompt automatiquement la consommation si un seuil élevé d'erreurs est atteint, évitant les pannes en cascade.
 - **Backoff Exponentiel** : Décale progressivement les tentatives de retry pour laisser le temps aux services défaillants de récupérer.
 
+## Métriques Redis Streams
+
+Chaque processor publie six métriques `volontariapp.redis_streams.<nom>` via `@volontariapp/monitoring`, avec les attributs `stream` et `group` (le `service` et l'`env` viennent du Resource d'`initTracing`). Sans MeterProvider, tous les appels sont sans effet.
+
+| Métrique | Type | Sens |
+| :--- | :--- | :--- |
+| `length` | jauge | `XLEN` du stream |
+| `pending` | jauge | total `XPENDING` du groupe (messages livrés, non acquittés) |
+| `dlq_length` | jauge | `XLEN` de `<stream>-dlq` ; `stream` = nom du stream source ; absente si la DLQ est désactivée |
+| `retry_attempts` | compteur | un par retour de `recordRetry`, dernière tentative avant DLQ comprise ; les erreurs d'infrastructure ne comptent pas |
+| `dlq_sent` | compteur | message écrit dans la DLQ avec succès |
+| `processed` | compteur | message traité avec succès (par message, pas par lot) |
+
+```mermaid
+flowchart LR
+    R[Message lu] --> H{Handler}
+    H -->|succès| P[processed +1]
+    H -->|erreur infra| K[reste pending, rien compté]
+    H -->|autre erreur| A[retry_attempts +1]
+    A --> M{Retries restants ?}
+    M -->|oui| Q[file de retry]
+    M -->|non| D[dlq_sent +1]
+```
+
+Règles d'usage :
+- **Agrégation** : chaque instance publie les mêmes jauges. Les agréger en `max by {stream, group}`, jamais en `sum`. Les compteurs s'agrègent en `sum`.
+- **Cardinalité** : `stream` et `group` viennent de la configuration, ne jamais les construire dynamiquement. Pas d'attribut `consumer` ni d'identifiant de message.
+- **Robustesse** : si Redis échoue pendant la lecture d'une jauge, rien n'est publié pour ce cycle (jamais 0). Les jauges sont lues toutes les 15 s sur la connexion `redis` (pas `blockingRedis`).
+
 ## Utilisation avec NestJS
 
 L'intégration d'un post-processor dans une application NestJS implique la création d'un service qui étend soit `SinglePostProcessor` soit `BatchPostProcessor` et la gestion de son cycle de vie.

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/post-processors",
-  "version": "3.4.9",
+  "version": "3.5.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -42,6 +42,7 @@
     "@volontariapp/health-check": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
+    "@volontariapp/monitoring": "workspace:*",
     "@volontariapp/outbox": "workspace:*",
     "@volontariapp/shared": "workspace:*"
   },

@@ -15,6 +15,7 @@ import { isInfrastructureError } from '@volontariapp/errors';
 import { OptionsValidator } from '../validators/options-validator.js';
 import { CircuitBreaker } from '../validators/circuit-breaker.js';
 import type { EventMessagingType } from '@volontariapp/messaging';
+import { StreamMetrics } from '../metrics/stream-metrics.js';
 
 export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   protected readonly logger: Logger;
@@ -22,6 +23,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   protected readonly retryHelper: RetryHelper;
   protected readonly circuitBreaker: CircuitBreaker;
   protected readonly blockingRedis: Redis;
+  protected readonly streamMetrics: StreamMetrics;
   private isRunning = false;
   private readPending = true;
   private readPendingDueAt: number | null = null;
@@ -77,6 +79,14 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
     );
     this.currentBatchSize = this.options.batchSize;
     this.blockingRedis = redis.duplicate();
+    this.streamMetrics = new StreamMetrics({
+      redis,
+      streamName: this.options.streamName,
+      groupName: this.options.groupName,
+      dlqStreamName: this.options.retry.enableDlq
+        ? this.retryHelper.getDlqStreamName(this.options.streamName)
+        : null,
+    });
   }
   /**
    * Starts the post-processor consumption loop and periodic claim task.
@@ -105,6 +115,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
     }
 
     this.setupSignalHandlers();
+    this.streamMetrics.register();
 
     this.loopPromise = this.runLoop().catch((err: unknown) => {
       const error = err instanceof Error ? err : new Error(String(err));
@@ -142,6 +153,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
     this.logger.info('Stopping post-processor...');
     this.isRunning = false;
 
+    this.streamMetrics.unregister();
     this.cleanupSignalHandlers();
 
     if (this.claimTimeout) {
@@ -644,6 +656,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
         originalPayload,
         error,
       );
+      this.streamMetrics.recordDlqSent();
       this.logger.error('Message sent to DLQ', { messageId, dlqStreamName, error });
     } catch (err) {
       const dlqError = err instanceof Error ? err : new Error(String(err));

@@ -105,6 +105,7 @@ export abstract class SinglePostProcessor<
         () => this.processEvent(event, id),
       );
       this.circuitBreaker.recordSuccess();
+      this.streamMetrics.recordProcessed(1);
 
       await this.retryHelper.clearRetryData(this.redis, this.options.groupName, id);
       await this.acknowledge(id);
@@ -146,6 +147,7 @@ export abstract class SinglePostProcessor<
         error,
         this.options.idempotencyTtlSeconds,
       );
+      this.streamMetrics.recordRetryAttempt();
 
       if (this.retryHelper.shouldRetry(attemptCount)) {
         await this.retryHelper.enqueueForRetry(

@@ -13,6 +13,7 @@ export default {
     '^@volontariapp/database$': '<rootDir>/../database/src/index.ts',
     '^@volontariapp/testing$': '<rootDir>/../testing/src/index.ts',
     '^@volontariapp/messaging$': '<rootDir>/../messaging/src/index.ts',
+    '^@volontariapp/monitoring$': '<rootDir>/../monitoring/src/index.ts',
     '^@volontariapp/logger$': '<rootDir>/../logger/src/index.ts',
   },
   transform: {

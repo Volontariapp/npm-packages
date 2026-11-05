@@ -51,6 +51,36 @@ export class RedisStreamHelper {
   }
 
   /**
+   * Total number of pending messages of a consumer group (summary form of XPENDING).
+   * Throws when Redis answers something unexpected, so callers never mistake it for 0.
+   */
+  static async getPendingCount(
+    redis: Redis,
+    streamName: string,
+    groupName: string,
+  ): Promise<number> {
+    const summary = (await redis.call('XPENDING', streamName, groupName)) as
+      | [number | string, ...unknown[]]
+      | null;
+    const count = Array.isArray(summary) ? Number(summary[0]) : Number.NaN;
+    if (!Number.isFinite(count)) {
+      throw new Error(`Unexpected XPENDING summary for ${streamName}/${groupName}`);
+    }
+    return count;
+  }
+
+  /**
+   * Number of entries in a stream (XLEN). A missing stream has length 0.
+   */
+  static async getStreamLength(redis: Redis, streamName: string): Promise<number> {
+    const length = Number(await redis.call('XLEN', streamName));
+    if (!Number.isFinite(length)) {
+      throw new Error(`Unexpected XLEN reply for ${streamName}`);
+    }
+    return length;
+  }
+
+  /**
    * Claims a pending message using XCLAIM command.
    */
   static async claimMessage(
