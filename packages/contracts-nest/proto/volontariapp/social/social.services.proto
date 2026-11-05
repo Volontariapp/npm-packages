@@ -94,7 +94,11 @@ service ParticipationQueryService {
   rpc GetEventParticipants(GetEventParticipantsQuery) returns (GetEventParticipantsResponse);
   rpc CountEventParticipants(CountEventParticipantsQuery) returns (CountEventParticipantsResponse);
   rpc GetEventAttendees(GetEventAttendeesQuery) returns (GetEventAttendeesResponse);
-  rpc AdminGetUserEvent(AdminGetUserEventQuery) returns (AdminGetUserEventResponse);
+  // Deprecated (lot 5): callers move to SearchEventsQuery.excluded_organizer_ids of ms-event.
+  // To be removed once no client calls it (then `reserved`).
+  rpc AdminGetUserEvent(AdminGetUserEventQuery) returns (AdminGetUserEventResponse) {
+    option deprecated = true;
+  }
   rpc AdminGetUserParticipateEvent(AdminGetUserParticipateEventQuery) returns (AdminGetUserParticipateEventResponse);
   rpc AdminGetUserWishEvent(AdminGetUserWishEventQuery) returns (AdminGetUserWishEventResponse);
   rpc GetRecommendedEventIds(GetRecommendedEventIdsQuery) returns (GetRecommendedEventIdsResponse);
