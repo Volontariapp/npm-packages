@@ -88,7 +88,7 @@ import type { IFeedbackEventPayload, IJobAuditPayload } from './common/payloads.
 
 import type { JobMessagingType } from '../jobs/index.js';
 import type { JobRegistry } from '../jobs/index.js';
-import type { IRankingComputePayload } from '../jobs/ranking/payloads.js';
+import type { IRankingReadyPayload } from '../jobs/ranking/payloads.js';
 
 export interface EventRegistry {
   // Event
@@ -102,7 +102,7 @@ export interface EventRegistry {
   [EventEventMessagingType.EVENT_DELETION_SUCCESSFULL]: IEventDeletionSuccessfullPayload;
   [EventEventMessagingType.USER_EVENT_DELETED]: IUserEventDeletedPayload;
   [EventEventMessagingType.USER_EVENT_DELETION_FAILED]: IUserEventDeletionFailedPayload;
-  [EventEventMessagingType.RANKING_READY]: IFeedbackEventPayload<IRankingComputePayload>;
+  [EventEventMessagingType.RANKING_READY]: IFeedbackEventPayload<IRankingReadyPayload>;
 
   [EventEventMessagingType.EVENT_GEOCODED]: IEventGeocodedPayload;
   [EventEventMessagingType.EVENT_GEOCODING_FAILED]: IEventGeocodingFailedPayload;

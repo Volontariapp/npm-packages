@@ -23,6 +23,18 @@ export interface IRankingComputePayload {
   requestedAt: string;
 }
 
+/** Which list a finished computation produced: the user events or the post feed. */
+export type RankingReadyListKind = 'EVENT' | 'POST';
+
+/**
+ * Content of the ranking.ready notification: the computation job plus the list it produced.
+ * `listKind` is absent on notifications emitted before the field existed, so consumers must
+ * treat a missing value as "unknown list" and refresh both.
+ */
+export interface IRankingReadyPayload extends IRankingComputePayload {
+  listKind?: RankingReadyListKind;
+}
+
 export interface IComputeUserRankingPayload extends IRankingComputePayload {}
 export interface IComputeUserFeedPayload extends IRankingComputePayload {}
 

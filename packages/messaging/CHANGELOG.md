@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.31.0
+
+### Minor Changes
+
+- ranking.ready now says which list is ready. Both ranking computations map to the same notification, so the event list and the post feed were indistinguishable for the client. `IRankingReadyPayload` adds an optional `listKind` (`'EVENT' | 'POST'`), `withRankingListKind(jobType, payload)` derives it from the job type, and the job success post-processor adds it to the original payload that ws-service forwards. The field is optional: a missing value means an older emitter, and consumers must then refresh both lists.
+
 ## 2.30.4
 
 ### Patch Changes

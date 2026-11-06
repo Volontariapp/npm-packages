@@ -9,8 +9,9 @@ import {
   RankingQueue,
   getEventForJob,
   getWsEventForEvent,
+  withRankingListKind,
 } from '../index.js';
-import type { EventRegistry, JobRegistry } from '../index.js';
+import type { EventRegistry, IRankingReadyWebsocketPayload, JobRegistry } from '../index.js';
 import {
   buildComputeUserFeedPayload,
   buildComputeUserRankingPayload,
@@ -69,6 +70,52 @@ describe('Ranking messaging', () => {
       expect(getWsEventForEvent(EventEventMessagingType.RANKING_READY)).toBe(
         EventWebsocketMessagingType.RANKING_READY,
       );
+    });
+  });
+
+  describe('ranking list kind', () => {
+    it('should tag the event list when the events computation is done', () => {
+      const payload = buildComputeUserRankingPayload();
+
+      expect(withRankingListKind('ranking.compute_user_ranking', payload)).toEqual({
+        ...payload,
+        listKind: 'EVENT',
+      });
+    });
+
+    it('should tag the post list when the feed computation is done', () => {
+      const payload = buildComputeUserFeedPayload();
+
+      expect(withRankingListKind('ranking.compute_user_feed', payload)).toEqual({
+        ...payload,
+        listKind: 'POST',
+      });
+    });
+
+    it('should leave the payload of any other job untouched', () => {
+      const payload = { eventId: 'e-1' };
+
+      expect(withRankingListKind('ranking.fanout', payload)).toBe(payload);
+      expect(withRankingListKind('events.fallback_create_event', payload)).toBe(payload);
+    });
+
+    it('should not mutate the payload it is given', () => {
+      const payload = buildComputeUserRankingPayload();
+
+      withRankingListKind('ranking.compute_user_ranking', payload);
+
+      expect('listKind' in payload).toBe(false);
+    });
+
+    it('should keep listKind optional on the websocket payload for older emitters', () => {
+      const withoutKind: IRankingReadyWebsocketPayload = buildComputeUserRankingPayload();
+      const withKind: IRankingReadyWebsocketPayload = {
+        ...buildComputeUserRankingPayload(),
+        listKind: 'POST',
+      };
+
+      expect(withoutKind.listKind).toBeUndefined();
+      expect(withKind.listKind).toBe('POST');
     });
   });
 
