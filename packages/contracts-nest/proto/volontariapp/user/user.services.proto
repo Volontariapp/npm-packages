@@ -35,4 +35,5 @@ service BadgeService {
   rpc GetBadge (GetBadgeQuery) returns (BadgeResponse) {}
   rpc ListBadges (ListBadgesQuery) returns (ListBadgesResponse) {}
   rpc GetBadgeBySlug (GetBadgeBySlugQuery) returns (GetBadgeBySlugResponse) {}
+  rpc GetMyBadgeProgress (GetMyBadgeProgressQuery) returns (GetMyBadgeProgressResponse) {}
 }
