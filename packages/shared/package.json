@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/shared",
-  "version": "0.18.1",
+  "version": "0.19.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -30,7 +30,7 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src/",
-    "test": "node --test dist/scoring/__tests__/event-scoring.calculator.spec.js"
+    "test": "node --test dist/scoring/__tests__/event-scoring.calculator.spec.js dist/badges/__tests__/badge-catalog.spec.js dist/badges/__tests__/badge-progress.calculator.spec.js"
   },
   "devDependencies": {
     "typescript": "5.7.3"

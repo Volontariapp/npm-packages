@@ -18,6 +18,10 @@ export class BadgeModel {
   @Column({name: "icon_path", type: 'varchar', nullable: true })
   iconPath?: string;
 
+  /** Points crédités à l'attribution. Nullable (étape Expand), le catalogue de `shared` fait foi. */
+  @Column({ type: 'int', nullable: true })
+  points?: number;
+
   @OneToMany('UserBadgeModel', 'badge')
   userBadges!: UserBadgeModel[];
 }

@@ -4,4 +4,5 @@ export class BadgeEntity {
   slug!: string;
   description!: string;
   iconPath?: string;
+  points?: number;
 }

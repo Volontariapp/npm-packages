@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.19.0
+
+### Minor Changes
+
+- feat(badges): badge points catalogue and progress
+
+  - shared: badge catalogue (13 badges, points x10, requirements), `BADGE_METRICS`, `BADGE_POINTS_VERSION` and the pure `computeBadgeProgress`.
+  - domain-user: `BadgeModel.points`, `BadgePointCreditModel` (`badge_point_credits`) and `BadgeProgressDedupModel` (`badge_progress_dedup`).
+  - messaging: optional `IBadgePayload.points` and `IPostLikedPayload.postAuthorId`.
+
 ## 0.18.1
 
 ### Patch Changes

@@ -24,6 +24,8 @@ export interface IBadgePayload {
   /** @deprecated Use `iconFileId`. */
   iconPath?: string;
   iconFileId?: string;
+  /** Points crédités pour ce badge. Absent des anciens messages. */
+  points?: number;
 }
 
 export interface IUserBadgeAwardedPayload {
