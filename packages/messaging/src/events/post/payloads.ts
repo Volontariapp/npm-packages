@@ -64,7 +64,10 @@ export interface ICommentCreatedPayload
 export interface ICommentDeletedPayload extends ICommentIdPayload, IPostIdPayload {}
 
 export interface IPostLikedPayload extends IPostIdPayload, Partial<IUserIdPayload> {
+  /** Historique : id de l'utilisateur qui like (et non de l'auteur du post). */
   authorId: string;
+  /** Auteur du post liké. Absent des anciens messages ou si ms-post est injoignable. */
+  postAuthorId?: string;
 }
 
 export interface IPostUnlikedPayload extends IPostIdPayload, Partial<IUserIdPayload> {

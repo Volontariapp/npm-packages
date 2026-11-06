@@ -4,4 +4,6 @@ export * from './user-badge.model.js';
 export * from './badge-progress.model.js';
 export * from './badge-progress-event.model.js';
 export * from './impact-score-credit.model.js';
+export * from './badge-point-credit.model.js';
+export * from './badge-progress-dedup.model.js';
 export * from './mapper.js';

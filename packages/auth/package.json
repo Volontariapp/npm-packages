@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/auth",
-  "version": "3.3.26",
+  "version": "3.3.27",
   "publishConfig": {
     "access": "public",
     "provenance": true
