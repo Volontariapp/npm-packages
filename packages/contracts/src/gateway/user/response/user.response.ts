@@ -19,10 +19,16 @@ import type {
   GetMyFollowersProfilesResponse,
   GetEventParticipantsProfilesResponse,
   GetPostLikersProfilesResponse,
+  GetMyBadgeProgressResponse,
 } from '../../../user/user.responses.js';
-import type { User, Badge, UserPublic } from '../../../user/user.js';
+import type { User, Badge, BadgeProgress, UserPublic } from '../../../user/user.js';
 
 export interface BadgeWeb extends Omit<Badge, 'awardedAt'> {
+  awardedAt?: Date;
+}
+
+/** Progress of the caller towards one badge. `awardedAt` is a Date for REST clients. */
+export interface BadgeProgressWeb extends Omit<BadgeProgress, 'awardedAt'> {
   awardedAt?: Date;
 }
 
@@ -121,4 +127,9 @@ export interface BadgeWebResponse {
 
 export interface ListBadgesWebResponse extends Omit<ListBadgesResponse, 'badges'> {
   badges: BadgeWeb[];
+}
+
+export interface GetMyBadgeProgressWebResponse
+  extends Omit<GetMyBadgeProgressResponse, 'badges'> {
+  badges: BadgeProgressWeb[];
 }
