@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.31.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.8.7
+
 ## 2.31.0
 
 ### Minor Changes

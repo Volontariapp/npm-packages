@@ -17,6 +17,29 @@ message Badge {
   string description = 5;
   google.protobuf.Timestamp awarded_at = 6;
   optional string icon_file_id = 7;
+  // Points credited to total_impact_score when the badge is awarded.
+  int32 points = 8;
+}
+
+// Progress of one metric towards a badge (current is capped at target).
+message BadgeRequirementProgress {
+  string metric = 1;
+  int32 current = 2;
+  int32 target = 3;
+}
+
+// Progress of the caller towards one badge of the catalogue.
+message BadgeProgress {
+  string slug = 1;
+  string name = 2;
+  string description = 3;
+  int32 points = 4;
+  bool unlocked = 5;
+  google.protobuf.Timestamp awarded_at = 6;
+  // 0 to 100. Always 100 when unlocked.
+  int32 percent = 7;
+  repeated BadgeRequirementProgress requirements = 8;
+  optional string icon_file_id = 9;
 }
 
 message User {
