@@ -12,7 +12,7 @@ import type {
   IFallbackManageRequirementsPayload,
   IFallbackUpdateEventPayload,
   IFallbackUpdateTagPayload,
-  IRankingComputePayload,
+  IRankingReadyPayload,
 } from '../../index.js';
 
 export interface IEventCreatedWebsocketPayload
@@ -53,4 +53,4 @@ export interface IFallbackDeleteTagWebsocketPayload
   extends IFallbackDeleteTagPayload,
     IEmitterPayload {}
 
-export interface IRankingReadyWebsocketPayload extends IRankingComputePayload, IEmitterPayload {}
+export interface IRankingReadyWebsocketPayload extends IRankingReadyPayload, IEmitterPayload {}

@@ -4,7 +4,7 @@ import type { EventEventMessagingType } from '@volontariapp/messaging';
 import { CommonEventMessagingType } from '@volontariapp/messaging';
 import { JobsOutboxRepository, EventQueueWriter, EventQueueRepository } from '@volontariapp/outbox';
 import { EventQueueEntity, EventQueueModel, JobsOutboxModel } from '@volontariapp/database';
-import { getEventForJob } from '@volontariapp/messaging';
+import { getEventForJob, withRankingListKind } from '@volontariapp/messaging';
 import type { DataSource } from 'typeorm';
 import type { Redis } from 'ioredis';
 import { Streams } from '@volontariapp/shared';
@@ -105,8 +105,9 @@ export class JobOutboxSuccessPostProcessor extends BatchPostProcessor<CommonEven
                   targetServices: [Streams.WS_JOBS_OUTBOX_SUCCESS],
                   payload: {
                     status: 'SUCCESS' as const,
+                    // The ranking jobs also say which list they produced (ranking.ready is shared).
                     // @ts-expect-error: JsonObject lacks strict interface index signatures
-                    originalPayload,
+                    originalPayload: withRankingListKind(jobType, originalPayload),
                   },
                 });
                 await transactionalEventWriter.create(eventEntity);
