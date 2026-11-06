@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.9.0
+
+### Minor Changes
+
+- feat(contracts): add the gateway Web types for the badge progress route
+
+  `BadgeProgressWeb` (`awardedAt` as a `Date`) and `GetMyBadgeProgressWebResponse`, used by the api-gateway response DTO for `GET /users/me/badges/progress` and by nativapp.
+
 ## 4.8.7
 
 ### Patch Changes
