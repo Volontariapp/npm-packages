@@ -414,6 +414,10 @@ export class PostgresEventRepository
       query.andWhere('event.startAt <= :startDateTo', { startDateTo: params.startDateTo });
     }
 
+    if (params.endAtFrom) {
+      query.andWhere('event.endAt >= :endAtFrom', { endAtFrom: params.endAtFrom });
+    }
+
     if (params.onlyAvailable) {
       query.andWhere('event.state = :availableState', {
         availableState: EventState.EVENT_STATE_PUBLISHED,

@@ -125,6 +125,76 @@ describe('PostgresEventRepository (Unit)', () => {
     });
   });
 
+  describe('searchAdvanced endAtFrom filter', () => {
+    const endAtFrom = new Date('2026-11-07T10:00:00.000Z');
+    const endAtFromClause = 'event.endAt >= :endAtFrom';
+
+    const buildParams = async (
+      overrides: {
+        area?: { lat: number; lng: number; radiusInMeters: number };
+        statuses?: EventState[];
+        endAtFrom?: Date;
+      } = {},
+    ) => {
+      const { SearchAdvancedVO } =
+        await import('../../value-objects/search-advanced.value-object.js');
+      return new SearchAdvancedVO(
+        overrides.area,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        overrides.statuses,
+        1,
+        10,
+        undefined,
+        overrides.endAtFrom,
+      );
+    };
+
+    beforeEach(() => {
+      queryBuilderMock.getManyAndCount.mockResolvedValue([[], 0]);
+    });
+
+    it('should filter on event.endAt when endAtFrom is given', async () => {
+      await repository.searchAdvanced(await buildParams({ endAtFrom }));
+
+      expect(queryBuilderMock.andWhere).toHaveBeenCalledWith(endAtFromClause, { endAtFrom });
+    });
+
+    it('should not add the endAt filter when endAtFrom is absent', async () => {
+      await repository.searchAdvanced(await buildParams());
+
+      expect(queryBuilderMock.andWhere).not.toHaveBeenCalledWith(
+        endAtFromClause,
+        expect.anything(),
+      );
+    });
+
+    it('should combine endAtFrom with area and statuses', async () => {
+      const statuses = [EventState.EVENT_STATE_PUBLISHED];
+
+      await repository.searchAdvanced(
+        await buildParams({
+          area: { lat: 48.85, lng: 2.35, radiusInMeters: 5000 },
+          statuses,
+          endAtFrom,
+        }),
+      );
+
+      expect(queryBuilderMock.andWhere).toHaveBeenCalledWith(endAtFromClause, { endAtFrom });
+      expect(queryBuilderMock.andWhere).toHaveBeenCalledWith('event.state IN (:...statuses)', {
+        statuses,
+      });
+      expect(queryBuilderMock.andWhere).toHaveBeenCalledWith(expect.stringContaining('ST_DWithin'));
+    });
+  });
+
   describe('findByIds', () => {
     it('should load all ids in a single query with relations', async () => {
       typeOrmRepositoryMock.find.mockResolvedValue([]);

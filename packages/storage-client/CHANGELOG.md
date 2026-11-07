@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.16
+
+### Patch Changes
+
+- Updated dependencies [[`8e032c2`](https://github.com/Volontariapp/npm-packages/commit/8e032c276ecd624e84ef73ccf603732551070538)]:
+  - @volontariapp/contracts@4.10.0
+
 ## 0.3.15
 
 ### Patch Changes

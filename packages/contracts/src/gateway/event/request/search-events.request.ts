@@ -12,6 +12,7 @@ export interface SearchEventsWebQuery {
   };
   startDateFrom?: string; // ISO 8601
   startDateTo?: string; // ISO 8601
+  endAtFrom?: string; // ISO 8601
   statuses?: EventState[];
   // Filtres Sociaux (ms-social)
   excludeCreatedByMe?: boolean;

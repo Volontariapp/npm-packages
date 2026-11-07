@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.16.0
+
+### Minor Changes
+
+- [#301](https://github.com/Volontariapp/npm-packages/pull/301) [`8e032c2`](https://github.com/Volontariapp/npm-packages/commit/8e032c276ecd624e84ef73ccf603732551070538) Thanks [@VictorAgahi](https://github.com/VictorAgahi)! - Add the `endAtFrom` event search filter (gateway query type, `SearchAdvancedVO`, `searchAdvanced` repository filter on `event.endAt`) and the live websocket contracts in `messaging` (`LiveWebsocketMessagingType`, `LiveClientMessageType`, `LiveClientMessageRegistry`, live payloads and gateway to ws-service request types).
+
+### Patch Changes
+
+- Updated dependencies [[`8e032c2`](https://github.com/Volontariapp/npm-packages/commit/8e032c276ecd624e84ef73ccf603732551070538)]:
+  - @volontariapp/contracts@4.10.0
+  - @volontariapp/messaging@2.33.0
+  - @volontariapp/database@3.12.9
+  - @volontariapp/outbox@0.10.35
+
 ## 3.15.6
 
 ### Patch Changes
