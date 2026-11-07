@@ -27,6 +27,9 @@ describe('Neo4jBaseRepository (Unit)', () => {
   beforeEach(() => {
     mockSession = {
       run: jest.fn(),
+      executeWrite: jest.fn((work: (tx: { run: Session['run'] }) => Promise<unknown>) =>
+        work({ run: (...args: Parameters<Session['run']>) => mockSession.run(...args) }),
+      ),
       close: jest.fn<() => Promise<void>>().mockImplementation(() => Promise.resolve()),
     } as unknown as jest.Mocked<Session>;
 
@@ -65,6 +68,29 @@ describe('Neo4jBaseRepository (Unit)', () => {
   // ─── write ─────────────────────────────────────────────────────────────────
 
   describe('write()', () => {
+    it('should run the cypher in a managed write transaction so transient errors are retried', async () => {
+      const runSpy = jest.spyOn(mockSession, 'run').mockResolvedValue({ records: [] } as never);
+      const executeWriteSpy = jest.spyOn(mockSession, 'executeWrite');
+
+      await repository.testWrite('MERGE (n:User { id: $id })', { id: '1' });
+
+      expect(executeWriteSpy).toHaveBeenCalledTimes(1);
+      expect(runSpy).toHaveBeenCalledWith('MERGE (n:User { id: $id })', { id: '1' });
+    });
+
+    it('should surface the error as DATABASE_QUERY_ERROR once the driver gave up retrying', async () => {
+      const deadlock = 'ForsetiClient[transactionId=1] can not acquire ExclusiveLock';
+      jest.spyOn(mockSession, 'executeWrite').mockRejectedValue(new Error(deadlock));
+      const closeSpy = jest.spyOn(mockSession, 'close');
+
+      await expect(repository.testWrite('MERGE (n:User)')).rejects.toMatchObject({
+        code: 'DATABASE_QUERY_ERROR',
+        message: expect.stringContaining(deadlock),
+      });
+
+      expect(closeSpy).toHaveBeenCalled();
+    });
+
     it('should throw DATABASE_QUERY_ERROR when the driver fails', async () => {
       const errorMsg = 'Constraint violation';
       jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));

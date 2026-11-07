@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.1
+
+### Patch Changes
+
+- Neo4j writes now run in a managed transaction (`session.executeWrite`) so the driver retries transient errors such as `DeadlockDetected` instead of failing on the first attempt. Applies to `Neo4jBaseRepository.write()` and the post/event batch in `Neo4jPublicationRepository`.
+
 ## 0.18.0
 
 ### Minor Changes
