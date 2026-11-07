@@ -122,4 +122,44 @@ describe('SearchAdvancedVO', () => {
         ),
     ).toThrow(Error);
   });
+
+  describe('endAtFrom', () => {
+    const UNSET = undefined;
+    const buildWithEndAtFrom = (endAtFrom?: Date): SearchAdvancedVO =>
+      new SearchAdvancedVO(
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        UNSET,
+        1,
+        10,
+        UNSET,
+        endAtFrom,
+      );
+
+    it('should keep endAtFrom when provided as the last parameter', () => {
+      const endAtFrom = new Date('2026-11-07T10:00:00.000Z');
+
+      expect(buildWithEndAtFrom(endAtFrom).endAtFrom).toBe(endAtFrom);
+    });
+
+    it('should leave endAtFrom undefined when omitted', () => {
+      expect(new SearchAdvancedVO().endAtFrom).toBeUndefined();
+    });
+
+    it('should not change the other fields when endAtFrom is set', () => {
+      const vo = buildWithEndAtFrom(new Date('2026-11-07T10:00:00.000Z'));
+
+      expect(vo.page).toBe(1);
+      expect(vo.limit).toBe(10);
+      expect(vo.excludedOrganizerIds).toBeUndefined();
+    });
+  });
 });

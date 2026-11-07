@@ -18,6 +18,8 @@ export class SearchAdvancedVO {
     public readonly limit: number = 10,
     /** Events organized by these users are left out (blocked users, the reader's own events). */
     public readonly excludedOrganizerIds?: string[],
+    /** Only events ending at or after this instant (live events: still running or about to start). */
+    public readonly endAtFrom?: Date,
   ) {
     this.validate();
   }

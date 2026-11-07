@@ -40,11 +40,17 @@ import type {
   IStorageAttachmentRejectedWebsocketPayload,
 } from './storage/index.js';
 import { StorageWebsocketMessagingType } from './storage/index.js';
+import type {
+  ILivePositionsUpdatedWebsocketPayload,
+  ILiveSharingStoppedWebsocketPayload,
+} from './live/index.js';
+import { LiveWebsocketMessagingType } from './live/index.js';
 
 export * from './events/index.js';
 export * from './posts/index.js';
 export * from './users/index.js';
 export * from './storage/index.js';
+export * from './live/index.js';
 export * from './common/index.js';
 
 export interface WebsocketEventRegistry {
@@ -83,6 +89,9 @@ export interface WebsocketEventRegistry {
   [StorageWebsocketMessagingType.FILE_SCANNED]: IStorageFileScannedWebsocketPayload;
   [StorageWebsocketMessagingType.FILE_REJECTED]: IStorageFileRejectedWebsocketPayload;
   [StorageWebsocketMessagingType.ATTACHMENT_REJECTED]: IStorageAttachmentRejectedWebsocketPayload;
+
+  [LiveWebsocketMessagingType.LIVE_POSITIONS_UPDATED]: ILivePositionsUpdatedWebsocketPayload;
+  [LiveWebsocketMessagingType.LIVE_SHARING_STOPPED]: ILiveSharingStoppedWebsocketPayload;
 }
 
 export const WebsocketMessagingType = {
@@ -90,6 +99,7 @@ export const WebsocketMessagingType = {
   ...UserWebsocketMessagingType,
   ...PostWebsocketMessagingType,
   ...StorageWebsocketMessagingType,
+  ...LiveWebsocketMessagingType,
 } as const;
 
 export type WebsocketMessagingType =
