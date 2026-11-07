@@ -50,10 +50,15 @@ export abstract class Neo4jBaseRepository {
     return results[0] ?? null;
   }
 
+  /**
+   * Ecriture en transaction geree (`executeWrite`) : le driver rejoue seul les erreurs transitoires
+   * (deadlock `Neo.TransientError.Transaction.DeadlockDetected`, perte de leader) avec un backoff,
+   * ce que `session.run` en auto-commit ne fait pas. Le cypher doit rester idempotent (MERGE).
+   */
   protected async write(cypher: string, params: Record<string, unknown> = {}): Promise<void> {
     const session = this.provider.getDriver().session();
     try {
-      await session.run(cypher, params);
+      await session.executeWrite((tx) => tx.run(cypher, params));
     } catch (error: unknown) {
       throw DATABASE_QUERY_ERROR((error as Error).message);
     } finally {

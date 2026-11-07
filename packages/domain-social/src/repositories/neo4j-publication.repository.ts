@@ -108,8 +108,10 @@ export class Neo4jPublicationRepository
     const invalidEventIds: { postId: string; eventId: string }[] = [];
 
     try {
-      const result = await session.run(
-        `UNWIND $batch AS item
+      // executeWrite : le driver rejoue les deadlocks transitoires, le cypher est idempotent (MERGE)
+      const result = await session.executeWrite((tx) =>
+        tx.run(
+          `UNWIND $batch AS item
          MERGE (p:SocialPost {postId: item.postId})
          WITH p, item
          MATCH (u:SocialUser {userId: item.userId})
@@ -120,7 +122,8 @@ export class Neo4jPublicationRepository
            MERGE (p)-[:LINK_TO_EVENT]->(e)
          )
          RETURN item.postId AS postId, item.eventId AS eventId, e IS NOT NULL AS eventFound`,
-        { batch },
+          { batch },
+        ),
       );
 
       for (const record of result.records) {
