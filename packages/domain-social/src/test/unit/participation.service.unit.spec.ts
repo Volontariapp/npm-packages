@@ -663,4 +663,55 @@ describe('ParticipationService (Unit)', () => {
       ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
     });
   });
+
+  // ─── setEventAttendance ───────────────────────────────────────────────────
+
+  describe('setEventAttendance()', () => {
+    const organizer = UserIdFactory.build('organizer-1');
+
+    it('should write the attendance then push EVENT_SOCIAL_ATTENDANCE_SET to the outbox', async () => {
+      const attendanceSpy = jest
+        .spyOn(mockRepository, 'setEventAttendance')
+        .mockResolvedValue(undefined);
+      const outboxSaveSpy = jest.spyOn(mockEventQueueRepository, 'save');
+
+      await service.setEventAttendance(
+        EventIdFactory.build('event-1'),
+        ['user-1'],
+        ['user-2'],
+        organizer,
+      );
+
+      expect(attendanceSpy).toHaveBeenCalledWith('event-1', ['user-1'], ['user-2']);
+      expect(outboxSaveSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not push anything when no user is checked or unchecked', async () => {
+      jest.spyOn(mockRepository, 'setEventAttendance').mockResolvedValue(undefined);
+      const outboxSaveSpy = jest.spyOn(mockEventQueueRepository, 'save');
+
+      await service.setEventAttendance(EventIdFactory.build('event-1'), [], [], organizer);
+
+      expect(outboxSaveSpy).not.toHaveBeenCalled();
+    });
+
+    it('should keep the attendance when the outbox push fails', async () => {
+      jest.spyOn(mockRepository, 'setEventAttendance').mockResolvedValue(undefined);
+      jest.spyOn(mockEventQueueRepository, 'save').mockRejectedValue(new Error('outbox down'));
+
+      await expect(
+        service.setEventAttendance(EventIdFactory.build('event-1'), ['user-1'], [], organizer),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw DATABASE_ERROR and push nothing when the repository fails', async () => {
+      jest.spyOn(mockRepository, 'setEventAttendance').mockRejectedValue(new Error('Neo4j down'));
+      const outboxSaveSpy = jest.spyOn(mockEventQueueRepository, 'save');
+
+      await expect(
+        service.setEventAttendance(EventIdFactory.build('event-1'), ['user-1'], [], organizer),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+      expect(outboxSaveSpy).not.toHaveBeenCalled();
+    });
+  });
 });
