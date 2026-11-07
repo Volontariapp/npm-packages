@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.14.8
+
+### Patch Changes
+
+- Updated dependencies [[`8e032c2`](https://github.com/Volontariapp/npm-packages/commit/8e032c276ecd624e84ef73ccf603732551070538)]:
+  - @volontariapp/messaging@2.33.0
+  - @volontariapp/database@3.12.9
+  - @volontariapp/outbox@0.10.35
+
 ## 0.14.7
 
 ### Patch Changes

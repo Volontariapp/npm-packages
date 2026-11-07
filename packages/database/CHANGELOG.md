@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.12.9
+
+### Patch Changes
+
+- Updated dependencies [[`8e032c2`](https://github.com/Volontariapp/npm-packages/commit/8e032c276ecd624e84ef73ccf603732551070538)]:
+  - @volontariapp/messaging@2.33.0
+
 ## 3.12.8
 
 ### Patch Changes
