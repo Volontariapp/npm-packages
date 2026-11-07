@@ -27,6 +27,7 @@ export enum SocialEventMessagingType {
   // === INTERACTION / PARTICIPATION ===
   EVENT_SOCIAL_WISHED = 'event_social.wished',
   EVENT_SOCIAL_UNWISHED = 'event_social.unwished',
+  EVENT_SOCIAL_ATTENDANCE_SET = 'event_social.attendance_set',
 }
 
 // Par default le userId est le emitter mais si un admin cree un event pour un autre utilisateur, il faudra specifier le userId
@@ -48,6 +49,15 @@ export interface ISocialEventDeletedFailedPayload extends IEventIdPayload, Parti
 
 export interface IEventSocialWishedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
 export interface IEventSocialUnwishedPayload extends IEventIdPayload, Partial<IUserIdPayload> {}
+
+/**
+ * Pointage (check-in) pose ou retire par l'organisateur sur une liste d'inscrits.
+ * L'emetteur (emitterId) est l'organisateur ; les deux listes portent les inscrits concernes.
+ */
+export interface IEventSocialAttendanceSetPayload extends IEventIdPayload {
+  checkedUserIds: string[];
+  uncheckedUserIds: string[];
+}
 
 // Un post peut etre lie avec un event
 export interface IPostSocialCreatedPayload

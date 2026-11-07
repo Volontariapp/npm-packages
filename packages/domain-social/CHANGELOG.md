@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.18.0
+
+### Minor Changes
+
+- Push the check-in of a participant: new `event_social.attendance_set` outbox event (stream `event-social-attendance-set`) emitted by `ParticipationService.setEventAttendance`, which now takes the organizer id, and the `event.attendance_updated` websocket message.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/shared@0.20.0
+  - @volontariapp/messaging@2.34.0
+  - @volontariapp/database@3.12.10
+  - @volontariapp/outbox@0.10.36
+
 ## 0.17.9
 
 ### Patch Changes

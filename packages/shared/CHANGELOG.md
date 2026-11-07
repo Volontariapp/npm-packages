@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.0
+
+### Minor Changes
+
+- Push the check-in of a participant: new `event_social.attendance_set` outbox event (stream `event-social-attendance-set`) emitted by `ParticipationService.setEventAttendance`, which now takes the organizer id, and the `event.attendance_updated` websocket message.
+
 ## 0.19.0
 
 ### Minor Changes

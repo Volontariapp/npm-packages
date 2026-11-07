@@ -4,6 +4,7 @@ export enum EventWebsocketMessagingType {
   EVENT_CREATION_FAILED = 'event.creation_failed',
   EVENT_DELETION_FAILED = 'event.deletion_failed',
   RANKING_READY = 'ranking.ready',
+  EVENT_ATTENDANCE_UPDATED = 'event.attendance_updated',
 
   // Event FallBack
   FALLBACK_CREATE_EVENT = 'event.fallback.create_event',

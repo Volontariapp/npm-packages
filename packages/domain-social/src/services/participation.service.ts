@@ -18,6 +18,7 @@ import {
   SocialEventMessagingType,
   IEventSocialWishedPayload,
   IEventSocialUnwishedPayload,
+  IEventSocialAttendanceSetPayload,
 } from '@volontariapp/messaging';
 import { Streams } from '@volontariapp/shared';
 import { Neo4jParticipationRepository } from '../repositories/neo4j-participation.repository.js';
@@ -360,16 +361,54 @@ export class ParticipationService {
     eventId: EventId,
     checkedUserIds: string[],
     uncheckedUserIds: string[],
+    organizerId: UserId,
   ): Promise<void> {
     try {
       this.logger.log(
         `Setting event attendance for event ${eventId.value}: ${String(checkedUserIds.length)} checked, ${String(uncheckedUserIds.length)} unchecked`,
       );
       await this.repository.setEventAttendance(eventId.value, checkedUserIds, uncheckedUserIds);
+      await this.pushAttendanceSet(eventId, checkedUserIds, uncheckedUserIds, organizerId);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       this.logger.error(`Failed to set attendance for event: ${eventId.value}`, error);
       throw DATABASE_ERROR('setting event attendance', (error as Error).message);
+    }
+  }
+
+  /** Previent les inscrits pointes ou depointes (push WS). Best effort : le pointage reste acquis. */
+  private async pushAttendanceSet(
+    eventId: EventId,
+    checkedUserIds: string[],
+    uncheckedUserIds: string[],
+    organizerId: UserId,
+  ): Promise<void> {
+    if (checkedUserIds.length === 0 && uncheckedUserIds.length === 0) {
+      return;
+    }
+    try {
+      const payload: IEventSocialAttendanceSetPayload = {
+        eventId: eventId.value,
+        checkedUserIds,
+        uncheckedUserIds,
+      };
+      const eventQueueEntity =
+        EventQueueEntity.createEvent<SocialEventMessagingType.EVENT_SOCIAL_ATTENDANCE_SET>({
+          type: SocialEventMessagingType.EVENT_SOCIAL_ATTENDANCE_SET,
+          emitter: 'ms-social',
+          emitterId: organizerId.value,
+          payload,
+          targetServices: [Streams.EVENT_SOCIAL_ATTENDANCE_SET],
+        });
+      const eventQueueRepo =
+        new EventQueueRepository<SocialEventMessagingType.EVENT_SOCIAL_ATTENDANCE_SET>(
+          this.eventQueueRepository,
+        );
+      await eventQueueRepo.create(eventQueueEntity);
+    } catch (eventError: unknown) {
+      this.logger.warn(
+        `Failed to push EVENT_SOCIAL_ATTENDANCE_SET event to outbox: ${(eventError as Error).message}`,
+      );
     }
   }
 

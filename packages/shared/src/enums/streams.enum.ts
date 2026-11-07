@@ -48,6 +48,7 @@ export enum SocialStream {
   SOCIAL_USER = 'social:user',
   EVENT_SOCIAL_WISHED = 'event-social-wished',
   EVENT_SOCIAL_UNWISHED = 'event-social-unwished',
+  EVENT_SOCIAL_ATTENDANCE_SET = 'event-social-attendance-set',
 }
 
 export enum StorageStream {

@@ -54,3 +54,9 @@ export interface IFallbackDeleteTagWebsocketPayload
     IEmitterPayload {}
 
 export interface IRankingReadyWebsocketPayload extends IRankingReadyPayload, IEmitterPayload {}
+
+/** Pointage de l'utilisateur modifie par l'organisateur : `checked` vaut true s'il est pointe. */
+export interface IEventAttendanceUpdatedWebsocketPayload {
+  eventId: string;
+  checked: boolean;
+}

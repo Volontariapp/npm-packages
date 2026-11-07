@@ -48,6 +48,7 @@ import type {
   ISocialEventDeletedFailedPayload,
   IEventSocialWishedPayload,
   IEventSocialUnwishedPayload,
+  IEventSocialAttendanceSetPayload,
 } from './social/payloads.js';
 
 import { PostEventMessagingType } from './post/payloads.js';
@@ -168,6 +169,7 @@ export interface EventRegistry {
   [SocialEventMessagingType.USER_SOCIAL_DELETION_FAILED]: IUserSocialDeletionFailedPayload;
   [SocialEventMessagingType.EVENT_SOCIAL_WISHED]: IEventSocialWishedPayload;
   [SocialEventMessagingType.EVENT_SOCIAL_UNWISHED]: IEventSocialUnwishedPayload;
+  [SocialEventMessagingType.EVENT_SOCIAL_ATTENDANCE_SET]: IEventSocialAttendanceSetPayload;
 
   // Post
   [PostEventMessagingType.POST_CREATED]: IPostCreatedPayload;
