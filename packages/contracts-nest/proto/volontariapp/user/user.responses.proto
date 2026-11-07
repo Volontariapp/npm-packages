@@ -112,3 +112,16 @@ message ListBadgesResponse {
   repeated Badge badges = 1;
   volontariapp.common.PaginationResponse pagination = 2;
 }
+
+message GetLeaderboardResponse {
+  repeated LeaderboardEntry entries = 1;
+  // Absent when there is no further page.
+  optional string next_cursor = 2;
+}
+
+message GetMyRankResponse {
+  // Absent when the caller has no rank on this scope yet.
+  optional LeaderboardEntry me = 1;
+  // Up to 5 entries above and 5 below the caller, ordered by rank.
+  repeated LeaderboardEntry neighbors = 2;
+}

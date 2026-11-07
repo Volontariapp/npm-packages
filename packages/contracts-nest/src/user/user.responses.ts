@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { PaginationResponse } from "../common/pagination.js";
-import { Badge, BadgeProgress, User, UserPublic } from "./user.js";
+import { Badge, BadgeProgress, LeaderboardEntry, User, UserPublic } from "./user.js";
 
 export interface UserResponse {
   user: User | undefined;
@@ -114,4 +114,19 @@ export interface GetMyBadgeProgressResponse {
 export interface ListBadgesResponse {
   badges: Badge[];
   pagination: PaginationResponse | undefined;
+}
+
+export interface GetLeaderboardResponse {
+  entries: LeaderboardEntry[];
+  /** Absent when there is no further page. */
+  nextCursor?: string | undefined;
+}
+
+export interface GetMyRankResponse {
+  /** Absent when the caller has no rank on this scope yet. */
+  me?:
+    | LeaderboardEntry
+    | undefined;
+  /** Up to 5 entries above and 5 below the caller, ordered by rank. */
+  neighbors: LeaderboardEntry[];
 }
