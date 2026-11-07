@@ -33,6 +33,11 @@ export interface SearchEventsQuery {
    * events). At most as many ids as `excluded_ids`.
    */
   excludedOrganizerIds: string[];
+  /**
+   * Events whose end is at or after this instant (ISO 8601), the counterpart of
+   * `start_date_from`, used to list events that are still running.
+   */
+  endAtFrom?: string | undefined;
 }
 
 export interface GetEventsByIdsQuery {

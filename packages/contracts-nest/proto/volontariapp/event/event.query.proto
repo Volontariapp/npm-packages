@@ -26,6 +26,9 @@ message SearchEventsQuery {
   // Events whose organizer is one of these users are left out (blocked users, the reader's own
   // events). At most as many ids as `excluded_ids`.
   repeated string excluded_organizer_ids = 13;
+  // Events whose end is at or after this instant (ISO 8601), the counterpart of
+  // `start_date_from`, used to list events that are still running.
+  optional string end_at_from = 14;
 }
 
 message GetEventsByIdsQuery {
