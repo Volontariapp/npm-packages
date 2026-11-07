@@ -7,6 +7,15 @@
 /* eslint-disable */
 import { Timestamp } from "../google/protobuf/timestamp.js";
 
+/** Leaderboard period: all-time total, current week or current month (Europe/Paris). */
+export enum LeaderboardScope {
+  LEADERBOARD_SCOPE_UNSPECIFIED = 0,
+  LEADERBOARD_SCOPE_GLOBAL = 1,
+  LEADERBOARD_SCOPE_WEEK = 2,
+  LEADERBOARD_SCOPE_MONTH = 3,
+  UNRECOGNIZED = -1,
+}
+
 export interface OrganisationInfo {
   rna: string;
 }
@@ -87,4 +96,19 @@ export interface UserPublic {
   organisationInfo?: OrganisationInfo | undefined;
   badges: Badge[];
   avatarFileId?: string | undefined;
+}
+
+/** A distinction earned on one leaderboard. tier is 1 (first), 2 or 3. */
+export interface LeaderboardDistinction {
+  scope: LeaderboardScope;
+  tier: number;
+}
+
+export interface LeaderboardEntry {
+  userId: string;
+  pseudo: string;
+  avatarFileId?: string | undefined;
+  points: number;
+  rank: number;
+  distinctions: LeaderboardDistinction[];
 }

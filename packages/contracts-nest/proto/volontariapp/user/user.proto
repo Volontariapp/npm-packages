@@ -67,3 +67,26 @@ message UserPublic {
   repeated Badge badges = 7;
   optional string avatar_file_id = 8;
 }
+
+// Leaderboard period: all-time total, current week or current month (Europe/Paris).
+enum LeaderboardScope {
+  LEADERBOARD_SCOPE_UNSPECIFIED = 0;
+  LEADERBOARD_SCOPE_GLOBAL = 1;
+  LEADERBOARD_SCOPE_WEEK = 2;
+  LEADERBOARD_SCOPE_MONTH = 3;
+}
+
+// A distinction earned on one leaderboard. tier is 1 (first), 2 or 3.
+message LeaderboardDistinction {
+  LeaderboardScope scope = 1;
+  int32 tier = 2;
+}
+
+message LeaderboardEntry {
+  string user_id = 1;
+  string pseudo = 2;
+  optional string avatar_file_id = 3;
+  int32 points = 4;
+  int32 rank = 5;
+  repeated LeaderboardDistinction distinctions = 6;
+}

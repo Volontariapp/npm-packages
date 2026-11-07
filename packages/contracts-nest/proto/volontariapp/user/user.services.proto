@@ -26,6 +26,8 @@ service UserService {
   rpc GetMyFollowersProfiles (GetMyFollowersProfilesQuery) returns (GetMyFollowersProfilesResponse) {}
   rpc GetEventParticipantsProfiles (GetEventParticipantsProfilesQuery) returns (GetEventParticipantsProfilesResponse) {}
   rpc GetPostLikersProfiles (GetPostLikersProfilesQuery) returns (GetPostLikersProfilesResponse) {}
+  rpc GetLeaderboard (GetLeaderboardQuery) returns (GetLeaderboardResponse) {}
+  rpc GetMyRank (GetMyRankQuery) returns (GetMyRankResponse) {}
 }
 
 service BadgeService {

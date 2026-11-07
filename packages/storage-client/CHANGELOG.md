@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/contracts@4.10.1
+  - @volontariapp/contracts-nest@3.4.8
+
 ## 0.3.16
 
 ### Patch Changes

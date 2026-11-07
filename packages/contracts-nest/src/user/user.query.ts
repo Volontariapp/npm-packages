@@ -6,6 +6,7 @@
 
 /* eslint-disable */
 import { PaginationRequest } from "../common/pagination.js";
+import { LeaderboardScope } from "./user.js";
 
 export interface GetUserQuery {
 }
@@ -58,4 +59,18 @@ export interface GetEventParticipantsProfilesQuery {
 export interface GetPostLikersProfilesQuery {
   postId: string;
   pagination: PaginationRequest | undefined;
+}
+
+export interface GetLeaderboardQuery {
+  scope: LeaderboardScope;
+  /** Opaque cursor returned by the previous page; absent for the first page. */
+  cursor?:
+    | string
+    | undefined;
+  /** Page size, between 1 and 100. */
+  limit: number;
+}
+
+export interface GetMyRankQuery {
+  scope: LeaderboardScope;
 }

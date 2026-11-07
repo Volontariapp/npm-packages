@@ -27,9 +27,11 @@ import {
   GetBadgeBySlugQuery,
   GetBadgeQuery,
   GetEventParticipantsProfilesQuery,
+  GetLeaderboardQuery,
   GetMyBadgeProgressQuery,
   GetMyFollowersProfilesQuery,
   GetMyFollowsProfilesQuery,
+  GetMyRankQuery,
   GetPostLikersProfilesQuery,
   GetPublicUserQuery,
   GetUserQuery,
@@ -48,9 +50,11 @@ import {
   DeleteUserResponse,
   GetBadgeBySlugResponse,
   GetEventParticipantsProfilesResponse,
+  GetLeaderboardResponse,
   GetMyBadgeProgressResponse,
   GetMyFollowersProfilesResponse,
   GetMyFollowsProfilesResponse,
+  GetMyRankResponse,
   GetPostLikersProfilesResponse,
   GetUsersByIdsResponse,
   IncrementImpactScoreResponse,
@@ -106,6 +110,10 @@ export interface UserServiceClient {
   ): Observable<GetEventParticipantsProfilesResponse>;
 
   getPostLikersProfiles(request: GetPostLikersProfilesQuery): Observable<GetPostLikersProfilesResponse>;
+
+  getLeaderboard(request: GetLeaderboardQuery): Observable<GetLeaderboardResponse>;
+
+  getMyRank(request: GetMyRankQuery): Observable<GetMyRankResponse>;
 }
 
 export interface UserServiceController {
@@ -182,6 +190,12 @@ export interface UserServiceController {
   getPostLikersProfiles(
     request: GetPostLikersProfilesQuery,
   ): Promise<GetPostLikersProfilesResponse> | Observable<GetPostLikersProfilesResponse> | GetPostLikersProfilesResponse;
+
+  getLeaderboard(
+    request: GetLeaderboardQuery,
+  ): Promise<GetLeaderboardResponse> | Observable<GetLeaderboardResponse> | GetLeaderboardResponse;
+
+  getMyRank(request: GetMyRankQuery): Promise<GetMyRankResponse> | Observable<GetMyRankResponse> | GetMyRankResponse;
 }
 
 export function UserServiceControllerMethods() {
@@ -206,6 +220,8 @@ export function UserServiceControllerMethods() {
       "getMyFollowersProfiles",
       "getEventParticipantsProfiles",
       "getPostLikersProfiles",
+      "getLeaderboard",
+      "getMyRank",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
