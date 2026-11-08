@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/storage-pipeline",
-  "version": "0.3.39",
+  "version": "0.3.40",
   "publishConfig": {
     "access": "public",
     "provenance": true

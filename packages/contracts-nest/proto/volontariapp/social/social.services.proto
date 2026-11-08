@@ -101,6 +101,9 @@ service ParticipationQueryService {
   rpc AdminGetUserParticipateEvent(AdminGetUserParticipateEventQuery) returns (AdminGetUserParticipateEventResponse);
   rpc AdminGetUserWishEvent(AdminGetUserWishEventQuery) returns (AdminGetUserWishEventResponse);
   rpc GetRecommendedEventIds(GetRecommendedEventIdsQuery) returns (GetRecommendedEventIdsResponse);
+  // One call instead of paginated reads of the caller's created, participated, wished and blocked
+  // sets: the sets that SearchEventsQuery.excluded_ids and excluded_organizer_ids need.
+  rpc GetSearchExclusions(GetSearchExclusionsQuery) returns (GetSearchExclusionsResponse);
   rpc AdminGetRecommendedEventIds(AdminGetRecommendedEventIdsQuery) returns (AdminGetRecommendedEventIdsResponse);
 }
 

@@ -142,6 +142,17 @@ export interface GetSocialEventQuery {
   eventId: string;
 }
 
+/**
+ * Which sets of the caller to read for a search. The caller is the authenticated user (internal
+ * token), never a field of the request.
+ */
+export interface GetSearchExclusionsQuery {
+  excludeCreatedByMe: boolean;
+  excludeParticipatedByMe: boolean;
+  excludeWishedByMe: boolean;
+  excludeBlockedUsers: boolean;
+}
+
 export interface GetRecommendedEventIdsQuery {
   excludeCreatedByMe: boolean;
   excludeBlockedUsers: boolean;

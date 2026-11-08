@@ -172,6 +172,17 @@ message GetEventNodeResponse {
   bool exists = 1;
 }
 
+// Each list holds at most 1000 ids (the cap of SearchEventsQuery in ms-event), in a stable order.
+// A truncated flag is true when more ids exist than were returned.
+message GetSearchExclusionsResponse {
+  // Union of the created, participated and wished events the query asked for.
+  repeated string excluded_event_ids = 1;
+  // Users the caller blocked and users who blocked the caller.
+  repeated string hidden_user_ids = 2;
+  bool excluded_event_ids_truncated = 3;
+  bool hidden_user_ids_truncated = 4;
+}
+
 message GetRecommendedEventIdsResponse {
   repeated string ids = 1;
   volontariapp.common.PaginationResponse pagination = 2;

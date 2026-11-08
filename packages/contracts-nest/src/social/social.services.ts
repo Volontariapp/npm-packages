@@ -71,6 +71,7 @@ import {
   GetPostLikersQuery,
   GetPostsLikeSummaryQuery,
   GetRecommendedEventIdsQuery,
+  GetSearchExclusionsQuery,
   GetSocialEventQuery,
   GetSocialPostQuery,
   GetSocialUserQuery,
@@ -135,6 +136,7 @@ import {
   GetPostNodeResponse,
   GetPostsLikeSummaryResponse,
   GetRecommendedEventIdsResponse,
+  GetSearchExclusionsResponse,
   GetUserEventResponse,
   GetUserLikesResponse,
   GetUserNodeResponse,
@@ -773,6 +775,13 @@ export interface ParticipationQueryServiceClient {
 
   getRecommendedEventIds(request: GetRecommendedEventIdsQuery): Observable<GetRecommendedEventIdsResponse>;
 
+  /**
+   * One call instead of paginated reads of the caller's created, participated, wished and blocked
+   * sets: the sets that SearchEventsQuery.excluded_ids and excluded_organizer_ids need.
+   */
+
+  getSearchExclusions(request: GetSearchExclusionsQuery): Observable<GetSearchExclusionsResponse>;
+
   adminGetRecommendedEventIds(
     request: AdminGetRecommendedEventIdsQuery,
   ): Observable<AdminGetRecommendedEventIdsResponse>;
@@ -841,6 +850,15 @@ export interface ParticipationQueryServiceController {
     | Observable<GetRecommendedEventIdsResponse>
     | GetRecommendedEventIdsResponse;
 
+  /**
+   * One call instead of paginated reads of the caller's created, participated, wished and blocked
+   * sets: the sets that SearchEventsQuery.excluded_ids and excluded_organizer_ids need.
+   */
+
+  getSearchExclusions(
+    request: GetSearchExclusionsQuery,
+  ): Promise<GetSearchExclusionsResponse> | Observable<GetSearchExclusionsResponse> | GetSearchExclusionsResponse;
+
   adminGetRecommendedEventIds(
     request: AdminGetRecommendedEventIdsQuery,
   ):
@@ -863,6 +881,7 @@ export function ParticipationQueryServiceControllerMethods() {
       "adminGetUserParticipateEvent",
       "adminGetUserWishEvent",
       "getRecommendedEventIds",
+      "getSearchExclusions",
       "adminGetRecommendedEventIds",
     ];
     for (const method of grpcMethods) {
