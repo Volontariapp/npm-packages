@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.11.0
+
+### Minor Changes
+
+- Add the gateway web types of the leaderboard: `LeaderboardEntryWeb` (with `avatarUrl`), `GetLeaderboardWebResponse` and `GetMyRankWebResponse`.
+
 ## 4.10.1
 
 ### Patch Changes

@@ -20,8 +20,16 @@ import type {
   GetEventParticipantsProfilesResponse,
   GetPostLikersProfilesResponse,
   GetMyBadgeProgressResponse,
+  GetLeaderboardResponse,
+  GetMyRankResponse,
 } from '../../../user/user.responses.js';
-import type { User, Badge, BadgeProgress, UserPublic } from '../../../user/user.js';
+import type {
+  User,
+  Badge,
+  BadgeProgress,
+  UserPublic,
+  LeaderboardEntry,
+} from '../../../user/user.js';
 
 export interface BadgeWeb extends Omit<Badge, 'awardedAt'> {
   awardedAt?: Date;
@@ -60,23 +68,31 @@ export interface GetUsersByIdsWebResponse extends Omit<ListUsersResponse, 'users
   users: UserWeb[];
 }
 
-export interface GetMyFollowsProfilesWebResponse
-  extends Omit<GetMyFollowsProfilesResponse, 'users'> {
+export interface GetMyFollowsProfilesWebResponse extends Omit<
+  GetMyFollowsProfilesResponse,
+  'users'
+> {
   users: UserWeb[];
 }
 
-export interface GetMyFollowersProfilesWebResponse
-  extends Omit<GetMyFollowersProfilesResponse, 'users'> {
+export interface GetMyFollowersProfilesWebResponse extends Omit<
+  GetMyFollowersProfilesResponse,
+  'users'
+> {
   users: UserWeb[];
 }
 
-export interface GetEventParticipantsProfilesWebResponse
-  extends Omit<GetEventParticipantsProfilesResponse, 'users'> {
+export interface GetEventParticipantsProfilesWebResponse extends Omit<
+  GetEventParticipantsProfilesResponse,
+  'users'
+> {
   users: UserPublicWeb[];
 }
 
-export interface GetPostLikersProfilesWebResponse
-  extends Omit<GetPostLikersProfilesResponse, 'users'> {
+export interface GetPostLikersProfilesWebResponse extends Omit<
+  GetPostLikersProfilesResponse,
+  'users'
+> {
   users: UserPublicWeb[];
 }
 
@@ -129,7 +145,22 @@ export interface ListBadgesWebResponse extends Omit<ListBadgesResponse, 'badges'
   badges: BadgeWeb[];
 }
 
-export interface GetMyBadgeProgressWebResponse
-  extends Omit<GetMyBadgeProgressResponse, 'badges'> {
+export interface GetMyBadgeProgressWebResponse extends Omit<GetMyBadgeProgressResponse, 'badges'> {
   badges: BadgeProgressWeb[];
+}
+
+/** One ranked user. `avatarUrl` is computed by the gateway from `avatarFileId`. Absent when there is none. */
+export interface LeaderboardEntryWeb extends LeaderboardEntry {
+  avatarUrl?: string;
+}
+
+export interface GetLeaderboardWebResponse extends Omit<GetLeaderboardResponse, 'entries'> {
+  entries: LeaderboardEntryWeb[];
+}
+
+export interface GetMyRankWebResponse extends Omit<GetMyRankResponse, 'me' | 'neighbors'> {
+  /** Absent when the caller has no rank on this scope yet. */
+  me?: LeaderboardEntryWeb;
+  /** Up to 5 entries above and 5 below the caller, ordered by rank. */
+  neighbors: LeaderboardEntryWeb[];
 }
