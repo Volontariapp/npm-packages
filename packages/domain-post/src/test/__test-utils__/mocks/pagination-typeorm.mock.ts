@@ -6,6 +6,10 @@ export interface ChainableQueryBuilderMock<T extends ObjectLiteral> {
   builder: SelectQueryBuilder<T>;
   orderBy: jest.Mock;
   addOrderBy: jest.Mock;
+  /** Lignes de la page. */
+  getMany: jest.Mock<() => Promise<unknown[]>>;
+  /** Resultat du COUNT(*) : { total } en texte comme le renvoie Postgres, ou undefined. */
+  getRawOne: jest.Mock<() => Promise<{ total: string } | undefined>>;
 }
 
 /** QueryBuilder chainable dont seules les methodes de listPaginated sont simulees. */
@@ -19,7 +23,10 @@ export const createChainableQueryBuilderMock = <
     orderBy: jest.fn(),
     addOrderBy: jest.fn(),
     andWhere: jest.fn(),
+    select: jest.fn(),
     getManyAndCount: jest.fn<() => Promise<[unknown[], number]>>(),
+    getMany: jest.fn<() => Promise<unknown[]>>(),
+    getRawOne: jest.fn<() => Promise<{ total: string } | undefined>>(),
   };
   qb.leftJoinAndSelect.mockReturnValue(qb);
   qb.skip.mockReturnValue(qb);
@@ -27,11 +34,16 @@ export const createChainableQueryBuilderMock = <
   qb.orderBy.mockReturnValue(qb);
   qb.addOrderBy.mockReturnValue(qb);
   qb.andWhere.mockReturnValue(qb);
+  qb.select.mockReturnValue(qb);
   qb.getManyAndCount.mockResolvedValue([[], 0]);
+  qb.getMany.mockResolvedValue([]);
+  qb.getRawOne.mockResolvedValue({ total: '0' });
   return {
     builder: qb as unknown as SelectQueryBuilder<T>,
     orderBy: qb.orderBy,
     addOrderBy: qb.addOrderBy,
+    getMany: qb.getMany,
+    getRawOne: qb.getRawOne,
   };
 };
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.10.16
+
+### Patch Changes
+
+- `PostgresPostRepository.listPaginated` computes its total with a plain `COUNT(*)` (no join on `post_media`, no `DISTINCT`) run in parallel with the page query, instead of `getManyAndCount()`. The page, its order and the visibility rules are unchanged. On the prod `ms-post` database (about 29 000 posts) the old count cost 12 ms of execution against 0.2 ms for the page itself, and was the main CPU consumer of the posts list at 125 req/s.
+
 ## 3.10.15
 
 ### Patch Changes
