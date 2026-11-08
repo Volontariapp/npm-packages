@@ -4,6 +4,11 @@ import { Column, Entity, Index } from 'typeorm';
 import type { EventType } from '../types/event.type.js';
 import { Streams } from '@volontariapp/shared';
 
+/**
+ * `(status, created_at, id)` serves the outbox polling query (`WHERE status = 'PENDING' ORDER BY
+ * created_at, id`) and the purge of the COMPLETED rows without reading the whole table.
+ */
+@Index('IDX_event_queue_status_created_at', ['status', 'createdAt', 'id'])
 @Entity('event_queue')
 export class EventQueueModel<K extends EventType = EventType> extends OutboxModel<K> {
   @Column({ type: 'integer' })

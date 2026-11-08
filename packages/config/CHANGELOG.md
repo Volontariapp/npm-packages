@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.4.0
+
+### Minor Changes
+
+- The outbox runners no longer read the whole `event_queue` and `jobs_outbox` tables on every poll, and they purge the rows they have finished.
+
+  - `database`: `EventQueueModel` and `JobsOutboxModel` declare the `(status, created_at, id)` index that serves the polling query and the purge. New `OutboxPurger` deletes the COMPLETED rows older than the retention in small batches, and `OutboxRunner` runs it on its own loop (right at start, then every interval) so that sending is never held back. For `jobs_outbox` the purge also covers `job_audit`. A failing purge is logged and retried, it never stops the runner.
+  - `config`: `OutboxRunnerConfig` gets an optional `purge` block (`OutboxPurgeConfig`: `enabled`, `retentionMs`, `intervalMs`, `batchSize`). Without it the runners purge COMPLETED rows after 1 day, once an hour, 5 000 rows at a time.
+  - The services must add the `AddOutboxPollingIndexes1794166000000` common migration (copied into the test migrations of `workers` and of the `domain-*` packages).
+
 ## 3.3.2
 
 ### Patch Changes
