@@ -7,9 +7,11 @@ import { SocialUserMapper } from '../mappers/social-user.mapper.js';
 import { SocialEventMapper } from '../mappers/social-event.mapper.js';
 import type { IParticipationRepository } from '../repositories/interfaces/participation.repository.js';
 import { Injectable, Inject } from '@nestjs/common';
+import neo4j from 'neo4j-driver';
 import { NestNeo4jProvider, NEST_NEO4J_PROVIDER } from '@volontariapp/bridge-nest';
 import { Neo4jBaseRepository, toSafeInt } from './base/neo4j-base.repository.js';
 import { EventParticipantCountVO } from '../value-objects/batch-results.vo.js';
+import { SearchExclusionsVO } from '../value-objects/search-exclusions.vo.js';
 
 @Injectable()
 export class Neo4jParticipationRepository
@@ -307,6 +309,58 @@ export class Neo4jParticipationRepository
     );
 
     return new PaginatedAttendeesVO(result.items, result.pagination);
+  }
+
+  async getSearchExclusions(
+    userId: string,
+    filters: {
+      excludeCreatedByMe?: boolean;
+      excludeParticipatedByMe?: boolean;
+      excludeWishedByMe?: boolean;
+      excludeBlockedUsers?: boolean;
+    },
+    maxIds: number,
+  ): Promise<SearchExclusionsVO> {
+    const relations: string[] = [];
+    if (filters.excludeCreatedByMe) relations.push('CREATED');
+    if (filters.excludeParticipatedByMe) relations.push('PARTICIPATE');
+    if (filters.excludeWishedByMe) relations.push('WISH_TO_PARTICIPATE');
+
+    // maxIds + 1 : un resultat de plus que le plafond suffit a savoir qu'il y en a davantage
+    const params = { userId, limit: neo4j.int(maxIds + 1) };
+    const mapId = (record: { get(key: string): unknown }): string => record.get('id') as string;
+
+    const [eventIds, userIds] = await Promise.all([
+      relations.length === 0
+        ? Promise.resolve<string[]>([])
+        : // A SocialEvent node read while another request deletes it can come back without its
+          // eventId (empty string on the wire), which ms-event rejects in a search: skip such nodes.
+          this.read(
+            `MATCH (:SocialUser {userId: $userId})-[:${relations.join('|')}]->(e:SocialEvent)
+             WHERE e.eventId IS NOT NULL AND e.eventId <> ''
+             WITH DISTINCT e.eventId AS id
+             RETURN id ORDER BY id LIMIT $limit`,
+            params,
+            mapId,
+          ),
+      filters.excludeBlockedUsers
+        ? this.read(
+            `MATCH (:SocialUser {userId: $userId})-[:BLOCK]-(u:SocialUser)
+             WHERE u.userId IS NOT NULL AND u.userId <> ''
+             WITH DISTINCT u.userId AS id
+             RETURN id ORDER BY id LIMIT $limit`,
+            params,
+            mapId,
+          )
+        : Promise.resolve<string[]>([]),
+    ]);
+
+    return new SearchExclusionsVO(
+      eventIds.slice(0, maxIds),
+      userIds.slice(0, maxIds),
+      eventIds.length > maxIds,
+      userIds.length > maxIds,
+    );
   }
 
   async getRecommendedEventIds(
