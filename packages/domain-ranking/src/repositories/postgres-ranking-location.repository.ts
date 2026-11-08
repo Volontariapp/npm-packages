@@ -5,7 +5,11 @@ import { BaseRepository } from '@volontariapp/database';
 import type { TransactionManager } from './sql.js';
 import { RankingUserLocationEntity } from '../entities/index.js';
 import { RankingUserLocationModel } from '../models/index.js';
-import type { IRankingLocationRepository, StoredLocation } from './interfaces/index.js';
+import type {
+  IRankingLocationRepository,
+  StoredLocation,
+  StoredUserLocation,
+} from './interfaces/index.js';
 import type { Queryable } from './sql.js';
 import { rowsOf } from './sql.js';
 
@@ -47,6 +51,25 @@ export class PostgresRankingLocationRepository
     );
     const row = rows.at(0);
     return row ? { encrypted: row.location_enc, updatedAt: row.updated_at } : null;
+  }
+
+  async findUpdatedSince(
+    since: Date,
+    limit: number,
+    executor: Queryable = this.repository.manager,
+  ): Promise<StoredUserLocation[]> {
+    const rows = rowsOf<{ user_id: string; location_enc: Buffer; updated_at: Date }>(
+      await executor.query(
+        `SELECT user_id, location_enc, updated_at FROM ranking_user_location
+         WHERE updated_at >= $1 ORDER BY updated_at DESC LIMIT $2`,
+        [since, limit],
+      ),
+    );
+    return rows.map((row) => ({
+      userId: row.user_id,
+      encrypted: row.location_enc,
+      updatedAt: row.updated_at,
+    }));
   }
 
   async purgeByUser(

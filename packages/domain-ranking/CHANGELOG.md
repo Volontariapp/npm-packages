@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- Add `RankingLocationService.listActiveCells` and `IRankingLocationRepository.findUpdatedSince`: the distinct positions (rounded to 1 km, no user identifier) of the users who sent one recently. Used by an admin-only route so the traffic simulator can create events around real users.
+
 ## 0.2.23
 
 ### Patch Changes

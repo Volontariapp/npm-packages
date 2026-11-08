@@ -266,9 +266,7 @@ describe('Ranking signals (Integration)', () => {
         expect(result.backfilled).toBe(1);
         const [like] = await likeLog.listActive(userId, 10);
         expect(like.postId).toBe(fromGraph);
-        expect(Date.now() - like.occurredAt.getTime()).toBeGreaterThan(
-          29 * 86_400_000,
-        );
+        expect(Date.now() - like.occurredAt.getTime()).toBeGreaterThan(29 * 86_400_000);
       });
 
       it('should revive a tombstoned like the graph still knows, and keep a live one untouched', async () => {
@@ -318,14 +316,47 @@ describe('Ranking signals (Integration)', () => {
       await locations.save(userId, encryptLocation(userId, { lat: 2, lng: 2 }, key));
 
       const stored = await locations.findByUser(userId);
-      expect(decryptLocation(userId, stored?.encrypted ?? Buffer.alloc(0), key).lat).toBeCloseTo(2, 1);
-      expect(await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_user_location`)).toEqual([
-        { total: 1 },
-      ]);
+      expect(decryptLocation(userId, stored?.encrypted ?? Buffer.alloc(0), key).lat).toBeCloseTo(
+        2,
+        1,
+      );
+      expect(
+        await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_user_location`),
+      ).toEqual([{ total: 1 }]);
     });
 
     it('should answer null without position', async () => {
       expect(await locations.findByUser(randomUUID())).toBeNull();
+    });
+
+    it('should list only the positions updated since the given date, most recent first', async () => {
+      const key = randomBytes(32);
+      const [recent, older, stale] = [randomUUID(), randomUUID(), randomUUID()];
+      for (const userId of [recent, older, stale]) {
+        await locations.save(userId, encryptLocation(userId, { lat: 1, lng: 1 }, key));
+      }
+      await testDataSource.query(
+        `UPDATE ranking_user_location SET updated_at = now() - interval '10 minutes' WHERE user_id = $1::uuid`,
+        [older],
+      );
+      await testDataSource.query(
+        `UPDATE ranking_user_location SET updated_at = now() - interval '2 hours' WHERE user_id = $1::uuid`,
+        [stale],
+      );
+
+      const rows = await locations.findUpdatedSince(new Date(Date.now() - 30 * 60_000), 10);
+
+      expect(rows.map((row) => row.userId)).toEqual([recent, older]);
+    });
+
+    it('should cap the number of positions read', async () => {
+      const key = randomBytes(32);
+      for (let i = 0; i < 3; i++) {
+        const userId = randomUUID();
+        await locations.save(userId, encryptLocation(userId, { lat: 1, lng: 1 }, key));
+      }
+
+      expect(await locations.findUpdatedSince(new Date(0), 2)).toHaveLength(2);
     });
   });
 
@@ -336,24 +367,78 @@ describe('Ranking signals (Integration)', () => {
       const other = randomUUID();
       const key = randomBytes(32);
       const seed = async (userId: string): Promise<void> => {
-        await repositories.requests.requestCompute({ userId, listKind: 'EVENT', reason: 'USER_CREATED', force: false, ttlSeconds: 120 });
+        await repositories.requests.requestCompute({
+          userId,
+          listKind: 'EVENT',
+          reason: 'USER_CREATED',
+          force: false,
+          ttlSeconds: 120,
+        });
         await repositories.scores.replaceList({
           userId,
           startedAt: await repositories.requests.databaseClock(),
-          items: [{ eventId: randomUUID(), score: 0.5, structuralScore: 0.5, semanticScore: null, rank: 1, reasons: [] }],
-          run: { source: 'STRUCTURAL_ONLY', formulaVersion: 1, reason: 'ON_DEMAND', candidateCount: 1, jevScoredCount: 0, durationMs: 1 },
+          items: [
+            {
+              eventId: randomUUID(),
+              score: 0.5,
+              structuralScore: 0.5,
+              semanticScore: null,
+              rank: 1,
+              reasons: [],
+            },
+          ],
+          run: {
+            source: 'STRUCTURAL_ONLY',
+            formulaVersion: 1,
+            reason: 'ON_DEMAND',
+            candidateCount: 1,
+            jevScoredCount: 0,
+            durationMs: 1,
+          },
         });
         await repositories.postScores.replaceList({
           userId,
           startedAt: await repositories.requests.databaseClock(),
-          items: [{ postId: randomUUID(), authorId: randomUUID(), origin: 'FOLLOWED', score: 0.5, structuralScore: 0.5, semanticScore: null, rank: 1, reasons: [] }],
-          run: { source: 'FULL', formulaVersion: 1, reason: 'ON_DEMAND', candidateCount: 1, jevScoredCount: 0, durationMs: 1 },
+          items: [
+            {
+              postId: randomUUID(),
+              authorId: randomUUID(),
+              origin: 'FOLLOWED',
+              score: 0.5,
+              structuralScore: 0.5,
+              semanticScore: null,
+              rank: 1,
+              reasons: [],
+            },
+          ],
+          run: {
+            source: 'FULL',
+            formulaVersion: 1,
+            reason: 'ON_DEMAND',
+            candidateCount: 1,
+            jevScoredCount: 0,
+            durationMs: 1,
+          },
         });
-        await repositories.requests.requestCompute({ userId, listKind: 'POST', reason: 'ON_DEMAND', force: true, ttlSeconds: 120 });
-        await repositories.likeLog.recordLike({ userId, postId: randomUUID(), occurredAt: new Date() });
+        await repositories.requests.requestCompute({
+          userId,
+          listKind: 'POST',
+          reason: 'ON_DEMAND',
+          force: true,
+          ttlSeconds: 120,
+        });
+        await repositories.likeLog.recordLike({
+          userId,
+          postId: randomUUID(),
+          occurredAt: new Date(),
+        });
         await repositories.feedback.recordPasses(userId, [randomUUID()]);
         await repositories.wishes.add(userId, randomUUID());
-        await repositories.mentions.add({ postId: randomUUID(), eventId: randomUUID(), authorId: userId });
+        await repositories.mentions.add({
+          postId: randomUUID(),
+          eventId: randomUUID(),
+          authorId: userId,
+        });
         await repositories.locations.save(userId, encryptLocation(userId, { lat: 1, lng: 1 }, key));
         await repositories.buckets.tryConsumeRefresh(userId);
       };
@@ -393,13 +478,22 @@ describe('Ranking signals (Integration)', () => {
         expect([table, left]).toEqual([table, { total: 0 }]);
       }
       expect(
-        await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_event_mention WHERE author_id = $1`, [user]),
+        await testDataSource.query(
+          `SELECT count(*)::int AS total FROM ranking_event_mention WHERE author_id = $1`,
+          [user],
+        ),
       ).toEqual([{ total: 0 }]);
       expect(
-        await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_score WHERE user_id = $1`, [other]),
+        await testDataSource.query(
+          `SELECT count(*)::int AS total FROM ranking_score WHERE user_id = $1`,
+          [other],
+        ),
       ).toEqual([{ total: 1 }]);
       expect(
-        await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_event_mention WHERE author_id = $1`, [other]),
+        await testDataSource.query(
+          `SELECT count(*)::int AS total FROM ranking_event_mention WHERE author_id = $1`,
+          [other],
+        ),
       ).toEqual([{ total: 1 }]);
     });
 
@@ -408,16 +502,23 @@ describe('Ranking signals (Integration)', () => {
       const user = randomUUID();
       await repositories.wishes.add(user, randomUUID());
       await repositories.feedback.recordPasses(user, [randomUUID()]);
-      await testDataSource.query('ALTER TABLE ranking_user_location RENAME TO ranking_user_location_tmp');
+      await testDataSource.query(
+        'ALTER TABLE ranking_user_location RENAME TO ranking_user_location_tmp',
+      );
 
       try {
         await expect(repositories.purge.purgeUser(user)).rejects.toThrow();
       } finally {
-        await testDataSource.query('ALTER TABLE ranking_user_location_tmp RENAME TO ranking_user_location');
+        await testDataSource.query(
+          'ALTER TABLE ranking_user_location_tmp RENAME TO ranking_user_location',
+        );
       }
 
       expect(
-        await testDataSource.query(`SELECT count(*)::int AS total FROM ranking_event_wish WHERE user_id = $1`, [user]),
+        await testDataSource.query(
+          `SELECT count(*)::int AS total FROM ranking_event_wish WHERE user_id = $1`,
+          [user],
+        ),
       ).toEqual([{ total: 1 }]);
     });
   });
