@@ -1,5 +1,7 @@
 import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { ParticipationService } from '../../services/participation.service.js';
+import { MAX_SEARCH_EXCLUSION_IDS } from '../../constants.js';
+import { SearchExclusionsVO } from '../../value-objects/search-exclusions.vo.js';
 import type { IParticipationRepository } from '../../repositories/interfaces/participation.repository.js';
 import type { Repository } from '@volontariapp/database';
 import type { EventQueueModel } from '@volontariapp/database';
@@ -660,6 +662,29 @@ describe('ParticipationService (Unit)', () => {
 
       await expect(
         service.getRecommendedEventIds(UserIdFactory.build('user-1'), {}, PAGINATION),
+      ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
+    });
+  });
+
+  // ─── getSearchExclusions ──────────────────────────────────────────────────
+
+  describe('getSearchExclusions()', () => {
+    it('should call the repository with the user id, the filters and the cap', async () => {
+      const expected = new SearchExclusionsVO(['e1'], ['u2'], false, false);
+      const filters = { excludeCreatedByMe: true, excludeBlockedUsers: true };
+      const spy = jest.spyOn(mockRepository, 'getSearchExclusions').mockResolvedValue(expected);
+
+      const result = await service.getSearchExclusions(UserIdFactory.build('user-1'), filters);
+
+      expect(result).toBe(expected);
+      expect(spy).toHaveBeenCalledWith('user-1', filters, MAX_SEARCH_EXCLUSION_IDS);
+    });
+
+    it('should throw DATABASE_ERROR on repository failure', async () => {
+      jest.spyOn(mockRepository, 'getSearchExclusions').mockRejectedValue(new Error('Query failed'));
+
+      await expect(
+        service.getSearchExclusions(UserIdFactory.build('user-1'), {}),
       ).rejects.toMatchObject({ code: 'DATABASE_ERROR' });
     });
   });

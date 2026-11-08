@@ -30,6 +30,8 @@ import { PaginationVO } from '../value-objects/pagination.vo.js';
 import { PaginatedIdsVO } from '../index.js';
 import type { EventParticipantCountVO } from '../value-objects/batch-results.vo.js';
 import { PaginatedAttendeesVO } from '../value-objects/paginated-attendees.vo.js';
+import type { SearchExclusionsVO } from '../value-objects/search-exclusions.vo.js';
+import { MAX_SEARCH_EXCLUSION_IDS } from '../constants.js';
 
 @Injectable()
 export class ParticipationService {
@@ -423,6 +425,28 @@ export class ParticipationService {
       if (isBaseError(error)) throw error;
       this.logger.error(`Failed to get attendees for event: ${eventId.value}`, error);
       throw DATABASE_ERROR('fetching event attendees', (error as Error).message);
+    }
+  }
+
+  async getSearchExclusions(
+    userId: UserId,
+    filters: {
+      excludeCreatedByMe?: boolean;
+      excludeParticipatedByMe?: boolean;
+      excludeWishedByMe?: boolean;
+      excludeBlockedUsers?: boolean;
+    },
+  ): Promise<SearchExclusionsVO> {
+    try {
+      return await this.repository.getSearchExclusions(
+        userId.value,
+        filters,
+        MAX_SEARCH_EXCLUSION_IDS,
+      );
+    } catch (error: unknown) {
+      if (isBaseError(error)) throw error;
+      this.logger.error(`Failed to get search exclusions for user: ${userId.value}`, error);
+      throw DATABASE_ERROR('fetching search exclusions', (error as Error).message);
     }
   }
 

@@ -424,4 +424,95 @@ describe('Neo4jParticipationRepository (Integration)', () => {
       expect(result.ids).toHaveLength(0);
     });
   });
+
+  // ─── getSearchExclusions ──────────────────────────────────────────────────
+
+  describe('getSearchExclusions()', () => {
+    const block = async (from: string, to: string): Promise<void> => {
+      const session = getTestProvider().getDriver().session();
+      try {
+        await session.run(
+          'MATCH (a:SocialUser {userId: $from}), (b:SocialUser {userId: $to}) MERGE (a)-[:BLOCK]->(b)',
+          { from, to },
+        );
+      } finally {
+        await session.close();
+      }
+    };
+
+    it('should return the union of created, participated and wished events, sorted and distinct', async () => {
+      await repository.createUserEvent(USER_A, EVENT_2);
+      await repository.createParticipation(USER_A, EVENT_1);
+      await repository.createWish(USER_A, EVENT_1);
+      await repository.createEventNode(EVENT_NEW);
+      await repository.createWish(USER_A, EVENT_NEW);
+
+      const result = await repository.getSearchExclusions(
+        'user-a',
+        { excludeCreatedByMe: true, excludeParticipatedByMe: true, excludeWishedByMe: true },
+        1000,
+      );
+
+      expect(result.excludedEventIds).toEqual(['event-1', 'event-2', 'event-new']);
+      expect(result.excludedEventIdsTruncated).toBe(false);
+      expect(result.hiddenUserIds).toEqual([]);
+    });
+
+    it('should only read the relations the filters ask for', async () => {
+      await repository.createUserEvent(USER_A, EVENT_2);
+      await repository.createParticipation(USER_A, EVENT_1);
+
+      const result = await repository.getSearchExclusions(
+        'user-a',
+        { excludeParticipatedByMe: true },
+        1000,
+      );
+
+      expect(result.excludedEventIds).toEqual(['event-1']);
+    });
+
+    it('should hide the users I blocked and the users who blocked me, once each', async () => {
+      await userRepository.createNode(SocialUserFactory.build({ userId: 'user-c' }));
+      await block('user-a', 'user-b');
+      await block('user-b', 'user-a');
+      await block('user-c', 'user-a');
+
+      const result = await repository.getSearchExclusions(
+        'user-a',
+        { excludeBlockedUsers: true },
+        1000,
+      );
+
+      expect(result.hiddenUserIds).toEqual(['user-b', 'user-c']);
+      expect(result.excludedEventIds).toEqual([]);
+    });
+
+    it('should not return the events of other users', async () => {
+      await repository.createParticipation(USER_B, EVENT_1);
+
+      const result = await repository.getSearchExclusions(
+        'user-a',
+        { excludeCreatedByMe: true, excludeParticipatedByMe: true, excludeWishedByMe: true },
+        1000,
+      );
+
+      expect(result.excludedEventIds).toEqual([]);
+    });
+
+    it('should cut the list at the cap and flag the truncation', async () => {
+      await repository.createParticipation(USER_A, EVENT_1);
+      await repository.createParticipation(USER_A, EVENT_2);
+      await repository.createEventNode(EVENT_NEW);
+      await repository.createParticipation(USER_A, EVENT_NEW);
+
+      const result = await repository.getSearchExclusions(
+        'user-a',
+        { excludeParticipatedByMe: true },
+        2,
+      );
+
+      expect(result.excludedEventIds).toEqual(['event-1', 'event-2']);
+      expect(result.excludedEventIdsTruncated).toBe(true);
+    });
+  });
 });
