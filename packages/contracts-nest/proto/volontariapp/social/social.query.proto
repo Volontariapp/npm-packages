@@ -139,6 +139,15 @@ message GetSocialEventQuery {
   string event_id = 1;
 }
 
+// Which sets of the caller to read for a search. The caller is the authenticated user (internal
+// token), never a field of the request.
+message GetSearchExclusionsQuery {
+  bool exclude_created_by_me = 1;
+  bool exclude_participated_by_me = 2;
+  bool exclude_wished_by_me = 3;
+  bool exclude_blocked_users = 4;
+}
+
 message GetRecommendedEventIdsQuery {
   bool exclude_created_by_me = 1;
   bool exclude_blocked_users = 2;

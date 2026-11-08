@@ -258,6 +258,19 @@ export interface GetEventNodeResponse {
   exists: boolean;
 }
 
+/**
+ * Each list holds at most 1000 ids (the cap of SearchEventsQuery in ms-event), in a stable order.
+ * A truncated flag is true when more ids exist than were returned.
+ */
+export interface GetSearchExclusionsResponse {
+  /** Union of the created, participated and wished events the query asked for. */
+  excludedEventIds: string[];
+  /** Users the caller blocked and users who blocked the caller. */
+  hiddenUserIds: string[];
+  excludedEventIdsTruncated: boolean;
+  hiddenUserIdsTruncated: boolean;
+}
+
 export interface GetRecommendedEventIdsResponse {
   ids: string[];
   pagination: PaginationResponse | undefined;

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/messaging",
-  "version": "2.34.5",
+  "version": "2.34.6",
   "publishConfig": {
     "access": "public",
     "provenance": true
