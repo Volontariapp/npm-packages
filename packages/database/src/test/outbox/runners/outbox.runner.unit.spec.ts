@@ -4,7 +4,12 @@ import type { OutboxDispatcher } from '../../../outbox/dispatchers/outbox.dispat
 import type { OutboxModel } from '../../../outbox/models/outbox.model.js';
 import type { OutboxEntity } from '../../../outbox/entities/outbox.entity.js';
 import type { BaseRepository } from '../../../core/base.repository.js';
-import { OutboxRunnerConfig, LoggerConfig, LoggerFormat } from '@volontariapp/config';
+import {
+  OutboxRunnerConfig,
+  OutboxPurgeConfig,
+  LoggerConfig,
+  LoggerFormat,
+} from '@volontariapp/config';
 import { setTimeout } from 'node:timers/promises';
 import { makeOutboxPusherMock } from '../../utils/helpers/outbox-pusher-mock.helper.js';
 import type { OutboxConsumer } from '../../../outbox/consumers/outbox.consumer.js';
@@ -32,6 +37,7 @@ describe('OutboxRunner (Unit)', () => {
   config.logger = new LoggerConfig();
   config.logger.format = LoggerFormat.TEXT;
   config.logger.level = 'info';
+  config.purge = Object.assign(new OutboxPurgeConfig(), { enabled: false });
 
   beforeEach(() => {
     repositoryMock = {} as unknown as jest.Mocked<

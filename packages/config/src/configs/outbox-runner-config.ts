@@ -1,5 +1,6 @@
 import { IsDefined, IsOptional, IsPositive, ValidateNested } from 'class-validator';
 import { LoggerConfig } from './logger-config.js';
+import { OutboxPurgeConfig } from './outbox-purge-config.js';
 import { Type } from 'class-transformer';
 
 export class OutboxRunnerConfig {
@@ -24,4 +25,12 @@ export class OutboxRunnerConfig {
   @ValidateNested()
   @Type(() => LoggerConfig)
   logger!: LoggerConfig;
+
+  /**
+   * Retention of the COMPLETED rows. When omitted, the runner purges rows older than one day.
+   */
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => OutboxPurgeConfig)
+  purge?: OutboxPurgeConfig;
 }

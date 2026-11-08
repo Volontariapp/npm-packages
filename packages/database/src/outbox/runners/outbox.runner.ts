@@ -6,12 +6,23 @@ import type { OutboxDispatcher } from '../dispatchers/outbox.dispatcher.js';
 import type { OutboxEntity, OutboxModel } from '../index.js';
 import type { BaseRepository } from '../../core/base.repository.js';
 import type { OutboxPusher } from '../pushers/outbox.pusher.js';
+import { OutboxPurger } from '../purgers/outbox.purger.js';
+import {
+  OUTBOX_COMPANION_TABLES,
+  resolveOutboxPurgeSettings,
+  type OutboxPurgeSettings,
+} from '../purgers/outbox-purge.settings.js';
+
+type OutboxPurgeAction = Pick<OutboxPurger, 'purgeCompleted'>;
 
 export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   private abortController?: AbortController;
   private loopPromise?: Promise<void>;
+  private purgeLoopPromise?: Promise<void>;
 
   private readonly logger: Logger;
+  private readonly purgeSettings: OutboxPurgeSettings;
+  private readonly purger?: OutboxPurgeAction;
   private readonly consumer: OutboxConsumer<TOutboxModel, TOutboxEntity>;
   private readonly dispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>;
 
@@ -20,6 +31,7 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     private readonly config: OutboxRunnerConfig,
     dispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>,
     pusher: OutboxPusher<TOutboxEntity>,
+    purger?: OutboxPurgeAction,
   ) {
     this.logger = new Logger(config.logger);
     this.dispatcher = dispatcher;
@@ -30,6 +42,17 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
       this.dispatcher,
       pusher,
     );
+
+    this.purgeSettings = resolveOutboxPurgeSettings(config.purge);
+    if (this.purgeSettings.enabled) {
+      this.purger =
+        purger ??
+        new OutboxPurger(this.logger, this.repository, {
+          retentionMs: this.purgeSettings.retentionMs,
+          batchSize: this.purgeSettings.batchSize,
+          additionalTables: [...(OUTBOX_COMPANION_TABLES[repository.metadata.tableName] ?? [])],
+        });
+    }
   }
 
   /**
@@ -50,6 +73,11 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
 
     // Execute the loop in the background without blocking the caller
     this.loopPromise = this.runLoop(this.abortController.signal);
+
+    // The purge runs on its own loop so that a long delete never holds back the sending.
+    if (this.purger) {
+      this.purgeLoopPromise = this.runPurgeLoop(this.abortController.signal, this.purger);
+    }
   }
 
   private async runLoop(signal: AbortSignal): Promise<void> {
@@ -73,10 +101,7 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
         }
       }
     } catch (error: unknown) {
-      if (
-        (error instanceof Error && error.name === 'AbortError') ||
-        (error as { code?: string }).code === 'ABORT_ERR'
-      ) {
+      if (this.isAbortError(error)) {
         this.logger.debug('Outbox runner wait interrupted by stop');
       } else {
         this.logger.error('Critical error in outbox runner loop', { error });
@@ -84,6 +109,36 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     } finally {
       this.logger.info('Outbox runner loop terminated');
     }
+  }
+
+  private async runPurgeLoop(signal: AbortSignal, purger: OutboxPurgeAction): Promise<void> {
+    try {
+      while (!signal.aborted) {
+        await this.runPurgeCycle(purger);
+        await setTimeout(this.purgeSettings.intervalMs, undefined, { signal });
+      }
+    } catch (error: unknown) {
+      if (this.isAbortError(error)) {
+        this.logger.debug('Outbox purge wait interrupted by stop');
+      } else {
+        this.logger.error('Critical error in outbox purge loop', { error });
+      }
+    }
+  }
+
+  private async runPurgeCycle(purger: OutboxPurgeAction): Promise<void> {
+    try {
+      await purger.purgeCompleted();
+    } catch (error) {
+      this.logger.error('Error during outbox purge', { error });
+    }
+  }
+
+  private isAbortError(error: unknown): boolean {
+    return (
+      (error instanceof Error && error.name === 'AbortError') ||
+      (error as { code?: string }).code === 'ABORT_ERR'
+    );
   }
 
   async runCycle(): Promise<number> {
@@ -109,9 +164,10 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
 
     try {
       // Wait for the current cycle/wait to actually finish
-      await this.loopPromise;
+      await Promise.all([this.loopPromise, this.purgeLoopPromise]);
     } finally {
       this.loopPromise = undefined;
+      this.purgeLoopPromise = undefined;
       this.abortController = undefined;
     }
   }
