@@ -2,7 +2,15 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/glo
 import { PostgresPostRepository } from '../../repositories/postgres-post.repository.js';
 import { PostModel } from '../../models/post.model.js';
 import { PostFactory } from '../__test-utils__/factories/post.factory.js';
-import { initializeTestDb, closeTestDb, truncateAll, getTestRepository } from '../data-source.js';
+import { randomUUID } from 'node:crypto';
+import { PostMediaScanStatus } from '../../enums/index.js';
+import {
+  initializeTestDb,
+  closeTestDb,
+  truncateAll,
+  getTestRepository,
+  testDataSource,
+} from '../data-source.js';
 import { EventQueueModel } from '@volontariapp/database';
 import { PostEventMessagingType } from '@volontariapp/messaging';
 import type { Repository } from '@volontariapp/database';
@@ -361,6 +369,100 @@ describe('PostgresPostRepository (Integration)', () => {
       expect(result.total).toBe(2);
       result.data.forEach((p) => {
         expect(p.authorId).toBe(authorId);
+      });
+    });
+
+    describe('total and visibility', () => {
+      const AUTHOR = '00000000-0000-0000-0000-0000000000a1';
+      const OTHER_AUTHOR = '00000000-0000-0000-0000-0000000000a2';
+      const READER = '00000000-0000-0000-0000-0000000000b1';
+
+      const insertPost = async (authorId: string, mediaStatus: string): Promise<string> => {
+        const id = randomUUID();
+        await testDataSource.query(
+          `INSERT INTO posts (id, "authorId", title, content, "createdAt", "updatedAt", media_status)
+           VALUES ($1, $2, $3, 'content', now(), now(), $4)`,
+          [id, authorId, `title ${id}`, mediaStatus],
+        );
+        return id;
+      };
+
+      it('counts only visible posts for an anonymous reader', async () => {
+        await insertPost(AUTHOR, 'NONE');
+        await insertPost(AUTHOR, 'READY');
+        await insertPost(AUTHOR, 'PENDING');
+        await insertPost(OTHER_AUTHOR, 'REJECTED');
+
+        const result = await repository.listPaginated(1, 10);
+
+        expect(result.total).toBe(2);
+        expect(result.data).toHaveLength(2);
+      });
+
+      it('hides the posts of others that are not visible yet, in the page and in the total', async () => {
+        await insertPost(AUTHOR, 'NONE');
+        await insertPost(AUTHOR, 'PENDING');
+
+        const result = await repository.listPaginated(1, 10, undefined, READER);
+
+        expect(result.total).toBe(1);
+        expect(result.data).toHaveLength(1);
+      });
+
+      it('includes the reader own posts that are not visible yet, in the page and in the total', async () => {
+        await insertPost(AUTHOR, 'NONE');
+        await insertPost(READER, 'PENDING');
+        await insertPost(READER, 'REJECTED');
+        await insertPost(OTHER_AUTHOR, 'PENDING');
+
+        const result = await repository.listPaginated(1, 10, undefined, READER);
+
+        expect(result.total).toBe(3);
+        expect(result.data).toHaveLength(3);
+      });
+
+      it('applies the same rules when the list is filtered by another author', async () => {
+        await insertPost(AUTHOR, 'READY');
+        await insertPost(AUTHOR, 'PENDING');
+        await insertPost(OTHER_AUTHOR, 'READY');
+
+        const result = await repository.listPaginated(1, 10, AUTHOR, READER);
+
+        expect(result.total).toBe(1);
+        expect(result.data).toHaveLength(1);
+        expect(result.data[0].authorId).toBe(AUTHOR);
+      });
+
+      it('counts a post once even when it has several media', async () => {
+        const files = [randomUUID(), randomUUID(), randomUUID()];
+        await repository.createWithPostCreated({
+          authorId: AUTHOR,
+          title: 'Post with three media',
+          content: 'content',
+          fileIds: files,
+          fileScanStatuses: Object.fromEntries(
+            files.map((fileId) => [fileId, PostMediaScanStatus.CLEAN]),
+          ),
+        });
+
+        const result = await repository.listPaginated(1, 10, undefined, READER);
+
+        expect(result.total).toBe(1);
+        expect(result.data).toHaveLength(1);
+        expect(result.totalPages).toBe(1);
+      });
+
+      it('keeps the total and the pages consistent when a page is partial', async () => {
+        for (let i = 0; i < 12; i++) {
+          await insertPost(AUTHOR, 'READY');
+        }
+
+        const second = await repository.listPaginated(2, 10, undefined, READER);
+
+        expect(second.total).toBe(12);
+        expect(second.data).toHaveLength(2);
+        expect(second.totalPages).toBe(2);
+        expect(second.hasNextPage).toBe(false);
       });
     });
   });
