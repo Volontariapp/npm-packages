@@ -41,3 +41,14 @@ message UpdateUserLocationResponse {
 message RecordEventFeedbackResponse {
   int32 recorded = 1;
 }
+
+// A position rounded to 1 km, without any user identifier.
+message UserLocationCell {
+  double lat = 1;
+  double lng = 2;
+}
+
+message GetActiveUserLocationsResponse {
+  // One entry per distinct cell, never one per user.
+  repeated UserLocationCell cells = 1;
+}
