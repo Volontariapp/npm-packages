@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.19.0
+
+### Minor Changes
+
+- Add ParticipationService.getSearchExclusions: the events a user created, participated in or wished, and the users blocked in both directions, in one call (at most 2 Neo4j queries, none without a flag), each list capped at 1000 ids with a truncated flag. Replaces five paginated reads of the api-gateway before every events search.
+
 ## 0.18.7
 
 ### Patch Changes

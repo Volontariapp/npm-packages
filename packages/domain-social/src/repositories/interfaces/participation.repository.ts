@@ -4,6 +4,7 @@ import type { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
 import type { PaginatedAttendeesVO } from '../../value-objects/paginated-attendees.vo.js';
 import type { EventParticipantCountVO } from '../../value-objects/batch-results.vo.js';
 import type { PaginationVO } from '../../value-objects/pagination.vo.js';
+import type { SearchExclusionsVO } from '../../value-objects/search-exclusions.vo.js';
 
 export interface IParticipationRepository {
   createEventNode(entity: SocialEventEntity): Promise<void>;
@@ -39,6 +40,21 @@ export interface IParticipationRepository {
     event: SocialEventEntity,
     pagination: PaginationVO,
   ): Promise<PaginatedAttendeesVO>;
+  /**
+   * Evenements crees, participes et souhaites par l'utilisateur, et utilisateurs bloques dans les
+   * deux sens, selon les drapeaux (une requete par famille, aucune sans drapeau). Chaque liste est
+   * dedoublonnee, triee et plafonnee a `maxIds` ; un drapeau de troncature signale le depassement.
+   */
+  getSearchExclusions(
+    userId: string,
+    filters: {
+      excludeCreatedByMe?: boolean;
+      excludeParticipatedByMe?: boolean;
+      excludeWishedByMe?: boolean;
+      excludeBlockedUsers?: boolean;
+    },
+    maxIds: number,
+  ): Promise<SearchExclusionsVO>;
   getRecommendedEventIds(
     userId: string,
     filters: {
