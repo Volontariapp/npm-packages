@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.12.0
+
+### Minor Changes
+
+- Add the gateway web request types of the leaderboard: `GetLeaderboardRequest`, `GetMyRankRequest` and `LeaderboardScopeWeb`.
+
 ## 4.11.0
 
 ### Minor Changes
