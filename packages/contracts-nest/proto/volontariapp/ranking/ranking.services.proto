@@ -9,6 +9,7 @@ import "volontariapp/ranking/ranking.responses.proto";
 service RankingQueryService {
   rpc GetRankingEvents (GetRankingEventsQuery) returns (GetRankingEventsResponse) {}
   rpc GetRankingFeed (GetRankingFeedQuery) returns (GetRankingFeedResponse) {}
+  rpc GetActiveUserLocations (GetActiveUserLocationsQuery) returns (GetActiveUserLocationsResponse) {}
 }
 
 service RankingCommandService {

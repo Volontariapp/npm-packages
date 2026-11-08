@@ -12,3 +12,9 @@ message GetRankingFeedQuery {
   string cursor = 1;
   int32 limit = 2;
 }
+
+// Admin only. Positions of the users who sent one recently, rounded and anonymous.
+message GetActiveUserLocationsQuery {
+  // Only positions updated less than this many minutes ago. 0 means the server default.
+  int32 max_age_minutes = 1;
+}
