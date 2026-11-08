@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
+import {
+  DEFAULT_ACTIVE_LOCATION_MAX_AGE_MINUTES,
+  MAX_ACTIVE_LOCATIONS,
+} from '../constants/index.js';
 import type { GeoPoint } from '../helpers/geo.helpers.js';
 import { decryptLocation, encryptLocation } from '../helpers/location-cipher.helpers.js';
 import { withDatabaseError } from '../helpers/database-error.helpers.js';
@@ -32,5 +36,38 @@ export class RankingLocationService {
       this.locationRepository.findByUser(userId),
     );
     return stored ? decryptLocation(userId, stored.encrypted, key) : null;
+  }
+
+  /**
+   * Distinct positions (rounded to 1 km) of the users who sent one less than `maxAgeMinutes` ago,
+   * without any user identifier. A position that cannot be decrypted is skipped, never fatal.
+   * `maxAgeMinutes <= 0` means the default window.
+   */
+  async listActiveCells(
+    maxAgeMinutes: number,
+    key: string | Buffer,
+    now: Date = new Date(),
+  ): Promise<GeoPoint[]> {
+    const windowMinutes =
+      maxAgeMinutes > 0 ? maxAgeMinutes : DEFAULT_ACTIVE_LOCATION_MAX_AGE_MINUTES;
+    const since = new Date(now.getTime() - windowMinutes * 60_000);
+    const rows = await withDatabaseError(this.logger, 'reading the recent positions', () =>
+      this.locationRepository.findUpdatedSince(since, MAX_ACTIVE_LOCATIONS),
+    );
+
+    const cells = new Map<string, GeoPoint>();
+    let skipped = 0;
+    for (const row of rows) {
+      try {
+        const point = decryptLocation(row.userId, row.encrypted, key);
+        cells.set(`${String(point.lat)},${String(point.lng)}`, { lat: point.lat, lng: point.lng });
+      } catch {
+        skipped++;
+      }
+    }
+    if (skipped > 0) {
+      this.logger.warn(`${String(skipped)} position(s) skipped: unreadable ciphertext`);
+    }
+    return [...cells.values()];
   }
 }
