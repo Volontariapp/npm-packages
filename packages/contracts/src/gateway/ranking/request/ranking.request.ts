@@ -2,7 +2,11 @@ import type {
   UpdateUserLocationCommand,
   EventFeedbackItem,
 } from '../../../ranking/ranking.command.js';
-import type { GetRankingEventsQuery, GetRankingFeedQuery } from '../../../ranking/ranking.query.js';
+import type {
+  GetActiveUserLocationsQuery,
+  GetRankingEventsQuery,
+  GetRankingFeedQuery,
+} from '../../../ranking/ranking.query.js';
 
 /** List a ranking request applies to, as exposed by the gateway. */
 export type RankingListKindWeb = 'EVENT' | 'POST';
@@ -38,3 +42,6 @@ export interface EventFeedbackWebItem extends Omit<EventFeedbackItem, 'action'> 
 export interface RecordEventFeedbackWebRequest {
   items: EventFeedbackWebItem[];
 }
+
+/** Query of GET /ranking/admin/active-locations (admin only). 0 or absent means the default 30 min. */
+export interface GetActiveUserLocationsWebRequest extends Partial<GetActiveUserLocationsQuery> {}

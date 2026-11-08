@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.13.0
+
+### Minor Changes
+
+- Add the gateway Web types of the admin route `GET /ranking/admin/active-locations`: `GetActiveUserLocationsWebRequest` and `GetActiveUserLocationsWebResponse`.
+
 ## 4.12.1
 
 ### Patch Changes
