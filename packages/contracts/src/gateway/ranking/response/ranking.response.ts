@@ -2,6 +2,7 @@ import type {
   RequestRankingRefreshResponse,
   UpdateUserLocationResponse,
   RecordEventFeedbackResponse,
+  GetActiveUserLocationsResponse,
 } from '../../../ranking/ranking.responses.js';
 import type { EventDTO } from '../../event/response/event.response.js';
 import type { PostWeb } from '../../post/response/post.response.js';
@@ -68,3 +69,9 @@ export interface RequestRankingRefreshWebResponse extends RequestRankingRefreshR
 export interface UpdateUserLocationWebResponse extends UpdateUserLocationResponse {}
 
 export interface RecordEventFeedbackWebResponse extends RecordEventFeedbackResponse {}
+
+/**
+ * Body of GET /ranking/admin/active-locations (admin only): the distinct positions, rounded to
+ * 1 km, of the users who sent one recently. No user identifier.
+ */
+export interface GetActiveUserLocationsWebResponse extends GetActiveUserLocationsResponse {}
