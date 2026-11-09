@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.17.0
+
+### Minor Changes
+
+- Make `searchAdvanced` cheaper for the database. A new optional `knownTotal` option (`searchAdvanced(params, { knownTotal })`, on the repository and on `EventService`) skips the COUNT query when the caller already knows the total; without it, the page and a COUNT without order or pagination run in parallel instead of `getManyAndCount`. The `ids`, `excludedIds` and `excludedOrganizerIds` filters are now bound as a single `uuid[]` parameter (`= ANY` / `<> ALL`) instead of one parameter per id. `findByIds` loads its relations with separate queries (`relationLoadStrategy: 'query'`) instead of one join that multiplied the rows read.
+
 ## 3.16.9
 
 ### Patch Changes

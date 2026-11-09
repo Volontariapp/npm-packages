@@ -1,7 +1,10 @@
 import type { jest } from '@jest/globals';
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { PostgresEventRepository } from '../../repositories/postgres-event.repository.js';
-import type { EventModel } from '../../models/event.model.js';
+import { EventModel } from '../../models/event.model.js';
+import { TagModel } from '../../models/tag.model.js';
+import { RequirementModel } from '../../models/requirement.model.js';
+import { registerEventMappings } from '../../models/mappers.js';
 import type { SelectQueryBuilder } from 'typeorm';
 import { EventType, EventState } from '@volontariapp/contracts';
 import { createMock } from '@volontariapp/testing';
@@ -19,12 +22,12 @@ describe('PostgresEventRepository (Unit)', () => {
     queryBuilderMock.setParameter.mockReturnThis();
     queryBuilderMock.orderBy.mockReturnThis();
     queryBuilderMock.addOrderBy.mockReturnThis();
+    queryBuilderMock.select.mockReturnThis();
     queryBuilderMock.getMany.mockResolvedValue([]);
+    queryBuilderMock.getRawOne.mockResolvedValue({ total: '0' });
 
     typeOrmRepositoryMock = createMock<ConstructorParameters<typeof PostgresEventRepository>[0]>();
-    typeOrmRepositoryMock.createQueryBuilder.mockReturnValue(
-      queryBuilderMock as unknown as ReturnType<typeof typeOrmRepositoryMock.createQueryBuilder>,
-    );
+    typeOrmRepositoryMock.createQueryBuilder.mockReturnValue(queryBuilderMock);
 
     repository = new PostgresEventRepository(typeOrmRepositoryMock);
   });
@@ -68,8 +71,6 @@ describe('PostgresEventRepository (Unit)', () => {
   });
   describe('searchAdvanced', () => {
     it('should build query with basic parameters and return PaginatedEventsVO', async () => {
-      queryBuilderMock.getManyAndCount.mockResolvedValue([[], 0]);
-
       const { SearchAdvancedVO } =
         await import('../../value-objects/search-advanced.value-object.js');
       const params = new SearchAdvancedVO(
@@ -109,7 +110,6 @@ describe('PostgresEventRepository (Unit)', () => {
     });
 
     it('should order by distance then id ASC when an area is given', async () => {
-      queryBuilderMock.getManyAndCount.mockResolvedValue([[], 0]);
       const { SearchAdvancedVO } =
         await import('../../value-objects/search-advanced.value-object.js');
       const params = new SearchAdvancedVO({ lat: 48.85, lng: 2.35, radiusInMeters: 5000 });
@@ -157,10 +157,6 @@ describe('PostgresEventRepository (Unit)', () => {
       );
     };
 
-    beforeEach(() => {
-      queryBuilderMock.getManyAndCount.mockResolvedValue([[], 0]);
-    });
-
     it('should filter on event.endAt when endAtFrom is given', async () => {
       await repository.searchAdvanced(await buildParams({ endAtFrom }));
 
@@ -196,16 +192,41 @@ describe('PostgresEventRepository (Unit)', () => {
   });
 
   describe('findByIds', () => {
-    it('should load all ids in a single query with relations', async () => {
+    it('should load all ids in a single call, relations by separate queries', async () => {
       typeOrmRepositoryMock.find.mockResolvedValue([]);
 
-      await repository.findByIds(['a', 'b'], ['tags']);
+      await repository.findByIds(['a', 'b'], ['requirements', 'tags']);
 
       expect(typeOrmRepositoryMock.find).toHaveBeenCalledTimes(1);
       expect(typeOrmRepositoryMock.find).toHaveBeenCalledWith({
         where: { id: In(['a', 'b']) },
-        relations: ['tags'],
+        relations: ['requirements', 'tags'],
+        relationLoadStrategy: 'query',
       });
+    });
+
+    it('should return the loaded events with their relations, in the order read', async () => {
+      registerEventMappings();
+      const first = Object.assign(new EventModel(), {
+        id: 'b',
+        name: 'Second id first',
+        tags: [Object.assign(new TagModel(), { id: 't1', slug: 'nature' })],
+        requirements: [Object.assign(new RequirementModel(), { id: 'r1', name: 'Gloves' })],
+      });
+      const second = Object.assign(new EventModel(), {
+        id: 'a',
+        name: 'First id second',
+        tags: [],
+        requirements: [],
+      });
+      typeOrmRepositoryMock.find.mockResolvedValue([first, second]);
+
+      const result = await repository.findByIds(['a', 'b'], ['requirements', 'tags']);
+
+      expect(result.map((event) => event.id)).toEqual(['b', 'a']);
+      expect(result[0].tags?.map((tag) => tag.slug)).toEqual(['nature']);
+      expect(result[0].requirements?.map((requirement) => requirement.id)).toEqual(['r1']);
+      expect(result[1].tags).toEqual([]);
     });
 
     it('should omit relations when none are requested', async () => {

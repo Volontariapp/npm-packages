@@ -11,7 +11,10 @@ import {
 import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariapp/errors';
 import { EventState, CoverStatus } from '@volontariapp/contracts';
 import { SagaStatus, UserRoles } from '@volontariapp/shared';
-import type { IEventRepository } from '../repositories/interfaces/event.repository.js';
+import type {
+  IEventRepository,
+  SearchAdvancedOptions,
+} from '../repositories/interfaces/event.repository.js';
 import { PostgresEventRepository } from '../repositories/postgres-event.repository.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { TagService } from './tag.service.js';
@@ -311,9 +314,12 @@ export class EventService {
     }
   }
 
-  async searchAdvanced(params: SearchAdvancedVO): Promise<PaginatedEventsVO> {
+  async searchAdvanced(
+    params: SearchAdvancedVO,
+    options: SearchAdvancedOptions = {},
+  ): Promise<PaginatedEventsVO> {
     try {
-      return await this.eventRepository.searchAdvanced(params);
+      return await this.eventRepository.searchAdvanced(params, options);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;

@@ -14,7 +14,8 @@ import { ForbiddenError } from '@volontariapp/errors';
 import { EventModel } from '../models/event.model.js';
 import { EventEntity } from '../entities/event.entity.js';
 import { Streams } from '@volontariapp/shared';
-import { IEventRepository } from './interfaces/event.repository.js';
+import type { SelectQueryBuilder } from 'typeorm';
+import { IEventRepository, SearchAdvancedOptions } from './interfaces/event.repository.js';
 import { MAX_EVENT_IDS_PER_LOOKUP } from '../constants.js';
 import {
   EventEventMessagingType,
@@ -52,9 +53,11 @@ export class PostgresEventRepository
       MAX_EVENT_IDS_PER_LOOKUP,
     );
     if (unique.length === 0) return [];
+    // Relations par requetes separees : une jointure sur `requirements` et `tags` multiplie les
+    // lignes lues (produit cartesien) et TypeORM doit ensuite les regrouper en memoire.
     const models = await this.repository.find({
       where: { id: In(unique) },
-      ...(relations.length > 0 ? { relations } : {}),
+      ...(relations.length > 0 ? { relations, relationLoadStrategy: 'query' as const } : {}),
     });
     return this.toEntities(models);
   }
@@ -374,20 +377,68 @@ export class PostgresEventRepository
     return eventModels.map((model) => this.toEntity(model));
   }
 
-  async searchAdvanced(params: SearchAdvancedVO): Promise<PaginatedEventsVO> {
-    const query = this.repository.createQueryBuilder('event');
+  async searchAdvanced(
+    params: SearchAdvancedVO,
+    options: SearchAdvancedOptions = {},
+  ): Promise<PaginatedEventsVO> {
+    const origin = params.area
+      ? `ST_SetSRID(ST_MakePoint(${String(params.area.lng)}, ${String(params.area.lat)}), 4326)`
+      : undefined;
+    const hasTagJoin = params.tagSlugs !== undefined && params.tagSlugs.length > 0;
 
-    if (params.area) {
-      const { lat, lng, radiusInMeters } = params.area;
-      const origin = `ST_SetSRID(ST_MakePoint(${String(lng)}, ${String(lat)}), 4326)`;
-      query.andWhere(`ST_DWithin(event.location::geography, ${origin}::geography, :radius)`);
-      query.setParameter('radius', radiusInMeters);
-      query.orderBy(`ST_Distance(event.location::geography, ${origin}::geography)`, 'ASC');
+    const pageQuery = this.repository.createQueryBuilder('event');
+    this.applySearchFilters(pageQuery, params, origin);
+
+    if (origin) {
+      pageQuery.orderBy(`ST_Distance(event.location::geography, ${origin}::geography)`, 'ASC');
       // Departage deterministe: sans id, deux evenements a egale distance changent de page
-      query.addOrderBy('event.id', 'ASC');
+      pageQuery.addOrderBy('event.id', 'ASC');
     } else {
-      query.orderBy('event.createdAt', 'DESC');
-      query.addOrderBy('event.id', 'DESC');
+      pageQuery.orderBy('event.createdAt', 'DESC');
+      pageQuery.addOrderBy('event.id', 'DESC');
+    }
+
+    const page = params.page && params.page > 0 ? params.page : 1;
+    const limit = params.limit && params.limit > 0 ? params.limit : 10;
+
+    pageQuery.skip((page - 1) * limit);
+    pageQuery.take(limit);
+
+    // `getManyAndCount` recomptait toute la table a chaque page (mesure en prod : Seq Scan de
+    // `events`, 4,95 ms contre 1 ms pour la page lue par l'index de tri). Le total part en
+    // parallele, sans tri ni pagination, et se saute quand l'appelant le connait deja (cache
+    // court du meme filtre). DISTINCT seulement si la jointure `tags` peut repeter un evenement.
+    const countTotal = async (): Promise<number> => {
+      if (options.knownTotal !== undefined) {
+        return options.knownTotal;
+      }
+      const countQuery = this.repository
+        .createQueryBuilder('event')
+        .select(hasTagJoin ? 'COUNT(DISTINCT "event"."id")' : 'COUNT(*)', 'total');
+      this.applySearchFilters(countQuery, params, origin);
+      const countRow = await countQuery.getRawOne<{ total: string }>();
+      return Number(countRow?.total ?? 0);
+    };
+
+    const [models, total] = await Promise.all([pageQuery.getMany(), countTotal()]);
+
+    return new PaginatedEventsVO(
+      models.map((model) => this.toEntity(model)),
+      total,
+      page,
+      limit,
+    );
+  }
+
+  /** Meme filtre pour la page et pour le total : ils ne doivent jamais diverger. */
+  private applySearchFilters(
+    query: SelectQueryBuilder<EventModel>,
+    params: SearchAdvancedVO,
+    origin: string | undefined,
+  ): void {
+    if (params.area && origin) {
+      query.andWhere(`ST_DWithin(event.location::geography, ${origin}::geography, :radius)`);
+      query.setParameter('radius', params.area.radiusInMeters);
     }
 
     if (params.types && params.types.length > 0) {
@@ -424,16 +475,20 @@ export class PostgresEventRepository
       });
     }
 
+    // Listes d'ids en un seul parametre tableau : `IN (:...ids)` produit un parametre par id
+    // (jusqu'a 1 000 en prod), que Postgres replanifie a chaque requete.
     if (params.ids && params.ids.length > 0) {
-      query.andWhere('event.id IN (:...ids)', { ids: params.ids });
+      query.andWhere('event.id = ANY(CAST(:ids AS uuid[]))', { ids: params.ids });
     }
 
     if (params.excludedIds && params.excludedIds.length > 0) {
-      query.andWhere('event.id NOT IN (:...excludedIds)', { excludedIds: params.excludedIds });
+      query.andWhere('event.id <> ALL(CAST(:excludedIds AS uuid[]))', {
+        excludedIds: params.excludedIds,
+      });
     }
 
     if (params.excludedOrganizerIds && params.excludedOrganizerIds.length > 0) {
-      query.andWhere('event.organizerId NOT IN (:...excludedOrganizerIds)', {
+      query.andWhere('event.organizerId <> ALL(CAST(:excludedOrganizerIds AS uuid[]))', {
         excludedOrganizerIds: params.excludedOrganizerIds,
       });
     }
@@ -442,20 +497,5 @@ export class PostgresEventRepository
       query.leftJoin('event.tags', 'tag');
       query.andWhere('tag.slug IN (:...tagSlugs)', { tagSlugs: params.tagSlugs });
     }
-
-    const page = params.page && params.page > 0 ? params.page : 1;
-    const limit = params.limit && params.limit > 0 ? params.limit : 10;
-
-    query.skip((page - 1) * limit);
-    query.take(limit);
-
-    const [models, total] = await query.getManyAndCount();
-
-    return new PaginatedEventsVO(
-      models.map((model) => this.toEntity(model)),
-      total,
-      page,
-      limit,
-    );
   }
 }

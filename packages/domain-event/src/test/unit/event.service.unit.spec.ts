@@ -736,7 +736,21 @@ describe('EventService (Unit)', () => {
 
       // Assert
       expect(result).toEqual(paginatedResult);
-      expect(mockRepository.searchAdvanced).toHaveBeenCalledWith(params);
+      expect(mockRepository.searchAdvanced).toHaveBeenCalledWith(params, {});
+    });
+
+    it('should pass the known total through to the repository', async () => {
+      const { PaginatedEventsVO } =
+        await import('../../value-objects/paginated-events.value-object.js');
+      const { SearchAdvancedVO } =
+        await import('../../value-objects/search-advanced.value-object.js');
+      mockRepository.searchAdvanced.mockResolvedValue(new PaginatedEventsVO([], 42, 2, 10));
+      const params = new SearchAdvancedVO();
+
+      const result = await service.searchAdvanced(params, { knownTotal: 42 });
+
+      expect(result.total).toBe(42);
+      expect(mockRepository.searchAdvanced).toHaveBeenCalledWith(params, { knownTotal: 42 });
     });
 
     it('should throw DATABASE_ERROR when the repository throws', async () => {
