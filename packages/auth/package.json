@@ -39,7 +39,7 @@
     "@volontariapp/errors-nest": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/shared": "workspace:*",
-    "jose": "^6.2.14",
+    "jose": "^6.2.15",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

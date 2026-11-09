@@ -37,8 +37,8 @@
     "test:coverage:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --runInBand"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1160.0",
-    "@aws-sdk/s3-presigned-post": "^3.1160.0",
+    "@aws-sdk/client-s3": "^3.1163.0",
+    "@aws-sdk/s3-presigned-post": "^3.1163.0",
     "@volontariapp/domain-storage": "workspace:*",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*",
