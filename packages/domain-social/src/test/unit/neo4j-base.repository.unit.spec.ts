@@ -3,6 +3,7 @@ import { Neo4jBaseRepository } from '../../repositories/base/neo4j-base.reposito
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import type { Driver, Session } from 'neo4j-driver';
 import { PaginationFactory } from '../__test-utils__/factories/pagination.factory.js';
+import { NEO4J_READ_TRANSACTION_TIMEOUT_MS } from '../../constants.js';
 
 class TestRepository extends Neo4jBaseRepository {
   async testRead(cypher: string, params: Record<string, unknown> = {}) {
@@ -51,6 +52,21 @@ describe('Neo4jBaseRepository (Unit)', () => {
   // ─── read ──────────────────────────────────────────────────────────────────
 
   describe('read()', () => {
+    it('should run the read with the transaction timeout, under the 2 s gateway deadline', async () => {
+      const runSpy = jest.spyOn(mockSession, 'run').mockResolvedValue({ records: [] } as never);
+
+      await repository.testRead('MATCH (n) RETURN n.id AS id', { id: '1' });
+
+      expect(runSpy).toHaveBeenCalledWith(
+        'MATCH (n) RETURN n.id AS id',
+        { id: '1' },
+        {
+          timeout: NEO4J_READ_TRANSACTION_TIMEOUT_MS,
+        },
+      );
+      expect(NEO4J_READ_TRANSACTION_TIMEOUT_MS).toBeLessThan(2_000);
+    });
+
     it('should throw DATABASE_QUERY_ERROR when the driver fails', async () => {
       const errorMsg = 'Cypher syntax error';
       jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
@@ -108,6 +124,17 @@ describe('Neo4jBaseRepository (Unit)', () => {
   // ─── readPaginated ─────────────────────────────────────────────────────────
 
   describe('readPaginated()', () => {
+    it('should run both the data and the count reads with the transaction timeout', async () => {
+      const runSpy = jest.spyOn(mockSession, 'run').mockResolvedValue({ records: [] } as never);
+
+      await repository.testReadPaginated('MATCH (n) RETURN n.id AS id', 'RETURN 0 AS total');
+
+      expect(runSpy).toHaveBeenCalledTimes(2);
+      for (const call of runSpy.mock.calls) {
+        expect(call[2]).toEqual({ timeout: NEO4J_READ_TRANSACTION_TIMEOUT_MS });
+      }
+    });
+
     it('should throw DATABASE_QUERY_ERROR when the driver fails on data query', async () => {
       const errorMsg = 'PaginationVO query failed';
       jest.spyOn(mockSession, 'run').mockRejectedValue(new Error(errorMsg));
