@@ -3,6 +3,14 @@ import type { EventType, EventState, CoverStatus } from '@volontariapp/contracts
 import type { PaginatedEventsVO } from '../../index.js';
 import type { SearchAdvancedVO } from '../../index.js';
 
+export interface SearchAdvancedOptions {
+  /**
+   * Total already known by the caller (a short lived cache of a previous answer for the same
+   * filters): the COUNT query is skipped and this value is returned instead.
+   */
+  knownTotal?: number;
+}
+
 export interface IEventRepository {
   findById(id: string, relations?: string[]): Promise<EventEntity | null>;
   /**
@@ -37,5 +45,8 @@ export interface IEventRepository {
     type?: EventType,
     state?: EventState,
   ): Promise<EventEntity[]>;
-  searchAdvanced(params: SearchAdvancedVO): Promise<PaginatedEventsVO>;
+  searchAdvanced(
+    params: SearchAdvancedVO,
+    options?: SearchAdvancedOptions,
+  ): Promise<PaginatedEventsVO>;
 }
