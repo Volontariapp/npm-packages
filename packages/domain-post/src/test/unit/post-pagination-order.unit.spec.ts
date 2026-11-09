@@ -48,6 +48,17 @@ describe('Pagination: ordre deterministe (posts et commentaires)', () => {
     expect(qb.addOrderBy).toHaveBeenCalledWith('post.id', 'DESC');
   });
 
+  it('listPaginated general lit la page sans jointure, en OFFSET/LIMIT', async () => {
+    const qb = createChainableQueryBuilderMock<PostModel>();
+    jest.spyOn(postRepo, 'createQueryBuilder').mockReturnValue(qb.builder);
+
+    await posts.listPaginated(3, 20, undefined, 'reader');
+
+    expect(qb.leftJoinAndSelect).not.toHaveBeenCalled();
+    expect(qb.offset).toHaveBeenCalledWith(40);
+    expect(qb.limit).toHaveBeenCalledWith(20);
+  });
+
   it('listPaginatedByPostId trie createdAt DESC puis id DESC', async () => {
     const spy = jest.spyOn(commentRepo, 'findAndCount').mockResolvedValue([[], 0]);
 

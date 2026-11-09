@@ -326,34 +326,42 @@ export class Neo4jParticipationRepository
     if (filters.excludeParticipatedByMe) relations.push('PARTICIPATE');
     if (filters.excludeWishedByMe) relations.push('WISH_TO_PARTICIPATE');
 
-    // maxIds + 1 : un resultat de plus que le plafond suffit a savoir qu'il y en a davantage
-    const params = { userId, limit: neo4j.int(maxIds + 1) };
-    const mapId = (record: { get(key: string): unknown }): string => record.get('id') as string;
+    if (relations.length === 0 && filters.excludeBlockedUsers !== true) {
+      return new SearchExclusionsVO([], [], false, false);
+    }
 
-    const [eventIds, userIds] = await Promise.all([
+    // A SocialEvent node read while another request deletes it can come back without its
+    // eventId (empty string on the wire), which ms-event rejects in a search: skip such nodes.
+    const eventBlock =
       relations.length === 0
-        ? Promise.resolve<string[]>([])
-        : // A SocialEvent node read while another request deletes it can come back without its
-          // eventId (empty string on the wire), which ms-event rejects in a search: skip such nodes.
-          this.read(
-            `MATCH (:SocialUser {userId: $userId})-[:${relations.join('|')}]->(e:SocialEvent)
-             WHERE e.eventId IS NOT NULL AND e.eventId <> ''
-             WITH DISTINCT e.eventId AS id
-             RETURN id ORDER BY id LIMIT $limit`,
-            params,
-            mapId,
-          ),
-      filters.excludeBlockedUsers
-        ? this.read(
-            `MATCH (:SocialUser {userId: $userId})-[:BLOCK]-(u:SocialUser)
-             WHERE u.userId IS NOT NULL AND u.userId <> ''
-             WITH DISTINCT u.userId AS id
-             RETURN id ORDER BY id LIMIT $limit`,
-            params,
-            mapId,
-          )
-        : Promise.resolve<string[]>([]),
-    ]);
+        ? 'RETURN [] AS eventIds'
+        : `MATCH (:SocialUser {userId: $userId})-[:${relations.join('|')}]->(e:SocialEvent)
+           WHERE e.eventId IS NOT NULL AND e.eventId <> ''
+           WITH DISTINCT e.eventId AS id ORDER BY id LIMIT $limit
+           RETURN collect(id) AS eventIds`;
+    const blockBlock =
+      filters.excludeBlockedUsers === true
+        ? `MATCH (:SocialUser {userId: $userId})-[:BLOCK]-(u:SocialUser)
+           WHERE u.userId IS NOT NULL AND u.userId <> ''
+           WITH DISTINCT u.userId AS id ORDER BY id LIMIT $limit
+           RETURN collect(id) AS userIds`
+        : 'RETURN [] AS userIds';
+
+    // One query, one session, one row: an aggregate without grouping key always returns a row,
+    // even when the user has no relation at all. maxIds + 1 tells whether there are more.
+    const rows = await this.read(
+      `CALL { ${eventBlock} }
+       CALL { ${blockBlock} }
+       RETURN eventIds, userIds`,
+      { userId, limit: neo4j.int(maxIds + 1) },
+      (record) => ({
+        eventIds: record.get('eventIds') as string[],
+        userIds: record.get('userIds') as string[],
+      }),
+    );
+    const row = rows.at(0);
+    const eventIds = row?.eventIds ?? [];
+    const userIds = row?.userIds ?? [];
 
     return new SearchExclusionsVO(
       eventIds.slice(0, maxIds),

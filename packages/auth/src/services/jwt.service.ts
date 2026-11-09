@@ -12,6 +12,13 @@ import {
 } from '@volontariapp/errors-nest';
 import type { AuthConfig, AuthUser } from '../interfaces/index.js';
 import { AUTH_OPTIONS } from '../constants/index.js';
+import { TokenCache } from './token-cache.js';
+
+const DEFAULT_INTERNAL_TOKEN_REUSE_SECONDS = 30;
+const DEFAULT_VERIFIED_TOKEN_CACHE_SECONDS = 30;
+const DEFAULT_TOKEN_CACHE_MAX_ENTRIES = 2000;
+/** A reused internal token always keeps at least this much validity for the callee. */
+const INTERNAL_TOKEN_EXPIRY_MARGIN_MS = 60_000;
 
 @Injectable()
 export class JwtService {
@@ -22,8 +29,32 @@ export class JwtService {
   private refreshTokenPrivateKey?: CryptoKey;
   private refreshTokenPublicKey?: CryptoKey;
   private readonly logger = new Logger({ context: 'JwtService', format: 'json' });
+  private readonly internalReuseMs: number;
+  private readonly verifiedCacheMs: number;
+  private readonly signedInternalTokens: TokenCache<string>;
+  private readonly verifiedInternalTokens: TokenCache<AuthUser>;
+  private readonly verifiedAccessTokens: TokenCache<AuthUser>;
 
-  constructor(@Inject(AUTH_OPTIONS) private readonly options: AuthConfig) {}
+  constructor(@Inject(AUTH_OPTIONS) private readonly options: AuthConfig) {
+    this.internalReuseMs =
+      this.nonNegative(options.internalTokenReuseSeconds, DEFAULT_INTERNAL_TOKEN_REUSE_SECONDS) *
+      1000;
+    this.verifiedCacheMs =
+      this.nonNegative(options.verifiedTokenCacheSeconds, DEFAULT_VERIFIED_TOKEN_CACHE_SECONDS) *
+      1000;
+    const maxEntries = this.nonNegative(
+      options.tokenCacheMaxEntries,
+      DEFAULT_TOKEN_CACHE_MAX_ENTRIES,
+    );
+    this.signedInternalTokens = new TokenCache(this.internalReuseMs > 0 ? maxEntries : 0);
+    this.verifiedInternalTokens = new TokenCache(this.verifiedCacheMs > 0 ? maxEntries : 0);
+    this.verifiedAccessTokens = new TokenCache(this.verifiedCacheMs > 0 ? maxEntries : 0);
+  }
+
+  private nonNegative(value: number | undefined, fallback: number): number {
+    if (value === undefined || !Number.isFinite(value) || value < 0) return fallback;
+    return value;
+  }
 
   private validateExpiration(expiresIn: string | number | undefined, type: string): void {
     if (expiresIn === undefined || expiresIn === '' || expiresIn === 0) {
@@ -115,15 +146,42 @@ export class JwtService {
     }
   }
 
+  /**
+   * Signs an internal token for `user`. The same payload (same access token, same identity)
+   * gets the same internal token back for `internalTokenReuseSeconds`, bounded by the internal
+   * token's `exp` (minus a margin) and by the `exp` carried by `user`.
+   */
   async signInternal(user: AuthUser): Promise<string> {
     this.validateExpiration(this.options.internalExpiresIn, 'Internal');
+    const cacheKey = this.signedInternalTokens.enabled ? JSON.stringify(user) : undefined;
+    if (cacheKey !== undefined) {
+      const cached = this.signedInternalTokens.get(cacheKey);
+      if (cached !== undefined) return cached;
+    }
+
     const key = await this.getInternalPrivateKey();
-    return this.sign(user, key, this.options.internalExpiresIn as string | number);
+    const token = await this.sign(user, key, this.options.internalExpiresIn as string | number);
+
+    if (cacheKey !== undefined) {
+      const tokenExp = jose.decodeJwt(token).exp;
+      const bounds = [Date.now() + this.internalReuseMs];
+      if (typeof tokenExp === 'number') {
+        bounds.push(tokenExp * 1000 - INTERNAL_TOKEN_EXPIRY_MARGIN_MS);
+      }
+      const userExp = user['exp'];
+      if (typeof userExp === 'number') bounds.push(userExp * 1000);
+      this.signedInternalTokens.set(cacheKey, token, Math.min(...bounds));
+    }
+    return token;
   }
 
   async verifyInternal<T extends AuthUser = AuthUser>(token: string): Promise<T> {
+    const cached = this.verifiedInternalTokens.get(token);
+    if (cached !== undefined) return { ...cached } as T;
     const key = await this.getInternalPublicKey();
-    return this.verify<T>(token, key, 'internal');
+    const payload = await this.verify<T>(token, key, 'internal');
+    this.rememberVerified(this.verifiedInternalTokens, token, payload);
+    return payload;
   }
 
   async signAccessToken(user: AuthUser): Promise<string> {
@@ -133,8 +191,20 @@ export class JwtService {
   }
 
   async verifyAccessToken<T extends AuthUser = AuthUser>(token: string): Promise<T> {
+    const cached = this.verifiedAccessTokens.get(token);
+    if (cached !== undefined) return { ...cached } as T;
     const key = await this.getAccessTokenPublicKey();
-    return this.verify<T>(token, key, 'access');
+    const payload = await this.verify<T>(token, key, 'access');
+    this.rememberVerified(this.verifiedAccessTokens, token, payload);
+    return payload;
+  }
+
+  /** Keeps a copy of a verified payload until min(now + window, exp). Never caches failures. */
+  private rememberVerified(cache: TokenCache<AuthUser>, token: string, payload: AuthUser): void {
+    if (!cache.enabled) return;
+    const exp = payload['exp'];
+    if (typeof exp !== 'number') return;
+    cache.set(token, { ...payload }, Math.min(Date.now() + this.verifiedCacheMs, exp * 1000));
   }
 
   async signRefreshToken(user: AuthUser): Promise<string> {

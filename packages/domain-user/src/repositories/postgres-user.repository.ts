@@ -61,8 +61,19 @@ export class PostgresUserRepository
     return encryptDeterministic(email, this.emailSecret);
   }
 
+  /**
+   * Une seule requete SQL. `findOne` impose `take: 1`, et avec des jointures TypeORM envoie alors
+   * deux requetes (un SELECT DISTINCT de l'id sur la requete jointe, puis la requete complete).
+   * `find` sans `take` envoie la requete jointe une fois ; la cle primaire garantit au plus un
+   * utilisateur.
+   */
   override async findById(id: string | number): Promise<UserEntity | null> {
-    return this.findWithRelations(this.buildIdWhere(id), ['userBadges', 'userBadges.badge']);
+    const models = await this.repository.find({
+      where: this.buildIdWhere(id),
+      relations: ['userBadges', 'userBadges.badge'],
+    });
+    const model = models.at(0);
+    return model ? this.toEntity(model) : null;
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {

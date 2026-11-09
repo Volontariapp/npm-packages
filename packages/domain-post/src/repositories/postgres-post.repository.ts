@@ -38,7 +38,7 @@ interface WhereBuilder {
   andWhere(condition: string, parameters?: ObjectLiteral): unknown;
 }
 
-const UUID_PATTERN =/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const VISIBLE_MEDIA_STATUSES = [PostMediaStatus.NONE, PostMediaStatus.READY];
 
 const validUniqueUuids = (ids: string[], cap: number): string[] =>
@@ -147,13 +147,15 @@ export class PostgresPostRepository
       }
     };
 
+    // Page sans jointure : un simple OFFSET/LIMIT. Avec `leftJoinAndSelect` et `skip/take`, TypeORM
+    // envoyait deux requetes (un SELECT DISTINCT des ids sur la requete jointe, puis la page).
+    // Les medias sont lus a part, seulement pour les posts qui en ont (`loadMedia`).
     const pageQuery = this.repository
       .createQueryBuilder('post')
-      .leftJoinAndSelect('post.media', 'media')
-      .skip((page - 1) * limit)
-      .take(limit)
       .orderBy('post.createdAt', 'DESC')
-      .addOrderBy('post.id', 'DESC');
+      .addOrderBy('post.id', 'DESC')
+      .offset((page - 1) * limit)
+      .limit(limit);
     applyVisibility(pageQuery);
 
     // Le total ne joint pas `media` et n'utilise pas DISTINCT : `post.id` est unique, un COUNT(*)
@@ -170,7 +172,10 @@ export class PostgresPostRepository
       return Number(countRow?.total ?? 0);
     };
 
-    const [items, total] = await Promise.all([pageQuery.getMany(), countTotal()]);
+    const [items, total] = await Promise.all([
+      pageQuery.getMany().then((models) => this.loadMedia(models)),
+      countTotal(),
+    ]);
     const entities = items.map((m) => this.toEntity(m));
 
     return {
@@ -447,6 +452,31 @@ export class PostgresPostRepository
       order: { createdAt: 'DESC', id: 'DESC' },
     });
     return models.map((model) => this.toEntity(model));
+  }
+
+  /**
+   * Attaches `media` to page models read without join. A post whose `media_status` is NONE has no
+   * file (status computed from its media at creation and on each scan), so only the others are
+   * read, in one query; a page of text posts costs no query at all.
+   */
+  private async loadMedia(models: PostModel[]): Promise<PostModel[]> {
+    const withMedia = models.filter((model) => model.media_status !== PostMediaStatus.NONE);
+    const mediaByPost = new Map<string, PostMediaModel[]>();
+    if (withMedia.length > 0) {
+      const media = await this.repository.manager.getRepository(PostMediaModel).find({
+        where: { postId: In(withMedia.map((model) => model.id)) },
+        order: { position: 'ASC', id: 'ASC' },
+      });
+      for (const item of media) {
+        const list = mediaByPost.get(item.postId) ?? [];
+        list.push(item);
+        mediaByPost.set(item.postId, list);
+      }
+    }
+    for (const model of models) {
+      model.media = mediaByPost.get(model.id) ?? [];
+    }
+    return models;
   }
 
   private async loadInOrder(ids: string[]): Promise<PostEntity[]> {
