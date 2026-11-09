@@ -6,6 +6,7 @@ import { isDatabaseDriverError, isBaseError, ForbiddenError } from '@volontariap
 import type {
   IPostRepository,
   CreatePostWithMediaOptions,
+  ListPaginatedPostsOptions,
   ListRecentPostsByAuthorsOptions,
 } from '../repositories/index.js';
 import { SagaStatus, UserRoles } from '@volontariapp/shared';
@@ -67,9 +68,10 @@ export class PostService {
     limit: number,
     authorId?: string,
     readerId?: string,
+    options?: ListPaginatedPostsOptions,
   ): Promise<PaginatedResult<PostEntity>> {
     try {
-      return await this.postRepository.listPaginated(page, limit, authorId, readerId);
+      return await this.postRepository.listPaginated(page, limit, authorId, readerId, options);
     } catch (error: unknown) {
       if (isBaseError(error)) throw error;
       const err = error as Error;

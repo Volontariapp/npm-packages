@@ -19,6 +19,15 @@ export interface ListRecentPostsByAuthorsOptions {
   limit?: number;
 }
 
+export interface ListPaginatedPostsOptions {
+  /**
+   * Total already known by the caller (a short lived cache of a previous answer for the same
+   * authorId and reader): the COUNT query is skipped and this value is returned instead.
+   * Ignored when the author reads their own posts, which goes through a different query.
+   */
+  knownTotal?: number;
+}
+
 export interface IPostRepository {
   findById(id: string, relations?: string[], readerId?: string): Promise<PostEntity | null>;
   findByAuthorId(id: string, relations?: string[]): Promise<PostEntity[]>;
@@ -42,6 +51,7 @@ export interface IPostRepository {
     limit: number,
     authorId?: string,
     readerId?: string,
+    options?: ListPaginatedPostsOptions,
   ): Promise<PaginatedResult<PostEntity>>;
   purgePostsByAuthor(authorId: string): Promise<number>;
   listRecentByAuthors(options: ListRecentPostsByAuthorsOptions): Promise<PostEntity[]>;

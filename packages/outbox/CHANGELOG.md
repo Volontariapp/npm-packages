@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.10.44
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.5.0
+  - @volontariapp/config@3.5.0
+  - @volontariapp/database@3.13.2
+  - @volontariapp/errors@0.7.1
+  - @volontariapp/messaging@2.34.7
+
 ## 0.10.43
 
 ### Patch Changes

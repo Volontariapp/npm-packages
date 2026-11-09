@@ -49,6 +49,32 @@ describe('listPaginated: total des posts', () => {
     expect(result.hasPreviousPage).toBe(true);
   });
 
+  it('saute le comptage quand le total est deja connu', async () => {
+    const qb = createChainableQueryBuilderMock<PostModel>();
+    qb.getMany.mockResolvedValue([]);
+    const createQueryBuilder = jest
+      .spyOn(postRepo, 'createQueryBuilder')
+      .mockReturnValue(qb.builder);
+
+    const result = await posts.listPaginated(2, 10, 'author', 'reader', { knownTotal: 42 });
+
+    expect(result.total).toBe(42);
+    expect(result.totalPages).toBe(5);
+    expect(result.hasNextPage).toBe(true);
+    expect(qb.getRawOne).not.toHaveBeenCalled();
+    expect(createQueryBuilder).toHaveBeenCalledTimes(1);
+  });
+
+  it('accepte un total connu de zero', async () => {
+    const qb = createChainableQueryBuilderMock<PostModel>();
+    jest.spyOn(postRepo, 'createQueryBuilder').mockReturnValue(qb.builder);
+
+    const result = await posts.listPaginated(1, 10, undefined, undefined, { knownTotal: 0 });
+
+    expect(result.total).toBe(0);
+    expect(qb.getRawOne).not.toHaveBeenCalled();
+  });
+
   it('vaut zero quand le comptage ne renvoie rien', async () => {
     const qb = createChainableQueryBuilderMock<PostModel>();
     qb.getRawOne.mockResolvedValue(undefined);

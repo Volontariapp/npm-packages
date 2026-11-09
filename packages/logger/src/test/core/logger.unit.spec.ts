@@ -113,6 +113,44 @@ describe('Logger', () => {
       expect(consoleLogSpy).not.toHaveBeenCalled();
       expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
     });
+
+    it('should apply a default level set after the logger was created', () => {
+      const logger = new Logger({ context: 'CreatedAtImport' });
+      Logger.setDefaultConfig({ minLevel: 'warn' });
+
+      logger.debug('Debug ignored');
+      logger.info('Info ignored');
+      logger.warn('Warn logged');
+
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      expect(logger.minLevel).toBe('warn');
+    });
+
+    it('should keep the level given to the instance over the default level', () => {
+      const logger = new Logger({ minLevel: 'debug' });
+      Logger.setDefaultConfig({ minLevel: 'error' });
+
+      logger.debug('Debug logged');
+
+      expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should log everything at debug when no level is configured', () => {
+      const logger = new Logger();
+
+      expect(logger.minLevel).toBe('debug');
+      expect(logger.isLevelEnabled('debug')).toBe(true);
+    });
+
+    it('should report enabled levels from the current default level', () => {
+      const logger = new Logger();
+      Logger.setDefaultConfig({ minLevel: 'info' });
+
+      expect(logger.isLevelEnabled('debug')).toBe(false);
+      expect(logger.isLevelEnabled('info')).toBe(true);
+      expect(logger.isLevelEnabled('fatal')).toBe(true);
+    });
   });
 
   describe('Default Config (Global)', () => {
