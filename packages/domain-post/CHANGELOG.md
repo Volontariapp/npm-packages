@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.11.1
+
+### Patch Changes
+
+- Load wave 2. auth: the internal token signed for an identity is reused for 30 s (never past its own exp minus 60 s, nor the access token exp), and verified internal and access tokens are cached by full token string for 30 s (never past exp, failures never cached); new options `internalTokenReuseSeconds`, `verifiedTokenCacheSeconds`, `tokenCacheMaxEntries` (0 disables). domain-social: `getSearchExclusions` sends one Cypher query returning one row with both lists instead of two queries in two sessions. domain-post: `listPaginated` reads the page without join (plain OFFSET/LIMIT) and media only for posts whose media status is not NONE, instead of TypeORM's two-query join mode. domain-user: `findById` reads the user and badges in one SQL query instead of two.
+
 ## 3.11.0
 
 ### Minor Changes

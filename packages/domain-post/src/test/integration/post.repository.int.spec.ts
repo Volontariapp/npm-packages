@@ -450,6 +450,27 @@ describe('PostgresPostRepository (Integration)', () => {
         expect(result.total).toBe(1);
         expect(result.data).toHaveLength(1);
         expect(result.totalPages).toBe(1);
+        expect(result.data[0].media?.map((m) => m.fileId).sort()).toEqual([...files].sort());
+      });
+
+      it('attaches media to media posts only, in position order, on a mixed page', async () => {
+        const files = [randomUUID(), randomUUID()];
+        const withMedia = await repository.createWithPostCreated({
+          authorId: AUTHOR,
+          title: 'Post with two media',
+          content: 'content',
+          fileIds: files,
+          fileScanStatuses: Object.fromEntries(
+            files.map((fileId) => [fileId, PostMediaScanStatus.CLEAN]),
+          ),
+        });
+        const textOnly = await insertPost(AUTHOR, 'NONE');
+
+        const result = await repository.listPaginated(1, 10, undefined, READER);
+
+        const byId = new Map(result.data.map((post) => [post.id, post]));
+        expect(byId.get(textOnly)?.media).toEqual([]);
+        expect(byId.get(withMedia.id)?.media?.map((m) => m.fileId)).toEqual(files);
       });
 
       it('keeps the total and the pages consistent when a page is partial', async () => {

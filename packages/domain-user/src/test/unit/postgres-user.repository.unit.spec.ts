@@ -82,6 +82,28 @@ describe('PostgresUserRepository (Unit): findPage / findByIds', () => {
     });
   });
 
+  describe('findById()', () => {
+    it('lit l utilisateur et ses badges avec find, sans take (une seule requete SQL)', async () => {
+      const model = UserModelFactory.build();
+      const spy = jest.spyOn(typeOrmRepo, 'find').mockResolvedValue([model]);
+
+      const user = await repository.findById(model.id);
+
+      expect(user?.id).toBe(model.id);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        where: { id: model.id },
+        relations: ['userBadges', 'userBadges.badge'],
+      });
+    });
+
+    it('renvoie null pour un utilisateur absent', async () => {
+      jest.spyOn(typeOrmRepo, 'find').mockResolvedValue([]);
+
+      expect(await repository.findById('missing')).toBeNull();
+    });
+  });
+
   describe('findByIds()', () => {
     it('lit en une seule requete avec les relations de findById', async () => {
       const models = UserModelFactory.buildMany(2);

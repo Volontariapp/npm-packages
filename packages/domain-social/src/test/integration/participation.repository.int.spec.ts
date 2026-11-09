@@ -487,6 +487,49 @@ describe('Neo4jParticipationRepository (Integration)', () => {
       expect(result.excludedEventIds).toEqual([]);
     });
 
+    it('should read both families in one call', async () => {
+      await repository.createParticipation(USER_A, EVENT_1);
+      await block('user-a', 'user-b');
+
+      const result = await repository.getSearchExclusions(
+        'user-a',
+        { excludeParticipatedByMe: true, excludeBlockedUsers: true },
+        1000,
+      );
+
+      expect(result.excludedEventIds).toEqual(['event-1']);
+      expect(result.hiddenUserIds).toEqual(['user-b']);
+    });
+
+    it('should return empty lists for a user without any relation', async () => {
+      const result = await repository.getSearchExclusions(
+        'user-a',
+        {
+          excludeCreatedByMe: true,
+          excludeParticipatedByMe: true,
+          excludeWishedByMe: true,
+          excludeBlockedUsers: true,
+        },
+        1000,
+      );
+
+      expect(result.excludedEventIds).toEqual([]);
+      expect(result.hiddenUserIds).toEqual([]);
+      expect(result.excludedEventIdsTruncated).toBe(false);
+      expect(result.hiddenUserIdsTruncated).toBe(false);
+    });
+
+    it('should return empty lists for an unknown user', async () => {
+      const result = await repository.getSearchExclusions(
+        'nobody',
+        { excludeParticipatedByMe: true, excludeBlockedUsers: true },
+        1000,
+      );
+
+      expect(result.excludedEventIds).toEqual([]);
+      expect(result.hiddenUserIds).toEqual([]);
+    });
+
     it('should not return the events of other users', async () => {
       await repository.createParticipation(USER_B, EVENT_1);
 

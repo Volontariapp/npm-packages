@@ -6,6 +6,9 @@ export interface ChainableQueryBuilderMock<T extends ObjectLiteral> {
   builder: SelectQueryBuilder<T>;
   orderBy: jest.Mock;
   addOrderBy: jest.Mock;
+  leftJoinAndSelect: jest.Mock;
+  offset: jest.Mock;
+  limit: jest.Mock;
   /** Lignes de la page. */
   getMany: jest.Mock<() => Promise<unknown[]>>;
   /** Resultat du COUNT(*) : { total } en texte comme le renvoie Postgres, ou undefined. */
@@ -20,6 +23,8 @@ export const createChainableQueryBuilderMock = <
     leftJoinAndSelect: jest.fn(),
     skip: jest.fn(),
     take: jest.fn(),
+    offset: jest.fn(),
+    limit: jest.fn(),
     orderBy: jest.fn(),
     addOrderBy: jest.fn(),
     andWhere: jest.fn(),
@@ -31,6 +36,8 @@ export const createChainableQueryBuilderMock = <
   qb.leftJoinAndSelect.mockReturnValue(qb);
   qb.skip.mockReturnValue(qb);
   qb.take.mockReturnValue(qb);
+  qb.offset.mockReturnValue(qb);
+  qb.limit.mockReturnValue(qb);
   qb.orderBy.mockReturnValue(qb);
   qb.addOrderBy.mockReturnValue(qb);
   qb.andWhere.mockReturnValue(qb);
@@ -42,6 +49,9 @@ export const createChainableQueryBuilderMock = <
     builder: qb as unknown as SelectQueryBuilder<T>,
     orderBy: qb.orderBy,
     addOrderBy: qb.addOrderBy,
+    leftJoinAndSelect: qb.leftJoinAndSelect,
+    offset: qb.offset,
+    limit: qb.limit,
     getMany: qb.getMany,
     getRawOne: qb.getRawOne,
   };

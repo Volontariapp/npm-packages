@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, beforeAll, jest } from '@jest/globals';
 import fs from 'node:fs';
 import * as jose from 'jose';
+import type { CryptoKey } from 'jose';
 import { JwtService } from '../../services/jwt.service.js';
 import { createAuthUser } from '../factories/auth-user.factory.js';
 import type { AuthConfig } from '../../interfaces/index.js';
@@ -216,6 +217,103 @@ describe('JwtService (Unit)', () => {
       await expect(jwtService.verifyInternal(invalidToken)).rejects.toThrow(
         'Invalid internal token payload',
       );
+    });
+  });
+
+  describe('Token reuse and verified token cache', () => {
+    it('should reuse the internal token for the same identity', async () => {
+      const user = createAuthUser({ exp: Math.floor(Date.now() / 1000) + 600 });
+      const signSpy = jest.spyOn(jose.SignJWT.prototype, 'sign');
+
+      const first = await jwtService.signInternal(user);
+      const second = await jwtService.signInternal({ ...user });
+
+      expect(second).toBe(first);
+      expect(signSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should sign a new internal token for another identity', async () => {
+      const first = await jwtService.signInternal(createAuthUser({ id: 'user-a' }));
+      const second = await jwtService.signInternal(createAuthUser({ id: 'user-b' }));
+
+      expect(second).not.toBe(first);
+    });
+
+    it('should sign a new internal token once the reuse window is over', async () => {
+      const now = Date.now();
+      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(now);
+      const user = createAuthUser();
+
+      const first = await jwtService.signInternal(user);
+      nowSpy.mockReturnValue(now + 31_000);
+      const second = await jwtService.signInternal(user);
+
+      expect(second).not.toBe(first);
+    });
+
+    it('should not reuse an internal token past the access token expiry', async () => {
+      const user = createAuthUser({ exp: Math.floor(Date.now() / 1000) - 1 });
+
+      const first = await jwtService.signInternal(user);
+      const second = await jwtService.signInternal(user);
+
+      expect(second).not.toBe(first);
+    });
+
+    it('should never reuse when the reuse window is 0', async () => {
+      const svc = new JwtService({ ...config, internalTokenReuseSeconds: 0 });
+      const user = createAuthUser();
+
+      const first = await svc.signInternal(user);
+      const second = await svc.signInternal(user);
+
+      expect(second).not.toBe(first);
+    });
+
+    const otherPublicKey = async (): Promise<CryptoKey> =>
+      (await jose.generateKeyPair('RS256')).publicKey;
+
+    it('should verify an internal token once, then serve a copy from the cache', async () => {
+      const token = await jwtService.signInternal(createAuthUser());
+
+      const first = await jwtService.verifyInternal(token);
+      first.role = 'tampered';
+      jwtService['internalPublicKey'] = await otherPublicKey();
+      const second = await jwtService.verifyInternal(token);
+
+      expect(second.role).toBe('volunteer');
+    });
+
+    it('should verify the access token again once the cache window is over', async () => {
+      const now = Date.now();
+      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(now);
+      const token = await jwtService.signAccessToken(createAuthUser());
+
+      await jwtService.verifyAccessToken(token);
+      jwtService['accessTokenPublicKey'] = await otherPublicKey();
+      nowSpy.mockReturnValue(now + 29_000);
+      await expect(jwtService.verifyAccessToken(token)).resolves.toBeDefined();
+      nowSpy.mockReturnValue(now + 31_000);
+      await expect(jwtService.verifyAccessToken(token)).rejects.toThrow();
+    });
+
+    it('should not cache a failed verification', async () => {
+      const token = await jwtService.signInternal(createAuthUser());
+      const rightKey = await jwtService['getInternalPublicKey']();
+
+      jwtService['internalPublicKey'] = await otherPublicKey();
+      await expect(jwtService.verifyInternal(token)).rejects.toThrow();
+      jwtService['internalPublicKey'] = rightKey;
+      await expect(jwtService.verifyInternal(token)).resolves.toBeDefined();
+    });
+
+    it('should verify every time when the cache window is 0', async () => {
+      const svc = new JwtService({ ...config, verifiedTokenCacheSeconds: 0 });
+      const token = await svc.signInternal(createAuthUser());
+
+      await svc.verifyInternal(token);
+      svc['internalPublicKey'] = await otherPublicKey();
+      await expect(svc.verifyInternal(token)).rejects.toThrow();
     });
   });
 
