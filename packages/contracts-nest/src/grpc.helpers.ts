@@ -75,10 +75,31 @@ export const GRPC_SERVICES_CONFIG = {
   },
 };
 
+/**
+ * Channel options shared by gRPC clients and servers (grpc-js ignores the ones of the other side).
+ *
+ * Client: `round_robin` spreads calls over every address the DNS returns. Behind a ClusterIP
+ * Service there is one address, so nothing changes; behind a headless Service (one address per
+ * ready pod) calls are balanced between replicas instead of pinned to one per HTTP/2 connection.
+ * Service config from DNS TXT records is disabled: one lookup less, and this config is the only one.
+ *
+ * Server: connections are closed gracefully after 5 minutes, so that clients reconnect and
+ * resolve the DNS again. That is how a client picks up a replica added after it connected.
+ */
+export const GRPC_MAX_CONNECTION_AGE_MS = 5 * 60 * 1000;
+export const GRPC_MAX_CONNECTION_AGE_GRACE_MS = 30 * 1000;
+
+export const GRPC_CHANNEL_OPTIONS: Readonly<Record<string, string | number>> = {
+  'grpc.service_config': JSON.stringify({ loadBalancingConfig: [{ round_robin: {} }] }),
+  'grpc.service_config_disable_resolution': 1,
+  'grpc.max_connection_age_ms': GRPC_MAX_CONNECTION_AGE_MS,
+  'grpc.max_connection_age_grace_ms': GRPC_MAX_CONNECTION_AGE_GRACE_MS,
+};
 
 export const getGrpcOptions = (
   domain: keyof typeof GRPC_SERVICES_CONFIG,
   url: string,
+  channelOptions: Readonly<Record<string, string | number>> = {},
 ): GrpcOptions => {
   const config = GRPC_SERVICES_CONFIG[domain];
   const protoRoot = join(__dirname, '../proto');
@@ -88,6 +109,8 @@ export const getGrpcOptions = (
     transport: Transport.GRPC,
     options: {
       url,
+      // A fresh object per call: Nest writes message size limits into it.
+      channelOptions: { ...GRPC_CHANNEL_OPTIONS, ...channelOptions },
       package: config.package,
       protoPath: join(protoRoot, `volontariapp/${config.domain}/${config.protoFileName}`),
       loader: {

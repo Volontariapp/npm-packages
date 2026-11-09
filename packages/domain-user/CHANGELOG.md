@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.17.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.5.0
+  - @volontariapp/auth@3.3.29
+  - @volontariapp/contracts@4.13.2
+  - @volontariapp/crypto@0.3.15
+  - @volontariapp/database@3.13.2
+  - @volontariapp/errors@0.7.1
+  - @volontariapp/errors-nest@0.14.2
+  - @volontariapp/outbox@0.10.44
+  - @volontariapp/messaging@2.34.7
+
 ## 2.17.11
 
 ### Patch Changes

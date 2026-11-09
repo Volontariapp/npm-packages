@@ -13,4 +13,5 @@ export * from './configs/auth/auth-config.js';
 export * from './configs/outbox-purge-config.js';
 export * from './configs/outbox-runner-config.js';
 export * from './config-loader.js';
+export * from './configure-logger.js';
 export * from './interfaces/database.config.interface.js';

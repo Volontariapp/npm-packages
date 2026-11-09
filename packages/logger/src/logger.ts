@@ -29,7 +29,8 @@ export class Logger {
 
   private readonly context: string;
   private readonly format: 'json' | 'text';
-  private readonly minLevel: LogLevel;
+  /** Level given to this instance; when absent, the default level is read at each call. */
+  private readonly ownMinLevel: LogLevel | undefined;
   private readonly masker: Masker | undefined;
 
   private readonly levels: Record<LogLevel, number> = {
@@ -44,8 +45,21 @@ export class Logger {
     const merged = { ...Logger.defaultConfig, ...config };
     this.context = merged.context ?? 'App';
     this.format = merged.format ?? 'text';
-    this.minLevel = merged.minLevel ?? 'debug';
+    this.ownMinLevel = config?.minLevel;
     this.masker = merged.masking === false ? undefined : new Masker(merged.masking);
+  }
+
+  /**
+   * Loggers created at import time (module constants, class fields of libraries) exist before
+   * the service calls `setDefaultConfig`: reading the default level here, not in the
+   * constructor, makes them follow the level configured at startup.
+   */
+  public get minLevel(): LogLevel {
+    return this.ownMinLevel ?? Logger.defaultConfig.minLevel ?? 'debug';
+  }
+
+  public isLevelEnabled(level: LogLevel): boolean {
+    return this.levels[level] >= this.levels[this.minLevel];
   }
 
   public log(message: unknown, ...optionalParams: unknown[]): void {
@@ -77,7 +91,7 @@ export class Logger {
   }
 
   private print(level: LogLevel, message: unknown, params: unknown[]): void {
-    if (this.levels[level] < this.levels[this.minLevel]) {
+    if (!this.isLevelEnabled(level)) {
       return;
     }
 

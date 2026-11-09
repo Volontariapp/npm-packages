@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- Load plan (300 req/s), phases 1 to 3:
+
+  - logger: the default `minLevel` is read at each call, so loggers created at import time follow the level set at startup; new `isLevelEnabled(level)` and `minLevel` getter.
+  - config: `configureLogger(config.logger, extra?)` applies the configured format and level (it was never passed, every service logged at debug); an unknown level falls back to `info` with a warning. `parseLogLevel` and `LOG_LEVELS` exported.
+  - contracts-nest: `getGrpcOptions` sets channel options: client `round_robin` load balancing (no TXT service config lookup) and server max connection age of 5 minutes (30 s grace) so that clients re-resolve and pick up new replicas. Optional third argument to override channel options.
+  - domain-post: `listPaginated` and `PostService.listPosts` accept `{ knownTotal }` to skip the COUNT query when the caller caches the total.
+
 ## 0.4.0
 
 ### Minor Changes

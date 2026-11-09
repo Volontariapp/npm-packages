@@ -29,6 +29,7 @@ import {
 import type {
   IPostRepository,
   CreatePostWithMediaOptions,
+  ListPaginatedPostsOptions,
   ListRecentPostsByAuthorsOptions,
 } from './interfaces/index.js';
 
@@ -115,6 +116,7 @@ export class PostgresPostRepository
     limit: number,
     authorId?: string,
     readerId?: string,
+    options: ListPaginatedPostsOptions = {},
   ): Promise<PaginatedResult<PostEntity>> {
     if (authorId && readerId && authorId === readerId) {
       // Ordre explicite (recent d'abord, id en departage) pour des pages stables
@@ -157,14 +159,18 @@ export class PostgresPostRepository
     // Le total ne joint pas `media` et n'utilise pas DISTINCT : `post.id` est unique, un COUNT(*)
     // suffit. `getManyAndCount` recomptait toute la table jointe a chaque page (mesure en prod :
     // 12 ms contre 0,2 ms pour la page elle-meme, sur 29 000 posts).
-    const countQuery = this.repository.createQueryBuilder('post').select('COUNT(*)', 'total');
-    applyVisibility(countQuery);
+    // Total connu de l'appelant (cache court du meme filtre) : le COUNT est saute, la page reste lue.
+    const countTotal = async (): Promise<number> => {
+      if (options.knownTotal !== undefined) {
+        return options.knownTotal;
+      }
+      const countQuery = this.repository.createQueryBuilder('post').select('COUNT(*)', 'total');
+      applyVisibility(countQuery);
+      const countRow = await countQuery.getRawOne<{ total: string }>();
+      return Number(countRow?.total ?? 0);
+    };
 
-    const [items, countRow] = await Promise.all([
-      pageQuery.getMany(),
-      countQuery.getRawOne<{ total: string }>(),
-    ]);
-    const total = Number(countRow?.total ?? 0);
+    const [items, total] = await Promise.all([pageQuery.getMany(), countTotal()]);
     const entities = items.map((m) => this.toEntity(m));
 
     return {
