@@ -28,6 +28,7 @@ export interface RequiredPostProcessorOptions {
   claimIntervalMs: number;
   claimMinIdleTimeMs: number;
   idempotencyTtlSeconds: number;
+  handleSignals: boolean;
   circuitBreaker: CircuitBreakerConfig;
   retry: RetryOptions;
   dynamicBatching: {
@@ -44,6 +45,7 @@ export const DEFAULT_POST_PROCESSOR_CONFIG: RequiredPostProcessorOptions = {
   claimIntervalMs: 30000,
   claimMinIdleTimeMs: 60000,
   idempotencyTtlSeconds: 86400,
+  handleSignals: true,
   retry: DEFAULT_RETRY_OPTIONS,
   circuitBreaker: DEFAULT_CIRCUIT_BREAKER_CONFIG,
   dynamicBatching: DEFAULT_DYNAMIC_BATCHING_CONFIG,

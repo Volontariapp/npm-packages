@@ -62,6 +62,16 @@ export interface PostProcessorOptions {
   circuitBreaker?: CircuitBreakerConfig;
 
   /**
+   * Whether this instance registers its own SIGTERM and SIGINT listeners that call `stop()`.
+   * Set it to false when the host process owns the shutdown (for example NestJS
+   * `enableShutdownHooks` with a lifecycle hook awaiting `stop()`): one listener per
+   * instance otherwise exceeds the process MaxListeners limit and stops the instance
+   * before the host can await it.
+   * @default true
+   */
+  handleSignals?: boolean;
+
+  /**
    * Configuration for dynamic batching based on CPU, memory, and processing latency.
    */
   dynamicBatching?: {

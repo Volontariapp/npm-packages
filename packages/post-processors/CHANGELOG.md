@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.0
+
+### Minor Changes
+
+- Add the `handleSignals` option (default `true`) so the host process can own the shutdown instead of one SIGTERM and SIGINT listener per instance. `stop()` now returns the stop in progress to every concurrent caller, so awaiting it always waits for the end of the consumption loop.
+
 ## 3.5.16
 
 ### Patch Changes
