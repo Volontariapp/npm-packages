@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.0
+
+### Minor Changes
+
+- Idempotency of post-processors on the event id (`fields.id`, the event_queue row id) instead of the Redis message id, so an event pushed twice by the outbox is processed once. Locks have two states (`processing` with the claim idle time as TTL, then `done` with `idempotencyTtlSeconds`); a `processing` lock leaves the message pending without acknowledgement. Batch locks are taken in a single Redis round trip, and the key of the previous version (Redis message id) is still read during the transition. The public API is unchanged.
+
 ## 3.6.0
 
 ### Minor Changes

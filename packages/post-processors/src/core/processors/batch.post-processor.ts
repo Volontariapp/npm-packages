@@ -2,9 +2,12 @@ import { BasePostProcessor } from './base.post-processor.js';
 import type { EventMessagingType, EventRegistry, StreamEvent } from '@volontariapp/messaging';
 import type { RedisStreamEntry, ExtractPayload, ParseResult } from '../../types/index.js';
 import type { BatchEventItem } from '../../interfaces/index.js';
-import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
+import { IdempotencyLockState, RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 import { runBatchInTraceContext } from '@volontariapp/database';
 import { isInfrastructureError } from '@volontariapp/errors';
+
+/** Idempotency id (event id) of each locked message of the batch, by Redis message id. */
+type LockedIds = Map<string, string>;
 
 export abstract class BatchPostProcessor<
   EventType extends EventMessagingType,
@@ -12,31 +15,60 @@ export abstract class BatchPostProcessor<
   protected abstract processEvents(events: BatchEventItem<EventType>[]): Promise<void>;
 
   /**
-   * Reads and processes the stream entries in batches.
+   * Reads and processes the stream entries in batches. The idempotency locks of the batch are
+   * taken in one round trip, on the event id, so an event pushed twice is processed once.
    */
   protected override async processEntries(entries: RedisStreamEntry[]): Promise<void> {
-    const items: BatchEventItem<EventType>[] = [];
-    const acquiredMessageIds: string[] = [];
-    const ttl = this.options.idempotencyTtlSeconds;
-
+    const useIdempotency = this.options.idempotencyTtlSeconds > 0;
+    const candidates: RedisStreamEntry[] = [];
     for (const entry of entries) {
-      await this.filterAndLockEntry(entry, ttl, items, acquiredMessageIds);
+      if (await this.isHandledEntry(entry)) candidates.push(entry);
+    }
+    if (candidates.length === 0) return;
+
+    const idempotencyIds = candidates.map((entry) => RedisStreamHelper.resolveIdempotencyId(entry));
+    const states = useIdempotency
+      ? await RedisStreamHelper.acquireIdempotencyLocks(
+          this.redis,
+          this.options.groupName,
+          candidates.map((entry, index) => ({
+            idempotencyId: idempotencyIds[index] ?? entry.id,
+            legacyMessageId: entry.id,
+          })),
+          this.processingLockTtlSeconds,
+        )
+      : candidates.map(() => IdempotencyLockState.ACQUIRED);
+
+    const items: BatchEventItem<EventType>[] = [];
+    const lockedIds: LockedIds = new Map();
+    for (const [index, entry] of candidates.entries()) {
+      const idempotencyId = idempotencyIds[index] ?? entry.id;
+      const state = states[index] ?? IdempotencyLockState.PROCESSING;
+      if (state === IdempotencyLockState.DONE) {
+        this.logger.warn('Event already processed (idempotency block), acknowledging', {
+          messageId: entry.id,
+          eventId: idempotencyId,
+        });
+        await this.acknowledge(entry.id);
+        continue;
+      }
+      if (state === IdempotencyLockState.PROCESSING) {
+        this.deferLockedMessage(entry.id, idempotencyId);
+        continue;
+      }
+      if (useIdempotency) lockedIds.set(entry.id, idempotencyId);
+      await this.parseAndAccumulateEntry(entry, idempotencyId, items, lockedIds);
     }
 
     if (items.length === 0) return;
 
-    await this.executeBatchProcessing(items, acquiredMessageIds, ttl > 0);
+    await this.executeBatchProcessing(items, lockedIds);
   }
 
   /**
-   * Filters invalid/unhandled entries and locks valid ones using idempotency.
+   * Acknowledges and skips the entries without payload or of a type this processor does not handle.
    */
-  private async filterAndLockEntry(
-    entry: RedisStreamEntry,
-    ttl: number,
-    items: BatchEventItem<EventType>[],
-    acquiredMessageIds: string[],
-  ): Promise<boolean> {
+  private async isHandledEntry(entry: RedisStreamEntry): Promise<boolean> {
     const { id, fields } = entry;
 
     if (!fields.event) {
@@ -56,31 +88,21 @@ export abstract class BatchPostProcessor<
       return false;
     }
 
-    if (
-      ttl > 0 &&
-      !(await RedisStreamHelper.acquireIdempotencyLock(this.redis, this.options.groupName, id, ttl))
-    ) {
-      this.logger.warn('Message already processed or currently processing (idempotency block)', {
-        messageId: id,
-      });
-      await this.acknowledge(id);
-      return false;
-    }
-
-    return this.parseAndAccumulateEntry(id, fields.event, ttl > 0, items, acquiredMessageIds);
+    return true;
   }
 
   /**
    * Parses stream entry payload and stores in batch collection.
    */
   private async parseAndAccumulateEntry(
-    id: string,
-    rawEvent: string,
-    useIdempotency: boolean,
+    entry: RedisStreamEntry,
+    idempotencyId: string,
     items: BatchEventItem<EventType>[],
-    acquiredMessageIds: string[],
+    lockedIds: LockedIds,
   ): Promise<boolean> {
+    const id = entry.id;
     try {
+      const rawEvent = entry.fields.event ?? '';
       const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[EventType]>>;
       if (typeof event !== 'object') {
         throw new Error('Event payload must be a non-null object');
@@ -93,7 +115,6 @@ export abstract class BatchPostProcessor<
       }
 
       items.push({ event, messageId: id });
-      if (useIdempotency) acquiredMessageIds.push(id);
       return true;
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
@@ -102,8 +123,12 @@ export abstract class BatchPostProcessor<
         error,
       });
       await this.acknowledge(id);
-      if (useIdempotency) {
-        await RedisStreamHelper.removeIdempotencyLock(this.redis, this.options.groupName, id);
+      if (lockedIds.delete(id)) {
+        await RedisStreamHelper.removeIdempotencyLock(
+          this.redis,
+          this.options.groupName,
+          idempotencyId,
+        );
       }
       return false;
     }
@@ -114,8 +139,7 @@ export abstract class BatchPostProcessor<
    */
   private async executeBatchProcessing(
     items: BatchEventItem<EventType>[],
-    _acquiredMessageIds: string[],
-    useIdempotency: boolean,
+    lockedIds: LockedIds,
   ): Promise<void> {
     try {
       this.logger.info('Processing batch of events', { count: items.length });
@@ -135,8 +159,16 @@ export abstract class BatchPostProcessor<
       this.circuitBreaker.recordSuccess();
       this.streamMetrics.recordProcessed(items.length);
 
-      // Successfully processed - clear retry data and acknowledge all
       const messageIds = items.map((item) => item.messageId);
+
+      // Done before the acknowledgement: a crash in between leaves the messages pending, and
+      // the next delivery finds them done and only acknowledges them.
+      await RedisStreamHelper.markIdempotencyDone(
+        this.redis,
+        this.options.groupName,
+        this.lockedIdsOf(messageIds, lockedIds),
+        this.options.idempotencyTtlSeconds,
+      );
 
       const startRetry = Date.now();
       await this.retryHelper.clearRetryDataMany(this.redis, this.options.groupName, messageIds);
@@ -159,8 +191,15 @@ export abstract class BatchPostProcessor<
       this.circuitBreaker.recordFailure();
 
       // Handle retry for each item in the batch individually
-      await this.handleBatchProcessingFailure(items, error, useIdempotency);
+      await this.handleBatchProcessingFailure(items, error, lockedIds);
     }
+  }
+
+  private lockedIdsOf(messageIds: string[], lockedIds: LockedIds): string[] {
+    return messageIds.flatMap((messageId) => {
+      const idempotencyId = lockedIds.get(messageId);
+      return idempotencyId === undefined ? [] : [idempotencyId];
+    });
   }
 
   /**
@@ -170,16 +209,12 @@ export abstract class BatchPostProcessor<
   private async handleBatchProcessingFailure(
     items: BatchEventItem<EventType>[],
     error: Error,
-    useIdempotency: boolean,
+    lockedIds: LockedIds,
   ): Promise<void> {
+    const messageIds = items.map((item) => item.messageId);
     if (isInfrastructureError(error)) {
-      this.deferInfrastructureRetry(
-        items.map((item) => item.messageId),
-        error,
-      );
-      if (useIdempotency) {
-        await this.releaseIdempotencyLocks(items.map((item) => item.messageId));
-      }
+      this.deferInfrastructureRetry(messageIds, error);
+      await this.releaseIdempotencyLocks(this.lockedIdsOf(messageIds, lockedIds));
       return;
     }
 
@@ -235,21 +270,19 @@ export abstract class BatchPostProcessor<
       }
     }
 
-    if (useIdempotency) {
-      await this.releaseIdempotencyLocks(items.map((item) => item.messageId));
-    }
+    await this.releaseIdempotencyLocks(this.lockedIdsOf(messageIds, lockedIds));
   }
 
   /**
-   * Releases idempotency locks for a list of message IDs on error.
+   * Releases idempotency locks (event ids) on error.
    */
-  private async releaseIdempotencyLocks(messageIds: string[]): Promise<void> {
-    for (const id of messageIds) {
+  private async releaseIdempotencyLocks(idempotencyIds: string[]): Promise<void> {
+    for (const id of idempotencyIds) {
       try {
         await RedisStreamHelper.removeIdempotencyLock(this.redis, this.options.groupName, id);
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
-        this.logger.error('Failed to release idempotency lock', { messageId: id, error });
+        this.logger.error('Failed to release idempotency lock', { eventId: id, error });
       }
     }
   }

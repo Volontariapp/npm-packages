@@ -11,6 +11,19 @@ import {
 
 export type RedisMockCallReturn = string | number | null | RedisMockCallReturn[];
 
+/**
+ * Reply of the idempotency scripts of RedisStreamHelper (`EVAL script numkeys ...`): every lock
+ * is acquired (one reply per key pair), and the "done" script returns its key count.
+ */
+export function idempotencyEvalReply(args: (string | number)[]): RedisMockCallReturn {
+  const [script, keyCount] = args;
+  const count = typeof keyCount === 'number' ? keyCount : Number(keyCount);
+  if (typeof script === 'string' && script.includes("'acquired'")) {
+    return Array.from({ length: count / 2 }, () => 'acquired');
+  }
+  return count;
+}
+
 export function mockRedisCall(
   redisMock: jest.Mocked<Redis>,
 ): jest.MockedFunction<
@@ -20,12 +33,13 @@ export function mockRedisCall(
     (command: string, ...args: (string | number)[]) => Promise<RedisMockCallReturn>
   >;
 
-  callMock.mockImplementation(async (command: string, ..._args: (string | number)[]) => {
+  callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
     if (command === 'XGROUP') return 'OK';
     if (command === 'XACK') return 1;
     if (command === 'XPENDING') return [];
     if (command === 'XCLAIM') return [];
     if (command === 'SET') return 'OK';
+    if (command === 'EVAL') return idempotencyEvalReply(args);
     if (command === 'DEL') return 1;
     if (command === 'XREADGROUP') {
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -69,10 +83,11 @@ export function mockRedisXreadgroup(
   entries: Array<{ messageId: string; event: StreamEvent }>,
 ): void {
   let xreadgroupCount = 0;
-  callMock.mockImplementation(async (command: string, ..._args: (string | number)[]) => {
+  callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
     if (command === 'XGROUP') return 'OK';
     if (command === 'XACK') return 1;
     if (command === 'SET') return 'OK';
+    if (command === 'EVAL') return idempotencyEvalReply(args);
     if (command === 'DEL') return 1;
     if (command === 'XREADGROUP') {
       xreadgroupCount++;

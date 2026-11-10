@@ -255,6 +255,30 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   }
 
   /**
+   * Keeps pending a message whose event is being processed by another delivery (same event id,
+   * pushed twice by the outbox): no acknowledgement, no retry attempt counted. The message is
+   * read again later and acknowledged once the other delivery has marked the event done, or
+   * processed if its lock expired without being marked done.
+   */
+  protected deferLockedMessage(messageId: string, idempotencyId: string): void {
+    this.logger.warn('Event is being processed by another delivery, message kept pending', {
+      streamName: this.options.streamName,
+      messageId,
+      eventId: idempotencyId,
+    });
+    this.scheduleReadPending();
+  }
+
+  /**
+   * Lifetime of the "processing" idempotency lock: the idle time after which a pending message
+   * is claimed by another consumer. A consumer that dies while processing releases the event
+   * when it is claimed again.
+   */
+  protected get processingLockTtlSeconds(): number {
+    return Math.max(1, Math.ceil(this.options.claimMinIdleTimeMs / 1000));
+  }
+
+  /**
    * Plans a re-read of the pending messages. Kept in memory on purpose: it must work when
    * Redis itself is the failing component.
    */

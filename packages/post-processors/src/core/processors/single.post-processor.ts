@@ -6,7 +6,7 @@ import type {
   EventChangedPayload,
 } from '@volontariapp/messaging';
 import type { ParseResult, RedisStreamEntry } from '../../types/index.js';
-import { RedisStreamHelper } from '../helpers/redis-stream.helper.js';
+import { IdempotencyLockState, RedisStreamHelper } from '../helpers/redis-stream.helper.js';
 import { runInTraceContext } from '@volontariapp/database';
 import { isInfrastructureError } from '@volontariapp/errors';
 
@@ -55,19 +55,30 @@ export abstract class SinglePostProcessor<
       return;
     }
 
-    const ttl = this.options.idempotencyTtlSeconds;
-    if (
-      ttl > 0 &&
-      !(await RedisStreamHelper.acquireIdempotencyLock(this.redis, this.options.groupName, id, ttl))
-    ) {
-      this.logger.warn('Message already processed or currently processing (idempotency block)', {
-        messageId: id,
-      });
-      await this.acknowledge(id);
-      return;
+    const useIdempotency = this.options.idempotencyTtlSeconds > 0;
+    const idempotencyId = RedisStreamHelper.resolveIdempotencyId(entry);
+    if (useIdempotency) {
+      const [state] = await RedisStreamHelper.acquireIdempotencyLocks(
+        this.redis,
+        this.options.groupName,
+        [{ idempotencyId, legacyMessageId: id }],
+        this.processingLockTtlSeconds,
+      );
+      if (state === IdempotencyLockState.DONE) {
+        this.logger.warn('Event already processed (idempotency block), acknowledging', {
+          messageId: id,
+          eventId: idempotencyId,
+        });
+        await this.acknowledge(id);
+        return;
+      }
+      if (state !== IdempotencyLockState.ACQUIRED) {
+        this.deferLockedMessage(id, idempotencyId);
+        return;
+      }
     }
 
-    await this.executeEventProcessing(id, fields.event, ttl > 0);
+    await this.executeEventProcessing(id, fields.event, useIdempotency ? idempotencyId : null);
   }
 
   /**
@@ -76,7 +87,7 @@ export abstract class SinglePostProcessor<
   private async executeEventProcessing(
     id: string,
     rawEvent: string,
-    useIdempotency: boolean,
+    idempotencyId: string | null,
   ): Promise<void> {
     try {
       const event = JSON.parse(rawEvent) as StreamEvent<ExtractPayload<EventRegistry[EventType]>>;
@@ -107,6 +118,15 @@ export abstract class SinglePostProcessor<
       this.circuitBreaker.recordSuccess();
       this.streamMetrics.recordProcessed(1);
 
+      if (idempotencyId !== null) {
+        // Done before the acknowledgement: a crash in between only leads to an acknowledgement.
+        await RedisStreamHelper.markIdempotencyDone(
+          this.redis,
+          this.options.groupName,
+          [idempotencyId],
+          this.options.idempotencyTtlSeconds,
+        );
+      }
       await this.retryHelper.clearRetryData(this.redis, this.options.groupName, id);
       await this.acknowledge(id);
       this.logger.info('Successfully processed event', {
@@ -121,7 +141,7 @@ export abstract class SinglePostProcessor<
       this.circuitBreaker.recordFailure();
 
       // Handle retry logic
-      await this.handleProcessingFailure(id, error, rawEvent, useIdempotency);
+      await this.handleProcessingFailure(id, error, rawEvent, idempotencyId);
     }
   }
 
@@ -132,7 +152,7 @@ export abstract class SinglePostProcessor<
     messageId: string,
     error: Error,
     rawEvent: string,
-    useIdempotency: boolean,
+    idempotencyId: string | null,
   ): Promise<void> {
     try {
       if (isInfrastructureError(error)) {
@@ -181,11 +201,11 @@ export abstract class SinglePostProcessor<
       const retryError = retryErr instanceof Error ? retryErr : new Error(String(retryErr));
       this.logger.error('Failed to handle retry logic', { messageId, error: retryError });
     } finally {
-      if (useIdempotency) {
+      if (idempotencyId !== null) {
         await RedisStreamHelper.removeIdempotencyLock(
           this.redis,
           this.options.groupName,
-          messageId,
+          idempotencyId,
         );
       }
     }
