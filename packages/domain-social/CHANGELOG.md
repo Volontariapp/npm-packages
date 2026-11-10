@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.21.0
+
+### Minor Changes
+
+- Add the Postgres-first write path for social relations: `SocialEdgeIntentService` (one transaction writes the `social_edge` row and a `SOCIAL_EDGE_APPLY` job), `SocialEdgeApplyService` (idempotent Neo4j convergence, then the business event with a deterministic id), `PostgresSocialEdgeRepository`, `Neo4jSocialEdgeRepository`, `buildSocialEdgeEventId` and the `SocialWriteMode` helpers. Existing services and repositories are unchanged.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.14.0
+  - @volontariapp/messaging@2.35.0
+  - @volontariapp/outbox@0.11.0
+
 ## 0.20.0
 
 ### Minor Changes

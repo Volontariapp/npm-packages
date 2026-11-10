@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.35.0
+
+### Minor Changes
+
+- Add the `SOCIAL_EDGE_APPLY` job (`SocialJobType`, `ISocialEdgeApplyPayload`, `SocialEdgeKind`, `SocialEdgeAction`) and `JOB_DELIVERY_OPTIONS` / `getJobDeliveryOptions`, per-job-type BullMQ options (12 exponential attempts for `SOCIAL_EDGE_APPLY`).
+
 ## 2.34.7
 
 ### Patch Changes

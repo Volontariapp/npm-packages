@@ -29,6 +29,11 @@ export class EventQueueEntity<
   processedAt?: Date;
 
   static createEvent<K extends EventType = EventType>(props: {
+    /**
+     * Fixed row id. Lets a retried producer write the same event twice and have the second
+     * insert ignored (`ON CONFLICT (id) DO NOTHING`). Random when omitted.
+     */
+    id?: string;
     type: K;
     emitter: string;
     emitterId: string;
@@ -39,7 +44,7 @@ export class EventQueueEntity<
     targetServices: Streams[];
   }): EventQueueEntity<K> {
     const entity = new EventQueueEntity<K>();
-    entity.id = randomUUID();
+    entity.id = props.id ?? randomUUID();
     entity.type = props.type;
     entity.emitter = props.emitter;
     entity.emitterId = props.emitterId;

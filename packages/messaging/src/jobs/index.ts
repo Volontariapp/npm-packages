@@ -17,7 +17,7 @@ import type {
   IFallbackIncrementImpactScoreJobPayload,
 } from './user/payloads.js';
 import { SocialJobType } from './social/payloads.js';
-import type { IFollowUserPayload } from './social/payloads.js';
+import type { IFollowUserPayload, ISocialEdgeApplyPayload } from './social/payloads.js';
 import { EventsJobType } from './event/payloads.js';
 import type {
   IPublishEventPayload,
@@ -60,6 +60,7 @@ export interface JobRegistry {
   [JobMessagingType.SEND_WELCOME_EMAIL]: ISendWelcomeEmailPayload;
   [JobMessagingType.RESET_PASSWORD]: IResetPasswordPayload;
   [JobMessagingType.FOLLOW_USER]: IFollowUserPayload;
+  [JobMessagingType.SOCIAL_EDGE_APPLY]: ISocialEdgeApplyPayload;
   [JobMessagingType.PUBLISH_EVENT]: IPublishEventPayload;
   [JobMessagingType.PUBLISH_POST]: IPublishPostPayload;
   [JobMessagingType.SCAN_FILE]: IScanFilePayload;
@@ -107,3 +108,4 @@ export * from './storage/queue.js';
 export * from './ranking/payloads.js';
 export * from './ranking/queue.js';
 export * from './envelope.js';
+export * from './delivery-options.js';

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- `JobsOutboxPusher` applies the per-job-type delivery options of `@volontariapp/messaging` (`attempts` and `backoff`) in `pushElement` and `pushBulkElement`; other job types keep the queue defaults.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.14.0
+  - @volontariapp/messaging@2.35.0
+
 ## 0.10.44
 
 ### Patch Changes
