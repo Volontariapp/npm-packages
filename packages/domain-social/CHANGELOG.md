@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22.0
+
+### Minor Changes
+
+- Make the Neo4j read transaction timeout configurable through NEO4J_READ_TRANSACTION_TIMEOUT_MS (default 1800 ms, invalid values fall back to the default). The timeout is resolved at each read; READ_TRANSACTION_CONFIG is replaced by readTransactionConfig() (no consumer imported it).
+
 ## 0.21.1
 
 ### Patch Changes

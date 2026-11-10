@@ -5,11 +5,23 @@ export const MAX_SOCIAL_BATCH_IDS = 100;
 export const MAX_SEARCH_EXCLUSION_IDS = 1000;
 
 /**
- * Delai d'une transaction de lecture Neo4j, en ms. Sous la deadline de lecture de 2 s de la
- * gateway : passe ce delai, l'appelant a deja abandonne, et Neo4j arrete la requete au lieu de
+ * Delai par defaut d'une transaction de lecture Neo4j, en ms. Sous la deadline de lecture de 2 s de
+ * la gateway : passe ce delai, l'appelant a deja abandonne, et Neo4j arrete la requete au lieu de
  * continuer un travail que plus personne n'attend (panne a froid du 2026-11-09).
  */
 export const NEO4J_READ_TRANSACTION_TIMEOUT_MS = 1800;
+
+/** Variable d'environnement qui remplace le delai par defaut (pile E2E, base froide). */
+export const NEO4J_READ_TRANSACTION_TIMEOUT_ENV = 'NEO4J_READ_TRANSACTION_TIMEOUT_MS';
+
+/** Delai configure ; une valeur absente, non entiere ou non positive donne le defaut. */
+export function neo4jReadTransactionTimeoutMs(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): number {
+  const raw = env[NEO4J_READ_TRANSACTION_TIMEOUT_ENV]?.trim();
+  const value = raw ? Number(raw) : Number.NaN;
+  return Number.isInteger(value) && value > 0 ? value : NEO4J_READ_TRANSACTION_TIMEOUT_MS;
+}
 
 /** Table Postgres de l'etat voulu des relations (like, follow, souhait, participation). */
 export const SOCIAL_EDGE_TABLE = 'social_edge';
