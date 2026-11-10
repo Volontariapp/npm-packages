@@ -124,6 +124,43 @@ describe('JobsOutboxPusher (Unit)', () => {
       );
     });
 
+    it('should apply the per-type delivery options of SOCIAL_EDGE_APPLY (12 exponential attempts)', async () => {
+      // Arrange
+      const entity = makeJobsOutboxEvent({
+        id: '1',
+        type: 'social.edge_apply',
+        payload: { data: 'test' },
+        target: 'social-queue',
+        scheduledAt: undefined,
+      });
+
+      // Act
+      await pusher.pushElement(entity);
+
+      // Assert
+      expect(addSpy).toHaveBeenCalledWith('social.edge_apply', expect.anything(), {
+        jobId: '1',
+        attempts: 12,
+        backoff: { type: 'exponential', delay: 1000 },
+      });
+    });
+
+    it('should keep the queue defaults for a job type without delivery options', async () => {
+      // Arrange
+      const entity = makeJobsOutboxEvent({
+        id: '1',
+        type: 'test.job',
+        target: 'test-service',
+        scheduledAt: undefined,
+      });
+
+      // Act
+      await pusher.pushElement(entity);
+
+      // Assert
+      expect(addSpy).toHaveBeenCalledWith('test.job', expect.anything(), { jobId: '1' });
+    });
+
     it('should throw and log error if queue.add fails', async () => {
       // Arrange
       const entity = makeJobsOutboxEvent({
@@ -217,6 +254,36 @@ describe('JobsOutboxPusher (Unit)', () => {
         expect.stringContaining('Failed to push bulk job outbox items'),
         expect.objectContaining({ error }),
       );
+    });
+
+    it('should apply the per-type delivery options in a bulk push', async () => {
+      // Arrange
+      const entities = [
+        makeJobsOutboxEvent({
+          id: '1',
+          type: 'social.edge_apply',
+          target: 'social-queue',
+          scheduledAt: undefined,
+        }),
+        makeJobsOutboxEvent({
+          id: '2',
+          type: 'test.job',
+          target: 'social-queue',
+          scheduledAt: undefined,
+        }),
+      ];
+
+      // Act
+      await pusher.pushBulkElement(entities);
+
+      // Assert
+      expect(addBulkSpy).toHaveBeenCalledWith([
+        expect.objectContaining({
+          name: 'social.edge_apply',
+          opts: expect.objectContaining({ jobId: '1', attempts: 12 }),
+        }),
+        expect.objectContaining({ name: 'test.job', opts: { jobId: '2' } }),
+      ]);
     });
   });
 });

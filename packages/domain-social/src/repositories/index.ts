@@ -6,3 +6,5 @@ export * from './neo4j-publication.repository.js';
 export * from './neo4j-interaction.repository.js';
 export * from './neo4j-participation.repository.js';
 export * from './neo4j-event-post-link.repository.js';
+export * from './neo4j-social-edge.repository.js';
+export * from './postgres-social-edge.repository.js';

@@ -2,7 +2,7 @@ import { Queue, type JobsOptions } from 'bullmq';
 import { OutboxPusher, continueTraceparent, type JobsOutboxEntity } from '@volontariapp/database';
 import type { Logger } from '@volontariapp/logger';
 import type { Redis } from 'ioredis';
-import type { JobEnvelope } from '@volontariapp/messaging';
+import { getJobDeliveryOptions, type JobEnvelope } from '@volontariapp/messaging';
 
 export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
   private readonly queues = new Map<string, Queue>();
@@ -34,14 +34,26 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
     return queue;
   }
 
+  /**
+   * `jobId` is the outbox row id (a row pushed twice makes a single job). A job type with its
+   * own delivery options (e.g. SOCIAL_EDGE_APPLY, 12 attempts) overrides the queue defaults.
+   */
+  private buildJobOptions(entity: JobsOutboxEntity): JobsOptions {
+    const jobOptions: JobsOptions = { jobId: entity.id };
+    const delivery = getJobDeliveryOptions(entity.type);
+    if (delivery) {
+      jobOptions.attempts = delivery.attempts;
+      jobOptions.backoff = { ...delivery.backoff };
+    }
+    return jobOptions;
+  }
+
   async pushElement(entity: JobsOutboxEntity): Promise<void> {
     this.logger.info(`Pushing job outbox item ${entity.id.toString()} to target: ${entity.target}`);
 
     try {
       const queue = this.getQueue(entity.target);
-      const jobOptions: JobsOptions = {
-        jobId: entity.id.toString(),
-      };
+      const jobOptions = this.buildJobOptions(entity);
 
       if (entity.scheduledAt) {
         const delay = entity.scheduledAt.getTime() - Date.now();
@@ -79,9 +91,7 @@ export class JobsOutboxPusher extends OutboxPusher<JobsOutboxEntity> {
         Array.from(targets.entries()).map(async ([target, targetEntities]) => {
           const queue = this.getQueue(target);
           const jobs = targetEntities.map((entity) => {
-            const jobOptions: JobsOptions = {
-              jobId: entity.id.toString(),
-            };
+            const jobOptions = this.buildJobOptions(entity);
 
             if (entity.scheduledAt) {
               const delay = entity.scheduledAt.getTime() - Date.now();

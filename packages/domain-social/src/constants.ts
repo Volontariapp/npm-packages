@@ -10,3 +10,22 @@ export const MAX_SEARCH_EXCLUSION_IDS = 1000;
  * continuer un travail que plus personne n'attend (panne a froid du 2026-11-09).
  */
 export const NEO4J_READ_TRANSACTION_TIMEOUT_MS = 1800;
+
+/** Table Postgres de l'etat voulu des relations (like, follow, souhait, participation). */
+export const SOCIAL_EDGE_TABLE = 'social_edge';
+
+/** Auteur des jobs et evenements ecrits pour les relations sociales. */
+export const SOCIAL_EDGE_EMITTER = 'ms-social';
+
+/**
+ * Mode d'ecriture de ms-social : `sync` ecrit Neo4j dans la requete (et peut dupliquer l'etat dans
+ * `social_edge` avec `mirrorEdge`), `async` n'ecrit que Postgres et laisse worker-social appliquer.
+ */
+export type SocialWriteMode = 'sync' | 'async';
+
+export const DEFAULT_SOCIAL_WRITE_MODE: SocialWriteMode = 'sync';
+
+/** Valeur inconnue ou absente : `sync` (retour arriere sans risque). */
+export function parseSocialWriteMode(value: string | undefined): SocialWriteMode {
+  return value === 'async' ? 'async' : DEFAULT_SOCIAL_WRITE_MODE;
+}

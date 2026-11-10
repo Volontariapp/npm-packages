@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.14.0
+
+### Minor Changes
+
+- `EventQueueEntity.createEvent` accepts an optional `id` (deterministic event ids, idempotent `INSERT ... ON CONFLICT DO NOTHING`), and the package re-exports the `EntityManager` and `DataSource` types.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/messaging@2.35.0
+
 ## 3.13.2
 
 ### Patch Changes

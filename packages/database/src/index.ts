@@ -9,5 +9,11 @@ export * from './outbox/index.js';
 export * from './workers/index.js';
 export * from './gather/index.js';
 
-export type { Repository, ObjectLiteral, FindOptionsWhere } from 'typeorm';
+export type {
+  Repository,
+  ObjectLiteral,
+  FindOptionsWhere,
+  EntityManager,
+  DataSource,
+} from 'typeorm';
 export { ILike, Like, In } from 'typeorm';
