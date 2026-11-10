@@ -14,6 +14,7 @@ import {
   mockRedisCall,
   mockRedisXreadgroup,
   formatEventsToXreadgroupResponse,
+  idempotencyEvalReply,
 } from '../../../utils/index.js';
 
 describe('BatchPostProcessor — Unit', () => {
@@ -107,6 +108,72 @@ describe('BatchPostProcessor — Unit', () => {
     });
   });
 
+  describe('Idempotence Locks', () => {
+    const lockCalls = (): Array<[string, string, number, ...Array<string | number>]> =>
+      callMock.mock.calls.filter(
+        (call): call is [string, string, number, ...Array<string | number>] =>
+          call[0] === 'EVAL' && typeof call[1] === 'string' && call[1].includes("'acquired'"),
+      );
+
+    it('should take the locks of a batch of 10 events in a single Redis round trip', async () => {
+      const entries = Array.from({ length: 10 }, (_, index) => ({
+        messageId: `${String(index + 1)}-0`,
+        event: makeTestEvent(`evt-lot-${String(index)}`),
+      }));
+      mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, entries);
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      const calls = lockCalls();
+      expect(calls).toHaveLength(1);
+      expect(calls[0]?.[2]).toBe(20);
+      expect(calls[0]?.[3]).toBe(
+        `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:evt-lot-0`,
+      );
+    });
+
+    it('should neither process nor acknowledge events whose lock is held by another delivery', async () => {
+      const entries = [
+        { messageId: '1-0', event: makeTestEvent('evt-free') },
+        { messageId: '2-0', event: makeTestEvent('evt-held') },
+        { messageId: '3-0', event: makeTestEvent('evt-finished') },
+      ];
+      let xreadCount = 0;
+      callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
+        if (command === 'XGROUP') return 'OK';
+        if (command === 'XREADGROUP') {
+          xreadCount++;
+          if (xreadCount === 1) {
+            return formatEventsToXreadgroupResponse(TestMessagingStream.TEST_STREAM, entries);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          return [];
+        }
+        if (command === 'EVAL') {
+          return typeof args[0] === 'string' && args[0].includes("'acquired'")
+            ? ['acquired', 'processing', 'done']
+            : args[1];
+        }
+        if (command === 'XACK') return 1;
+        return [];
+      });
+      const processSpy = jest.spyOn(processor, 'processEvents');
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      expect(processSpy).toHaveBeenCalledTimes(1);
+      expect(processSpy).toHaveBeenCalledWith([expect.objectContaining({ messageId: '1-0' })]);
+      const acked = callMock.mock.calls
+        .filter((call) => call[0] === 'XACK')
+        .flatMap((call) => call.slice(3));
+      expect(acked).toContain('1-0');
+      expect(acked).toContain('3-0');
+      expect(acked).not.toContain('2-0');
+    });
+  });
+
   describe('Batch Retry & DLQ', () => {
     it('should individually schedule batch items for retry when batch execution fails', async () => {
       const mockEvent1 = makeTestEvent('evt-1');
@@ -172,6 +239,7 @@ describe('BatchPostProcessor — Unit', () => {
           return 1;
         }
         if (command === 'SET') return 'OK';
+        if (command === 'EVAL') return idempotencyEvalReply(args);
         if (command === 'DEL') return 1;
         if (command === 'XREADGROUP') {
           const readsPendingEntries = args[args.length - 1] === '0';
@@ -310,7 +378,7 @@ describe('BatchPostProcessor — Unit', () => {
       const mockEvent = makeTestEvent('evt-1');
 
       let xreadgroupCount = 0;
-      callMock.mockImplementation(async (command: string, ..._args: (string | number)[]) => {
+      callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
         if (command === 'XGROUP') return 'OK';
         if (command === 'XREADGROUP') {
           xreadgroupCount++;
@@ -323,6 +391,7 @@ describe('BatchPostProcessor — Unit', () => {
           return [];
         }
         if (command === 'SET') return 'OK';
+        if (command === 'EVAL') return idempotencyEvalReply(args);
         return [];
       });
 

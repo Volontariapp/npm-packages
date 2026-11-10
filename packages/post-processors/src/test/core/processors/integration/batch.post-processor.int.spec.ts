@@ -164,7 +164,130 @@ describe('BatchPostProcessor — Integration', () => {
       TestMessagingStream.TEST_STREAM,
       TestMessagingGroup.TEST_GROUP,
     )) as RedisXPendingSummary;
-    expect(Number(pendingInfo[0])).toBe(0);
+    expect(pendingInfo[0]).toBe(0);
+  });
+
+  describe('idempotency on the event id', () => {
+    const pendingCount = async (): Promise<number> => {
+      const pendingInfo = (await redis.call(
+        'XPENDING',
+        TestMessagingStream.TEST_STREAM,
+        TestMessagingGroup.TEST_GROUP,
+      )) as RedisXPendingSummary;
+      return pendingInfo[0];
+    };
+    const processedIds = (): string[] =>
+      processor.processedBatches.flat().map((item) => item.event.id);
+
+    it('processes an event pushed twice in the same batch only once, and acknowledges both messages', async () => {
+      const event = makeTestEvent('evt-dup-same-batch');
+      await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+      await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+
+      await processor.start();
+      await waitFor(async () => (await pendingCount()) === 0 && processedIds().length > 0, 3000);
+
+      expect(processedIds()).toEqual(['evt-dup-same-batch']);
+    });
+
+    it('acknowledges without processing an event pushed again after it was processed', async () => {
+      const event = makeTestEvent('evt-dup-later');
+      await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+      await processor.start();
+      await waitFor(() => processedIds().length === 1, 3000);
+
+      await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      expect(processedIds()).toEqual(['evt-dup-later']);
+      expect(await pendingCount()).toBe(0);
+    });
+
+    it('marks a processed event as done on its event id', async () => {
+      const event = makeTestEvent('evt-done-key');
+      await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+
+      await processor.start();
+      await waitFor(() => processedIds().length === 1, 3000);
+      await waitFor(async () => (await pendingCount()) === 0, 3000);
+
+      const key = `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:evt-done-key`;
+      expect(await redis.get(key)).toBe('done');
+    });
+
+    it('processes each event once when 100 duplicated messages are delivered', async () => {
+      const events = Array.from({ length: 20 }, (_, index) =>
+        makeTestEvent(`evt-dup100-${String(index)}`),
+      );
+      for (let copy = 0; copy < 5; copy++) {
+        for (const event of events) {
+          await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+        }
+      }
+
+      await processor.start();
+      await waitFor(
+        async () => (await pendingCount()) === 0 && processedIds().length >= events.length,
+        8000,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const processed = processedIds();
+      expect(processed).toHaveLength(events.length);
+      expect(new Set(processed).size).toBe(events.length);
+      expect(await pendingCount()).toBe(0);
+    });
+
+    it('leaves a message pending after a consumer died mid-processing, and processes it once the lock expires', async () => {
+      const event = makeTestEvent('evt-dead-consumer');
+      const key = `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:evt-dead-consumer`;
+      await redis.xgroup(
+        'CREATE',
+        TestMessagingStream.TEST_STREAM,
+        TestMessagingGroup.TEST_GROUP,
+        '$',
+        'MKSTREAM',
+      );
+      await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+      // The dead consumer read the message and took the lock, then never finished.
+      await redis.call(
+        'XREADGROUP',
+        'GROUP',
+        TestMessagingGroup.TEST_GROUP,
+        'dead-consumer',
+        'COUNT',
+        '10',
+        'STREAMS',
+        TestMessagingStream.TEST_STREAM,
+        '>',
+      );
+      await redis.set(key, 'processing', 'PX', 600);
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      expect(processedIds()).toEqual([]);
+      expect(await pendingCount()).toBe(1);
+
+      await waitFor(() => processedIds().length === 1, 5000);
+      await waitFor(async () => (await pendingCount()) === 0, 3000);
+      expect(processedIds()).toEqual(['evt-dead-consumer']);
+      expect(await redis.get(key)).toBe('done');
+    });
+
+    it('does not acknowledge a message whose event is being processed elsewhere, and processes it once the lock expires', async () => {
+      const event = makeTestEvent('evt-held-elsewhere');
+      const key = `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:evt-held-elsewhere`;
+      await redis.set(key, 'processing', 'PX', 400);
+      await pushTestEventToStream(redis, TestMessagingStream.TEST_STREAM, event.id, event);
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      expect(processedIds()).toEqual([]);
+      expect(await pendingCount()).toBe(1);
+
+      await waitFor(() => processedIds().length === 1, 4000);
+      expect(processedIds()).toEqual(['evt-held-elsewhere']);
+    });
   });
 
   it('should release all acquired idempotency locks in a batch if processing fails', async () => {
@@ -191,8 +314,9 @@ describe('BatchPostProcessor — Integration', () => {
 
     expect(processor.processedBatches).toHaveLength(0);
 
-    const key1 = `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:${msgId1}`;
-    const key2 = `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:${msgId2}`;
+    expect(msgId1).not.toBe(msgId2);
+    const key1 = `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:evt-batch-idemp-fail1`;
+    const key2 = `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:evt-batch-idemp-fail2`;
 
     expect(await redis.get(key1)).toBeNull();
     expect(await redis.get(key2)).toBeNull();

@@ -14,6 +14,7 @@ import {
   mockRedisCall,
   mockRedisXreadgroup,
   formatEventsToXreadgroupResponse,
+  idempotencyEvalReply,
 } from '../../../utils/index.js';
 
 describe('SinglePostProcessor — Unit', () => {
@@ -170,9 +171,8 @@ describe('SinglePostProcessor — Unit', () => {
   });
 
   describe('Idempotence Locks', () => {
-    it('should acquire lock and skip if already processing (concurrent safety)', async () => {
+    const mockLockReply = (lockState: string): void => {
       const mockEvent = makeTestEvent(TestEventId.DEFAULT);
-
       let xreadCount = 0;
       callMock.mockImplementation(async (command: string, ..._args: (string | number)[]) => {
         if (command === 'XGROUP') return 'OK';
@@ -186,24 +186,53 @@ describe('SinglePostProcessor — Unit', () => {
           await new Promise((resolve) => setTimeout(resolve, 50));
           return [];
         }
-        if (command === 'SET') {
-          return null; // lock acquisition fails (NX)
-        }
+        if (command === 'EVAL') return [lockState];
         if (command === 'XACK') {
           return 1;
         }
         return [];
       });
+    };
 
+    it('should skip and acknowledge an event already processed', async () => {
+      mockLockReply('done');
       const processSpy = jest.spyOn(processor, 'processEvent');
       const acknowledgeSpy = jest.spyOn(processor, 'acknowledge');
 
       await processor.start();
       await new Promise((resolve) => setTimeout(resolve, 60));
 
-      // Should skip processing and directly XACK the duplicate (since it was locked by another process)
       expect(processSpy).not.toHaveBeenCalled();
       expect(acknowledgeSpy).toHaveBeenCalledWith(TestEventId.MSG_PENDING);
+    });
+
+    it('should neither process nor acknowledge an event being processed by another delivery', async () => {
+      mockLockReply('processing');
+      const processSpy = jest.spyOn(processor, 'processEvent');
+      const acknowledgeSpy = jest.spyOn(processor, 'acknowledge');
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      expect(processSpy).not.toHaveBeenCalled();
+      expect(acknowledgeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should lock on the event id of the message, not on the Redis message id', async () => {
+      mockRedisXreadgroup(callMock, TestMessagingStream.TEST_STREAM, [
+        { messageId: TestEventId.MSG_PENDING, event: makeTestEvent(TestEventId.DEFAULT) },
+      ]);
+
+      await processor.start();
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      const evalCall = callMock.mock.calls.find(([command]) => command === 'EVAL');
+      expect(evalCall?.[3]).toBe(
+        `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:${TestEventId.DEFAULT}`,
+      );
+      expect(evalCall?.[4]).toBe(
+        `idempotency:post-processor:${TestMessagingGroup.TEST_GROUP}:${TestEventId.MSG_PENDING}`,
+      );
     });
   });
 
@@ -212,7 +241,7 @@ describe('SinglePostProcessor — Unit', () => {
       const mockEvent = makeTestEvent(TestEventId.DEFAULT);
 
       let xreadgroupCount = 0;
-      callMock.mockImplementation(async (command: string, ..._args: (string | number)[]) => {
+      callMock.mockImplementation(async (command: string, ...args: (string | number)[]) => {
         if (command === 'XGROUP') return 'OK';
         if (command === 'XREADGROUP') {
           xreadgroupCount++;
@@ -225,6 +254,7 @@ describe('SinglePostProcessor — Unit', () => {
           return [];
         }
         if (command === 'SET') return 'OK';
+        if (command === 'EVAL') return idempotencyEvalReply(args);
         return [];
       });
 
@@ -308,6 +338,7 @@ describe('SinglePostProcessor — Unit', () => {
           return 1;
         }
         if (command === 'SET') return 'OK';
+        if (command === 'EVAL') return idempotencyEvalReply(args);
         if (command === 'DEL') return 1;
         if (command === 'XREADGROUP') {
           const readsPendingEntries = args[args.length - 1] === '0';
@@ -344,6 +375,7 @@ describe('SinglePostProcessor — Unit', () => {
           return 1;
         }
         if (command === 'SET') return 'OK';
+        if (command === 'EVAL') return idempotencyEvalReply(args);
         if (command === 'DEL') return 1;
         if (command === 'XREADGROUP') {
           const readsPendingEntries = args[args.length - 1] === '0';
