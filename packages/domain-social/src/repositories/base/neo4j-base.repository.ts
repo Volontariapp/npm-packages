@@ -1,15 +1,20 @@
 import neo4j from 'neo4j-driver';
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import { DATABASE_QUERY_ERROR } from '@volontariapp/errors-nest';
-import { MAX_SOCIAL_BATCH_IDS, NEO4J_READ_TRANSACTION_TIMEOUT_MS } from '../../constants.js';
+import { MAX_SOCIAL_BATCH_IDS, neo4jReadTransactionTimeoutMs } from '../../constants.js';
 import { PaginatedIdsVO } from '../../value-objects/paginated-ids.vo.js';
 import { PaginationResultVO } from '../../value-objects/pagination-result.vo.js';
 import type { PaginationVO } from '../../value-objects/pagination.vo.js';
 
 type Neo4jRecord = { get(key: string): unknown };
 
-/** Transaction config of every read: Neo4j stops a read the caller no longer waits for. */
-export const READ_TRANSACTION_CONFIG = { timeout: NEO4J_READ_TRANSACTION_TIMEOUT_MS } as const;
+/**
+ * Transaction config of every read: Neo4j stops a read the caller no longer waits for. Resolved at
+ * each call (one env lookup) so the timeout follows the environment, never frozen at import time.
+ */
+export function readTransactionConfig(): { timeout: number } {
+  return { timeout: neo4jReadTransactionTimeoutMs() };
+}
 
 export function toSafeInt(value: unknown): number {
   if (value == null) return 0;
@@ -30,7 +35,7 @@ export abstract class Neo4jBaseRepository {
   ): Promise<T[]> {
     const session = this.provider.getDriver().session();
     try {
-      const result = await session.run(cypher, params, READ_TRANSACTION_CONFIG);
+      const result = await session.run(cypher, params, readTransactionConfig());
       return result.records.map((r) => mapper(r as Neo4jRecord));
     } catch (error: unknown) {
       throw DATABASE_QUERY_ERROR((error as Error).message);
@@ -93,9 +98,9 @@ export abstract class Neo4jBaseRepository {
             skip: neo4j.int(skip),
             limit: neo4j.int(safeLimit),
           },
-          READ_TRANSACTION_CONFIG,
+          readTransactionConfig(),
         ),
-        countSession.run(countCypher, params, READ_TRANSACTION_CONFIG),
+        countSession.run(countCypher, params, readTransactionConfig()),
       ]);
 
       const ids = dataResult.records.map((r) => r.get(idKey) as string);
@@ -136,9 +141,9 @@ export abstract class Neo4jBaseRepository {
             skip: neo4j.int(skip),
             limit: neo4j.int(safeLimit),
           },
-          READ_TRANSACTION_CONFIG,
+          readTransactionConfig(),
         ),
-        countSession.run(countCypher, params, READ_TRANSACTION_CONFIG),
+        countSession.run(countCypher, params, readTransactionConfig()),
       ]);
 
       const items = dataResult.records.map((r) => mapper(r as Neo4jRecord));

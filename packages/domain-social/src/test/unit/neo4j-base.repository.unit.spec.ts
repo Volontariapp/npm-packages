@@ -3,7 +3,10 @@ import { Neo4jBaseRepository } from '../../repositories/base/neo4j-base.reposito
 import type { NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import type { Driver, Session } from 'neo4j-driver';
 import { PaginationFactory } from '../__test-utils__/factories/pagination.factory.js';
-import { NEO4J_READ_TRANSACTION_TIMEOUT_MS } from '../../constants.js';
+import {
+  NEO4J_READ_TRANSACTION_TIMEOUT_ENV,
+  NEO4J_READ_TRANSACTION_TIMEOUT_MS,
+} from '../../constants.js';
 
 class TestRepository extends Neo4jBaseRepository {
   async testRead(cypher: string, params: Record<string, unknown> = {}) {
@@ -47,6 +50,7 @@ describe('Neo4jBaseRepository (Unit)', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    Reflect.deleteProperty(process.env, NEO4J_READ_TRANSACTION_TIMEOUT_ENV);
   });
 
   // ─── read ──────────────────────────────────────────────────────────────────
@@ -65,6 +69,15 @@ describe('Neo4jBaseRepository (Unit)', () => {
         },
       );
       expect(NEO4J_READ_TRANSACTION_TIMEOUT_MS).toBeLessThan(2_000);
+    });
+
+    it('should pass the timeout configured through the environment to session.run', async () => {
+      process.env[NEO4J_READ_TRANSACTION_TIMEOUT_ENV] = '10000';
+      const runSpy = jest.spyOn(mockSession, 'run').mockResolvedValue({ records: [] } as never);
+
+      await repository.testRead('MATCH (n) RETURN n.id AS id');
+
+      expect(runSpy.mock.calls[0]?.[2]).toEqual({ timeout: 10_000 });
     });
 
     it('should throw DATABASE_QUERY_ERROR when the driver fails', async () => {
@@ -132,6 +145,17 @@ describe('Neo4jBaseRepository (Unit)', () => {
       expect(runSpy).toHaveBeenCalledTimes(2);
       for (const call of runSpy.mock.calls) {
         expect(call[2]).toEqual({ timeout: NEO4J_READ_TRANSACTION_TIMEOUT_MS });
+      }
+    });
+
+    it('should pass the configured timeout to both paginated reads', async () => {
+      process.env[NEO4J_READ_TRANSACTION_TIMEOUT_ENV] = '7000';
+      const runSpy = jest.spyOn(mockSession, 'run').mockResolvedValue({ records: [] } as never);
+
+      await repository.testReadPaginated('MATCH (n) RETURN n.id AS id', 'RETURN 0 AS total');
+
+      for (const call of runSpy.mock.calls) {
+        expect(call[2]).toEqual({ timeout: 7000 });
       }
     });
 
