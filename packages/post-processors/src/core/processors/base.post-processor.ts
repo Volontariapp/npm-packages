@@ -31,6 +31,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   private retryLoopTimeout: NodeJS.Timeout | null = null;
   private dlqSyncTimeout: NodeJS.Timeout | null = null;
   private loopPromise: Promise<void> | null = null;
+  private stopPromise: Promise<void> | null = null;
   private currentBatchSize: number;
 
   private readonly sigtermHandler = () => {
@@ -62,6 +63,7 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
         options.claimMinIdleTimeMs ?? DEFAULT_POST_PROCESSOR_CONFIG.claimMinIdleTimeMs,
       idempotencyTtlSeconds:
         options.idempotencyTtlSeconds ?? DEFAULT_POST_PROCESSOR_CONFIG.idempotencyTtlSeconds,
+      handleSignals: options.handleSignals ?? DEFAULT_POST_PROCESSOR_CONFIG.handleSignals,
       circuitBreaker: options.circuitBreaker ?? DEFAULT_POST_PROCESSOR_CONFIG.circuitBreaker,
       consumerName: options.consumerName ?? `${host}-${this.constructor.name}`,
       retry: RetryHelper.normalizeRetryOptions(
@@ -143,13 +145,25 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   }
 
   /**
-   * Stops the post-processor.
+   * Stops the post-processor. Every call made while a stop is in progress returns the same
+   * promise, so a caller awaiting `stop()` always waits for the end of the consumption loop,
+   * even when another caller (a signal listener) started the stop first.
    */
-  async stop(): Promise<void> {
+  stop(): Promise<void> {
+    if (this.stopPromise) {
+      return this.stopPromise;
+    }
     if (!this.isRunning) {
-      return;
+      return Promise.resolve();
     }
 
+    this.stopPromise = this.doStop().finally(() => {
+      this.stopPromise = null;
+    });
+    return this.stopPromise;
+  }
+
+  private async doStop(): Promise<void> {
     this.logger.info('Stopping post-processor...');
     this.isRunning = false;
 
@@ -190,6 +204,9 @@ export abstract class BasePostProcessor<EventType extends EventMessagingType> {
   }
 
   private setupSignalHandlers(): void {
+    if (!this.options.handleSignals) {
+      return;
+    }
     process.on('SIGTERM', this.sigtermHandler);
     process.on('SIGINT', this.sigintHandler);
   }
