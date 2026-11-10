@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.0
+
+### Minor Changes
+
+- Reads in Neo4jBaseRepository (read, readPaginated, readPaginatedCustom) run with a 1.8 s transaction timeout (NEO4J_READ_TRANSACTION_TIMEOUT_MS), under the 2 s gateway read deadline: Neo4j stops a read nobody waits for instead of piling work up on a saturated server.
+
 ## 0.19.3
 
 ### Patch Changes
