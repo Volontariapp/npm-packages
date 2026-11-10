@@ -13,16 +13,26 @@ import {
   type OutboxPurgeSettings,
 } from '../purgers/outbox-purge.settings.js';
 
+import { OutboxReaper } from '../reapers/outbox.reaper.js';
+import {
+  resolveOutboxReapSettings,
+  type OutboxReapSettings,
+} from '../reapers/outbox-reap.settings.js';
+
 type OutboxPurgeAction = Pick<OutboxPurger, 'purgeCompleted'>;
+type OutboxReapAction = Pick<OutboxReaper, 'reap'>;
 
 export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extends OutboxEntity> {
   private abortController?: AbortController;
   private loopPromise?: Promise<void>;
   private purgeLoopPromise?: Promise<void>;
+  private reapLoopPromise?: Promise<void>;
 
   private readonly logger: Logger;
   private readonly purgeSettings: OutboxPurgeSettings;
+  private readonly reapSettings: OutboxReapSettings;
   private readonly purger?: OutboxPurgeAction;
+  private readonly reaper?: OutboxReapAction;
   private readonly consumer: OutboxConsumer<TOutboxModel, TOutboxEntity>;
   private readonly dispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>;
 
@@ -32,6 +42,7 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     dispatcher: OutboxDispatcher<TOutboxModel, TOutboxEntity>,
     pusher: OutboxPusher<TOutboxEntity>,
     purger?: OutboxPurgeAction,
+    reaper?: OutboxReapAction,
   ) {
     this.logger = new Logger(config.logger);
     this.dispatcher = dispatcher;
@@ -52,6 +63,34 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
           batchSize: this.purgeSettings.batchSize,
           additionalTables: [...(OUTBOX_COMPANION_TABLES[repository.metadata.tableName] ?? [])],
         });
+    }
+
+    this.reapSettings = resolveOutboxReapSettings(config.reap);
+    this.reaper = reaper;
+  }
+
+  /**
+   * The default reaper is built when the runner starts, not in the constructor, so a runner
+   * built on a stub repository (a consumer's unit test) keeps working until it is started.
+   */
+  private buildReaper(): OutboxReapAction | undefined {
+    if (!this.reapSettings.enabled) {
+      return undefined;
+    }
+    if (this.reaper) {
+      return this.reaper;
+    }
+    try {
+      return new OutboxReaper(this.logger, this.repository, {
+        stuckAfterMs: this.reapSettings.stuckAfterMs,
+        maxAttempts: this.reapSettings.maxAttempts,
+        retryBaseMs: this.reapSettings.retryBaseMs,
+        limit: this.reapSettings.limit,
+        maxAgeMs: this.reapSettings.maxAgeMs,
+      });
+    } catch (error) {
+      this.logger.error('Outbox reap disabled: could not build the reaper', { error });
+      return undefined;
     }
   }
 
@@ -77,6 +116,12 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     // The purge runs on its own loop so that a long delete never holds back the sending.
     if (this.purger) {
       this.purgeLoopPromise = this.runPurgeLoop(this.abortController.signal, this.purger);
+    }
+
+    // Same for the reap: it only needs a short statement but must not wait behind a long cycle.
+    const reaper = this.buildReaper();
+    if (reaper) {
+      this.reapLoopPromise = this.runReapLoop(this.abortController.signal, reaper);
     }
   }
 
@@ -134,6 +179,29 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
     }
   }
 
+  private async runReapLoop(signal: AbortSignal, reaper: OutboxReapAction): Promise<void> {
+    try {
+      while (!signal.aborted) {
+        await this.runReapCycle(reaper);
+        await setTimeout(this.reapSettings.intervalMs, undefined, { signal });
+      }
+    } catch (error: unknown) {
+      if (this.isAbortError(error)) {
+        this.logger.debug('Outbox reap wait interrupted by stop');
+      } else {
+        this.logger.error('Critical error in outbox reap loop', { error });
+      }
+    }
+  }
+
+  private async runReapCycle(reaper: OutboxReapAction): Promise<void> {
+    try {
+      await reaper.reap();
+    } catch (error) {
+      this.logger.error('Error during outbox reap', { error });
+    }
+  }
+
   private isAbortError(error: unknown): boolean {
     return (
       (error instanceof Error && error.name === 'AbortError') ||
@@ -164,10 +232,11 @@ export class OutboxRunner<TOutboxModel extends OutboxModel, TOutboxEntity extend
 
     try {
       // Wait for the current cycle/wait to actually finish
-      await Promise.all([this.loopPromise, this.purgeLoopPromise]);
+      await Promise.all([this.loopPromise, this.purgeLoopPromise, this.reapLoopPromise]);
     } finally {
       this.loopPromise = undefined;
       this.purgeLoopPromise = undefined;
+      this.reapLoopPromise = undefined;
       this.abortController = undefined;
     }
   }

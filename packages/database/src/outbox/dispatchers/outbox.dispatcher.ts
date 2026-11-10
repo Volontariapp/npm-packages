@@ -6,12 +6,12 @@ import type { OutboxModel } from '../models/outbox.model.js';
 import { OutboxStatus } from '../types/outbox.status.js';
 
 export class OutboxDispatcher<
-  ToutboxModel extends OutboxModel,
+  TOutboxModel extends OutboxModel,
   TOutboxEntity extends OutboxEntity,
 > {
   constructor(
     private readonly logger: Logger,
-    private readonly repository: BaseRepository<ToutboxModel, TOutboxEntity, string>,
+    private readonly repository: BaseRepository<TOutboxModel, TOutboxEntity, string>,
   ) {}
 
   markAsProcessing(entity: TOutboxEntity): Promise<TOutboxEntity | null> {
@@ -27,9 +27,10 @@ export class OutboxDispatcher<
 
     this.logger.info(`Marking outbox entity ${entity.id} as processing`);
 
-    entity.status = OutboxStatus.PROCESSING;
-    entity.updatedAt = new Date();
-    return this.repository.update(entity.id, entity);
+    return this.writeTransition(entity, {
+      status: OutboxStatus.PROCESSING,
+      updatedAt: new Date(),
+    } as Partial<TOutboxEntity>);
   }
 
   markAsFailed(entity: TOutboxEntity, error?: string): Promise<TOutboxEntity | null> {
@@ -45,11 +46,12 @@ export class OutboxDispatcher<
 
     this.logger.error(`Marking outbox entity ${entity.id} as failed`, { error });
 
-    entity.status = OutboxStatus.FAILED;
-    entity.lastError = error;
-    entity.attempts += 1;
-    entity.updatedAt = new Date();
-    return this.repository.update(entity.id, entity);
+    return this.writeTransition(entity, {
+      status: OutboxStatus.FAILED,
+      lastError: error,
+      attempts: entity.attempts + 1,
+      updatedAt: new Date(),
+    } as Partial<TOutboxEntity>);
   }
 
   markAsCompleted(entity: TOutboxEntity): Promise<TOutboxEntity | null> {
@@ -65,8 +67,28 @@ export class OutboxDispatcher<
 
     this.logger.info(`Marking outbox entity ${entity.id} as done`);
 
-    entity.status = OutboxStatus.COMPLETED;
-    entity.updatedAt = new Date();
-    return this.repository.update(entity.id, entity);
+    return this.writeTransition(entity, {
+      status: OutboxStatus.COMPLETED,
+      updatedAt: new Date(),
+    } as Partial<TOutboxEntity>);
+  }
+
+  /**
+   * Writes the new state from a copy, and applies it to `entity` only once the UPDATE has
+   * succeeded. A failed write therefore leaves the entity as it was read (PROCESSING), so the
+   * caller can still mark it as failed instead of tripping over a status that was never stored.
+   */
+  private async writeTransition(
+    entity: TOutboxEntity,
+    changes: Partial<TOutboxEntity>,
+  ): Promise<TOutboxEntity | null> {
+    const next: TOutboxEntity = Object.assign(
+      Object.create(Object.getPrototypeOf(entity) as object) as TOutboxEntity,
+      entity,
+      changes,
+    );
+    const stored = await this.repository.update(entity.id, next);
+    Object.assign(entity, changes);
+    return stored;
   }
 }

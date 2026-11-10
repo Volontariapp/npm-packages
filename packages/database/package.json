@@ -24,6 +24,9 @@
       "import": "./dist/test/utils/index.js"
     }
   },
+  "bin": {
+    "volontariapp-outbox-requeue": "./dist/cli/requeue.js"
+  },
   "files": [
     "dist"
   ],
