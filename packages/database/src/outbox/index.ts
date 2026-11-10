@@ -12,3 +12,5 @@ export * from './writers/index.js';
 export * from './dispatchers/index.js';
 export * from './pushers/index.js';
 export * from './purgers/index.js';
+export * from './reapers/index.js';
+export * from './requeue/index.js';

@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/database",
-  "version": "3.14.0",
+  "version": "3.15.0",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -23,6 +23,9 @@
       "types": "./dist/test/utils/index.d.ts",
       "import": "./dist/test/utils/index.js"
     }
+  },
+  "bin": {
+    "volontariapp-outbox-requeue": "./dist/cli/requeue.js"
   },
   "files": [
     "dist"

@@ -116,4 +116,29 @@ describe('OutboxDispatcher (Unit)', () => {
       );
     });
   });
+
+  describe('a failed write', () => {
+    it('markAsCompleted leaves the entity PROCESSING so it can still be marked as failed', async () => {
+      const entity = makeEntity(OutboxStatus.PROCESSING);
+      jest.spyOn(repositoryMock, 'update').mockRejectedValueOnce(new Error('connection reset'));
+
+      await expect(dispatcher.markAsCompleted(entity)).rejects.toThrow('connection reset');
+
+      expect(entity.status).toBe(OutboxStatus.PROCESSING);
+      await expect(dispatcher.markAsFailed(entity, 'push ok, write lost')).resolves.not.toThrow();
+      expect(entity.status).toBe(OutboxStatus.FAILED);
+      expect(entity.attempts).toBe(1);
+    });
+
+    it('markAsFailed does not count the attempt when the write fails', async () => {
+      const entity = makeEntity(OutboxStatus.PROCESSING);
+      jest.spyOn(repositoryMock, 'update').mockRejectedValueOnce(new Error('connection reset'));
+
+      await expect(dispatcher.markAsFailed(entity, 'boom')).rejects.toThrow('connection reset');
+
+      expect(entity.status).toBe(OutboxStatus.PROCESSING);
+      expect(entity.attempts).toBe(0);
+      expect(entity.lastError).toBeUndefined();
+    });
+  });
 });

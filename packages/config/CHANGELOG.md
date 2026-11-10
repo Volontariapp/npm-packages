@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.0
+
+### Minor Changes
+
+- Add `OutboxReapConfig` and the optional `reap` field of `OutboxRunnerConfig` (reap interval, stuck delay, max attempts, retry base delay, batch limit, max age). Every field is optional: runners that do not set it get the defaults.
+
 ## 3.5.0
 
 ### Minor Changes

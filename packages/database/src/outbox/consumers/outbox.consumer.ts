@@ -129,11 +129,23 @@ export class OutboxConsumer<TOutboxModel extends OutboxModel, TOutboxEntity exte
         );
       } catch (error) {
         this.logger.error(`Error pushing outbox item ${item.id}`, { error });
-        await this.outboxDispatcher.markAsFailed(
-          item,
-          error instanceof Error ? error.message : String(error),
-        );
+        await this.markItemAsFailed(item, error);
       }
+    }
+  }
+
+  /**
+   * A row that cannot even be marked as failed (the database is unreachable) must not stop the
+   * rest of the batch: it stays PROCESSING and the reaper puts it back to PENDING.
+   */
+  private async markItemAsFailed(item: TOutboxEntity, cause: unknown): Promise<void> {
+    try {
+      await this.outboxDispatcher.markAsFailed(
+        item,
+        cause instanceof Error ? cause.message : String(cause),
+      );
+    } catch (error) {
+      this.logger.error(`Could not mark outbox item ${item.id} as failed`, { error });
     }
   }
 

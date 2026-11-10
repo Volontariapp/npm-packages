@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.15.0
+
+### Minor Changes
+
+- Outbox delivery becomes at-least-once. `OutboxRunner` runs a reap loop (`OutboxReaper`) that puts PROCESSING rows stuck for 5 minutes and FAILED rows below `maxAttempts` (exponential delay) back to PENDING, only for rows created in the last 15 minutes. `markAsCompleted`, `markAsFailed` and `markAsProcessing` update the entity only after the UPDATE succeeded, and an error on one row no longer leaves the `processItems` loop. New `volontariapp-outbox-requeue` command (`dist/cli/requeue.js`) to replay older rows explicitly: read-only unless `--apply`, `--type` required. Consumers of `@volontariapp/post-processors` must be idempotent on the event id (3.7.0).
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/config@3.6.0
+  - @volontariapp/bridge@1.0.14
+
 ## 3.14.0
 
 ### Minor Changes

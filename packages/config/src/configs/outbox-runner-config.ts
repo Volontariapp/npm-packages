@@ -1,6 +1,7 @@
 import { IsDefined, IsOptional, IsPositive, ValidateNested } from 'class-validator';
 import { LoggerConfig } from './logger-config.js';
 import { OutboxPurgeConfig } from './outbox-purge-config.js';
+import { OutboxReapConfig } from './outbox-reap-config.js';
 import { Type } from 'class-transformer';
 
 export class OutboxRunnerConfig {
@@ -33,4 +34,13 @@ export class OutboxRunnerConfig {
   @ValidateNested()
   @Type(() => OutboxPurgeConfig)
   purge?: OutboxPurgeConfig;
+
+  /**
+   * Recovery of the stuck and failed rows. When omitted, the runner reaps with the defaults
+   * of `OutboxReapConfig`.
+   */
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => OutboxReapConfig)
+  reap?: OutboxReapConfig;
 }

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, jest } from '@jest/globals';
 import type { Redis } from 'ioredis';
 import { testDataSource, setupIntegrationTest, RealRedisPusher } from '../../utils/index.js';
 import { OutboxModel } from '../../../outbox/models/outbox.model.js';
@@ -190,5 +190,75 @@ describe('OutboxConsumer (Integration)', () => {
     const dbItem = await repo.findOneBy({ id: event.id });
     expect(dbItem?.status).toBe(OutboxStatus.FAILED);
     expect(dbItem?.lastError).toContain('Connection is closed');
+  });
+
+  describe('processItems() when the database write of one row fails', () => {
+    const seedProcessing = async (suffix: number): Promise<OutboxEntity> => {
+      const id = `00000000-0000-0000-0000-0000000003${suffix.toString().padStart(2, '0')}`;
+      await testDataSource.getRepository(OutboxModel).save(
+        makeOutboxEvent({
+          id,
+          status: OutboxStatus.PROCESSING,
+          createdAt: new Date(Date.now() + suffix),
+        }),
+      );
+      return repository.findOneOrFail({ id });
+    };
+
+    beforeEach(() => {
+      // The test above disconnects Redis to force a push failure: start from a live connection.
+      redis = createTestRedisConnection();
+      pusher = new RealRedisPusher(redis);
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      redis.disconnect();
+    });
+
+    it('marks the row FAILED and still processes the following rows', async () => {
+      const [first, second, third] = [
+        await seedProcessing(1),
+        await seedProcessing(2),
+        await seedProcessing(3),
+      ];
+      const dispatcher = new OutboxDispatcher(loggerMock, repository);
+      const consumer = new OutboxConsumer(loggerMock, repository, 10, dispatcher, pusher);
+      const original = dispatcher.markAsCompleted.bind(dispatcher);
+      jest.spyOn(dispatcher, 'markAsCompleted').mockImplementation(async (entity) => {
+        if (entity.id === first.id) {
+          throw new Error('update lost');
+        }
+        return original(entity);
+      });
+
+      await consumer.processItems([first, second, third]);
+
+      const repo = testDataSource.getRepository(OutboxModel);
+      expect((await repo.findOneByOrFail({ id: first.id })).status).toBe(OutboxStatus.FAILED);
+      expect((await repo.findOneByOrFail({ id: first.id })).attempts).toBe(1);
+      expect((await repo.findOneByOrFail({ id: second.id })).status).toBe(OutboxStatus.COMPLETED);
+      expect((await repo.findOneByOrFail({ id: third.id })).status).toBe(OutboxStatus.COMPLETED);
+    });
+
+    it('does not leave the loop when markAsFailed itself throws', async () => {
+      const [first, second] = [await seedProcessing(11), await seedProcessing(12)];
+      const dispatcher = new OutboxDispatcher(loggerMock, repository);
+      const consumer = new OutboxConsumer(loggerMock, repository, 10, dispatcher, pusher);
+      const original = dispatcher.markAsCompleted.bind(dispatcher);
+      jest.spyOn(dispatcher, 'markAsCompleted').mockImplementation(async (entity) => {
+        if (entity.id === first.id) {
+          throw new Error('update lost');
+        }
+        return original(entity);
+      });
+      jest.spyOn(dispatcher, 'markAsFailed').mockRejectedValue(new Error('database gone'));
+
+      await expect(consumer.processItems([first, second])).resolves.toBeUndefined();
+
+      const repo = testDataSource.getRepository(OutboxModel);
+      expect((await repo.findOneByOrFail({ id: first.id })).status).toBe(OutboxStatus.PROCESSING);
+      expect((await repo.findOneByOrFail({ id: second.id })).status).toBe(OutboxStatus.COMPLETED);
+    });
   });
 });

@@ -4832,6 +4832,8 @@ __metadata:
     typescript: "npm:5.7.3"
   peerDependencies:
     typeorm: ^0.3.28
+  bin:
+    volontariapp-outbox-requeue: ./dist/cli/requeue.js
   languageName: unknown
   linkType: soft
 

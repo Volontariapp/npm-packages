@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/database@3.15.0
+  - @volontariapp/health-check@1.0.14
+  - @volontariapp/outbox@0.11.1
+
 ## 3.7.1
 
 ### Patch Changes
