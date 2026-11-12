@@ -315,8 +315,8 @@ export class PostgresFileRepository
    *
    * No condition on a date: a late event attaches a file whose reservation has expired. All the
    * events are written in the same transaction as the updates, so a failure rolls everything
-   * back and the redelivered event starts again. Events are written with an empty
-   * `targetServices` until `StorageStream` exists (see `FILE_SCAN_RESULT_TARGET_SERVICES`).
+   * back and the redelivered event starts again. Each event names its Redis stream in
+   * `targetServices` (see `file-outbox.builders.ts`), otherwise the pusher skips it.
    */
   async attachFromConfirmationEvent(
     input: AttachFromConfirmationEventInput,

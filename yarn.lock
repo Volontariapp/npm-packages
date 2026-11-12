@@ -4968,6 +4968,7 @@ __metadata:
     "@volontariapp/logger": "workspace:*"
     "@volontariapp/messaging": "workspace:*"
     "@volontariapp/outbox": "workspace:*"
+    "@volontariapp/shared": "workspace:*"
     jest: "npm:^30.3.0"
     pg: "npm:^8.23.1"
     reflect-metadata: "npm:^0.2.2"

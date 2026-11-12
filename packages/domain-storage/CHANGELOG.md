@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.20
+
+### Patch Changes
+
+- Fix `storage.file_scanned`, `storage.file_rejected` and `storage.attachment_rejected` never being pushed: they were written with an empty `targetServices`, so the outbox pusher skipped them and a post with an image over 1 MB stayed `PENDING`. Each event now names its stream (`Streams.STORAGE_FILE_SCANNED`, `Streams.STORAGE_FILE_REJECTED`, `Streams.STORAGE_ATTACHMENT_REJECTED`). The empty `FILE_SCAN_RESULT_TARGET_SERVICES` constant is removed (no dependent in the workspace) and replaced by `FILE_SCANNED_TARGET_SERVICES`, `FILE_REJECTED_TARGET_SERVICES` and `ATTACHMENT_REJECTED_TARGET_SERVICES`. `@volontariapp/shared` is now a dependency.
+
 ## 0.14.19
 
 ### Patch Changes

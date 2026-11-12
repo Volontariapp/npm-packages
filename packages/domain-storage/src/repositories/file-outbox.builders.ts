@@ -6,6 +6,7 @@ import {
   StorageQueue,
 } from '@volontariapp/messaging';
 import { InternalServerError } from '@volontariapp/errors';
+import { Streams } from '@volontariapp/shared';
 import { AttachmentRefusalReason } from '../enums/attachment-refusal-reason.enum.js';
 import type { EntityType } from '../enums/entity-type.enum.js';
 import type { RejectionReason } from '../enums/rejection-reason.enum.js';
@@ -16,16 +17,20 @@ import type { ScanTransitionRow } from './file-repository.types.js';
 export const FILE_OUTBOX_EMITTER = 'ms-storage';
 
 /**
- * Redis streams that receive `storage.file_scanned`, `storage.file_rejected` and
- * `storage.attachment_rejected`.
- *
- * Empty on purpose: `@volontariapp/shared` has no `StorageStream` entry yet
- * (docs/stockage-fichiers/08-contrats-et-evolutions.md, section 4), and the pusher skips an
- * `event_queue` row with no target. Fill it with `StorageStream.STORAGE_FILE_SCANNED`,
- * `StorageStream.STORAGE_FILE_REJECTED` and `StorageStream.STORAGE_ATTACHMENT_REJECTED` once
- * `shared` exposes them.
+ * Redis streams that receive the scan result events. The pusher skips an `event_queue` row with
+ * no target, so every storage event names its stream, as `domain-post` and `domain-event` do.
  */
-export const FILE_SCAN_RESULT_TARGET_SERVICES: EventQueueEntity['targetServices'] = [];
+export const FILE_SCANNED_TARGET_SERVICES: EventQueueEntity['targetServices'] = [
+  Streams.STORAGE_FILE_SCANNED,
+];
+
+export const FILE_REJECTED_TARGET_SERVICES: EventQueueEntity['targetServices'] = [
+  Streams.STORAGE_FILE_REJECTED,
+];
+
+export const ATTACHMENT_REJECTED_TARGET_SERVICES: EventQueueEntity['targetServices'] = [
+  Streams.STORAGE_ATTACHMENT_REJECTED,
+];
 
 export const buildScanFileJob = (
   fileId: string,
@@ -81,7 +86,7 @@ export const buildFileScannedEvent = (
       entityType: row.entity_type,
       entityId: requireEntityId(row),
     },
-    targetServices: FILE_SCAN_RESULT_TARGET_SERVICES,
+    targetServices: FILE_SCANNED_TARGET_SERVICES,
   });
 
 export const buildFileRejectedEvent = (
@@ -99,7 +104,7 @@ export const buildFileRejectedEvent = (
       entityId: requireEntityId(row),
       reason,
     },
-    targetServices: FILE_SCAN_RESULT_TARGET_SERVICES,
+    targetServices: FILE_REJECTED_TARGET_SERVICES,
   });
 
 /**
@@ -141,5 +146,5 @@ export const buildAttachmentRejectedEvent = (
     emitter: FILE_OUTBOX_EMITTER,
     emitterId: ownerId,
     payload: rejection,
-    targetServices: FILE_SCAN_RESULT_TARGET_SERVICES,
+    targetServices: ATTACHMENT_REJECTED_TARGET_SERVICES,
   });

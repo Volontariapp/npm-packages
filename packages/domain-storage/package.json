@@ -1,6 +1,6 @@
 {
   "name": "@volontariapp/domain-storage",
-  "version": "0.14.19",
+  "version": "0.14.20",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -60,7 +60,8 @@
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*",
     "@volontariapp/messaging": "workspace:*",
-    "@volontariapp/outbox": "workspace:*"
+    "@volontariapp/outbox": "workspace:*",
+    "@volontariapp/shared": "workspace:*"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.2.2",
