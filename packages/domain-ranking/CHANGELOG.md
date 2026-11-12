@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.6.0
+  - @volontariapp/crypto@0.3.16
+  - @volontariapp/database@3.15.1
+  - @volontariapp/errors@0.7.2
+  - @volontariapp/errors-nest@0.14.3
+
 ## 0.3.6
 
 ### Patch Changes

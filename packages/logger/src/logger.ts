@@ -1,3 +1,4 @@
+import type { AuditEntry } from './audit.js';
 import type { LogLevel } from './colors.js';
 import { Colors, getLevelColor } from './colors.js';
 import type { MaskingConfig } from './masking.js';
@@ -90,8 +91,26 @@ export class Logger {
     this.print('debug', message, optionalParams);
   }
 
-  private print(level: LogLevel, message: unknown, params: unknown[]): void {
-    if (!this.isLevelEnabled(level)) {
+  /**
+   * Writes the trail of a sensitive action: one `info` line tagged `audit: true` with who did what
+   * to which target and with which result, searchable as a whole in Datadog. Goes through the same
+   * masking and trace fields as every other log.
+   */
+  public audit(entry: AuditEntry): void {
+    this.print('info', `audit ${entry.action}`, [{ ...entry, audit: true }], true);
+  }
+
+  /**
+   * `ignoreMinLevel` is for the audit trail only: a service that logs warnings and errors in
+   * production must not lose the record of a sensitive action.
+   */
+  private print(
+    level: LogLevel,
+    message: unknown,
+    params: unknown[],
+    ignoreMinLevel = false,
+  ): void {
+    if (!ignoreMinLevel && !this.isLevelEnabled(level)) {
       return;
     }
 
