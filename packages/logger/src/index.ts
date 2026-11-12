@@ -1,3 +1,4 @@
+export * from './audit.js';
 export * from './colors.js';
 export * from './logger.js';
 export * from './masking.js';

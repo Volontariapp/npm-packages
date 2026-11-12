@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.22.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @volontariapp/logger@0.6.0
+  - @volontariapp/bridge-nest@0.3.24
+  - @volontariapp/contracts@4.13.3
+  - @volontariapp/database@3.15.1
+  - @volontariapp/errors@0.7.2
+  - @volontariapp/errors-nest@0.14.3
+  - @volontariapp/outbox@0.11.2
+  - @volontariapp/messaging@2.35.1
+
 ## 0.22.0
 
 ### Minor Changes

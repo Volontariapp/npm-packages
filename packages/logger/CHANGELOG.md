@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- Add `logger.audit(entry)` for the audit trail of sensitive actions. It writes one `info` line tagged `audit: true` with `actor`, `action`, `target` (`type` and `id`) and `result` (`success`, `failure` or `denied`), plus the `timestamp` and `trace_id` every log already carries. Unlike the other methods it ignores the minimum level, so a service that only logs warnings and errors in production does not lose the record of a sensitive action. It goes through the same masking as every other log. `AUDIT_ACTIONS` and the `AuditAction`, `AuditEntry`, `AuditTarget` and `AuditResult` types are exported; the list of actions is closed: `user.admin_deleted`, `user.admin_updated`, `badge.created`, `badge.updated`, `badge.deleted`.
+
 ## 0.5.0
 
 ### Minor Changes
