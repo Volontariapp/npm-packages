@@ -23,7 +23,6 @@ import {
 } from '../../index.js';
 import { FileModel } from '../../models/index.js';
 import {
-  FILE_SCAN_RESULT_TARGET_SERVICES,
   OWNER_RELEASE_EXCLUDED_ENTITY_TYPES,
   PostgresFileRepository,
 } from '../../repositories/index.js';
@@ -108,7 +107,7 @@ describe('PostgresFileRepository attachment and release (integration)', () => {
           entityType: EntityType.POST,
           entityId,
         });
-        expect(events[0]?.targetServices).toEqual(FILE_SCAN_RESULT_TARGET_SERVICES);
+        expect(events[0]?.targetServices).toEqual(['storage:file_scanned']);
       });
 
       it('emits storage.file_rejected with the reason of a scan that ended REJECTED', async () => {
@@ -131,6 +130,7 @@ describe('PostgresFileRepository attachment and release (integration)', () => {
           entityId,
           reason: RejectionReason.MALWARE,
         });
+        expect(events[0]?.targetServices).toEqual(['storage:file_rejected']);
       });
 
       it('attaches a reserved file while it is still SCANNING, and the scan emits afterwards', async () => {
@@ -255,6 +255,10 @@ describe('PostgresFileRepository attachment and release (integration)', () => {
             expect.objectContaining({ fileId: attachFirst.id }),
           ]),
         );
+        expect(events.map((event) => event.targetServices)).toEqual([
+          ['storage:file_scanned'],
+          ['storage:file_scanned'],
+        ]);
       });
     });
 
@@ -283,7 +287,7 @@ describe('PostgresFileRepository attachment and release (integration)', () => {
           reason,
         });
         expect(events[0]?.emitterId).toBe(ownerId);
-        expect(events[0]?.targetServices).toEqual(FILE_SCAN_RESULT_TARGET_SERVICES);
+        expect(events[0]?.targetServices).toEqual(['storage:attachment_rejected']);
       };
 
       it('writes NOT_FOUND for an unknown file and for a file of another owner', async () => {

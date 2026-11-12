@@ -20,7 +20,6 @@ import {
   buildFileScannedEvent,
   buildScanFileJob,
   FILE_OUTBOX_EMITTER,
-  FILE_SCAN_RESULT_TARGET_SERVICES,
   toAttachmentRejectionReason,
 } from '../repositories/file-outbox.builders.js';
 import type { ScanTransitionRow } from '../repositories/file-repository.types.js';
@@ -81,6 +80,12 @@ describe('file outbox builders', () => {
       });
     });
 
+    it('is pushed to the storage:file_scanned stream', () => {
+      const event = buildFileScannedEvent(attachedRow());
+
+      expect(event.targetServices).toEqual(['storage:file_scanned']);
+    });
+
     it('refuses an attached row without entity id', () => {
       expect(() => buildFileScannedEvent(attachedRow({ entity_id: null }))).toThrow(
         'has no entity_id',
@@ -100,6 +105,12 @@ describe('file outbox builders', () => {
         entityId: '22222222-2222-4222-8222-222222222222',
         reason: RejectionReason.MALWARE,
       });
+    });
+
+    it('is pushed to the storage:file_rejected stream', () => {
+      const event = buildFileRejectedEvent(attachedRow(), RejectionReason.MALWARE);
+
+      expect(event.targetServices).toEqual(['storage:file_rejected']);
     });
 
     it('refuses an attached row without entity id', () => {
@@ -158,7 +169,7 @@ describe('file outbox builders', () => {
       expect(event.payload.after).toEqual(payload);
       expect(event.emitter).toBe(FILE_OUTBOX_EMITTER);
       expect(event.emitterId).toBe('owner-1');
-      expect(event.targetServices).toEqual(FILE_SCAN_RESULT_TARGET_SERVICES);
+      expect(event.targetServices).toEqual(['storage:attachment_rejected']);
     });
   });
 });
