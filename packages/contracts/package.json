@@ -40,6 +40,6 @@
   },
   "dependencies": {
     "@volontariapp/logger": "workspace:*",
-    "protobufjs": "^7.5.8"
+    "protobufjs": "^8.8.1"
   }
 }
