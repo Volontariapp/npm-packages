@@ -38,7 +38,7 @@
     "test:coverage:integration": "node --experimental-vm-modules $(yarn bin jest) --config jest.integration.config.js --coverage --coverageReporters=\"text\" --coverageReporters=\"json-summary\" --coverageReporters=\"lcov\" --coverageReporters=\"json\" --runInBand"
   },
   "dependencies": {
-    "@nestjs/common": "^11.2.8",
+    "@nestjs/common": "^11.2.10",
     "@nestjs/typeorm": "^11.0.3",
     "@volontariapp/bridge-nest": "workspace:*",
     "@volontariapp/contracts": "workspace:*",
@@ -49,7 +49,7 @@
     "@volontariapp/messaging": "workspace:*",
     "@volontariapp/outbox": "workspace:*",
     "@volontariapp/shared": "workspace:*",
-    "neo4j-driver": "^6.3.0",
+    "neo4j-driver": "^6.3.2",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
