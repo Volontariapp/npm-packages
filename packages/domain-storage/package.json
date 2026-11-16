@@ -55,7 +55,7 @@
     "migration:run": "TYPEORM_MIGRATION_RUN=true yarn typeorm migration:run -d src/test/data-source.ts"
   },
   "dependencies": {
-    "@nestjs/common": "^11.2.8",
+    "@nestjs/common": "^11.2.10",
     "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
     "@volontariapp/logger": "workspace:*",

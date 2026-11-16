@@ -53,7 +53,7 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
-    "@nestjs/common": "^11.2.8",
+    "@nestjs/common": "^11.2.10",
     "@volontariapp/crypto": "workspace:*",
     "@volontariapp/database": "workspace:*",
     "@volontariapp/errors": "workspace:*",
